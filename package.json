@@ -1,6 +1,6 @@
 {
     "name": "bitbybit-occt",
-    "version": "0.9.14",
+    "version": "0.9.15",
     "description": "Bit By Bit Developers CAD algorithms using OpenCascade Technology kernel",
     "main": "index.js",
     "repository": {
@@ -28,8 +28,8 @@
     "author": "Bit by bit developers",
     "license": "MIT",
     "types": "./index.d.ts",
-    "dependencies": {
-    },
+    "dependencies": {},
+    "type": "module",
     "devDependencies": {
         "typedoc": "0.21.9",
         "@microsoft/tsdoc": "0.13.2",
