@@ -15,7 +15,7 @@ describe('OCCT wire unit tests', () => {
     const closeToNr = 13;
 
     beforeAll(async () => {
-        const occt: OpenCascadeInstance = await (initOpenCascade as any).default();
+        const occt: OpenCascadeInstance = await initOpenCascade();
         const vec = new VectorHelperService();
         const s = new ShapesHelperService();
         occHelper = new OccHelper(vec, s, occt);
@@ -109,6 +109,12 @@ describe('OCCT wire unit tests', () => {
         const w = wire.createParallelogramWire({ width: 5, height: 2, center: [0, 0, 0], direction: [0, 1, 0], angle: 0, aroundCenter: true });
         const length = wire.getWireLength({ shape: w }).result;
         expect(length).toBe(14);
+    });
+
+    it('should get wires of a box', async () => {
+        const b = occHelper.bRepPrimAPIMakeBox(5, 5, 5, [0, 0, 0]);
+        const wires = wire.getWires({ shape: b });
+        expect(wires.length).toBe(6);
     });
 });
 

@@ -13,7 +13,7 @@ describe('OCCT edge unit tests', () => {
     const closeToNr = 13;
 
     beforeAll(async () => {
-        const occt: OpenCascadeInstance = await (initOpenCascade as any).default();
+        const occt: OpenCascadeInstance = await initOpenCascade();
         const vec = new VectorHelperService();
         const s = new ShapesHelperService();
         occHelper = new OccHelper(vec, s, occt);
