@@ -17,11 +17,12 @@
     ],
     "scripts": {
         "build": "tsc -p tsconfig.bitbybit.json",
-        "build-p": "npm run build && npm run copy-package && npm run copy-occt && npm run copy-readme && npm run delete-tsdoc",
+        "build-p": "npm run build && npm run copy-package && npm run copy-occt && npm run copy-readme && npm run delete-tsdoc && npm run delete-coverage",
         "copy-package": "cp -R ./package.json ./dist/package.json",
         "copy-occt": "cp -R ./bitbybit-dev-occt ./dist",
         "copy-readme": "cp -R ./README.md ./dist",
         "delete-tsdoc": "rm -R ./dist/ts-api-docs && rm -R ./dist/ts-doc-theme",
+        "delete-coverage": "rm -R ./dist/coverage",
         "build-occt": "node generate-prod-build-yaml.js && cd bitbybit-dev-occt && docker run --rm -it -v \"$(pwd):/src\" -u \"$(id -u):$(id -g)\" donalffons/opencascade.js bitbybit-dev-occt.yml && cd ../",
         "build-occt-multithreaded": "node generate-prod-build-yaml-multithreaded.js && cd bitbybit-dev-occt-multithreaded && docker run --rm -it -v \"$(pwd):/src\" -u \"$(id -u):$(id -g)\" donalffons/opencascade.js:multi-threaded bitbybit-dev-occt.yml && cd ../",
         "declarations": "tsc --project lib/api/tsconfig.bbb.json",
