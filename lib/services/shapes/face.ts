@@ -1,5 +1,5 @@
 import { GeomAbs_Shape, Geom_Surface, OpenCascadeInstance, TopoDS_Face, TopoDS_Shape, TopoDS_Wire } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper, typeSpecificityEnum } from '../../occ-helper';
+import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from '../../occ-helper';
 import * as Inputs from '../../api/inputs/inputs';
 import { Base } from '../../api/inputs/inputs';
 
@@ -371,7 +371,7 @@ export class OCCTFace {
     }
 
     getFace(inputs: Inputs.OCCT.ShapeIndexDto<TopoDS_Shape>): TopoDS_Face {
-        if (!inputs.shape || inputs.shape.ShapeType() > this.occ.TopAbs_ShapeEnum.TopAbs_SHELL || inputs.shape.IsNull()) {
+        if (!inputs.shape || this.och.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.shell || inputs.shape.IsNull()) {
             throw (new Error('Shape is not provided or is of incorrect type'));
         }
         if (!inputs.index) { inputs.index = 0; }

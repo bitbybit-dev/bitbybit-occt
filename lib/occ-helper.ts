@@ -10,6 +10,20 @@ export enum typeSpecificityEnum {
     wire,
     face,
 }
+
+export enum shapeTypeEnum {
+    unknown,
+    vertex,
+    edge,
+    wire,
+    face,
+    shell,
+    solid,
+    compSolid,
+    compound,
+    shape,
+}
+
 export class OccHelper {
 
     constructor(
@@ -242,6 +256,17 @@ export class OccHelper {
         return sphere;
     }
 
+    closestPointsBetweenTwoShapes(shape1: TopoDS_Shape, shape2: TopoDS_Shape): [Base.Point3, Base.Point3] {
+        const extrema = new this.occ.BRepExtBrema_DistShapeShape_2(shape1, shape2);
+        // BRepExtrema_DistShapeShape extrema(shape1, shape2);
+        //         extrema.Perform();
+
+        //         if (extrema.IsDone() && extrema.NbSolution() > 0) {
+        //   gp_Pnt closestPoint1 = extrema.PointOnShape1(1);
+        //   gp_Pnt closestPoint2 = extrema.PointOnShape2(1);
+        //         }
+    }
+
     bRepPrimAPIMakeCylinder(center: Base.Point3, direction: Base.Vector3, radius, height): TopoDS_Shape {
         const ax = this.gpAx2(center, direction);
         const cylinderMaker = new this.occ.BRepPrimAPI_MakeCylinder_3(ax, radius, height);
@@ -281,7 +306,7 @@ export class OccHelper {
     }
 
     getEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Edge[] {
-        if (!inputs.shape || inputs.shape.ShapeType() > this.occ.TopAbs_ShapeEnum.TopAbs_WIRE || inputs.shape.IsNull()) {
+        if (!inputs.shape || this.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.wire || inputs.shape.IsNull()) {
             throw (new Error('Shape is not provided or is of incorrect type'));
         }
         const edges = [];
@@ -442,6 +467,30 @@ export class OccHelper {
             result = this.occ.TopoDS.Compound_1(shape);
         } else {
             result = shape;
+        }
+        return result;
+    }
+
+    getShapeTypeEnum(shape: TopoDS_Shape): shapeTypeEnum {
+        let result = shapeTypeEnum.unknown;
+        if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_EDGE) {
+            result = shapeTypeEnum.edge;
+        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_WIRE) {
+            result = shapeTypeEnum.wire;
+        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_VERTEX) {
+            result = shapeTypeEnum.vertex;
+        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_SOLID) {
+            result = shapeTypeEnum.solid;
+        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_SHELL) {
+            result = shapeTypeEnum.shell;
+        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_FACE) {
+            result = shapeTypeEnum.face;
+        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_COMPSOLID) {
+            result = shapeTypeEnum.compSolid;
+        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_COMPOUND) {
+            result = shapeTypeEnum.compound;
+        } else {
+            result = shapeTypeEnum.shape;
         }
         return result;
     }

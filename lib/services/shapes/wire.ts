@@ -1,5 +1,5 @@
 import { Geom_Surface, TopoDS_Face, OpenCascadeInstance, TopoDS_Wire, TopoDS_Shape, TopoDS_Edge } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper, typeSpecificityEnum } from '../../occ-helper';
+import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from '../../occ-helper';
 import * as Inputs from '../../api/inputs/inputs';
 
 export class OCCTWire {
@@ -168,7 +168,7 @@ export class OCCTWire {
     }
 
     getWire(inputs: Inputs.OCCT.ShapeIndexDto<TopoDS_Shape>): TopoDS_Wire {
-        if (!inputs.shape || inputs.shape.ShapeType() > this.occ.TopAbs_ShapeEnum.TopAbs_FACE || inputs.shape.IsNull()) {
+        if (!inputs.shape || this.och.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.wire || inputs.shape.IsNull()) {
             throw (new Error('Shape is not provided or is of incorrect type'));
         }
         if (!inputs.index) { inputs.index = 0; }
@@ -191,12 +191,12 @@ export class OCCTWire {
         return { result: this.och.getWiresLengths(inputs) };
     }
 
-    reversedWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): { result: TopoDS_Shape } {
+    reversedWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire{
         const wire: TopoDS_Wire = inputs.shape;
         const reversed = wire.Reversed();
         const result = this.och.getActualTypeOfShape(reversed);
         reversed.delete();
-        return { result };
+        return result;
     }
 
     placeWireOnFace(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire | TopoDS_Face>) {
