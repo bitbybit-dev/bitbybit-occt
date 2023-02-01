@@ -13,6 +13,9 @@ export class OCCTFace {
 
     createFaceFromWire(inputs: Inputs.OCCT.FaceFromWireDto<TopoDS_Wire>): TopoDS_Face {
         let result;
+        if(this.och.getShapeTypeEnum(inputs.shape) !== shapeTypeEnum.wire) {
+            throw new Error('Provided input shape is not a wire');
+        }
         if (inputs.planar) {
             const wire = this.occ.TopoDS.Wire_1(inputs.shape);
             result = this.och.bRepBuilderAPIMakeFaceFromWire(wire, inputs.planar);

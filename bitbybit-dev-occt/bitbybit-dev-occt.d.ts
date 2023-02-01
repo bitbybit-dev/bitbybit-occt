@@ -625,30 +625,6 @@ export declare class BRepAlgoAPI_BuilderAlgo extends BRepAlgoAPI_Algo {
     constructor(thePF: BOPAlgo_PaveFiller);
   }
 
-export declare class BOPTools_AlgoTools3D {
-  constructor();
-  static DoSplitSEAMOnFace_1(theESplit: TopoDS_Edge, theFace: TopoDS_Face): Standard_Boolean;
-  static DoSplitSEAMOnFace_2(theEOrigin: TopoDS_Edge, theESplit: TopoDS_Edge, theFace: TopoDS_Face): Standard_Boolean;
-  static GetNormalToFaceOnEdge_1(aE: TopoDS_Edge, aF: TopoDS_Face, aT: Standard_Real, aD: gp_Dir, theContext: Handle_IntTools_Context): void;
-  static GetNormalToFaceOnEdge_2(aE: TopoDS_Edge, aF: TopoDS_Face, aD: gp_Dir, theContext: Handle_IntTools_Context): void;
-  static SenseFlag(aNF1: gp_Dir, aNF2: gp_Dir): Graphic3d_ZLayerId;
-  static GetNormalToSurface(aS: Handle_Geom_Surface, U: Standard_Real, V: Standard_Real, aD: gp_Dir): Standard_Boolean;
-  static GetApproxNormalToFaceOnEdge_1(aE: TopoDS_Edge, aF: TopoDS_Face, aT: Standard_Real, aPx: gp_Pnt, aD: gp_Dir, theContext: Handle_IntTools_Context): Standard_Boolean;
-  static GetApproxNormalToFaceOnEdge_2(theE: TopoDS_Edge, theF: TopoDS_Face, aT: Standard_Real, aP: gp_Pnt, aDNF: gp_Dir, aDt2D: Standard_Real): Standard_Boolean;
-  static GetApproxNormalToFaceOnEdge_3(theE: TopoDS_Edge, theF: TopoDS_Face, aT: Standard_Real, aDt2D: Standard_Real, aP: gp_Pnt, aDNF: gp_Dir, theContext: Handle_IntTools_Context): Standard_Boolean;
-  static PointNearEdge_1(aE: TopoDS_Edge, aF: TopoDS_Face, aT: Standard_Real, aDt2D: Standard_Real, aP2D: gp_Pnt2d, aPx: gp_Pnt, theContext: Handle_IntTools_Context): Graphic3d_ZLayerId;
-  static PointNearEdge_2(aE: TopoDS_Edge, aF: TopoDS_Face, aT: Standard_Real, aDt2D: Standard_Real, aP2D: gp_Pnt2d, aPx: gp_Pnt): Graphic3d_ZLayerId;
-  static PointNearEdge_3(aE: TopoDS_Edge, aF: TopoDS_Face, aT: Standard_Real, aP2D: gp_Pnt2d, aPx: gp_Pnt, theContext: Handle_IntTools_Context): Graphic3d_ZLayerId;
-  static PointNearEdge_4(aE: TopoDS_Edge, aF: TopoDS_Face, aP2D: gp_Pnt2d, aPx: gp_Pnt, theContext: Handle_IntTools_Context): Graphic3d_ZLayerId;
-  static MinStepIn2d(): Standard_Real;
-  static IsEmptyShape(aS: TopoDS_Shape): Standard_Boolean;
-  static OrientEdgeOnFace(aE: TopoDS_Edge, aF: TopoDS_Face, aER: TopoDS_Edge): void;
-  static PointInFace_1(theF: TopoDS_Face, theP: gp_Pnt, theP2D: gp_Pnt2d, theContext: Handle_IntTools_Context): Graphic3d_ZLayerId;
-  static PointInFace_2(theF: TopoDS_Face, theE: TopoDS_Edge, theT: Standard_Real, theDt2D: Standard_Real, theP: gp_Pnt, theP2D: gp_Pnt2d, theContext: Handle_IntTools_Context): Graphic3d_ZLayerId;
-  static PointInFace_3(theF: TopoDS_Face, theL: Handle_Geom2d_Curve, theP: gp_Pnt, theP2D: gp_Pnt2d, theContext: Handle_IntTools_Context, theDt2D: Standard_Real): Graphic3d_ZLayerId;
-  delete(): void;
-}
-
 export declare class ShapeFix_Face extends ShapeFix_Root {
   ClearModes(): void;
   Init_1(face: TopoDS_Face): void;
@@ -1751,22 +1727,6 @@ export declare class GeomAPI_PointsToBSpline {
 
   export declare class GeomAPI_PointsToBSpline_5 extends GeomAPI_PointsToBSpline {
     constructor(Points: TColgp_Array1OfPnt, Weight1: Standard_Real, Weight2: Standard_Real, Weight3: Standard_Real, DegMax: Graphic3d_ZLayerId, Continuity: GeomAbs_Shape, Tol3D: Standard_Real);
-  }
-
-export declare class GeomAPI_IntSS {
-  Perform(S1: Handle_Geom_Surface, S2: Handle_Geom_Surface, Tol: Standard_Real): void;
-  IsDone(): Standard_Boolean;
-  NbLines(): Graphic3d_ZLayerId;
-  Line(Index: Graphic3d_ZLayerId): Handle_Geom_Curve;
-  delete(): void;
-}
-
-  export declare class GeomAPI_IntSS_1 extends GeomAPI_IntSS {
-    constructor();
-  }
-
-  export declare class GeomAPI_IntSS_2 extends GeomAPI_IntSS {
-    constructor(S1: Handle_Geom_Surface, S2: Handle_Geom_Surface, Tol: Standard_Real);
   }
 
 export declare class GeomLProp_SLProps {
@@ -3145,6 +3105,12 @@ export declare class BRepGProp {
   static VolumePropertiesGK_1(S: TopoDS_Shape, VProps: GProp_GProps, Eps: Standard_Real, OnlyClosed: Standard_Boolean, IsUseSpan: Standard_Boolean, CGFlag: Standard_Boolean, IFlag: Standard_Boolean, SkipShared: Standard_Boolean): Standard_Real;
   static VolumePropertiesGK_2(S: TopoDS_Shape, VProps: GProp_GProps, thePln: gp_Pln, Eps: Standard_Real, OnlyClosed: Standard_Boolean, IsUseSpan: Standard_Boolean, CGFlag: Standard_Boolean, IFlag: Standard_Boolean, SkipShared: Standard_Boolean): Standard_Real;
   delete(): void;
+}
+
+export declare type Extrema_ExtFlag = {
+  Extrema_ExtFlag_MIN: {};
+  Extrema_ExtFlag_MAX: {};
+  Extrema_ExtFlag_MINMAX: {};
 }
 
 export declare type Extrema_ExtAlgo = {
@@ -6211,6 +6177,354 @@ export declare type BRepOffset_Mode = {
   BRepOffset_RectoVerso: {};
 }
 
+export declare class BRepExtrema_DistanceSS {
+  IsDone(): Standard_Boolean;
+  DistValue(): Standard_Real;
+  Seq1Value(): BRepExtrema_SeqOfSolution;
+  Seq2Value(): BRepExtrema_SeqOfSolution;
+  SetFlag(F: Extrema_ExtFlag): void;
+  SetAlgo(A: Extrema_ExtAlgo): void;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_DistanceSS_1 extends BRepExtrema_DistanceSS {
+    constructor(S1: TopoDS_Shape, S2: TopoDS_Shape, B1: Bnd_Box, B2: Bnd_Box, DstRef: Standard_Real, F: Extrema_ExtFlag, A: Extrema_ExtAlgo);
+  }
+
+  export declare class BRepExtrema_DistanceSS_2 extends BRepExtrema_DistanceSS {
+    constructor(S1: TopoDS_Shape, S2: TopoDS_Shape, B1: Bnd_Box, B2: Bnd_Box, DstRef: Standard_Real, aDeflection: Standard_Real, F: Extrema_ExtFlag, A: Extrema_ExtAlgo);
+  }
+
+export declare class BRepExtrema_ElementFilter {
+  constructor();
+  PreCheckElements(a0: Graphic3d_ZLayerId, a1: Graphic3d_ZLayerId): any;
+  delete(): void;
+}
+
+export declare class BRepExtrema_ExtCC {
+  Initialize(E2: TopoDS_Edge): void;
+  Perform(E1: TopoDS_Edge): void;
+  IsDone(): Standard_Boolean;
+  NbExt(): Graphic3d_ZLayerId;
+  IsParallel(): Standard_Boolean;
+  SquareDistance(N: Graphic3d_ZLayerId): Standard_Real;
+  ParameterOnE1(N: Graphic3d_ZLayerId): Standard_Real;
+  PointOnE1(N: Graphic3d_ZLayerId): gp_Pnt;
+  ParameterOnE2(N: Graphic3d_ZLayerId): Standard_Real;
+  PointOnE2(N: Graphic3d_ZLayerId): gp_Pnt;
+  TrimmedSquareDistances(dist11: Standard_Real, distP12: Standard_Real, distP21: Standard_Real, distP22: Standard_Real, P11: gp_Pnt, P12: gp_Pnt, P21: gp_Pnt, P22: gp_Pnt): void;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_ExtCC_1 extends BRepExtrema_ExtCC {
+    constructor();
+  }
+
+  export declare class BRepExtrema_ExtCC_2 extends BRepExtrema_ExtCC {
+    constructor(E1: TopoDS_Edge, E2: TopoDS_Edge);
+  }
+
+export declare type BRepExtrema_SupportType = {
+  BRepExtrema_IsVertex: {};
+  BRepExtrema_IsOnEdge: {};
+  BRepExtrema_IsInFace: {};
+}
+
+export declare class BRepExtrema_DistShapeShape {
+  SetDeflection(theDeflection: Standard_Real): void;
+  LoadS1(Shape1: TopoDS_Shape): void;
+  LoadS2(Shape1: TopoDS_Shape): void;
+  Perform(theRange: Message_ProgressRange): Standard_Boolean;
+  IsDone(): Standard_Boolean;
+  NbSolution(): Graphic3d_ZLayerId;
+  Value(): Standard_Real;
+  InnerSolution(): Standard_Boolean;
+  PointOnShape1(N: Graphic3d_ZLayerId): gp_Pnt;
+  PointOnShape2(N: Graphic3d_ZLayerId): gp_Pnt;
+  SupportTypeShape1(N: Graphic3d_ZLayerId): BRepExtrema_SupportType;
+  SupportTypeShape2(N: Graphic3d_ZLayerId): BRepExtrema_SupportType;
+  SupportOnShape1(N: Graphic3d_ZLayerId): TopoDS_Shape;
+  SupportOnShape2(N: Graphic3d_ZLayerId): TopoDS_Shape;
+  ParOnEdgeS1(N: Graphic3d_ZLayerId, t: Standard_Real): void;
+  ParOnEdgeS2(N: Graphic3d_ZLayerId, t: Standard_Real): void;
+  ParOnFaceS1(N: Graphic3d_ZLayerId, u: Standard_Real, v: Standard_Real): void;
+  ParOnFaceS2(N: Graphic3d_ZLayerId, u: Standard_Real, v: Standard_Real): void;
+  Dump(o: Standard_OStream): void;
+  SetFlag(F: Extrema_ExtFlag): void;
+  SetAlgo(A: Extrema_ExtAlgo): void;
+  SetMultiThread(theIsMultiThread: Standard_Boolean): void;
+  IsMultiThread(): Standard_Boolean;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_DistShapeShape_1 extends BRepExtrema_DistShapeShape {
+    constructor();
+  }
+
+  export declare class BRepExtrema_DistShapeShape_2 extends BRepExtrema_DistShapeShape {
+    constructor(Shape1: TopoDS_Shape, Shape2: TopoDS_Shape, F: Extrema_ExtFlag, A: Extrema_ExtAlgo, theRange: Message_ProgressRange);
+  }
+
+  export declare class BRepExtrema_DistShapeShape_3 extends BRepExtrema_DistShapeShape {
+    constructor(Shape1: TopoDS_Shape, Shape2: TopoDS_Shape, theDeflection: Standard_Real, F: Extrema_ExtFlag, A: Extrema_ExtAlgo, theRange: Message_ProgressRange);
+  }
+
+export declare class BRepExtrema_ExtCF {
+  Initialize(E: TopoDS_Edge, F: TopoDS_Face): void;
+  Perform(E: TopoDS_Edge, F: TopoDS_Face): void;
+  IsDone(): Standard_Boolean;
+  NbExt(): Graphic3d_ZLayerId;
+  SquareDistance(N: Graphic3d_ZLayerId): Standard_Real;
+  IsParallel(): Standard_Boolean;
+  ParameterOnEdge(N: Graphic3d_ZLayerId): Standard_Real;
+  ParameterOnFace(N: Graphic3d_ZLayerId, U: Standard_Real, V: Standard_Real): void;
+  PointOnEdge(N: Graphic3d_ZLayerId): gp_Pnt;
+  PointOnFace(N: Graphic3d_ZLayerId): gp_Pnt;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_ExtCF_1 extends BRepExtrema_ExtCF {
+    constructor();
+  }
+
+  export declare class BRepExtrema_ExtCF_2 extends BRepExtrema_ExtCF {
+    constructor(E: TopoDS_Edge, F: TopoDS_Face);
+  }
+
+export declare class BRepExtrema_ExtPF {
+  Initialize(TheFace: TopoDS_Face, TheFlag: Extrema_ExtFlag, TheAlgo: Extrema_ExtAlgo): void;
+  Perform(TheVertex: TopoDS_Vertex, TheFace: TopoDS_Face): void;
+  IsDone(): Standard_Boolean;
+  NbExt(): Graphic3d_ZLayerId;
+  SquareDistance(N: Graphic3d_ZLayerId): Standard_Real;
+  Parameter(N: Graphic3d_ZLayerId, U: Standard_Real, V: Standard_Real): void;
+  Point(N: Graphic3d_ZLayerId): gp_Pnt;
+  SetFlag(F: Extrema_ExtFlag): void;
+  SetAlgo(A: Extrema_ExtAlgo): void;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_ExtPF_1 extends BRepExtrema_ExtPF {
+    constructor();
+  }
+
+  export declare class BRepExtrema_ExtPF_2 extends BRepExtrema_ExtPF {
+    constructor(TheVertex: TopoDS_Vertex, TheFace: TopoDS_Face, TheFlag: Extrema_ExtFlag, TheAlgo: Extrema_ExtAlgo);
+  }
+
+export declare class BRepExtrema_OverlapTool {
+  LoadTriangleSets(theSet1: Handle_BRepExtrema_TriangleSet, theSet2: Handle_BRepExtrema_TriangleSet): void;
+  Perform(theTolerance: Standard_Real): void;
+  IsDone(): Standard_Boolean;
+  MarkDirty(): void;
+  OverlapSubShapes1(): BRepExtrema_MapOfIntegerPackedMapOfInteger;
+  OverlapSubShapes2(): BRepExtrema_MapOfIntegerPackedMapOfInteger;
+  SetElementFilter(theFilter: BRepExtrema_ElementFilter): void;
+  RejectNode(theCornerMin1: BVH_Vec3d, theCornerMax1: BVH_Vec3d, theCornerMin2: BVH_Vec3d, theCornerMax2: BVH_Vec3d, a4: Standard_Real): Standard_Boolean;
+  Accept(theLeaf1: Graphic3d_ZLayerId, theLeaf2: Graphic3d_ZLayerId): Standard_Boolean;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_OverlapTool_1 extends BRepExtrema_OverlapTool {
+    constructor();
+  }
+
+  export declare class BRepExtrema_OverlapTool_2 extends BRepExtrema_OverlapTool {
+    constructor(theSet1: Handle_BRepExtrema_TriangleSet, theSet2: Handle_BRepExtrema_TriangleSet);
+  }
+
+export declare class BRepExtrema_SelfIntersection extends BRepExtrema_ElementFilter {
+  Tolerance(): Standard_Real;
+  SetTolerance(theTolerance: Standard_Real): void;
+  LoadShape(theShape: TopoDS_Shape): Standard_Boolean;
+  Perform(): void;
+  IsDone(): Standard_Boolean;
+  OverlapElements(): BRepExtrema_MapOfIntegerPackedMapOfInteger;
+  GetSubShape(theID: Graphic3d_ZLayerId): TopoDS_Face;
+  ElementSet(): Handle_BRepExtrema_TriangleSet;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_SelfIntersection_1 extends BRepExtrema_SelfIntersection {
+    constructor(theTolerance: Standard_Real);
+  }
+
+  export declare class BRepExtrema_SelfIntersection_2 extends BRepExtrema_SelfIntersection {
+    constructor(theShape: TopoDS_Shape, theTolerance: Standard_Real);
+  }
+
+export declare class BRepExtrema_ShapeProximity {
+  Tolerance(): Standard_Real;
+  SetTolerance(theTolerance: Standard_Real): void;
+  LoadShape1(theShape1: TopoDS_Shape): Standard_Boolean;
+  LoadShape2(theShape2: TopoDS_Shape): Standard_Boolean;
+  Perform(): void;
+  IsDone(): Standard_Boolean;
+  OverlapSubShapes1(): BRepExtrema_MapOfIntegerPackedMapOfInteger;
+  OverlapSubShapes2(): BRepExtrema_MapOfIntegerPackedMapOfInteger;
+  GetSubShape1(theID: Graphic3d_ZLayerId): TopoDS_Face;
+  GetSubShape2(theID: Graphic3d_ZLayerId): TopoDS_Face;
+  ElementSet1(): Handle_BRepExtrema_TriangleSet;
+  ElementSet2(): Handle_BRepExtrema_TriangleSet;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_ShapeProximity_1 extends BRepExtrema_ShapeProximity {
+    constructor(theTolerance: Standard_Real);
+  }
+
+  export declare class BRepExtrema_ShapeProximity_2 extends BRepExtrema_ShapeProximity {
+    constructor(theShape1: TopoDS_Shape, theShape2: TopoDS_Shape, theTolerance: Standard_Real);
+  }
+
+export declare class BRepExtrema_SolutionElem {
+  Dist(): Standard_Real;
+  Point(): gp_Pnt;
+  SupportKind(): BRepExtrema_SupportType;
+  Vertex(): TopoDS_Vertex;
+  Edge(): TopoDS_Edge;
+  Face(): TopoDS_Face;
+  EdgeParameter(theParam: Standard_Real): void;
+  FaceParameter(theU: Standard_Real, theV: Standard_Real): void;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_SolutionElem_1 extends BRepExtrema_SolutionElem {
+    constructor();
+  }
+
+  export declare class BRepExtrema_SolutionElem_2 extends BRepExtrema_SolutionElem {
+    constructor(theDist: Standard_Real, thePoint: gp_Pnt, theSolType: BRepExtrema_SupportType, theVertex: TopoDS_Vertex);
+  }
+
+  export declare class BRepExtrema_SolutionElem_3 extends BRepExtrema_SolutionElem {
+    constructor(theDist: Standard_Real, thePoint: gp_Pnt, theSolType: BRepExtrema_SupportType, theEdge: TopoDS_Edge, theParam: Standard_Real);
+  }
+
+  export declare class BRepExtrema_SolutionElem_4 extends BRepExtrema_SolutionElem {
+    constructor(theDist: Standard_Real, thePoint: gp_Pnt, theSolType: BRepExtrema_SupportType, theFace: TopoDS_Face, theU: Standard_Real, theV: Standard_Real);
+  }
+
+export declare class BRepExtrema_ExtFF {
+  Initialize(F2: TopoDS_Face): void;
+  Perform(F1: TopoDS_Face, F2: TopoDS_Face): void;
+  IsDone(): Standard_Boolean;
+  IsParallel(): Standard_Boolean;
+  NbExt(): Graphic3d_ZLayerId;
+  SquareDistance(N: Graphic3d_ZLayerId): Standard_Real;
+  ParameterOnFace1(N: Graphic3d_ZLayerId, U: Standard_Real, V: Standard_Real): void;
+  ParameterOnFace2(N: Graphic3d_ZLayerId, U: Standard_Real, V: Standard_Real): void;
+  PointOnFace1(N: Graphic3d_ZLayerId): gp_Pnt;
+  PointOnFace2(N: Graphic3d_ZLayerId): gp_Pnt;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_ExtFF_1 extends BRepExtrema_ExtFF {
+    constructor();
+  }
+
+  export declare class BRepExtrema_ExtFF_2 extends BRepExtrema_ExtFF {
+    constructor(F1: TopoDS_Face, F2: TopoDS_Face);
+  }
+
+export declare class BRepExtrema_ExtPC {
+  Initialize(E: TopoDS_Edge): void;
+  Perform(V: TopoDS_Vertex): void;
+  IsDone(): Standard_Boolean;
+  NbExt(): Graphic3d_ZLayerId;
+  IsMin(N: Graphic3d_ZLayerId): Standard_Boolean;
+  SquareDistance(N: Graphic3d_ZLayerId): Standard_Real;
+  Parameter(N: Graphic3d_ZLayerId): Standard_Real;
+  Point(N: Graphic3d_ZLayerId): gp_Pnt;
+  TrimmedSquareDistances(dist1: Standard_Real, dist2: Standard_Real, pnt1: gp_Pnt, pnt2: gp_Pnt): void;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_ExtPC_1 extends BRepExtrema_ExtPC {
+    constructor();
+  }
+
+  export declare class BRepExtrema_ExtPC_2 extends BRepExtrema_ExtPC {
+    constructor(V: TopoDS_Vertex, E: TopoDS_Edge);
+  }
+
+export declare class BRepExtrema_SeqOfSolution extends NCollection_BaseSequence {
+  begin(): any;
+  end(): any;
+  cbegin(): any;
+  cend(): any;
+  Size(): Standard_Integer;
+  Length(): Standard_Integer;
+  Lower(): Standard_Integer;
+  Upper(): Standard_Integer;
+  IsEmpty(): Standard_Boolean;
+  Reverse(): void;
+  Exchange(I: Standard_Integer, J: Standard_Integer): void;
+  static delNode(theNode: NCollection_SeqNode, theAl: Handle_NCollection_BaseAllocator): void;
+  Clear(theAllocator: Handle_NCollection_BaseAllocator): void;
+  Assign(theOther: BRepExtrema_SeqOfSolution): BRepExtrema_SeqOfSolution;
+  Remove_2(theIndex: Standard_Integer): void;
+  Remove_3(theFromIndex: Standard_Integer, theToIndex: Standard_Integer): void;
+  Append_1(theItem: BRepExtrema_SolutionElem): void;
+  Append_2(theSeq: BRepExtrema_SeqOfSolution): void;
+  Prepend_1(theItem: BRepExtrema_SolutionElem): void;
+  Prepend_2(theSeq: BRepExtrema_SeqOfSolution): void;
+  InsertBefore_1(theIndex: Standard_Integer, theItem: BRepExtrema_SolutionElem): void;
+  InsertBefore_2(theIndex: Standard_Integer, theSeq: BRepExtrema_SeqOfSolution): void;
+  InsertAfter_2(theIndex: Standard_Integer, theSeq: BRepExtrema_SeqOfSolution): void;
+  InsertAfter_3(theIndex: Standard_Integer, theItem: BRepExtrema_SolutionElem): void;
+  Split(theIndex: Standard_Integer, theSeq: BRepExtrema_SeqOfSolution): void;
+  First(): BRepExtrema_SolutionElem;
+  ChangeFirst(): BRepExtrema_SolutionElem;
+  Last(): BRepExtrema_SolutionElem;
+  ChangeLast(): BRepExtrema_SolutionElem;
+  Value(theIndex: Standard_Integer): BRepExtrema_SolutionElem;
+  ChangeValue(theIndex: Standard_Integer): BRepExtrema_SolutionElem;
+  SetValue(theIndex: Standard_Integer, theItem: BRepExtrema_SolutionElem): void;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_SeqOfSolution_1 extends BRepExtrema_SeqOfSolution {
+    constructor();
+  }
+
+  export declare class BRepExtrema_SeqOfSolution_2 extends BRepExtrema_SeqOfSolution {
+    constructor(theAllocator: Handle_NCollection_BaseAllocator);
+  }
+
+  export declare class BRepExtrema_SeqOfSolution_3 extends BRepExtrema_SeqOfSolution {
+    constructor(theOther: BRepExtrema_SeqOfSolution);
+  }
+
+export declare class BRepExtrema_TriangleSet extends BVH_PrimitiveSet3d {
+  Size(): Graphic3d_ZLayerId;
+  Box_1(theIndex: Graphic3d_ZLayerId): Graphic3d_BndBox3d;
+  Center(theIndex: Graphic3d_ZLayerId, theAxis: Graphic3d_ZLayerId): Standard_Real;
+  Swap(theIndex1: Graphic3d_ZLayerId, theIndex2: Graphic3d_ZLayerId): void;
+  Clear(): void;
+  Init(theFaces: BRepExtrema_ShapeList): Standard_Boolean;
+  GetVertices(theIndex: Graphic3d_ZLayerId, theVertex1: BVH_Vec3d, theVertex2: BVH_Vec3d, theVertex3: BVH_Vec3d): void;
+  GetFaceID(theIndex: Graphic3d_ZLayerId): Graphic3d_ZLayerId;
+  static get_type_name(): Standard_Character;
+  static get_type_descriptor(): Handle_Standard_Type;
+  DynamicType(): Handle_Standard_Type;
+  delete(): void;
+}
+
+  export declare class BRepExtrema_TriangleSet_1 extends BRepExtrema_TriangleSet {
+    constructor();
+  }
+
+  export declare class BRepExtrema_TriangleSet_2 extends BRepExtrema_TriangleSet {
+    constructor(theFaces: BRepExtrema_ShapeList);
+  }
+
+export declare class BRepExtrema_Poly {
+  constructor();
+  static Distance(S1: TopoDS_Shape, S2: TopoDS_Shape, P1: gp_Pnt, P2: gp_Pnt, dist: Standard_Real): Standard_Boolean;
+  delete(): void;
+}
+
 export declare class BRepLib {
   constructor();
   static Precision_1(P: Standard_Real): void;
@@ -7653,69 +7967,6 @@ export declare class StdPrs_ToolTriangulatedShape {
   delete(): void;
 }
 
-export declare class IntTools_Context extends Standard_Transient {
-  ProjPC(aE: TopoDS_Edge): GeomAPI_ProjectPointOnCurve;
-  ProjPT(aC: Handle_Geom_Curve): GeomAPI_ProjectPointOnCurve;
-  SurfaceData(aF: TopoDS_Face): IntTools_SurfaceRangeLocalizeData;
-  Hatcher(aF: TopoDS_Face): Geom2dHatch_Hatcher;
-  SurfaceAdaptor(theFace: TopoDS_Face): BRepAdaptor_Surface;
-  OBB(theShape: TopoDS_Shape, theFuzzyValue: Standard_Real): Bnd_OBB;
-  UVBounds(theFace: TopoDS_Face, UMin: Standard_Real, UMax: Standard_Real, VMin: Standard_Real, VMax: Standard_Real): void;
-  ComputePE(theP: gp_Pnt, theTolP: Standard_Real, theE: TopoDS_Edge, theT: Standard_Real, theDist: Standard_Real): Graphic3d_ZLayerId;
-  ComputeVE(theV: TopoDS_Vertex, theE: TopoDS_Edge, theT: Standard_Real, theTol: Standard_Real, theFuzz: Standard_Real): Graphic3d_ZLayerId;
-  ComputeVF(theVertex: TopoDS_Vertex, theFace: TopoDS_Face, theU: Standard_Real, theV: Standard_Real, theTol: Standard_Real, theFuzz: Standard_Real): Graphic3d_ZLayerId;
-  StatePointFace(aF: TopoDS_Face, aP2D: gp_Pnt2d): TopAbs_State;
-  IsPointInFace_1(aF: TopoDS_Face, aP2D: gp_Pnt2d): Standard_Boolean;
-  IsPointInFace_2(aP3D: gp_Pnt, aF: TopoDS_Face, aTol: Standard_Real): Standard_Boolean;
-  IsPointInOnFace(aF: TopoDS_Face, aP2D: gp_Pnt2d): Standard_Boolean;
-  IsValidPointForFace(aP3D: gp_Pnt, aF: TopoDS_Face, aTol: Standard_Real): Standard_Boolean;
-  IsValidPointForFaces(aP3D: gp_Pnt, aF1: TopoDS_Face, aF2: TopoDS_Face, aTol: Standard_Real): Standard_Boolean;
-  IsValidBlockForFace(aT1: Standard_Real, aT2: Standard_Real, aIC: IntTools_Curve, aF: TopoDS_Face, aTol: Standard_Real): Standard_Boolean;
-  IsValidBlockForFaces(aT1: Standard_Real, aT2: Standard_Real, aIC: IntTools_Curve, aF1: TopoDS_Face, aF2: TopoDS_Face, aTol: Standard_Real): Standard_Boolean;
-  IsVertexOnLine_1(aV: TopoDS_Vertex, aIC: IntTools_Curve, aTolC: Standard_Real, aT: Standard_Real): Standard_Boolean;
-  IsVertexOnLine_2(aV: TopoDS_Vertex, aTolV: Standard_Real, aIC: IntTools_Curve, aTolC: Standard_Real, aT: Standard_Real): Standard_Boolean;
-  ProjectPointOnEdge(aP: gp_Pnt, aE: TopoDS_Edge, aT: Standard_Real): Standard_Boolean;
-  BndBox(theS: TopoDS_Shape): Bnd_Box;
-  IsInfiniteFace(theFace: TopoDS_Face): Standard_Boolean;
-  SetPOnSProjectionTolerance(theValue: Standard_Real): void;
-  static get_type_name(): Standard_Character;
-  static get_type_descriptor(): Handle_Standard_Type;
-  DynamicType(): Handle_Standard_Type;
-  delete(): void;
-}
-
-  export declare class IntTools_Context_1 extends IntTools_Context {
-    constructor();
-  }
-
-  export declare class IntTools_Context_2 extends IntTools_Context {
-    constructor(theAllocator: Handle_NCollection_BaseAllocator);
-  }
-
-export declare class Handle_IntTools_Context {
-  Nullify(): void;
-  IsNull(): boolean;
-  reset(thePtr: IntTools_Context): void;
-  get(): IntTools_Context;
-  delete(): void;
-}
-
-  export declare class Handle_IntTools_Context_1 extends Handle_IntTools_Context {
-    constructor();
-  }
-
-  export declare class Handle_IntTools_Context_2 extends Handle_IntTools_Context {
-    constructor(thePtr: IntTools_Context);
-  }
-
-  export declare class Handle_IntTools_Context_3 extends Handle_IntTools_Context {
-    constructor(theHandle: Handle_IntTools_Context);
-  }
-
-  export declare class Handle_IntTools_Context_4 extends Handle_IntTools_Context {
-    constructor(theHandle: Handle_IntTools_Context);
-  }
-
 export declare class BRepCheck_Analyzer {
   constructor(S: TopoDS_Shape, GeomControls: Standard_Boolean, theIsParallel: Standard_Boolean)
   Init(S: TopoDS_Shape, GeomControls: Standard_Boolean, theIsParallel: Standard_Boolean): void;
@@ -8470,7 +8721,6 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   BRepAlgoAPI_BuilderAlgo: typeof BRepAlgoAPI_BuilderAlgo;
   BRepAlgoAPI_BuilderAlgo_1: typeof BRepAlgoAPI_BuilderAlgo_1;
   BRepAlgoAPI_BuilderAlgo_2: typeof BRepAlgoAPI_BuilderAlgo_2;
-  BOPTools_AlgoTools3D: typeof BOPTools_AlgoTools3D;
   ShapeFix_Face: typeof ShapeFix_Face;
   ShapeFix_Face_1: typeof ShapeFix_Face_1;
   ShapeFix_Face_2: typeof ShapeFix_Face_2;
@@ -8587,9 +8837,6 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   GeomAPI_PointsToBSpline_3: typeof GeomAPI_PointsToBSpline_3;
   GeomAPI_PointsToBSpline_4: typeof GeomAPI_PointsToBSpline_4;
   GeomAPI_PointsToBSpline_5: typeof GeomAPI_PointsToBSpline_5;
-  GeomAPI_IntSS: typeof GeomAPI_IntSS;
-  GeomAPI_IntSS_1: typeof GeomAPI_IntSS_1;
-  GeomAPI_IntSS_2: typeof GeomAPI_IntSS_2;
   GeomLProp_SLProps: typeof GeomLProp_SLProps;
   GeomLProp_SLProps_1: typeof GeomLProp_SLProps_1;
   GeomLProp_SLProps_2: typeof GeomLProp_SLProps_2;
@@ -8693,6 +8940,7 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   BRepGProp_Face_1: typeof BRepGProp_Face_1;
   BRepGProp_Face_2: typeof BRepGProp_Face_2;
   BRepGProp: typeof BRepGProp;
+  Extrema_ExtFlag: Extrema_ExtFlag;
   Extrema_ExtAlgo: Extrema_ExtAlgo;
   Precision: typeof Precision;
   TColStd_Array1OfBoolean: typeof TColStd_Array1OfBoolean;
@@ -9096,6 +9344,52 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   Adaptor3d_Curve: typeof Adaptor3d_Curve;
   ChFi3d_FilletShape: ChFi3d_FilletShape;
   BRepOffset_Mode: BRepOffset_Mode;
+  BRepExtrema_DistanceSS: typeof BRepExtrema_DistanceSS;
+  BRepExtrema_DistanceSS_1: typeof BRepExtrema_DistanceSS_1;
+  BRepExtrema_DistanceSS_2: typeof BRepExtrema_DistanceSS_2;
+  BRepExtrema_ElementFilter: typeof BRepExtrema_ElementFilter;
+  BRepExtrema_ExtCC: typeof BRepExtrema_ExtCC;
+  BRepExtrema_ExtCC_1: typeof BRepExtrema_ExtCC_1;
+  BRepExtrema_ExtCC_2: typeof BRepExtrema_ExtCC_2;
+  BRepExtrema_SupportType: BRepExtrema_SupportType;
+  BRepExtrema_DistShapeShape: typeof BRepExtrema_DistShapeShape;
+  BRepExtrema_DistShapeShape_1: typeof BRepExtrema_DistShapeShape_1;
+  BRepExtrema_DistShapeShape_2: typeof BRepExtrema_DistShapeShape_2;
+  BRepExtrema_DistShapeShape_3: typeof BRepExtrema_DistShapeShape_3;
+  BRepExtrema_ExtCF: typeof BRepExtrema_ExtCF;
+  BRepExtrema_ExtCF_1: typeof BRepExtrema_ExtCF_1;
+  BRepExtrema_ExtCF_2: typeof BRepExtrema_ExtCF_2;
+  BRepExtrema_ExtPF: typeof BRepExtrema_ExtPF;
+  BRepExtrema_ExtPF_1: typeof BRepExtrema_ExtPF_1;
+  BRepExtrema_ExtPF_2: typeof BRepExtrema_ExtPF_2;
+  BRepExtrema_OverlapTool: typeof BRepExtrema_OverlapTool;
+  BRepExtrema_OverlapTool_1: typeof BRepExtrema_OverlapTool_1;
+  BRepExtrema_OverlapTool_2: typeof BRepExtrema_OverlapTool_2;
+  BRepExtrema_SelfIntersection: typeof BRepExtrema_SelfIntersection;
+  BRepExtrema_SelfIntersection_1: typeof BRepExtrema_SelfIntersection_1;
+  BRepExtrema_SelfIntersection_2: typeof BRepExtrema_SelfIntersection_2;
+  BRepExtrema_ShapeProximity: typeof BRepExtrema_ShapeProximity;
+  BRepExtrema_ShapeProximity_1: typeof BRepExtrema_ShapeProximity_1;
+  BRepExtrema_ShapeProximity_2: typeof BRepExtrema_ShapeProximity_2;
+  BRepExtrema_SolutionElem: typeof BRepExtrema_SolutionElem;
+  BRepExtrema_SolutionElem_1: typeof BRepExtrema_SolutionElem_1;
+  BRepExtrema_SolutionElem_2: typeof BRepExtrema_SolutionElem_2;
+  BRepExtrema_SolutionElem_3: typeof BRepExtrema_SolutionElem_3;
+  BRepExtrema_SolutionElem_4: typeof BRepExtrema_SolutionElem_4;
+  BRepExtrema_ExtFF: typeof BRepExtrema_ExtFF;
+  BRepExtrema_ExtFF_1: typeof BRepExtrema_ExtFF_1;
+  BRepExtrema_ExtFF_2: typeof BRepExtrema_ExtFF_2;
+  BRepExtrema_ExtPC: typeof BRepExtrema_ExtPC;
+  BRepExtrema_ExtPC_1: typeof BRepExtrema_ExtPC_1;
+  BRepExtrema_ExtPC_2: typeof BRepExtrema_ExtPC_2;
+  BRepExtrema_SeqOfSolution: typeof BRepExtrema_SeqOfSolution;
+  BRepExtrema_SeqOfSolution_1: typeof BRepExtrema_SeqOfSolution_1;
+  BRepExtrema_SeqOfSolution_2: typeof BRepExtrema_SeqOfSolution_2;
+  BRepExtrema_SeqOfSolution_3: typeof BRepExtrema_SeqOfSolution_3;
+  BRepExtrema_TriangleSet: typeof BRepExtrema_TriangleSet;
+  BRepExtrema_TriangleSet_1: typeof BRepExtrema_TriangleSet_1;
+  BRepExtrema_TriangleSet_2: typeof BRepExtrema_TriangleSet_2;
+  BRepExtrema_Poly: typeof BRepExtrema_Poly;
   BRepLib: typeof BRepLib;
   Geom2dAPI_ProjectPointOnCurve: typeof Geom2dAPI_ProjectPointOnCurve;
   Geom2dAPI_ProjectPointOnCurve_1: typeof Geom2dAPI_ProjectPointOnCurve_1;
@@ -9250,14 +9544,6 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   Standard_GUID_5: typeof Standard_GUID_5;
   Standard_GUID_6: typeof Standard_GUID_6;
   StdPrs_ToolTriangulatedShape: typeof StdPrs_ToolTriangulatedShape;
-  IntTools_Context: typeof IntTools_Context;
-  IntTools_Context_1: typeof IntTools_Context_1;
-  IntTools_Context_2: typeof IntTools_Context_2;
-  Handle_IntTools_Context: typeof Handle_IntTools_Context;
-  Handle_IntTools_Context_1: typeof Handle_IntTools_Context_1;
-  Handle_IntTools_Context_2: typeof Handle_IntTools_Context_2;
-  Handle_IntTools_Context_3: typeof Handle_IntTools_Context_3;
-  Handle_IntTools_Context_4: typeof Handle_IntTools_Context_4;
   BRepCheck_Analyzer: typeof BRepCheck_Analyzer;
   Geom2dConvert_CompCurveToBSplineCurve: typeof Geom2dConvert_CompCurveToBSplineCurve;
   Geom2dConvert_CompCurveToBSplineCurve_1: typeof Geom2dConvert_CompCurveToBSplineCurve_1;

@@ -32,7 +32,7 @@ export class OCCTWire {
         if (makeWire.IsDone()) {
             result = makeWire.Wire();
         } else {
-            result = null;
+            throw new Error('Wire could not be constructed. Check if edges and wires do not have disconnected elements.');
         }
         makeWire.delete();
         return result;

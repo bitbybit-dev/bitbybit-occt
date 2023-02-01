@@ -82,11 +82,11 @@ export namespace OCCT {
         /**
          * Surface from which to create a face
          */
-        surface: T;
+        surface?: T;
         /**
          * Wire that represents a boundary on the surface to delimit the face
          */
-        wire: U;
+        wire?: U;
         /**
          * Indicates wether face should be created inside or outside the wire
          */

@@ -30,6 +30,22 @@
       - symbol: BRepBuilderAPI_TransitionMode
       - symbol: BRepBuilderAPI_WireError
       - symbol: BRepCheck_Analyzer
+      - symbol: BRepExtrema_DistShapeShape
+      - symbol: BRepExtrema_DistanceSS
+      - symbol: BRepExtrema_ElementFilter
+      - symbol: BRepExtrema_ExtCC
+      - symbol: BRepExtrema_ExtCF
+      - symbol: BRepExtrema_ExtFF
+      - symbol: BRepExtrema_ExtPC
+      - symbol: BRepExtrema_ExtPF
+      - symbol: BRepExtrema_OverlapTool
+      - symbol: BRepExtrema_Poly
+      - symbol: BRepExtrema_SelfIntersection
+      - symbol: BRepExtrema_SeqOfSolution
+      - symbol: BRepExtrema_ShapeProximity
+      - symbol: BRepExtrema_SolutionElem
+      - symbol: BRepExtrema_SupportType
+      - symbol: BRepExtrema_TriangleSet
       - symbol: BRepFeat_Form
       - symbol: BRepFeat_MakeDPrism
       - symbol: BRepFeat_SplitShape
@@ -71,6 +87,7 @@
       - symbol: ChFi3d_FilletShape
       - symbol: ChFiDS_ChamfMode
       - symbol: Extrema_ExtAlgo
+      - symbol: Extrema_ExtFlag
       - symbol: GCE2d_MakeArcOfCircle
       - symbol: GCE2d_MakeArcOfEllipse
       - symbol: GCE2d_MakeSegment
@@ -129,6 +146,7 @@
       - symbol: Geom_Ellipse
       - symbol: Geom_Geometry
       - symbol: Geom_Plane
+      - symbol: Geom_Surface
       - symbol: Geom_TrimmedCurve
       - symbol: Handle_Geom2d_BSplineCurve
       - symbol: Handle_Geom2d_BezierCurve
@@ -226,10 +244,13 @@
       - symbol: TopoDS_Builder
       - symbol: TopoDS_Compound
       - symbol: TopoDS_Edge
+      - symbol: TopoDS_Face
       - symbol: TopoDS_Iterator
+      - symbol: TopoDS_Shape
       - symbol: TopoDS_Shell
       - symbol: TopoDS_Solid
       - symbol: TopoDS_Vertex
+      - symbol: TopoDS_Wire
       - symbol: XCAFApp_Application
       - symbol: XCAFDoc_ColorTool
       - symbol: XCAFDoc_DocumentTool

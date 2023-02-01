@@ -1,4 +1,4 @@
-import { Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Circle, Handle_Geom_Curve, Handle_Geom_Ellipse, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from '../bitbybit-dev-occt/bitbybit-dev-occt';
+import { Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Circle, Handle_Geom_Curve, Handle_Geom_Ellipse, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, Extrema_ExtAlgo, Extrema_ExtFlag } from '../bitbybit-dev-occt/bitbybit-dev-occt';
 import { VectorHelperService } from './api/vector-helper.service';
 import { Base } from './api/inputs/base-inputs';
 import * as Inputs from './api/inputs/inputs';
@@ -257,14 +257,23 @@ export class OccHelper {
     }
 
     closestPointsBetweenTwoShapes(shape1: TopoDS_Shape, shape2: TopoDS_Shape): [Base.Point3, Base.Point3] {
-        const extrema = new this.occ.BRepExtBrema_DistShapeShape_2(shape1, shape2);
-        // BRepExtrema_DistShapeShape extrema(shape1, shape2);
-        //         extrema.Perform();
-
-        //         if (extrema.IsDone() && extrema.NbSolution() > 0) {
-        //   gp_Pnt closestPoint1 = extrema.PointOnShape1(1);
-        //   gp_Pnt closestPoint2 = extrema.PointOnShape2(1);
-        //         }
+        const messageProgress = new this.occ.Message_ProgressRange_1();
+        const extrema = new this.occ.BRepExtrema_DistShapeShape_2(
+            shape1,
+            shape2,
+            this.occ.Extrema_ExtFlag.Extrema_ExtFlag_MIN as Extrema_ExtFlag,
+            this.occ.Extrema_ExtAlgo.Extrema_ExtAlgo_Grad as Extrema_ExtAlgo,
+            messageProgress
+        );
+        const messageProgress1 = new this.occ.Message_ProgressRange_1();
+        extrema.Perform(messageProgress1);
+        if (extrema.IsDone() && extrema.NbSolution() > 0) {
+            const closestPoint1 = extrema.PointOnShape1(1);
+            const closestPoint2 = extrema.PointOnShape2(1);
+            return [[closestPoint1.X(), closestPoint1.Y(), closestPoint1.Z()], [closestPoint2.X(), closestPoint2.Y(), closestPoint2.Z()]];
+        } else {
+            throw new Error("Closest points could not be found.");
+        }
     }
 
     bRepPrimAPIMakeCylinder(center: Base.Point3, direction: Base.Vector3, radius, height): TopoDS_Shape {
