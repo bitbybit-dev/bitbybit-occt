@@ -1,6 +1,6 @@
 {
     "name": "bitbybit-occt",
-    "version": "0.9.20",
+    "version": "0.9.21",
     "description": "Bit By Bit Developers CAD algorithms using OpenCascade Technology kernel. Run in Node and in Browser.",
     "main": "index.js",
     "repository": {
@@ -35,8 +35,8 @@
     "author": "Bit by bit developers",
     "license": "MIT",
     "types": "./index.d.ts",
-    "dependencies": {},
     "type": "module",
+    "dependencies": {},
     "devDependencies": {
         "typedoc": "0.21.9",
         "@microsoft/tsdoc": "0.13.2",
@@ -62,6 +62,10 @@
         },
         "extensionsToTreatAsEsm": [
             ".ts"
+        ],
+        "transformIgnorePatterns": [
+            "node_modules/(?!bitbybit-occt)",
+            "bitbybit-occt"
         ],
         "collectCoverageFrom": [
             "lib/services/**/*.ts",

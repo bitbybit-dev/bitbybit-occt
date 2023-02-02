@@ -1373,6 +1373,29 @@ export namespace OCCT {
          */
         centers: Base.Point3[];
     }
+    export class ShapeToMeshDto<T>{
+        constructor(shape?: T, precision?: number, adjustYtoZ?: boolean) {
+            this.shape = shape;
+            if(precision){
+                this.precision = precision;
+            }
+            if(adjustYtoZ){
+                this.adjustYtoZ = adjustYtoZ;
+            }
+        }
+        /**
+         * Shape to save
+         */
+        shape: T;
+        /**
+         * File name
+         */
+        precision = 0.01;
+        /**
+         * Adjust Y (up) coordinate system to Z (up) coordinate system
+         */
+        adjustYtoZ = false;
+    }
     export class SaveStepDto<T> {
         constructor(shape?: T, filename?: string, adjustYtoZ?: boolean) {
             this.shape = shape;
