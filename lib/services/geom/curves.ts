@@ -46,7 +46,7 @@ export class OCCTCurves {
         const pt2d = inputs.shape.Value(inputs.param);
         const pt = [pt2d.X(), pt2d.Y()] 
         pt2d.delete();
-        return { result: pt};
+        return pt;
     }
 
     geomCircleCurve(inputs: Inputs.OCCT.CircleDto): any {

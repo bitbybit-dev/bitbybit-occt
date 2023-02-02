@@ -1,7 +1,6 @@
 import { Geom2d_Curve, Geom_Surface, OpenCascadeInstance, TopoDS_Edge, TopoDS_Shape } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
 import { OccHelper, typeSpecificityEnum } from '../../occ-helper';
 import * as Inputs from '../../api/inputs/inputs';
-import { Base } from '../../api/inputs/inputs';
 
 export class OCCTEdge {
 
@@ -82,61 +81,60 @@ export class OCCTEdge {
         }
     }
 
-    pointOnEdgeAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Edge>): { result: Inputs.Base.Point3 } {
-        return { result: this.och.pointOnEdgeAtParam(inputs) };
+    pointOnEdgeAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Edge>): Inputs.Base.Point3 {
+        return this.och.pointOnEdgeAtParam(inputs);
     }
 
-    tangentOnEdgeAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Edge>): { result: Inputs.Base.Vector3 } {
-        return { result: this.och.tangentOnEdgeAtParam(inputs) };
+    tangentOnEdgeAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Edge>): Inputs.Base.Vector3 {
+        return this.och.tangentOnEdgeAtParam(inputs);
     }
 
-    startPointOnEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>) {
-        return { result: this.och.startPointOnEdge({ ...inputs }) };
+    startPointOnEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Inputs.Base.Point3 {
+        return this.och.startPointOnEdge({ ...inputs });
     }
 
-    endPointOnEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>) {
-        return { result: this.och.endPointOnEdge({ ...inputs }) };
+    endPointOnEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Inputs.Base.Point3 {
+        return this.och.endPointOnEdge({ ...inputs });
     }
 
-    pointOnEdgeAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Edge>): { result: Inputs.Base.Point3 } {
-        return { result: this.och.pointOnEdgeAtLength(inputs) };
+    pointOnEdgeAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Edge>): Inputs.Base.Point3 {
+        return this.och.pointOnEdgeAtLength(inputs);
     }
 
-    tangentOnEdgeAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Edge>): { result: Inputs.Base.Vector3 } {
-        return { result: this.och.tangentOnEdgeAtLength(inputs) };
+    tangentOnEdgeAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Edge>): Inputs.Base.Vector3 {
+        return this.och.tangentOnEdgeAtLength(inputs);
     }
 
-    divideEdgeByParamsToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Edge>): { result: Inputs.Base.Point3[] } {
-        return { result: this.och.divideEdgeByParamsToPoints(inputs) };
+    divideEdgeByParamsToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Edge>): Inputs.Base.Point3[] {
+        return this.och.divideEdgeByParamsToPoints(inputs);
     }
 
-    divideEdgeByEqualDistanceToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Edge>): { result: Inputs.Base.Point3[] } {
-        return { result: this.och.divideEdgeByEqualDistanceToPoints(inputs) };
+    divideEdgeByEqualDistanceToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Edge>): Inputs.Base.Point3[] {
+        return this.och.divideEdgeByEqualDistanceToPoints(inputs);
     }
 
     getEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>) {
         return this.och.getEdges(inputs);
     }
 
-    getEdgeLength(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): { result: number } {
-        return { result: this.och.getEdgeLength(inputs) };
+    getEdgeLength(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): number {
+        return this.och.getEdgeLength(inputs);
     }
 
-    getEdgesLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): { result: number[] } {
-        return { result: this.och.getEdgesLengths(inputs) };
+    getEdgesLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): number[] {
+        return this.och.getEdgesLengths(inputs);
     }
 
-    getEdgeCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): { result: Base.Point3 } {
-        return { result: this.och.getEdgeCenterOfMass(inputs) };
+    getEdgeCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Inputs.Base.Point3 {
+        return this.och.getEdgeCenterOfMass(inputs);
     }
 
-    getEdgesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): { result: Base.Point3[] } {
-        return { result: this.och.getEdgesCentersOfMass(inputs) };
+    getEdgesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): Inputs.Base.Point3[] {
+        return this.och.getEdgesCentersOfMass(inputs);
     }
 
-    getCornerPointsOfEdgesForShape(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): { result: Inputs.Base.Point3[] } {
+    getCornerPointsOfEdgesForShape(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Inputs.Base.Point3[] {
         const points = this.och.getCornerPointsOfEdgesForShape(inputs);
-        return { result: points };
+        return points;
     }
-
 }

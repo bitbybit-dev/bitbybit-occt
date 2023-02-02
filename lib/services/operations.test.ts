@@ -7,7 +7,7 @@ import { OCCTOperations } from "./operations";
 import { OCCTFace } from "./shapes/face";
 import { OCCTWire } from "./shapes/wire";
 
-describe('OCCT face unit tests', () => {
+describe('OCCT operations unit tests', () => {
     let occt: OpenCascadeInstance;
     let wire: OCCTWire;
     let face: OCCTFace;
@@ -29,7 +29,7 @@ describe('OCCT face unit tests', () => {
     it('should get two closest points between two shapes', async () => {
         const sph1 = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
         const sph2 = occHelper.bRepPrimAPIMakeSphere([3, 3, 3], [0, 1, 0], 1);
-        const res = operations.closestPointsBetweenTwoShapes({ shapes: [sph1, sph2] }).result;
+        const res = operations.closestPointsBetweenTwoShapes({ shapes: [sph1, sph2] });
         expect(res.length).toBe(2);
         expect(res).toEqual([
             [0.5773398570788231, 0.577340634175626, 0.5773703157921182],

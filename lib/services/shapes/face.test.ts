@@ -27,7 +27,7 @@ describe('OCCT face unit tests', () => {
     it('should create a face from closed planar wire', async () => {
         const w = wire.createCircleWire({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const f = face.createFaceFromWire({ shape: w, planar: true });
-        const area = face.getFaceArea({ shape: f }).result;
+        const area = face.getFaceArea({ shape: f });
         expect(f.ShapeType()).toBe(occt.TopAbs_ShapeEnum.TopAbs_FACE);
         expect(area).toBeCloseTo(28.274333882308138);
         w.delete();
@@ -37,7 +37,7 @@ describe('OCCT face unit tests', () => {
     it('should create a face from closed non-planar wire', async () => {
         const w = wire.interpolatePoints({ points: [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]], periodic: true, tolerance: 1e-7 });
         const f = face.createFaceFromWire({ shape: w, planar: false });
-        const area = face.getFaceArea({ shape: f }).result;
+        const area = face.getFaceArea({ shape: f });
         expect(f.ShapeType()).toBe(occt.TopAbs_ShapeEnum.TopAbs_FACE);
         expect(area).toBeCloseTo(1.5999655130076433);
         w.delete();
@@ -47,7 +47,7 @@ describe('OCCT face unit tests', () => {
     it('should not create a good face from open non-planar wire', async () => {
         const w = wire.createBezier({ points: [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]], closed: false });
         const f = face.createFaceFromWire({ shape: w, planar: false });
-        const area = face.getFaceArea({ shape: f }).result;
+        const area = face.getFaceArea({ shape: f });
         expect(f.ShapeType()).toBe(occt.TopAbs_ShapeEnum.TopAbs_FACE);
         //TODO check how to test validity of a face later
         expect(area).toBeLessThan(0);
@@ -65,8 +65,8 @@ describe('OCCT face unit tests', () => {
         const w1 = wire.createCircleWire({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const w2 = wire.createCircleWire({ radius: 2, center: [0, 0, 1], direction: [0, 0, 1] });
         const f = face.createFacesFromWires({ shapes: [w1, w2], planar: true });
-        const area1 = face.getFaceArea({ shape: f[0] }).result;
-        const area2 = face.getFaceArea({ shape: f[1] }).result;
+        const area1 = face.getFaceArea({ shape: f[0] });
+        const area2 = face.getFaceArea({ shape: f[1] });
         expect(area1).toBeCloseTo(28.274333882308138);
         expect(area2).toBeCloseTo(12.566370614359167);
         w1.delete();
@@ -77,7 +77,7 @@ describe('OCCT face unit tests', () => {
     it('should create an infinite face from surface', async () => {
         const srf = geom.surfaces.cylindricalSurface({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const f = face.faceFromSurface({ shape: srf, tolerance: 1e-7 });
-        const area = face.getFaceArea({ shape: f }).result;
+        const area = face.getFaceArea({ shape: f });
         expect(area).toBeCloseTo(2e+100);
     });
 
@@ -86,31 +86,31 @@ describe('OCCT face unit tests', () => {
         const srf = geom.surfaces.surfaceFromFace({ shape: f1 });
         const w = wire.createCircleWire({ radius: 2, center: [0, 0, 1], direction: [0, 0, 1] });
         const f = face.faceFromSurfaceAndWire({ shapes: [srf, w], inside: true });
-        const area = face.getFaceArea({ shape: f }).result;
+        const area = face.getFaceArea({ shape: f });
         expect(area).toBeCloseTo(12.566370614359167);
     });
 
     it('should get u min bound', () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
-        const uMin = face.getUMinBound({ shape: f }).result;
+        const uMin = face.getUMinBound({ shape: f });
         expect(uMin).toBe(-1);
     });
 
     it('should get u max bound', () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
-        const uMax = face.getUMaxBound({ shape: f }).result;
+        const uMax = face.getUMaxBound({ shape: f });
         expect(uMax).toBe(1);
     });
 
     it('should get v min bound', () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
-        const vMin = face.getVMinBound({ shape: f }).result;
+        const vMin = face.getVMinBound({ shape: f });
         expect(vMin).toBe(-0.5);
     });
 
     it('should get v max bound', () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
-        const vMax = face.getVMaxBound({ shape: f }).result;
+        const vMax = face.getVMaxBound({ shape: f });
         expect(vMax).toBe(0.5);
     });
 
@@ -127,7 +127,7 @@ describe('OCCT face unit tests', () => {
             removeStartEdgeV: false,
             shiftHalfStepU: false,
             shiftHalfStepV: false,
-        }).result;
+        });
         expect(pts.length).toBe(30);
         expect(pts).toEqual([
             [0, -2, 1.2246467991473532e-16],
@@ -176,7 +176,7 @@ describe('OCCT face unit tests', () => {
             removeStartEdgeV: false,
             shiftHalfStepU: false,
             shiftHalfStepV: false,
-        }).result;
+        });
         expect(pts.length).toBe(12);
         expect(pts).toEqual([
             [0, -2, 1.2246467991473532e-16],
@@ -207,7 +207,7 @@ describe('OCCT face unit tests', () => {
             removeStartEdgeV: true,
             shiftHalfStepU: true,
             shiftHalfStepV: true,
-        }).result;
+        });
         expect(pts.length).toBe(6);
         expect(pts).toEqual([
             [1.4142135623730951, -4.440892098500626e-16, -1.414213562373095],
@@ -232,7 +232,7 @@ describe('OCCT face unit tests', () => {
             removeStartEdgeV: false,
             shiftHalfStepU: false,
             shiftHalfStepV: false,
-        }).result;
+        });
         expect(normals.length).toBe(12);
         expect(normals).toEqual([
             [0, -1, 1.2246467991473532e-16],
@@ -263,7 +263,7 @@ describe('OCCT face unit tests', () => {
             removeStartEdgeV: true,
             shiftHalfStepU: true,
             shiftHalfStepV: true,
-        }).result;
+        });
         expect(normals.length).toBe(6);
         expect(normals).toEqual([
             [0.7071067811865476, -2.220446049250313e-16, -0.7071067811865475],
@@ -286,7 +286,7 @@ describe('OCCT face unit tests', () => {
             shiftHalfStep: false,
             param: 0.2,
             isU: true
-        }).result;
+        });
         expect(points.length).toBe(4);
         expect(points).toEqual([
             [1.1647083184890923e-16, -2, 3.7843667304341506e-17],
@@ -307,7 +307,7 @@ describe('OCCT face unit tests', () => {
             shiftHalfStep: false,
             param: 0.5,
             isU: false
-        }).result;
+        });
         expect(points.length).toBe(4);
         expect(points).toEqual([
             [0, 0, 2],
@@ -328,7 +328,7 @@ describe('OCCT face unit tests', () => {
             shiftHalfStep: true,
             param: 0.3,
             isU: false
-        }).result;
+        });
         expect(points.length).toBe(5);
         expect(points).toEqual([
             [1.618033988749895, -1.1755705045849463, 9.907600726170916e-17],
@@ -350,7 +350,7 @@ describe('OCCT face unit tests', () => {
             shiftHalfStep: true,
             param: 0.3,
             isU: true
-        }).result;
+        });
         expect(points.length).toBe(5);
         expect(points).toEqual([
             [1.3449970239279145, -1.4142135623730951, -0.43701602444882093],
@@ -372,7 +372,7 @@ describe('OCCT face unit tests', () => {
             shiftHalfStep: false,
             param: 0.2,
             isU: true
-        }).result;
+        });
         expect(uvs.length).toBe(4);
         expect(uvs).toEqual([
             [1.2566370614359172, -1.5707963267948966],
@@ -393,7 +393,7 @@ describe('OCCT face unit tests', () => {
             shiftHalfStep: false,
             param: 0.3423,
             isU: true
-        }).result;
+        });
         expect(uvs.length).toBe(4);
         expect(uvs).toEqual([
             [2.1507343306475724, -1.5707963267948966],
@@ -414,7 +414,7 @@ describe('OCCT face unit tests', () => {
             shiftHalfStep: false,
             param: 0.3423,
             isU: false
-        }).result;
+        });
         expect(uvs.length).toBe(4);
         expect(uvs).toEqual([
             [0, -0.4954291614711104],
@@ -435,7 +435,7 @@ describe('OCCT face unit tests', () => {
             shiftHalfStep: true,
             param: 0.222,
             isU: true
-        }).result;
+        });
         expect(uvs.length).toBe(6);
         expect(uvs).toEqual([
             [1.3948671381938682, -0.8975979010256552],
@@ -458,7 +458,7 @@ describe('OCCT face unit tests', () => {
             shiftHalfStep: true,
             param: 0.666,
             isU: false
-        }).result;
+        });
         expect(uvs.length).toBe(6);
         expect(uvs).toEqual([
             [ 1.3463968515384828, 0.5215043804959056 ],

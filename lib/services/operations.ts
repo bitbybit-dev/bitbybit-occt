@@ -10,8 +10,8 @@ export class OCCTOperations {
     ) {
     }
 
-    closestPointsBetweenTwoShapes(inputs: Inputs.OCCT.ShapesDto<TopoDS_Shape>): { result: [Inputs.Base.Point3, Inputs.Base.Point3] } {
-        return { result: this.och.closestPointsBetweenTwoShapes(inputs.shapes[0], inputs.shapes[1]) };
+    closestPointsBetweenTwoShapes(inputs: Inputs.OCCT.ShapesDto<TopoDS_Shape>): [Inputs.Base.Point3, Inputs.Base.Point3] {
+        return this.och.closestPointsBetweenTwoShapes(inputs.shapes[0], inputs.shapes[1]);
     }
 
     loft(inputs: Inputs.OCCT.LoftDto<TopoDS_Wire>) {

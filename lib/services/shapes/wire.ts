@@ -42,30 +42,30 @@ export class OCCTWire {
         return this.och.createBSpline(inputs);
     }
 
-    divideWireByParamsToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Wire>): { result: Inputs.Base.Point3[] } {
-        return { result: this.och.divideWireByParamsToPoints(inputs) };
+    divideWireByParamsToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Wire>): Inputs.Base.Point3[] {
+        return this.och.divideWireByParamsToPoints(inputs);
     }
 
-    divideWireByEqualDistanceToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Wire>): { result: Inputs.Base.Point3[] } {
-        return { result: this.och.divideWireByEqualDistanceToPoints(inputs) };
+    divideWireByEqualDistanceToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Wire>): Inputs.Base.Point3[] {
+        return this.och.divideWireByEqualDistanceToPoints(inputs);
     }
 
-    pointOnWireAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Wire>): { result: Inputs.Base.Point3 } {
-        return { result: this.och.pointOnWireAtParam(inputs) };
+    pointOnWireAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Wire>): Inputs.Base.Point3 {
+        return this.och.pointOnWireAtParam(inputs);
     }
 
-    pointOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): { result: Inputs.Base.Point3 } {
-        return { result: this.och.pointOnWireAtLength(inputs) };
+    pointOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): Inputs.Base.Point3 {
+        return this.och.pointOnWireAtLength(inputs);
     }
 
-    tangentOnWireAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Wire>): { result: Inputs.Base.Point3 } {
-        return { result: this.och.tangentOnWireAtParam(inputs) };
+    tangentOnWireAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Wire>): Inputs.Base.Point3 {
+        return this.och.tangentOnWireAtParam(inputs);
     }
 
-    tangentOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): { result: Inputs.Base.Point3 } {
-        return { result: this.och.tangentOnWireAtLength(inputs) };
+    tangentOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): Inputs.Base.Point3 {
+        return this.och.tangentOnWireAtLength(inputs);
     }
-    derivativesOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): { result: [Inputs.Base.Vector3, Inputs.Base.Vector3, Inputs.Base.Vector3] } {
+    derivativesOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): [Inputs.Base.Vector3, Inputs.Base.Vector3, Inputs.Base.Vector3] {
         const wire = inputs.shape;
         const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
 
@@ -85,11 +85,11 @@ export class OCCTWire {
         curve.delete();
         absc.delete();
         gpPnt.delete();
-        return { result: der };
+        return der;
     }
 
 
-    derivativesOnWireAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Wire>): { result: [Inputs.Base.Vector3, Inputs.Base.Vector3, Inputs.Base.Vector3] } {
+    derivativesOnWireAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Wire>): [Inputs.Base.Vector3, Inputs.Base.Vector3, Inputs.Base.Vector3] {
         const wire = inputs.shape;
         const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
 
@@ -108,15 +108,15 @@ export class OCCTWire {
         der3.delete();
         curve.delete();
         gpPnt.delete();
-        return { result: der };
+        return der;
     }
 
-    startPointOnWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): { result: Inputs.Base.Point3 } {
-        return { result: this.och.startPointOnWire(inputs) };
+    startPointOnWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): Inputs.Base.Point3 {
+        return this.och.startPointOnWire(inputs);
     }
 
-    endPointOnWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): { result: Inputs.Base.Point3 } {
-        return { result: this.och.endPointOnWire(inputs) };
+    endPointOnWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): Inputs.Base.Point3 {
+        return this.och.endPointOnWire(inputs);
     }
 
     createBezier(inputs: Inputs.OCCT.BezierDto) {
@@ -183,15 +183,15 @@ export class OCCTWire {
         return this.och.getWires(inputs);
     }
 
-    getWireLength(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): { result: number } {
-        return { result: this.och.getWireLength(inputs) };
+    getWireLength(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): number {
+        return this.och.getWireLength(inputs);
     }
 
-    getWiresLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire>): { result: number[] } {
-        return { result: this.och.getWiresLengths(inputs) };
+    getWiresLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire>): number[] {
+        return this.och.getWiresLengths(inputs);
     }
 
-    reversedWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire{
+    reversedWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
         const wire: TopoDS_Wire = inputs.shape;
         const reversed = wire.Reversed();
         const result = this.och.getActualTypeOfShape(reversed);

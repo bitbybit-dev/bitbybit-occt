@@ -25,11 +25,11 @@ export class OCCTShell {
         return result;
     }
 
-    isClosed(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shell>): { result: boolean } {
-        return { result: this.occ.BRep_Tool.IsClosed_1(inputs.shape) }
+    isClosed(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shell>): boolean {
+        return this.occ.BRep_Tool.IsClosed_1(inputs.shape);
     }
 
-    getShellSurfaceArea(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shell>): { result: number } {
-        return { result: this.och.getShellSurfaceArea(inputs) };
+    getShellSurfaceArea(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shell>): number {
+        return this.och.getShellSurfaceArea(inputs);
     }
 }

@@ -10,7 +10,7 @@ export class OCCTIO {
     ) {
     }
 
-    saveShapeSTEP(inputs: Inputs.OCCT.SaveStepDto<TopoDS_Shape>): { result: string } {
+    saveShapeSTEP(inputs: Inputs.OCCT.SaveStepDto<TopoDS_Shape>): string {
         let shapeToUse = inputs.shape;
         let adjustedShape;
         if (inputs.adjustYtoZ) {
@@ -36,7 +36,7 @@ export class OCCTIO {
             true,
             messageProgress
         );
-        let result;
+        let result: string;
         if (transferResult === this.occ.IFSelect_ReturnStatus.IFSelect_RetDone) {
             // Write the STEP File to the virtual Emscripten Filesystem Temporarily
             const writeResult = writer.Write(inputs.filename);
@@ -46,7 +46,7 @@ export class OCCTIO {
                 this.occ.FS.unlink('/' + inputs.filename);
 
                 // Return the contents of the STEP File
-                result = { result: stepFileText };
+                result = stepFileText;
             } else {
                 throw (new Error('Failed when writing step file.'));
             }

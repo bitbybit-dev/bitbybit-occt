@@ -27,16 +27,16 @@ describe('OCCT edge unit tests', () => {
     it('should create a circle edge of the right radius and it will mach the length', async () => {
         const e = edge.createCircleEdge({ radius: 10, center: [0, 0, 0], direction: [0, 0, 1] });
         const length = edge.getEdgeLength({ shape: e });
-        expect(length.result).toEqual(62.83185307179586);
+        expect(length).toEqual(62.83185307179586);
         e.delete();
     });
 
     it('should create a circle edge and the point on it will be at specific location', async () => {
         const e = edge.createCircleEdge({ radius: 1, center: [0, 1, 0], direction: [1, 1, 0] });
         const point = edge.pointOnEdgeAtParam({ shape: e, param: 0.5 });
-        const x = point.result[0];
-        const y = point.result[1];
-        const z = point.result[2];
+        const x = point[0];
+        const y = point[1];
+        const z = point[2];
         expect(x).toBeCloseTo(-0.7071067811865476, closeToNr);
         expect(y).toBeCloseTo(1.7071067811865475, closeToNr);
         expect(z).toBeCloseTo(0, closeToNr);
@@ -46,16 +46,16 @@ describe('OCCT edge unit tests', () => {
     it('should create an edge line between two points', async () => {
         const e = edge.line({ start: [-1, -1, -1], end: [1, 1, 1] });
         const length = edge.getEdgeLength({ shape: e });
-        expect(length.result).toEqual(3.4641016151377544);
+        expect(length).toEqual(3.4641016151377544);
         e.delete();
     })
 
     it('should create an edge line between two points and the point on it will be at specific location', async () => {
         const e = edge.line({ start: [-1, -1, -1], end: [1, 1, 1] });
         const point = edge.pointOnEdgeAtParam({ shape: e, param: 0.5 });
-        const x = point.result[0];
-        const y = point.result[1];
-        const z = point.result[2];
+        const x = point[0];
+        const y = point[1];
+        const z = point[2];
         expect(x).toBeCloseTo(0, closeToNr);
         expect(y).toBeCloseTo(0, closeToNr);
         expect(z).toBeCloseTo(0, closeToNr);
@@ -65,7 +65,7 @@ describe('OCCT edge unit tests', () => {
     it('should create an arc edge between three points and the length will be correct', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const length = edge.getEdgeLength({ shape: e });
-        expect(length.result).toEqual(4.05306515313624);
+        expect(length).toEqual(4.05306515313624);
         e.delete();
     });
 
@@ -77,7 +77,7 @@ describe('OCCT edge unit tests', () => {
             shapes: [elipse2d, cylinderSrf]
         })
         const length = edge.getEdgeLength({ shape: e });
-        expect(length.result).toEqual(12.566370614359172);
+        expect(length).toEqual(12.566370614359172);
         e.delete();
         elipse2d.delete();
         cylinderSrf.delete();
@@ -86,7 +86,7 @@ describe('OCCT edge unit tests', () => {
     it('should make ellipse edge', async () => {
         const e = edge.createEllipseEdge({ radiusMinor: 2, radiusMajor: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const length = edge.getEdgeLength({ shape: e });
-        expect(length.result).toEqual(15.869698772210649);
+        expect(length).toEqual(15.869698772210649);
         e.delete();
     });
 
@@ -100,7 +100,7 @@ describe('OCCT edge unit tests', () => {
         const box = occHelper.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
         const e = edge.getEdge({ shape: box, index: 1 });
         const length = edge.getEdgeLength({ shape: e });
-        expect(length.result).toEqual(10);
+        expect(length).toEqual(10);
         box.delete();
         e.delete();
     });
@@ -142,23 +142,23 @@ describe('OCCT edge unit tests', () => {
     it('should get a point on edge at param', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const pt = edge.pointOnEdgeAtParam({ shape: e, param: 0.25 });
-        expect(pt.result).toEqual([-0.8321107509656731, -0.02482724898439559, -0.8321107509656731]);
+        expect(pt).toEqual([-0.8321107509656731, -0.02482724898439559, -0.8321107509656731]);
         e.delete();
     });
 
     it('should get a tangent on edge at param', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const pt = edge.tangentOnEdgeAtParam({ shape: e, param: 0.25 });
-        expect(pt.result).toEqual([0.6895512650714751, 1.8838890905986638, 0.6895512650714751]);
+        expect(pt).toEqual([0.6895512650714751, 1.8838890905986638, 0.6895512650714751]);
         e.delete();
     });
 
     it('should get a start point on edge', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const pt = edge.startPointOnEdge({ shape: e });
-        const x = pt.result[0];
-        const y = pt.result[1];
-        const z = pt.result[2];
+        const x = pt[0];
+        const y = pt[1];
+        const z = pt[2];
 
         expect(x).toBeCloseTo(-1, closeToNr);
         expect(y).toBeCloseTo(-1, closeToNr);
@@ -169,9 +169,9 @@ describe('OCCT edge unit tests', () => {
     it('should get an end point on edge', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const pt = edge.endPointOnEdge({ shape: e });
-        const x = pt.result[0];
-        const y = pt.result[1];
-        const z = pt.result[2];
+        const x = pt[0];
+        const y = pt[1];
+        const z = pt[2];
 
         expect(x).toBeCloseTo(1, closeToNr);
         expect(y).toBeCloseTo(1, closeToNr);
@@ -182,9 +182,9 @@ describe('OCCT edge unit tests', () => {
     it('should get a point on the edge at length', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const pt = edge.pointOnEdgeAtLength({ shape: e, length: 0 });
-        const x = pt.result[0];
-        const y = pt.result[1];
-        const z = pt.result[2];
+        const x = pt[0];
+        const y = pt[1];
+        const z = pt[2];
 
         expect(x).toBeCloseTo(-1, closeToNr);
         expect(y).toBeCloseTo(-1, closeToNr);
@@ -195,9 +195,9 @@ describe('OCCT edge unit tests', () => {
     it('should get a point on the edge at length', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const pt = edge.pointOnEdgeAtLength({ shape: e, length: 0.1 });
-        const x = pt.result[0];
-        const y = pt.result[1];
-        const z = pt.result[2];
+        const x = pt[0];
+        const y = pt[1];
+        const z = pt[2];
         expect(x).toBeCloseTo(-0.9983336419524473, closeToNr);
         expect(y).toBeCloseTo(-0.9000370329220284, closeToNr);
         expect(z).toBeCloseTo(-0.9983336419524473, closeToNr);
@@ -207,9 +207,9 @@ describe('OCCT edge unit tests', () => {
     it('should get a point on the edge at length', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const pt = edge.pointOnEdgeAtLength({ shape: e, length: 0.7 });
-        const x = pt.result[0];
-        const y = pt.result[1];
-        const z = pt.result[2];
+        const x = pt[0];
+        const y = pt[1];
+        const z = pt[2];
         expect(x).toBeCloseTo(-0.9190716982049705, closeToNr);
         expect(y).toBeCloseTo(-0.3126347181393845, closeToNr);
         expect(z).toBeCloseTo(-0.9190716982049705, closeToNr);
@@ -219,10 +219,10 @@ describe('OCCT edge unit tests', () => {
     it('should get a point on the edge at length', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const edgeLength = edge.getEdgeLength({ shape: e });
-        const pt = edge.pointOnEdgeAtLength({ shape: e, length: edgeLength.result });
-        const x = pt.result[0];
-        const y = pt.result[1];
-        const z = pt.result[2];
+        const pt = edge.pointOnEdgeAtLength({ shape: e, length: edgeLength });
+        const x = pt[0];
+        const y = pt[1];
+        const z = pt[2];
         expect(x).toBeCloseTo(1, closeToNr);
         expect(y).toBeCloseTo(1, closeToNr);
         expect(z).toBeCloseTo(1, closeToNr);
@@ -232,9 +232,9 @@ describe('OCCT edge unit tests', () => {
     it('should get a tangent on the arc edge at length', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
         const pt = edge.tangentOnEdgeAtLength({ shape: e, length: 0.1 });
-        const x = pt.result[0];
-        const y = pt.result[1];
-        const z = pt.result[2];
+        const x = pt[0];
+        const y = pt[1];
+        const z = pt[2];
         expect(x).toBeCloseTo(0.1350521394892781, closeToNr);
         expect(y).toBeCloseTo(4.048562581312783, closeToNr);
         expect(z).toBeCloseTo(0.1350521394892781, closeToNr);
@@ -244,9 +244,9 @@ describe('OCCT edge unit tests', () => {
     it('should get a tangent on the circle edge at length', async () => {
         const e = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
         const pt = edge.tangentOnEdgeAtLength({ shape: e, length: Math.PI });
-        const x = pt.result[0];
-        const y = pt.result[1];
-        const z = pt.result[2];
+        const x = pt[0];
+        const y = pt[1];
+        const z = pt[2];
         expect(x).toBeCloseTo(-6.283185307179586, closeToNr);
         expect(y).toBeCloseTo(0, closeToNr);
         expect(z).toBeCloseTo(0, closeToNr);
@@ -255,8 +255,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should divide the edge by params to points', async () => {
         const e = edge.createCircleEdge({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
-        const pt = edge.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: false, removeStartPoint: false });
-        const points = pt.result;
+        const points = edge.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: false, removeStartPoint: false });
         expect(points.length).toBe(11);
         expect(points[0][0]).toBeCloseTo(points[10][0], closeToNr);
         expect(points[0][1]).toBeCloseTo(points[10][1], closeToNr);
@@ -266,8 +265,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should divide the edge by params to points', async () => {
         const e = edge.createCircleEdge({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
-        const pt = edge.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: false, removeStartPoint: false });
-        const points = pt.result;
+        const points = edge.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: false, removeStartPoint: false });
         expect(points.length).toBe(11);
         expect(points).toEqual([
             [0, 0, 2],
@@ -287,8 +285,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should divide the edge by params to points and remove start and end points', async () => {
         const e = edge.createCircleEdge({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
-        const pt = edge.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: true, removeStartPoint: true });
-        const points = pt.result;
+        const points = edge.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: true, removeStartPoint: true });
         expect(points.length).toBe(9);
         expect(points).toEqual([
             [1.1755705045849463, 0, 1.618033988749895],
@@ -306,8 +303,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should divide the edge by params to points and remove end point', async () => {
         const e = edge.createCircleEdge({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
-        const pt = edge.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: true, removeStartPoint: false });
-        const points = pt.result;
+        const points = edge.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: true, removeStartPoint: false });
         expect(points.length).toBe(10);
         expect(points[0][0]).not.toBeCloseTo(points[9][0], closeToNr);
         expect(points[0][1]).toBeCloseTo(points[9][1], closeToNr);
@@ -317,8 +313,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should divide the edge by equal length to points', async () => {
         const e = edge.createCircleEdge({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
-        const pt = edge.divideEdgeByEqualDistanceToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: false, removeStartPoint: false });
-        const points = pt.result;
+        const points = edge.divideEdgeByEqualDistanceToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: false, removeStartPoint: false });
         expect(points.length).toBe(11);
         expect(points[0][0]).toBeCloseTo(points[10][0], closeToNr);
         expect(points[0][1]).toBeCloseTo(points[10][1], closeToNr);
@@ -329,8 +324,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should divide the edge by equal length to points', async () => {
         const e = edge.createCircleEdge({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
-        const pt = edge.divideEdgeByEqualDistanceToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: false, removeStartPoint: false });
-        const points = pt.result;
+        const points = edge.divideEdgeByEqualDistanceToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: false, removeStartPoint: false });
         expect(points.length).toBe(11);
         expect(points[0]).toEqual([0, 0, 2]);
         expect(points[1]).toEqual([1.1755705045849463, 0, 1.618033988749895]);
@@ -348,8 +342,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should divide the edge by equal length to points and remove start and end points', async () => {
         const e = edge.createCircleEdge({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
-        const pt = edge.divideEdgeByEqualDistanceToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: true, removeStartPoint: true });
-        const points = pt.result;
+        const points = edge.divideEdgeByEqualDistanceToPoints({ shape: e, nrOfDivisions: 10, removeEndPoint: true, removeStartPoint: true });
         expect(points.length).toBe(9);
         expect(points[0]).toEqual([1.1755705045849463, 0, 1.618033988749895]);
         expect(points[1]).toEqual([1.902113032590307, 0, 0.6180339887498949]);
@@ -366,7 +359,7 @@ describe('OCCT edge unit tests', () => {
     it('should get edge lengths', async () => {
         const cylinder = occHelper.bRepPrimAPIMakeCylinder([0, 0, 0], [0, 1, 0], 1, 2);
         const edges = edge.getEdges({ shape: cylinder });
-        const lengths = edge.getEdgesLengths({ shapes: edges }).result;
+        const lengths = edge.getEdgesLengths({ shapes: edges });
         expect(lengths.length).toBe(3);
         expect(lengths[0]).toBe(6.283185307179586);
         expect(lengths[1]).toBe(2);
@@ -377,7 +370,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should get edge center of mass of a circle', async () => {
         const e = edge.createCircleEdge({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
-        const center = edge.getEdgeCenterOfMass({ shape: e }).result;
+        const center = edge.getEdgeCenterOfMass({ shape: e });
         expect(center[0]).toBeCloseTo(0, closeToNr);
         expect(center[1]).toBeCloseTo(0, closeToNr);
         expect(center[2]).toBeCloseTo(0, closeToNr);
@@ -386,7 +379,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should get edge center of mass of an arc', async () => {
         const e = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
-        const center = edge.getEdgeCenterOfMass({ shape: e }).result;
+        const center = edge.getEdgeCenterOfMass({ shape: e });
         expect(center[0]).toBeCloseTo(-0.24018055142257372, closeToNr);
         expect(center[1]).toBeCloseTo(0.4803611028451472, closeToNr);
         expect(center[2]).toBeCloseTo(-0.24018055142257372, closeToNr);
@@ -397,7 +390,7 @@ describe('OCCT edge unit tests', () => {
         const e1 = edge.createCircleEdge({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
         const e2 = edge.arcThroughThreePoints({ start: [-1, -1, -1], middle: [0, 1, 0], end: [1, 1, 1] });
 
-        const centers = edge.getEdgesCentersOfMass({ shapes: [e1, e2] }).result;
+        const centers = edge.getEdgesCentersOfMass({ shapes: [e1, e2] });
         expect(centers).toEqual([
             [5.551115123125783e-17, 0, 9.43689570931383e-15],
             [-0.24018055142257372, 0.4803611028451472, -0.24018055142257372]
@@ -408,7 +401,7 @@ describe('OCCT edge unit tests', () => {
 
     it('should get corner points of edges for the shape', async () => {
         const box = occHelper.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
-        const corners = edge.getCornerPointsOfEdgesForShape({ shape: box }).result;
+        const corners = edge.getCornerPointsOfEdgesForShape({ shape: box });
         expect(corners.length).toBe(8);
         expect(corners).toEqual([
             [-5, -5, -5],

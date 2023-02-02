@@ -64,23 +64,23 @@ export class OCCTSolid {
         return coneShape;
     }
 
-    getSolidSurfaceArea(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): { result: number } {
-        return { result: this.och.getSolidSurfaceArea(inputs) };
+    getSolidSurfaceArea(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): number {
+        return this.och.getSolidSurfaceArea(inputs);
     }
 
-    getSolidVolume(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): { result: number } {
-        return { result: this.och.getSolidVolume(inputs) };
+    getSolidVolume(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): number {
+        return this.och.getSolidVolume(inputs);
     }
 
-    getSolidsVolumes(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): { result: number[] } {
-        return { result: this.och.getSolidsVolumes(inputs) };
+    getSolidsVolumes(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): number[] {
+        return this.och.getSolidsVolumes(inputs);
     }
 
-    getSolidCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): { result: Base.Point3 } {
-        return { result: this.och.getSolidCenterOfMass(inputs) };
+    getSolidCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): Base.Point3 {
+        return this.och.getSolidCenterOfMass(inputs);
     }
 
-    getSolidsCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): { result: Base.Point3[] } {
-        return { result: this.och.getSolidsCentersOfMass(inputs) };
+    getSolidsCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): Base.Point3[] {
+        return this.och.getSolidsCentersOfMass(inputs)
     }
 }
