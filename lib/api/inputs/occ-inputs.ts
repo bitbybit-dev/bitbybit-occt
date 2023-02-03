@@ -708,30 +708,8 @@ export namespace OCCT {
     export class LoftAdvancedDto<T> {
         constructor(
             shapes?: T[],
-            makeSolid?: boolean,
-            closed?: boolean,
-            periodic?: boolean,
-            straight?: boolean,
-            nrPerpendicularSections?: number,
-            useSmoothing?: boolean,
-            maxUDegree?: number,
-            parType?: ApproxParametrizationTypeEnum,
-            tolerance?: number,
-            startVertex?: Base.Point3,
-            endVertex?: Base.Point3,
         ) {
             this.shapes = shapes;
-            this.makeSolid = makeSolid;
-            this.closed = closed;
-            this.periodic = periodic;
-            this.straight = straight;
-            this.nrPeriodicSections = nrPerpendicularSections;
-            this.useSmoothing = useSmoothing;
-            this.maxUDegree = maxUDegree;
-            this.parType = parType;
-            this.tolerance = tolerance;
-            this.startVertex = startVertex;
-            this.endVertex = endVertex;
         }
         /**
          * Wires through which the loft passes
