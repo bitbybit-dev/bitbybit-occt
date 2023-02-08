@@ -382,7 +382,12 @@ export class OCCTFace {
         this.och.forEachFace(inputs.shape, (i, s) => {
             if (i === inputs.index) { innerFace = this.occ.TopoDS.Face_1(s); } facesFound++;
         });
-        return innerFace as TopoDS_Face;
+        if (facesFound < inputs.index || inputs.index < 0) {
+            throw (new Error('Face index is out of range'));
+        }
+        else {
+            return innerFace as TopoDS_Face;
+        }
     }
 
     getFaces(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Face[] {

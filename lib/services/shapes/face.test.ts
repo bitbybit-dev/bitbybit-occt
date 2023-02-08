@@ -592,32 +592,164 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide face into uvs, remove end edges and shift u and v directions', () => {
+    it('should get uv on face', () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
-        const uvs = face.subdivideToUV({
-            shape: f,
-            nrDivisionsU: 5,
-            nrDivisionsV: 4,
-            removeEndEdgeU: true,
-            removeEndEdgeV: true,
-            removeStartEdgeU: true,
-            removeStartEdgeV: true,
-            shiftHalfStepU: true,
-            shiftHalfStepV: true,
-        });
-        expect(uvs.length).toBe(6);
-        expect(uvs).toEqual([
-            [2.356194490192345, -2.220446049250313e-16],
-            [2.356194490192345, 1.0471975511965974],
-            [3.9269908169872414, -2.220446049250313e-16],
-            [3.9269908169872414, 1.0471975511965974],
-            [5.497787143782138, -2.220446049250313e-16],
-            [5.497787143782138, 1.0471975511965974]
+        const uv = face.uvOnFace({ shape: f, paramU: 0.2, paramV: 0.3 });
+        expect(uv.length).toBe(2);
+        expect(uv).toEqual([
+            1.2566370614359172, -0.6283185307179586
         ])
         sph.delete();
         f.delete();
     });
 
-});
+    it('should get points on uvs', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const points = face.pointsOnUVs({ shape: f, paramsUV: [[0.2, 0.3], [0, 0], [0.5, 0.4]] });
+        expect(points.length).toBe(3);
+        expect(points).toEqual([
+            [1.5388417685876268, -1.1755705045849463, 0.5000000000000001],
+            [0, -2, 1.2246467991473532e-16],
+            [2.3294166369781847e-16, -0.6180339887498948, -1.902113032590307]
+        ])
+        sph.delete();
+        f.delete();
+    });
 
+
+    it('should get normals on uvs', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const normals = face.normalsOnUVs({ shape: f, paramsUV: [[0.2, 0.3], [0, 0], [0.5, 0.4]] });
+        expect(normals.length).toBe(3);
+        expect(normals).toEqual([
+            [0.7694208842938133, -0.5877852522924731, 0.25000000000000006],
+            [0, -1, 1.2246467991473532e-16],
+            [1.1647083184890923e-16, -0.3090169943749474, -0.9510565162951536]
+        ])
+        sph.delete();
+        f.delete();
+    });
+
+    it('should get point on uv', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const point = face.pointOnUV({ shape: f, paramU: 0.2, paramV: 0.3 });
+        expect(point.length).toBe(3);
+        expect(point).toEqual([1.5388417685876268, -1.1755705045849463, 0.5000000000000001])
+        sph.delete();
+        f.delete();
+    });
+
+    it('should get normal on uv', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const normal = face.normalOnUV({ shape: f, paramU: 0.2, paramV: 0.3 });
+        expect(normal.length).toBe(3);
+        expect(normal).toEqual([0.7694208842938133, -0.5877852522924731, 0.25000000000000006])
+        sph.delete();
+        f.delete();
+    });
+
+    it('should create polygon face', () => {
+        const f = face.createPolygonFace({ points: [[0, 0, 0], [1, 0, -2], [1, 0, 0], [0, 0, 1]] });
+        const area = face.getFaceArea({ shape: f });
+        expect(area).toBe(1.5);
+        f.delete();
+    });
+
+    it('should create ellipse face', () => {
+        const f = face.createEllipseFace({ center: [0, 0, 0], radiusMinor: 1, radiusMajor: 2, direction: [0, 1, 0] });
+        const area = face.getFaceArea({ shape: f });
+        expect(area).toBe(6.283185307179584);
+        f.delete();
+    });
+
+    it('should not create ellipse face when radius major is smaller then minor', () => {
+        expect(() => face.createEllipseFace({ center: [0, 0, 0], radiusMinor: 2, radiusMajor: 1, direction: [0, 1, 0] }))
+            .toThrowError('Ellipse could not be created');
+    });
+
+    it('should create square face', () => {
+        const f = face.createSquareFace({ center: [0, 0, 0], size: 2, direction: [0, 1, 0] });
+        const area = face.getFaceArea({ shape: f });
+        expect(area).toBe(4);
+        f.delete();
+    });
+
+    it('should not get a face of a shape that does not have faces', async () => {
+        const d = occHelper.lineEdge({ start: [0, 0, 0], end: [1, 1, 1] });
+        expect(() => face.getFace({ shape: d, index: 22 })).toThrowError('Shape is not provided or is of incorrect type');
+        d.delete();
+    });
+
+    it('should not get a face of a shape that does not have particular index', async () => {
+        const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
+        expect(() => face.getFace({ shape: b, index: 22 })).toThrowError('Face index is out of range');
+        b.delete();
+    });
+
+    it('should not get a face of a shape that does not have particular index', async () => {
+        const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
+        expect(() => face.getFace({ shape: b, index: -22 })).toThrowError('Face index is out of range');
+        b.delete();
+    });
+
+    it('should get faces', async () => {
+        const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
+        const faces = face.getFaces({ shape: b });
+        expect(faces.length).toBe(6);
+        b.delete();
+        faces.forEach(f => f.delete());
+    });
+
+    it('should reverse a face', async () => {
+        const f = face.createRectangleFace({ center: [0, 0, 0], width: 2, length: 1, direction: [0, 1, 0] });
+        const w = wire.getWire({ shape: f, index: 0 });
+        const fr = face.reversedFace({ shape: f });
+        const wr = wire.getWire({ shape: fr, index: 0 });
+        const pt1 = wire.pointOnWireAtLength({ shape: w, length: 0.1 });
+        const pt2 = wire.pointOnWireAtLength({ shape: wr, length: 0.1 });
+        expect(pt1).not.toEqual(pt2);
+        f.delete();
+        fr.delete();
+        w.delete();
+        wr.delete();
+    });
+
+    it('should get faces areas', async () => {
+        const f1 = face.createRectangleFace({ center: [0, 0, 0], width: 2, length: 1, direction: [0, 1, 0] });
+        const f2 = face.createCircleFace({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
+        const areas = face.getFacesAreas({ shapes: [f1, f2] });
+        expect(areas.length).toBe(2);
+        expect(areas[0]).toBe(2);
+        expect(areas[1]).toBe(28.274333882308138);
+        f1.delete();
+        f2.delete();
+    });
+
+    it('should get faces centers of mass', async () => {
+        const f1 = face.createRectangleFace({ center: [0, 1, 0], width: 2, length: 1, direction: [0, 1, 0] });
+        const f2 = face.createCircleFace({ radius: 3, center: [0, 3, 3], direction: [0, 0, 1] });
+        const centers = face.getFacesCentersOfMass({ shapes: [f1, f2] });
+        console.log(centers);
+        expect(centers).toEqual([
+            [2.0816681711721685e-17, 1, -8.023096076392733e-18],
+            [4.440892098500626e-16, 2.9999999999999996, 3]
+        ]);
+        f1.delete();
+        f2.delete();
+    });
+
+
+    it('should get face center of mass', async () => {
+        const f1 = face.createRectangleFace({ center: [0, 1, 0], width: 2, length: 1, direction: [0, 1, 0] });
+        const center = face.getFaceCenterOfMass({ shape: f1 });
+        expect(center).toEqual(
+            [2.0816681711721685e-17, 1, -8.023096076392733e-18],
+        );
+        f1.delete();
+    });
+});
