@@ -79,6 +79,8 @@ describe('OCCT face unit tests', () => {
         const f = face.faceFromSurface({ shape: srf, tolerance: 1e-7 });
         const area = face.getFaceArea({ shape: f });
         expect(area).toBeCloseTo(2e+100);
+        srf.delete();
+        f.delete();
     });
 
     it('should create an face from surface and wire', async () => {
@@ -88,30 +90,38 @@ describe('OCCT face unit tests', () => {
         const f = face.faceFromSurfaceAndWire({ shapes: [srf, w], inside: true });
         const area = face.getFaceArea({ shape: f });
         expect(area).toBeCloseTo(12.566370614359167);
+        f1.delete();
+        srf.delete();
+        w.delete();
+        f.delete();
     });
 
     it('should get u min bound', () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const uMin = face.getUMinBound({ shape: f });
         expect(uMin).toBe(-1);
+        f.delete();
     });
 
     it('should get u max bound', () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const uMax = face.getUMaxBound({ shape: f });
         expect(uMax).toBe(1);
+        f.delete();
     });
 
     it('should get v min bound', () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const vMin = face.getVMinBound({ shape: f });
         expect(vMin).toBe(-0.5);
+        f.delete();
     });
 
     it('should get v max bound', () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const vMax = face.getVMaxBound({ shape: f });
         expect(vMax).toBe(0.5);
+        f.delete();
     });
 
     it('should subdivide face into points', () => {
@@ -160,7 +170,9 @@ describe('OCCT face unit tests', () => {
             [-4.658833273956369e-16, 0.6180339887498948, 1.902113032590307],
             [-2.8793173112239865e-16, 1.618033988749895, 1.1755705045849463],
             [-2.999519565323715e-32, 2, 1.2246467991473532e-16]
-        ])
+        ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide face into points', () => {
@@ -191,7 +203,9 @@ describe('OCCT face unit tests', () => {
             [-2.999519565323715e-32, -2, 1.2246467991473532e-16],
             [-4.898587196589413e-16, 0, 2],
             [-2.999519565323715e-32, 2, 1.2246467991473532e-16]
-        ])
+        ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide face into points, remove end edges and shift u and v directions', () => {
@@ -217,6 +231,8 @@ describe('OCCT face unit tests', () => {
             [-1.4142135623730954, -4.440892098500626e-16, 1.4142135623730947],
             [-0.7071067811865481, 1.732050807568877, 0.7071067811865478]
         ])
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide into normals', () => {
@@ -248,6 +264,8 @@ describe('OCCT face unit tests', () => {
             [-2.4492935982947064e-16, 0, 1],
             [-2.999519565323715e-32, 1, 1.2246467991473532e-16]
         ])
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide face into normals, remove end edges and shift u and v directions', () => {
@@ -272,7 +290,9 @@ describe('OCCT face unit tests', () => {
             [-0.35355339059327384, 0.8660254037844385, -0.35355339059327395],
             [-0.7071067811865477, -2.220446049250313e-16, 0.7071067811865474],
             [-0.35355339059327406, 0.8660254037844385, 0.3535533905932739]
-        ])
+        ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide to points on param on u', () => {
@@ -294,6 +314,8 @@ describe('OCCT face unit tests', () => {
             [1.647278207092664, 0.9999999999999997, 0.535233134659635],
             [1.1647083184890923e-16, 2, 3.7843667304341506e-17]
         ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide to points on param on v', () => {
@@ -315,6 +337,8 @@ describe('OCCT face unit tests', () => {
             [-1.732050807568877, 0, -1.0000000000000009],
             [-4.898587196589413e-16, 0, 2]
         ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide to points on param, remove start and end points and shift half step on v', () => {
@@ -337,6 +361,8 @@ describe('OCCT face unit tests', () => {
             [-1.618033988749895, -1.1755705045849463, -2.9722802178512745e-16],
             [-0.8090169943749481, -1.1755705045849463, 1.4012585384440732]
         ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide to points on param, remove start and end points and shift half step on u', () => {
@@ -359,6 +385,8 @@ describe('OCCT face unit tests', () => {
             [1.344997023927915, 1.4142135623730947, -0.43701602444882104],
             [0.49230307877208407, 1.9318516525781364, -0.15995896680915006]
         ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide to points on param on u', () => {
@@ -380,6 +408,8 @@ describe('OCCT face unit tests', () => {
             [1.2566370614359172, 0.5235987755982987],
             [1.2566370614359172, 1.5707963267948966]
         ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide to points on param on u', () => {
@@ -401,6 +431,8 @@ describe('OCCT face unit tests', () => {
             [2.1507343306475724, 0.5235987755982987],
             [2.1507343306475724, 1.5707963267948966]
         ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide to points on param on v', () => {
@@ -422,6 +454,8 @@ describe('OCCT face unit tests', () => {
             [4.1887902047863905, -0.4954291614711104],
             [6.283185307179586, -0.4954291614711104]
         ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide to points on param on u and remove edge points and shift step', () => {
@@ -445,6 +479,8 @@ describe('OCCT face unit tests', () => {
             [1.3948671381938682, 0.8975979010256552],
             [1.3948671381938682, 1.3463968515384828]
         ]);
+        sph.delete();
+        f.delete();
     });
 
     it('should subdivide to points on param on v and remove edge points and shift step', () => {
@@ -461,16 +497,127 @@ describe('OCCT face unit tests', () => {
         });
         expect(uvs.length).toBe(6);
         expect(uvs).toEqual([
-            [ 1.3463968515384828, 0.5215043804959056 ],
-            [ 2.243994752564138, 0.5215043804959056 ],
-            [ 3.141592653589793, 0.5215043804959056 ],
-            [ 4.039190554615448, 0.5215043804959056 ],
-            [ 4.9367884556411035, 0.5215043804959056 ],
-            [ 5.834386356666759, 0.5215043804959056 ]
+            [1.3463968515384828, 0.5215043804959056],
+            [2.243994752564138, 0.5215043804959056],
+            [3.141592653589793, 0.5215043804959056],
+            [4.039190554615448, 0.5215043804959056],
+            [4.9367884556411035, 0.5215043804959056],
+            [5.834386356666759, 0.5215043804959056]
         ]);
+        sph.delete();
+        f.delete();
     });
 
+    it('should subdivide face into uvs', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const uvs = face.subdivideToUV({
+            shape: f,
+            nrDivisionsU: 5,
+            nrDivisionsV: 6,
+            removeEndEdgeU: false,
+            removeEndEdgeV: false,
+            removeStartEdgeU: false,
+            removeStartEdgeV: false,
+            shiftHalfStepU: false,
+            shiftHalfStepV: false,
+        });
+        expect(uvs.length).toBe(30);
+        expect(uvs).toEqual([
+            [0, -1.5707963267948966],
+            [0, -0.9424777960769379],
+            [0, -0.3141592653589793],
+            [0, 0.3141592653589793],
+            [0, 0.9424777960769379],
+            [0, 1.5707963267948966],
+            [1.5707963267948966, -1.5707963267948966],
+            [1.5707963267948966, -0.9424777960769379],
+            [1.5707963267948966, -0.3141592653589793],
+            [1.5707963267948966, 0.3141592653589793],
+            [1.5707963267948966, 0.9424777960769379],
+            [1.5707963267948966, 1.5707963267948966],
+            [3.141592653589793, -1.5707963267948966],
+            [3.141592653589793, -0.9424777960769379],
+            [3.141592653589793, -0.3141592653589793],
+            [3.141592653589793, 0.3141592653589793],
+            [3.141592653589793, 0.9424777960769379],
+            [3.141592653589793, 1.5707963267948966],
+            [4.71238898038469, -1.5707963267948966],
+            [4.71238898038469, -0.9424777960769379],
+            [4.71238898038469, -0.3141592653589793],
+            [4.71238898038469, 0.3141592653589793],
+            [4.71238898038469, 0.9424777960769379],
+            [4.71238898038469, 1.5707963267948966],
+            [6.283185307179586, -1.5707963267948966],
+            [6.283185307179586, -0.9424777960769379],
+            [6.283185307179586, -0.3141592653589793],
+            [6.283185307179586, 0.3141592653589793],
+            [6.283185307179586, 0.9424777960769379],
+            [6.283185307179586, 1.5707963267948966]
+        ]);
+        sph.delete();
+        f.delete();
+    });
 
+    it('should subdivide face into uvs', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const uvs = face.subdivideToUV({
+            shape: f,
+            nrDivisionsU: 4,
+            nrDivisionsV: 3,
+            removeEndEdgeU: false,
+            removeEndEdgeV: false,
+            removeStartEdgeU: false,
+            removeStartEdgeV: false,
+            shiftHalfStepU: false,
+            shiftHalfStepV: false,
+        });
+        expect(uvs.length).toBe(12);
+        expect(uvs).toEqual([
+            [0, -1.5707963267948966],
+            [0, 0],
+            [0, 1.5707963267948966],
+            [2.0943951023931953, -1.5707963267948966],
+            [2.0943951023931953, 0],
+            [2.0943951023931953, 1.5707963267948966],
+            [4.1887902047863905, -1.5707963267948966],
+            [4.1887902047863905, 0],
+            [4.1887902047863905, 1.5707963267948966],
+            [6.283185307179586, -1.5707963267948966],
+            [6.283185307179586, 0],
+            [6.283185307179586, 1.5707963267948966]
+        ]);
+        sph.delete();
+        f.delete();
+    });
+
+    it('should subdivide face into uvs, remove end edges and shift u and v directions', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const uvs = face.subdivideToUV({
+            shape: f,
+            nrDivisionsU: 5,
+            nrDivisionsV: 4,
+            removeEndEdgeU: true,
+            removeEndEdgeV: true,
+            removeStartEdgeU: true,
+            removeStartEdgeV: true,
+            shiftHalfStepU: true,
+            shiftHalfStepV: true,
+        });
+        expect(uvs.length).toBe(6);
+        expect(uvs).toEqual([
+            [2.356194490192345, -2.220446049250313e-16],
+            [2.356194490192345, 1.0471975511965974],
+            [3.9269908169872414, -2.220446049250313e-16],
+            [3.9269908169872414, 1.0471975511965974],
+            [5.497787143782138, -2.220446049250313e-16],
+            [5.497787143782138, 1.0471975511965974]
+        ])
+        sph.delete();
+        f.delete();
+    });
 
 });
 
