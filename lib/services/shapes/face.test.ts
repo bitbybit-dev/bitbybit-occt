@@ -592,6 +592,40 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
+
+    it('should subdivide face into uvs remove end and start edges and shift half step both on u and v', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const uvs = face.subdivideToUV({
+            shape: f,
+            nrDivisionsU: 6,
+            nrDivisionsV: 5,
+            removeEndEdgeU: true,
+            removeEndEdgeV: true,
+            removeStartEdgeU: true,
+            removeStartEdgeV: true,
+            shiftHalfStepU: true,
+            shiftHalfStepV: true,
+        });
+        expect(uvs.length).toBe(12);
+        expect(uvs).toEqual([
+            [1.8849555921538759, -0.39269908169872414],
+            [1.8849555921538759, 0.39269908169872414],
+            [1.8849555921538759, 1.1780972450961724],
+            [3.141592653589793, -0.39269908169872414],
+            [3.141592653589793, 0.39269908169872414],
+            [3.141592653589793, 1.1780972450961724],
+            [4.39822971502571, -0.39269908169872414],
+            [4.39822971502571, 0.39269908169872414],
+            [4.39822971502571, 1.1780972450961724],
+            [5.654866776461628, -0.39269908169872414],
+            [5.654866776461628, 0.39269908169872414],
+            [5.654866776461628, 1.1780972450961724]
+        ]);
+        sph.delete();
+        f.delete();
+    });
+
     it('should get uv on face', () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
@@ -734,7 +768,6 @@ describe('OCCT face unit tests', () => {
         const f1 = face.createRectangleFace({ center: [0, 1, 0], width: 2, length: 1, direction: [0, 1, 0] });
         const f2 = face.createCircleFace({ radius: 3, center: [0, 3, 3], direction: [0, 0, 1] });
         const centers = face.getFacesCentersOfMass({ shapes: [f1, f2] });
-        console.log(centers);
         expect(centers).toEqual([
             [2.0816681711721685e-17, 1, -8.023096076392733e-18],
             [4.440892098500626e-16, 2.9999999999999996, 3]
