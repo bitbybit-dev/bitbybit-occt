@@ -6,7 +6,7 @@ import { OCCTFace } from "./face";
 import { OCCTGeom } from "../geom/geom";
 import { OCCTShell } from "./shell";
 
-describe('OCCT face unit tests', () => {
+describe('OCCT shell unit tests', () => {
     let occt: OpenCascadeInstance;
     let face: OCCTFace;
     let shell: OCCTShell;
