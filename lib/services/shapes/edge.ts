@@ -126,11 +126,11 @@ export class OCCTEdge {
     }
 
     getEdgeCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Inputs.Base.Point3 {
-        return this.och.getEdgeCenterOfMass(inputs);
+        return this.och.getLinearCenterOfMass(inputs);
     }
 
     getEdgesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): Inputs.Base.Point3[] {
-        return this.och.getEdgesCentersOfMass(inputs);
+        return this.och.getShapesCentersOfMass(inputs);
     }
 
     getCornerPointsOfEdgesForShape(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Inputs.Base.Point3[] {

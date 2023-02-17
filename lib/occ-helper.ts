@@ -356,8 +356,8 @@ export class OccHelper {
         return inputs.shapes.map(edge => this.getEdgeLength({ shape: edge }));
     }
 
-    getEdgeCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Base.Point3 {
-        const edge: TopoDS_Edge = inputs.shape;
+    getLinearCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Base.Point3 {
+        const edge: TopoDS_Shape = inputs.shape;
         const gprops = new this.occ.GProp_GProps_1();
         this.occ.BRepGProp.LinearProperties(edge, gprops, false, false);
         const gppnt = gprops.CentreOfMass();
@@ -366,8 +366,8 @@ export class OccHelper {
         return pt;
     }
 
-    getEdgesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): Base.Point3[] {
-        return inputs.shapes.map(edge => this.getEdgeCenterOfMass({ shape: edge }));
+    getShapesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): Base.Point3[] {
+        return inputs.shapes.map(edge => this.getLinearCenterOfMass({ shape: edge }));
     }
 
     getWireLength(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): number {
@@ -380,6 +380,7 @@ export class OccHelper {
         return inputs.shapes.map(wire => this.getWireLength({ shape: wire }));
     }
 
+    
     getFaces(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Face[] {
         const faces = [];
         this.forEachFace(inputs.shape, (faceIndex, myFace) => {
