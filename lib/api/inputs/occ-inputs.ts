@@ -1651,7 +1651,24 @@ export namespace OCCT {
          */
         angle: number;
     }
-
+    export class NGonWireDto {
+        /**
+         * Center of the circle
+         */
+        center: Base.Point3;
+        /**
+         * Direction
+         */
+        direction: Base.Vector3;
+        /**
+         * How many corners to create.
+         */
+        nrCorners: number;
+        /**
+         * Radius of nGon
+         */
+        radius: number;
+    }
     export class EllipseDto {
         /**
          * Center of the ellipse

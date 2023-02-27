@@ -163,6 +163,10 @@ export class OCCTWire {
         return this.och.createParallelogramWire(inputs);
     }
 
+    createNGonWire(inputs: Inputs.OCCT.NGonWireDto): TopoDS_Wire {
+        return this.och.createNGonWire(inputs);
+    }
+
     createRectangleWire(inputs: Inputs.OCCT.RectangleDto): TopoDS_Wire {
         return this.och.createRectangleWire(inputs);
     }

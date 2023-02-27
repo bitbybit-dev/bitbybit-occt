@@ -74,4 +74,16 @@ export class ShapesHelperService {
         return [line1, line2, line3, line4];
     }
 
+    ngon(n: number, radius: number, center: Base.Point2): Base.Line3[] {
+        const angle = (2 * Math.PI) / n;
+        const edges: Base.Line3[] = [];
+
+        for (let i = 0; i < n; i++) {
+            const start = [center[0] + radius * Math.cos(i * angle), 0, center[1] + radius * Math.sin(i * angle)] as Base.Point3;
+            const end = [center[0] + radius * Math.cos((i + 1) * angle), 0, center[1] + radius * Math.sin((i + 1) * angle)] as Base.Point3;
+            edges.push({ start, end });
+        }
+
+        return edges;
+    }
 }

@@ -380,7 +380,6 @@ export class OccHelper {
         return inputs.shapes.map(wire => this.getWireLength({ shape: wire }));
     }
 
-    
     getFaces(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Face[] {
         const faces = [];
         this.forEachFace(inputs.shape, (faceIndex, myFace) => {
@@ -620,6 +619,18 @@ export class OccHelper {
 
     createParallelogramWire(inputs: Inputs.OCCT.ParallelogramDto) {
         const lines = this.shapesHelperServide.parallelogram(inputs.width, inputs.height, inputs.angle, inputs.aroundCenter);
+        const edges = [];
+        lines.forEach(line => {
+            edges.push(this.lineEdge(line));
+        })
+        let wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
+        let aligned = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
+        wire.delete();
+        return aligned;
+    }
+
+    createNGonWire(inputs: Inputs.OCCT.NGonWireDto) {
+        const lines = this.shapesHelperServide.ngon(inputs.nrCorners, inputs.radius, [0, 0]);
         const edges = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
