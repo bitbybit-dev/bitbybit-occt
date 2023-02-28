@@ -101,6 +101,50 @@ export class OCCTFace {
         return vMax;
     }
 
+    subdivideToPointsControlled(inputs: Inputs.OCCT.FaceSubdivisionControlledDto<TopoDS_Face>): Base.Point3[] {
+        const face = inputs.shape;
+        let handle = this.occ.BRep_Tool.Surface_2(face)
+        var surface = handle.get();
+        const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
+        const points: Base.Point3[] = [];
+
+        for (var i = 0; i < inputs.nrDivisionsU; i++) {
+            const stepU = (uMax - uMin) / (inputs.nrDivisionsU - 1);
+            const halfStepU = stepU / 2;
+            const stepsU = stepU * i;
+
+            for (var j = 0; j < inputs.nrDivisionsV; j++) {
+                const stepV = (vMax - vMin) / (inputs.nrDivisionsV - 1);
+                const halfStepV = stepV / 2;
+                const stepsV = stepV * j;
+                var v = vMin + stepsV;
+                v += (inputs.shiftHalfStepNthV && (i + inputs.shiftHalfStepVOffsetN) % inputs.shiftHalfStepNthV === 0) ? halfStepV : 0;
+                var u = uMin + stepsU;
+                u += (inputs.shiftHalfStepNthU && (j + inputs.shiftHalfStepUOffsetN) % inputs.shiftHalfStepNthU === 0) ? halfStepU : 0;
+                const gpPnt = this.och.gpPnt([0, 0, 0]);
+                surface.D0(u, v, gpPnt);
+                const pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
+
+                let shouldPush = true;
+                if (i === 0 && inputs.removeStartEdgeNthU && (j + inputs.removeStartEdgeUOffsetN) % inputs.removeStartEdgeNthU === 0) {
+                    shouldPush = false;
+                } else if (i === inputs.nrDivisionsU - 1 && inputs.removeEndEdgeNthU && (j + inputs.removeEndEdgeUOffsetN) % inputs.removeEndEdgeNthU === 0) {
+                    shouldPush = false;
+                } else if (j === 0 && inputs.removeStartEdgeNthV && (i + inputs.removeStartEdgeVOffsetN) % inputs.removeStartEdgeNthV === 0) {
+                    shouldPush = false;
+                } else if (j === inputs.nrDivisionsV - 1 && inputs.removeEndEdgeNthV && (i + inputs.removeEndEdgeVOffsetN) % inputs.removeEndEdgeNthV === 0) {
+                    shouldPush = false;
+                }
+                if (shouldPush) {
+                    points.push(pt);
+                }
+                gpPnt.delete();
+            }
+        }
+        handle.delete();
+        return points;
+    }
+
     subdivideToPoints(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point3[] {
         const face = inputs.shape;
         let handle = this.occ.BRep_Tool.Surface_2(face)

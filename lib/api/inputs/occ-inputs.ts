@@ -186,8 +186,8 @@ export namespace OCCT {
     }
     export class FaceSubdivisionDto<T> {
         /**
-         * Provide options without default values
-         */
+          * Provide options without default values
+          */
         constructor(shape?: T) {
             this.shape = shape;
         }
@@ -227,7 +227,74 @@ export namespace OCCT {
          * Removes end edge points on V 
          */
         removeEndEdgeV = false;
-
+    }
+    export class FaceSubdivisionControlledDto<T> {
+        /**
+         * Provide options without default values
+         */
+        constructor(shape?: T) {
+            this.shape = shape;
+        }
+        /**
+         * Brep OpenCascade geometry
+         */
+        shape?: T;
+        /**
+         * Number of subdivisions on U direction
+         */
+        nrDivisionsU: number;
+        /**
+         * Number of subdivisions on V direction
+         */
+        nrDivisionsV: number;
+        /**
+         * Shift half step every nth U row
+         */
+        shiftHalfStepNthU: number;
+        /**
+         * Offset for shift half step every nth U row
+         */
+        shiftHalfStepUOffsetN: number = 0;
+        /**
+         * Removes start edge points on U
+         */
+        removeStartEdgeNthU: number;
+        /**
+         * Offset for remove start edge points on U
+         */
+        removeStartEdgeUOffsetN: number = 0;
+        /**
+         * Removes end edge points on U 
+         */
+        removeEndEdgeNthU: number;
+        /**
+         * Offset for remove end edge points on U
+         */
+        removeEndEdgeUOffsetN: number = 0;
+        /**
+         * Shift half step every nth V row
+         */
+        shiftHalfStepNthV: number;
+        /**
+         * Offset for shift half step every nth V row
+         */
+        shiftHalfStepVOffsetN: number = 0;
+        /**
+         * Removes start edge points on V
+         */
+        removeStartEdgeNthV: number;
+        /**
+         * Offset for remove start edge points on V
+         */
+        removeStartEdgeVOffsetN: number = 0;
+        /**
+         * Removes end edge points on V 
+         */
+        removeEndEdgeNthV: number;
+        /**
+         * Offset for remove end edge points on V
+         */
+        removeEndEdgeVOffsetN: number = 0;
     }
     export class FaceLinearSubdivisionDto<T> {
         /**
@@ -1354,10 +1421,10 @@ export namespace OCCT {
     export class ShapeToMeshDto<T>{
         constructor(shape?: T, precision?: number, adjustYtoZ?: boolean) {
             this.shape = shape;
-            if(precision){
+            if (precision) {
                 this.precision = precision;
             }
-            if(adjustYtoZ){
+            if (adjustYtoZ) {
                 this.adjustYtoZ = adjustYtoZ;
             }
         }
