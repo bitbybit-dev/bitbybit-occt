@@ -1,4 +1,4 @@
-import initOpenCascade, { OpenCascadeInstance, TopoDS_Shape } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import initOpenCascade, { OpenCascadeInstance, TopoDS_Face, TopoDS_Shape } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OCCTEdge } from "./edge";
 import { OccHelper } from "../../occ-helper";
 import { OCCTWire } from "./wire";
@@ -6,6 +6,7 @@ import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
 import { OCCTFace } from "./face";
 import { OCCTGeom } from "../geom/geom";
+import { OCCT } from "../../api/inputs";
 
 describe('OCCT face unit tests', () => {
     let occt: OpenCascadeInstance;
@@ -171,6 +172,87 @@ describe('OCCT face unit tests', () => {
             [-2.8793173112239865e-16, 1.618033988749895, 1.1755705045849463],
             [-2.999519565323715e-32, 2, 1.2246467991473532e-16]
         ]);
+        sph.delete();
+        f.delete();
+    });
+
+    it('should subdivide face into points controlled', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const subdOpt = new OCCT.FaceSubdivisionControlledDto<TopoDS_Face>(f);
+        subdOpt.nrDivisionsU = 5;
+        subdOpt.nrDivisionsV = 6;
+        subdOpt.shiftHalfStepNthU = 2;
+        const pts = face.subdivideToPointsControlled(subdOpt);
+        expect(pts.length).toBe(30);
+        expect(pts).toEqual(
+            [
+                [8.659560562354932e-17, -2, 8.659560562354934e-17],
+                [0, -1.618033988749895, 1.1755705045849463],
+                [1.3449970239279145, -0.6180339887498948, 1.3449970239279148],
+                [0, 0.6180339887498948, 1.902113032590307],
+                [0.8312538755549068, 1.618033988749895, 0.8312538755549069],
+                [0, 2, 1.2246467991473532e-16],
+                [8.659560562354934e-17, -2, -8.659560562354932e-17],
+                [1.1755705045849463, -1.618033988749895, 7.198293278059966e-17],
+                [1.3449970239279148, -0.6180339887498948, -1.3449970239279145],
+                [1.902113032590307, 0.6180339887498948, 1.1647083184890923e-16],
+                [0.8312538755549069, 1.618033988749895, -0.8312538755549068],
+                [1.2246467991473532e-16, 2, 7.498798913309288e-33],
+                [-8.659560562354932e-17, -2, -8.659560562354935e-17],
+                [1.4396586556119933e-16, -1.618033988749895, -1.1755705045849463],
+                [-1.3449970239279145, -0.6180339887498948, -1.344997023927915],
+                [2.3294166369781847e-16, 0.6180339887498948, -1.902113032590307],
+                [-0.8312538755549068, 1.618033988749895, -0.831253875554907],
+                [1.4997597826618576e-32, 2, -1.2246467991473532e-16],
+                [-8.659560562354935e-17, -2, 8.65956056235493e-17],
+                [-1.1755705045849463, -1.618033988749895, -2.15948798341799e-16],
+                [-1.344997023927915, -0.6180339887498948, 1.3449970239279143],
+                [-1.902113032590307, 0.6180339887498948, -3.494124955467277e-16],
+                [-0.831253875554907, 1.618033988749895, 0.8312538755549067],
+                [-1.2246467991473532e-16, 2, -2.2496396739927864e-32],
+                [8.65956056235493e-17, -2, 8.659560562354935e-17],
+                [-2.8793173112239865e-16, -1.618033988749895, 1.1755705045849463],
+                [1.3449970239279143, -0.6180339887498948, 1.344997023927915],
+                [-4.658833273956369e-16, 0.6180339887498948, 1.902113032590307],
+                [0.8312538755549067, 1.618033988749895, 0.831253875554907],
+                [-2.999519565323715e-32, 2, 1.2246467991473532e-16]
+            ]
+        );
+        sph.delete();
+        f.delete();
+    });
+
+    it('should subdivide face into points controlled with removals', () => {
+        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const f = face.getFace({ shape: sph, index: 0 });
+        const subdOpt = new OCCT.FaceSubdivisionControlledDto<TopoDS_Face>(f);
+        subdOpt.nrDivisionsU = 4;
+        subdOpt.nrDivisionsV = 7;
+        subdOpt.shiftHalfStepNthV = 3;
+        subdOpt.removeEndEdgeNthV = 2;
+        subdOpt.removeEndEdgeNthU = 1;
+        subdOpt.removeStartEdgeNthV = 2;
+        subdOpt.removeStartEdgeNthU = 1;
+        const pts = face.subdivideToPointsControlled(subdOpt);
+        expect(pts.length).toBe(12);
+        console.log(pts)
+        expect(pts).toEqual(
+            [
+                [1.0605752387249069e-16, -2, -6.123233995736764e-17],
+                [0.8660254037844385, -1.7320508075688774, -0.49999999999999967],
+                [1.5, -1, -0.8660254037844383],
+                [1.7320508075688774, 0, -0.9999999999999996],
+                [1.5000000000000002, 0.9999999999999997, -0.8660254037844384],
+                [0.8660254037844393, 1.732050807568877, -0.5000000000000001],
+                [1.0605752387249069e-16, 2, -6.123233995736764e-17],
+                [-0.8660254037844383, -1.7320508075688774, -0.5000000000000003],
+                [-1.4999999999999996, -1, -0.8660254037844394],
+                [-1.732050807568877, 0, -1.0000000000000009],
+                [-1.4999999999999998, 0.9999999999999997, -0.8660254037844395],
+                [-0.866025403784439, 1.732050807568877, -0.5000000000000008]
+            ]
+        );
         sph.delete();
         f.delete();
     });
