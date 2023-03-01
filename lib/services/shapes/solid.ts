@@ -20,18 +20,18 @@ export class OCCTSolid {
         return result;
     }
 
-    createBox(inputs: Inputs.OCCT.BoxDto): any {
+    createBox(inputs: Inputs.OCCT.BoxDto): TopoDS_Solid {
         return this.och.bRepPrimAPIMakeBox(inputs.width, inputs.length, inputs.height, inputs.center);
     }
 
-    createBoxFromCorner(inputs: Inputs.OCCT.BoxFromCornerDto): any {
+    createBoxFromCorner(inputs: Inputs.OCCT.BoxFromCornerDto): TopoDS_Solid {
         const box = this.och.bRepPrimAPIMakeBox(inputs.width, inputs.length, inputs.height, inputs.corner);
         const cornerBox = this.och.translate({ shape: box, translation: [inputs.width / 2, inputs.height / 2, inputs.length / 2] });
         box.delete();
         return cornerBox;
     }
 
-    createCylinder(inputs: Inputs.OCCT.CylinderDto): any {
+    createCylinder(inputs: Inputs.OCCT.CylinderDto): TopoDS_Solid {
         return this.och.bRepPrimAPIMakeCylinder(
             inputs.center,
             inputs.direction ? inputs.direction : [0., 1., 0.],
@@ -40,7 +40,7 @@ export class OCCTSolid {
         );
     }
 
-    createCylindersOnLines(inputs: Inputs.OCCT.CylindersOnLinesDto): any {
+    createCylindersOnLines(inputs: Inputs.OCCT.CylindersOnLinesDto): TopoDS_Solid[] {
         const cylinders = inputs.lines.map(line => {
             return this.och.bRepPrimAPIMakeCylinderBetweenPoints(
                 line.start,

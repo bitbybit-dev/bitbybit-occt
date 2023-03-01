@@ -236,7 +236,6 @@ describe('OCCT face unit tests', () => {
         subdOpt.removeStartEdgeNthU = 1;
         const pts = face.subdivideToPointsControlled(subdOpt);
         expect(pts.length).toBe(12);
-        console.log(pts)
         expect(pts).toEqual(
             [
                 [1.0605752387249069e-16, -2, -6.123233995736764e-17],
