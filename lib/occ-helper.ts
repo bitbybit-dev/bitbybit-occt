@@ -905,13 +905,12 @@ export class OccHelper {
         return wire;
     }
 
-    getNumSolidsInCompound(shape: TopoDS_Shape): number | TopoDS_Shape {
+    getNumSolidsInCompound(shape: TopoDS_Shape): number {
         if (!shape ||
-            shape.ShapeType() > this.occ.TopAbs_ShapeEnum.TopAbs_COMPSOLID ||
+            this.getShapeTypeEnum(shape) !== shapeTypeEnum.compound ||
             shape.IsNull()
         ) {
-            console.error('Not a compound shape!');
-            return shape;
+            throw new Error('Shape is not a compound or is null.');
         }
         let solidsFound = 0;
         this.forEachSolid(shape, (i, s) => { solidsFound++; });

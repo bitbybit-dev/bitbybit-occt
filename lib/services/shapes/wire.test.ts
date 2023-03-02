@@ -383,7 +383,7 @@ describe('OCCT wire unit tests', () => {
         const e2 = edge.line({ start: [1, 0, 0], end: [3, 4, 0] });
         const w1 = wire.createBezier({ points: [[3, 4, 0], [4, 4, 0], [5, 5, 0]], closed: false });
         const w2 = wire.createBezier({ points: [[5, 5, 0], [6, 6, 0], [7, 7, 0]], closed: false });
-        const box = occHelper.bRepPrimAPIMakeBox(1,1,1, [0, 0, 0]);
+        const box = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
         const combined = wire.addEdgesAndWiresToWire({ shape: wBase, shapes: [e1, e2, w1, w2, box] });
         const length = wire.getWireLength({ shape: combined });
         expect(length).toBeCloseTo(12.640244335199364);
@@ -427,5 +427,24 @@ describe('OCCT wire unit tests', () => {
         w2.delete();
         placed.forEach((w) => w.delete());
     });
+
+    it('should create a ngon wire', () => {
+        const w = wire.createNGonWire({ nrCorners: 6, radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const length = wire.getWireLength({ shape: w });
+        const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: w });
+        expect(cornerPoints.length).toBe(6);
+        expect(length).toBeCloseTo(6);
+        expect(cornerPoints).toEqual(
+            [
+                [0, 1, 0],
+                [0.8660254037844386, 0.5000000000000001, 0],
+                [0.8660254037844387, -0.4999999999999998, 0],
+                [1.1102230246251565e-16, -1, 0],
+                [-0.8660254037844385, -0.5000000000000004, 0],
+                [-0.866025403784439, 0.49999999999999933, 0]
+            ]
+        )
+        w.delete();
+    })
 });
 
