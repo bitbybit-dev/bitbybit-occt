@@ -1,4 +1,4 @@
-import { Geom2d_Curve, OpenCascadeInstance } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
+import { Geom2d_Curve, Geom_Circle, Geom_Curve, Geom_Ellipse, OpenCascadeInstance } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
 import { OccHelper, typeSpecificityEnum } from '../../occ-helper';
 import * as Inputs from '../../api/inputs/inputs';
 
@@ -49,12 +49,12 @@ export class OCCTCurves {
         return pt;
     }
 
-    geomCircleCurve(inputs: Inputs.OCCT.CircleDto): any {
-        return this.och.createCircle(inputs.radius, inputs.center, inputs.direction, typeSpecificityEnum.curve);
+    geomCircleCurve(inputs: Inputs.OCCT.CircleDto): Geom_Circle {
+        return this.och.createCircle(inputs.radius, inputs.center, inputs.direction, typeSpecificityEnum.curve) as Geom_Circle;
     }
 
-    geomEllipseCurve(inputs: Inputs.OCCT.EllipseDto) {
-        return this.och.createEllipse(inputs.radiusMinor, inputs.radiusMajor, inputs.center, inputs.direction, typeSpecificityEnum.curve)
+    geomEllipseCurve(inputs: Inputs.OCCT.EllipseDto): Geom_Ellipse {
+        return this.och.createEllipse(inputs.radiusMinor, inputs.radiusMajor, inputs.center, inputs.direction, typeSpecificityEnum.curve) as Geom_Ellipse
     }
 
 }

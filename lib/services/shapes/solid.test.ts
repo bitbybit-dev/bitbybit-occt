@@ -46,7 +46,6 @@ describe('OCCT solid unit tests', () => {
         const box = solid.createBoxFromCorner({ corner: [-1, -1, -1], width: 3, height: 2, length: 2 });
         const center = solid.getSolidCenterOfMass({ shape: box });
         expect(solid.getSolidVolume({ shape: box })).toBeCloseTo(12);
-        console.log(center);
         expect(center).toEqual([0.5, 0, 0]);
         box.delete();
     });
@@ -103,7 +102,6 @@ describe('OCCT solid unit tests', () => {
         expect(volumes[0]).toBeCloseTo(12.56637061435917);
         expect(volumes[1]).toBeCloseTo(28.099258924162907);
         expect(volumes[2]).toBeCloseTo(35.54306350526693);
-        console.log(centersOfMass);
         expect(centersOfMass[0]).toEqual([
             -7.016405868980245e-17,
             0.49999999999999994,
