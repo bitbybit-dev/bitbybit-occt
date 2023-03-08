@@ -35,15 +35,15 @@ export class OCCTTransforms {
 
     scale(inputs: Inputs.OCCT.ScaleDto<TopoDS_Shape>): TopoDS_Shape {
         const transformation = new this.occ.gp_Trsf_1();
-        const gpPnt = this.och.gpPnt([0, 0, 0]);
+        const gpPnt = this.och.gpPnt([0.0, 0.0, 0.0]);
         transformation.SetScale(gpPnt, inputs.factor);
-        const scaling = new this.occ.TopLoc_Location_2(transformation);
-        const moved = inputs.shape.Moved(scaling, false);
-        const result = this.och.getActualTypeOfShape(moved);
+        const transf = new this.occ.BRepBuilderAPI_Transform_2(inputs.shape, transformation, true);
+        const s = transf.Shape();
+        const result = this.och.getActualTypeOfShape(s);
         gpPnt.delete();
         transformation.delete();
-        scaling.delete();
-        moved.delete();
+        transf.delete();
+        s.delete();
         return result;
     }
 
@@ -51,7 +51,7 @@ export class OCCTTransforms {
         const shapeTranslated = this.translate({ shape: inputs.shape, translation: inputs.center.map(c => -c) as Base.Vector3 });
         const transformation = new this.occ.gp_GTrsf_1();
         const scale = inputs.scale;
-        const mat = new this.occ.gp_Mat_2(scale[0], 0, 0, 0, scale[1], 0, 0, 0, scale[2]);
+        const mat = new this.occ.gp_Mat_2(scale[0], 0.0, 0.0, 0.0, scale[1], 0.0, 0.0, 0.0, scale[2]);
         transformation.SetVectorialPart(mat);
         let result;
         try {

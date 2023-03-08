@@ -96,7 +96,7 @@ describe('OCCT edge unit tests', () => {
             direction: [0, 0, 1]
         });
         const point = geom.curves.get2dPointFrom2dCurveOnParam({
-            shape: circle,
+            shape: circle as any,
             param: 0.5
         });
         expect(point).toBeDefined();

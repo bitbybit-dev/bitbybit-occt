@@ -74,7 +74,11 @@ export class OccHelper {
         const builder = new this.occ.BRep_Builder();
         builder.MakeCompound(resCompound);
         inputs.shapes.forEach(shape => {
-            builder.Add(resCompound, shape);
+            const cp = new this.occ.BRepBuilderAPI_Copy_2(shape, true, false);
+            const s = cp.Shape();
+            builder.Add(resCompound, s);
+            cp.delete();
+            s.delete();
         });
         builder.delete();
         return resCompound;
@@ -1106,7 +1110,7 @@ export class OccHelper {
             }
         });
         if (makeWire.IsDone()) {
-            this.occ.BRepLib.BuildCurves3d_2(makeWire.Wire());
+            this.occ.BRepLib.BuildCurves3d_1(makeWire.Wire(), 1.0e-7, this.occ.GeomAbs_Shape.GeomAbs_C1 as GeomAbs_Shape, 14, 0);
             const wire = makeWire.Wire();
             makeWire.delete();
             return wire;
@@ -1185,10 +1189,10 @@ export class OccHelper {
         const transformation = new this.occ.gp_Trsf_1();
         const gpVec = new this.occ.gp_Vec_4(inputs.translation[0], inputs.translation[1], inputs.translation[2]);
         transformation.SetTranslation_1(gpVec);
-        const translation = new this.occ.TopLoc_Location_2(transformation);
-        const moved = inputs.shape.Moved(translation, false);
-        const shp = this.getActualTypeOfShape(moved);
-        moved.delete();
+        const transf = new this.occ.BRepBuilderAPI_Transform_2(inputs.shape, transformation, true);
+        const s = transf.Shape();
+        const shp = this.getActualTypeOfShape(s);
+        s.delete();
         transformation.delete();
         gpVec.delete();
         return shp;
