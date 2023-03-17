@@ -28,7 +28,10 @@ export namespace OCCT {
         approxIsoParametric = 'approxIsoParametric'
     }
 
-    export type DecomposedMeshDto = {
+    export class DecomposedMeshDto {
+        /**
+         * Face list
+         */
         faceList: {
             face_index: number;
             normal_coord: Base.Vector3;
@@ -36,7 +39,10 @@ export namespace OCCT {
             tri_indexes: number[];
             vertex_coord: Base.Point3;
             vertex_coord_vec: Base.Vector3[];
-        }[],
+        }[];
+        /**
+         * Edge list
+         */
         edgeList: {
             edge_index: number;
             vertex_coord: Base.Point3[];
@@ -47,33 +53,39 @@ export namespace OCCT {
             this.shapes = shapes;
         }
         /**
-         * The shapes
+         * The OCCT shapes
          */
         shapes?: T[];
     }
     export class FilletTwoEdgesInPlaneDto<T> extends ShapesDto<T> {
         /**
-         * First edge to fillet
+         * First OCCT edge to fillet
          */
         edge1: any;
         /**
-         * Second edge to fillet
+         * Second OCCT edge to fillet
          */
         edge2: any;
         /**
          * Plane origin that is also used to find the closest solution if two solutions exist.
+         * @default [0, 0, 0]
          */
         planeOrigin: Base.Point3 = [0, 0, 0];
         /**
          * Plane direction for fillet
+         * @default [0, 1, 0]
          */
         planeDirection: Base.Vector3 = [0, 1, 0];
         /**
          * Radius of the fillet
+         * @default 0.3
+         * @minimum 0
+         * @maximum Infinity
          */
         radius: number = 0.3;
         /**
          * if solution is -1 planeOrigin chooses a particular fillet in case of several fillets may be constructed (for example, a circle intersecting a segment in 2 points). Put the intersecting (or common) point of the edges
+         * @default -1
          */
         solution?= -1;
     }
@@ -89,6 +101,7 @@ export namespace OCCT {
         wire?: U;
         /**
          * Indicates wether face should be created inside or outside the wire
+         * @default true
          */
         inside = true;
     }
@@ -125,64 +138,90 @@ export namespace OCCT {
         shape?: T;
         /**
          * Face opacity value between 0 and 1
+         * @default 1
+         * @minimum 0
+         * @maximum 1
          */
         faceOpacity = 1;
         /**
          * Edge opacity value between 0 and 1
+         * @default 1
+         * @minimum 0
+         * @maximum 1
          */
         edgeOpacity = 1;
         /**
          * Hex colour string for the edges
+         * @default #ffffff
          */
-        edgeColour = '#ffffff';
+        edgeColour: Base.Color = '#ffffff';
         /**
          * Face material
          */
-        faceMaterial?;
+        faceMaterial?: Base.Material;
         /**
          * Hex colour string for face colour
+         * @default #ff0000
          */
-        faceColour = '#ff0000';
+        faceColour: Base.Color = '#ff0000';
         /**
          * Edge width
+         * @default 2
+         * @minimum 0
+         * @maximum Infinity
          */
         edgeWidth = 2;
         /**
          * You can turn off drawing of edges via this property
+         * @default true
          */
         drawEdges = true;
         /**
          * You can turn off drawing of faces via this property
+         * @default true
          */
         drawFaces = true;
         /**
-         * Precision
+         * Precision of the mesh that will be generated for the shape, lower number will mean more triangles
+         * @default 0.01
+         * @minimum 0
+         * @maximum Infinity
          */
         precision = 0.01;
         /**
          * Draw index of edges in space
+         * @default false
          */
         drawEdgeIndexes = false;
         /**
          * Indicates the edge index height if they are drawn
+         * @default 0.06
+         * @minimum 0
+         * @maximum Infinity
          */
         edgeIndexHeight = 0.06;
         /**
          * Edge index colour if the edges are drawn
+         * @default #ff00ff
          */
-        edgeIndexColour = '#ff00ff';
+        edgeIndexColour: Base.Color = '#ff00ff';
         /**
          * Draw indexes of faces in space
+         * @default false
          */
         drawFaceIndexes = false;
         /**
          * Indicates the edge index height if they are drawn
+         * @default 0.06
+         * @minimum 0
+         * @maximum Infinity
          */
         faceIndexHeight = 0.06;
         /**
          * Edge index colour if the edges are drawn
+         * @default #0000ff
          */
-        faceIndexColour = '#0000ff';
+        faceIndexColour: Base.Color = '#0000ff';
     }
     export class FaceSubdivisionDto<T> {
         /**
@@ -447,18 +486,28 @@ export namespace OCCT {
         }
         /**
          * Width of the box
+         * @default 1
+         * @minimum 0
+         * @maximum Infinity
          */
-        width?: number;
+        width?: number = 1;
         /**
          * Length of the box
+         * @default 2
+         * @minimum 0
+         * @maximum Infinity
          */
-        length?: number;
+        length?: number = 2;
         /**
          * Height of the box
+         * @default 3
+         * @minimum 0
+         * @maximum Infinity
          */
-        height?: number;
+        height?: number = 3;
         /**
          * Corner of the box
+         * @default [0, 0, 0]
          */
         corner: Base.Point3 = [0, 0, 0];
     }
