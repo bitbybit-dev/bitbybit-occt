@@ -54,16 +54,19 @@ export namespace OCCT {
         }
         /**
          * The OCCT shapes
+         * @default undefined
          */
         shapes?: T[];
     }
     export class FilletTwoEdgesInPlaneDto<T> extends ShapesDto<T> {
         /**
          * First OCCT edge to fillet
+         * @default undefined
          */
         edge1: any;
         /**
          * Second OCCT edge to fillet
+         * @default undefined
          */
         edge2: any;
         /**
@@ -93,10 +96,12 @@ export namespace OCCT {
     export class FaceFromSurfaceAndWireDto<T, U> extends ShapesDto<T> {
         /**
          * Surface from which to create a face
+         * @default undefined
          */
         surface?: T;
         /**
          * Wire that represents a boundary on the surface to delimit the face
+         * @default undefined
          */
         wire?: U;
         /**
@@ -108,20 +113,24 @@ export namespace OCCT {
     export class EdgeFromGeom2dCurveAndSurfaceDto<T, U> extends ShapesDto<T> {
         /**
          * Curve 2d
+         * @default undefined
          */
         curve: T;
         /**
          * Surface on which 2d curve will be evaluated
+         * @default undefined
          */
         surface: U;
     }
     export class WireOnFaceDto<T, U> extends ShapesDto<T> {
         /**
          * Wire to place on face
+         * @default undefined
          */
         wire: T;
         /**
          * Face on which the wire will be placed
+         * @default undefined
          */
         face: U;
     }
@@ -134,6 +143,7 @@ export namespace OCCT {
         }
         /**
          * Brep OpenCascade geometry
+         * @default undefined
          */
         shape?: T;
         /**
@@ -157,6 +167,7 @@ export namespace OCCT {
         edgeColour: Base.Color = '#ffffff';
         /**
          * Face material
+         * @default undefined
          */
         faceMaterial?: Base.Material;
         /**
@@ -232,6 +243,7 @@ export namespace OCCT {
         }
         /**
          * Brep OpenCascade geometry
+         * @default undefined
          */
         shape?: T;
         /**
@@ -288,6 +300,7 @@ export namespace OCCT {
         }
         /**
          * Brep OpenCascade geometry
+         * @default undefined
          */
         shape?: T;
         /**
@@ -398,6 +411,7 @@ export namespace OCCT {
         }
         /**
          * Brep OpenCascade geometry
+         * @default undefined
          */
         shape?: T;
         /**
@@ -445,6 +459,7 @@ export namespace OCCT {
         }
         /**
          * Brep OpenCascade geometry
+         * @default undefined
          */
         shape?: T;
         /**
@@ -471,6 +486,7 @@ export namespace OCCT {
         }
         /**
          * Brep OpenCascade geometry
+         * @default undefined
          */
         shape?: T;
         /**
@@ -624,6 +640,7 @@ export namespace OCCT {
         radius: number = 1;
         /**
          * Center of the sphere
+         * @default [0, 0, 0]
          */
         center: Base.Point3 = [0, 0, 0];
     }
@@ -754,6 +771,7 @@ export namespace OCCT {
         }
         /**
          * Shape to apply the fillets
+         * @default undefined
          */
         shape: T;
         /**
@@ -782,6 +800,7 @@ export namespace OCCT {
         }
         /**
          * Shape to apply the chamfer
+         * @default undefined
          */
         shape: T;
         /**
@@ -868,6 +887,7 @@ export namespace OCCT {
         }
         /**
          * Shape representing a wire
+         * @default undefined
          */
         shape: T;
         /**
@@ -896,6 +916,7 @@ export namespace OCCT {
         }
         /**
          * Shape representing a geometry
+         * @default undefined
          */
         shape: T;
         /**
@@ -916,10 +937,12 @@ export namespace OCCT {
         }
         /** 
          * OCCT face to be used for calculation 
+         * @default undefined
          */
         face: any;
         /**
          * OCCT edge to be used for calculation
+         * @default undefined
          */
         edge: any;
         /**
@@ -945,6 +968,7 @@ export namespace OCCT {
         }
         /**
          * Shape representing a wire
+         * @default undefined
          */
         shape: T;
         /**
@@ -986,6 +1010,7 @@ export namespace OCCT {
         }
         /**
          * Wires through which the loft passes
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1002,6 +1027,7 @@ export namespace OCCT {
         }
         /**
          * Wires through which the loft passes
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1074,6 +1100,7 @@ export namespace OCCT {
         }
         /**
          * Shape to offset
+         * @default undefined
          */
         shape: T;
         /**
@@ -1102,6 +1129,7 @@ export namespace OCCT {
         }
         /**
          * Shape to revolve
+         * @default undefined
          */
         shape: T;
         /**
@@ -1129,10 +1157,12 @@ export namespace OCCT {
         }
         /**
          * The wire path
+         * @default undefined
          */
         shape: T;
         /**
          * Shapes along the path to be piped
+         * @default undefined
          */
         shapes: U[];
     }
@@ -1143,6 +1173,7 @@ export namespace OCCT {
         }
         /**
          * Face to extrude
+         * @default undefined
          */
         shape: T;
         /**
@@ -1159,6 +1190,7 @@ export namespace OCCT {
         }
         /**
          * Shapes to extrude
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1175,10 +1207,12 @@ export namespace OCCT {
         }
         /**
          * Shape to split
+         * @default undefined
          */
         shape: T;
         /**
          * Shapes to split from main shape
+         * @default undefined
          */
         shapes: T[];
     }
@@ -1189,6 +1223,7 @@ export namespace OCCT {
         }
         /**
          * Objects to be joined together
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1205,10 +1240,12 @@ export namespace OCCT {
         }
         /**
          * Object to subtract from
+         * @default undefined
          */
         shape: T;
         /**
          * Objects to subtract
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1225,6 +1262,7 @@ export namespace OCCT {
         }
         /**
          * Shapes to intersect
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1239,6 +1277,7 @@ export namespace OCCT {
         }
         /**
          * Shape on which action should be performed
+         * @default undefined
          */
         shape: T;
     }
@@ -1249,6 +1288,7 @@ export namespace OCCT {
         }
         /**
          * The shapes
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1265,6 +1305,7 @@ export namespace OCCT {
         }
         /**
          * The shape
+         * @default undefined
          */
         shape: T;
         /**
@@ -1283,6 +1324,7 @@ export namespace OCCT {
         }
         /**
          * Shape
+         * @default undefined
          */
         shape: T;
         /**
@@ -1301,6 +1343,7 @@ export namespace OCCT {
         }
         /**
          * Wire to extrude by rotating
+         * @default undefined
          */
         shape: T;
         /**
@@ -1328,10 +1371,12 @@ export namespace OCCT {
         }
         /**
          * Shape to make thick
+         * @default undefined
          */
         shape: T;
         /**
          * closing faces
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1380,6 +1425,7 @@ export namespace OCCT {
         }
         /**
          * Shape to transform
+         * @default undefined
          */
         shape: T;
         /**
@@ -1417,6 +1463,7 @@ export namespace OCCT {
         }
         /**
          * Shape to transform
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1447,6 +1494,7 @@ export namespace OCCT {
         }
         /**
          * Shape for translation
+         * @default undefined
          */
         shape: T;
         /**
@@ -1462,6 +1510,7 @@ export namespace OCCT {
         }
         /**
          * Shape for translation
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1481,6 +1530,7 @@ export namespace OCCT {
         }
         /**
          * Shape for translation
+         * @default undefined
          */
         shape: T;
         /**
@@ -1514,6 +1564,7 @@ export namespace OCCT {
         }
         /**
          * Shape for translation
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1546,6 +1597,7 @@ export namespace OCCT {
         }
         /**
          * Shape to mirror
+         * @default undefined
          */
         shape: T;
         /**
@@ -1567,6 +1619,7 @@ export namespace OCCT {
         }
         /**
          * Shape to mirror
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1588,6 +1641,7 @@ export namespace OCCT {
         }
         /**
          * Shape to mirror
+         * @default undefined
          */
         shape: T;
         /**
@@ -1609,6 +1663,7 @@ export namespace OCCT {
         }
         /**
          * Shape to mirror
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1630,6 +1685,7 @@ export namespace OCCT {
         }
         /**
          * Shape to rotate
+         * @default undefined
          */
         shape: T;
         /**
@@ -1653,6 +1709,7 @@ export namespace OCCT {
         }
         /**
          * Shape to rotate
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1673,6 +1730,7 @@ export namespace OCCT {
         }
         /**
          * Shape to scale
+         * @default undefined
          */
         shape: T;
         /**
@@ -1690,6 +1748,7 @@ export namespace OCCT {
         }
         /**
          * Shape to scale
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1706,6 +1765,7 @@ export namespace OCCT {
         }
         /**
          * Shape to scale
+         * @default undefined
          */
         shape: T;
         /**
@@ -1727,6 +1787,7 @@ export namespace OCCT {
         }
         /**
          * Shape to scale
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1752,6 +1813,7 @@ export namespace OCCT {
         }
         /**
          * Shape to save
+         * @default undefined
          */
         shape: T;
         /**
@@ -1775,6 +1837,7 @@ export namespace OCCT {
         }
         /**
          * Shape to save
+         * @default undefined
          */
         shape: T;
         /**
@@ -1797,6 +1860,7 @@ export namespace OCCT {
         }
         /**
          * Shape to save
+         * @default undefined
          */
         shape: T;
         /**
@@ -1823,6 +1887,7 @@ export namespace OCCT {
         /**
          * The name of the asset to store in the cache.
          * This allows to store the imported objects for multiple run cycles in the cache
+         * @default undefined
          */
         assetFile: File;
         /**
@@ -1838,7 +1903,8 @@ export namespace OCCT {
             this.adjustZtoY = adjustZtoY;
         }
         /**
-         * Shape to save
+         * File text
+         * @default undefined
          */
         filetext: any;
         /**
@@ -1858,6 +1924,7 @@ export namespace OCCT {
         }
         /**
          * Shapes to add to compound
+         * @default undefined
          */
         shapes: T[];
     }
@@ -1868,6 +1935,7 @@ export namespace OCCT {
         }
         /**
          * Shape to make thick
+         * @default undefined
          */
         shape: T;
         /**
@@ -1885,6 +1953,7 @@ export namespace OCCT {
         }
         /**
          * Wire shape to convert into a face
+         * @default undefined
          */
         shape: T;
         /**
@@ -1900,6 +1969,7 @@ export namespace OCCT {
         }
         /**
          * Wire shapes to convert into a faces
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1915,6 +1985,7 @@ export namespace OCCT {
         }
         /**
          * Faces to construct a shell from
+         * @default undefined
          */
         shapes: T[];
         /**
@@ -1933,6 +2004,7 @@ export namespace OCCT {
         }
         /**
          * Face shape
+         * @default undefined
          */
         shape: T;
         /**
@@ -1955,6 +2027,7 @@ export namespace OCCT {
         }
         /**
          * Face shape
+         * @default undefined
          */
         shape: T;
         /**
@@ -2184,6 +2257,7 @@ export namespace OCCT {
     export class Geom2dTrimmedCurveDto<T>{
         /**
          * 2D Curve to trim
+         * @default undefined
          */
         shape: T;
         /**
@@ -2231,6 +2305,7 @@ export namespace OCCT {
     export class SliceDto<T> {
         /**
          * THe shape to slice
+         * @default undefined
          */
         shape: T;
         /**
