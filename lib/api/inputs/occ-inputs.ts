@@ -89,6 +89,7 @@ export namespace OCCT {
         /**
          * if solution is -1 planeOrigin chooses a particular fillet in case of several fillets may be constructed (for example, a circle intersecting a segment in 2 points). Put the intersecting (or common) point of the edges
          * @default -1
+         * @optional true
          */
         solution?= -1;
     }
@@ -168,6 +169,7 @@ export namespace OCCT {
         /**
          * Face material
          * @default undefined
+         * @optional true
          */
         faceMaterial?: Base.Material;
         /**
@@ -425,7 +427,7 @@ export namespace OCCT {
          * @minimum 0
          * @maximum 1
          */
-        param?: number = 0.5;
+        param: number = 0.5;
         /**
          * Number of subdivisions on opposite direction
          * @default 10
@@ -503,7 +505,7 @@ export namespace OCCT {
          * Points points
          * @default []
          */
-        points?: Base.Point3[] = [];
+        points: Base.Point3[] = [];
     }
     export class SquareDto {
         /**
@@ -565,21 +567,21 @@ export namespace OCCT {
          * @minimum 0
          * @maximum Infinity
          */
-        width?: number = 1;
+        width: number = 1;
         /**
          * Length of the box
          * @default 2
          * @minimum 0
          * @maximum Infinity
          */
-        length?: number = 2;
+        length: number = 2;
         /**
          * Height of the box
          * @default 3
          * @minimum 0
          * @maximum Infinity
          */
-        height?: number = 3;
+        height: number = 3;
         /**
          * Center of the box
          * @default [0, 0, 0]
@@ -603,21 +605,21 @@ export namespace OCCT {
          * @minimum 0
          * @maximum Infinity
          */
-        width?: number = 1;
+        width: number = 1;
         /**
          * Length of the box
          * @default 2
          * @minimum 0
          * @maximum Infinity
          */
-        length?: number = 2;
+        length: number = 2;
         /**
          * Height of the box
          * @default 3
          * @minimum 0
          * @maximum Infinity
          */
-        height?: number = 3;
+        height: number = 3;
         /**
          * Corner of the box
          * @default [0, 0, 0]
@@ -779,11 +781,13 @@ export namespace OCCT {
          * @default 0.1
          * @minimum 0
          * @maximum Infinity
+         * @optional true
          */
         radius?: number = 0.1;
         /**
          * Radius list
          * @default undefined
+         * @optional true
          */
         radiusList?: number[];
         /**
@@ -808,11 +812,13 @@ export namespace OCCT {
          * @default 0.1
          * @minimum 0
          * @maximum Infinity
+         * @optional true
          */
         distance?: number = 0.1;
         /**
          * Distance for the chamfer
          * @default undefined
+         * @optional true
          */
         distanceList?: number[];
         /**
