@@ -503,9 +503,9 @@ export namespace OCCT {
         }
         /**
          * Points points
-         * @default []
+         * @default undefined
          */
-        points: Base.Point3[] = [];
+        points: Base.Point3[];
     }
     export class SquareDto {
         /**
@@ -761,9 +761,9 @@ export namespace OCCT {
         radius: number;
         /**
          * Lines between which to span cylinders
-         * @default []
+         * @default undefined
          */
-        lines: { start: Base.Point3, end: Base.Point3 }[] = [];
+        lines: { start: Base.Point3, end: Base.Point3 }[];
     }
     export class FilletDto<T> {
         constructor(shape?: T, radius?: number, indexes?: number[], all?: boolean) {
@@ -792,9 +792,9 @@ export namespace OCCT {
         radiusList?: number[];
         /**
          * List of edge indexes to which apply the fillet, if left empty all edges will be rounded
-         * @default []
+         * @default undefined
          */
-        indexes?= [];
+        indexes?;
     }
     export class ChamferDto<T> {
         constructor(shape?: T, distance?: number, indexes?: number[], all?: boolean) {
@@ -823,9 +823,9 @@ export namespace OCCT {
         distanceList?: number[];
         /**
          * List of edge indexes to which apply the chamfer, if left empty all edges will be chamfered
-         * @default []
+         * @default undefined
          */
-        indexes?= [];
+        indexes?;
     }
     export class BSplineDto {
         constructor(points?: Base.Point3[], closed?: boolean) {
@@ -834,9 +834,9 @@ export namespace OCCT {
         }
         /**
          * Points through which the BSpline will be created
-         * @default []
+         * @default undefined
          */
-        points: Base.Point3[] = [];
+        points: Base.Point3[];
         /**
          * Indicates wether BSpline will be cloed
          * @default false
@@ -850,9 +850,9 @@ export namespace OCCT {
         }
         /**
          * Points through which the BSpline will be created
-         * @default []
+         * @default undefined
          */
-        points: Base.Point3[] = [];
+        points: Base.Point3[];
         /**
          * Indicates wether BSpline will be periodic
          * @default false
@@ -874,9 +874,9 @@ export namespace OCCT {
         }
         /**
          * Points through which the Bezier curve will be created
-         * @default []
+         * @default undefined
          */
-        points: Base.Point3[] = [];
+        points: Base.Point3[];
         /**
          * Indicates wether Bezier will be cloed
          * @default false
