@@ -836,8 +836,9 @@ export namespace OCCT {
         /**
          * List of edge indexes to which apply the fillet, if left empty all edges will be rounded
          * @default undefined
+         * @optional true
          */
-        indexes?;
+        indexes?: number[];
     }
     export class ChamferDto<T> {
         constructor(shape?: T, distance?: number, indexes?: number[], all?: boolean) {
@@ -868,8 +869,9 @@ export namespace OCCT {
         /**
          * List of edge indexes to which apply the chamfer, if left empty all edges will be chamfered
          * @default undefined
+         * @optional true
          */
-        indexes?;
+        indexes?: number[];
     }
     export class BSplineDto {
         constructor(points?: Base.Point3[], closed?: boolean) {
