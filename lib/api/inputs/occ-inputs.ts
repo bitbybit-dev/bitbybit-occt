@@ -84,6 +84,7 @@ export namespace OCCT {
          * @default 0.3
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius: number = 0.3;
         /**
@@ -152,6 +153,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum 1
+         * @step 0.1
          */
         faceOpacity = 1;
         /**
@@ -159,6 +161,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum 1
+         * @step 0.1
          */
         edgeOpacity = 1;
         /**
@@ -182,6 +185,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         edgeWidth = 2;
         /**
@@ -199,6 +203,7 @@ export namespace OCCT {
          * @default 0.01
          * @minimum 0
          * @maximum Infinity
+         * @step 0.01
          */
         precision = 0.01;
         /**
@@ -211,6 +216,7 @@ export namespace OCCT {
          * @default 0.06
          * @minimum 0
          * @maximum Infinity
+         * @step 0.01
          */
         edgeIndexHeight = 0.06;
         /**
@@ -228,6 +234,7 @@ export namespace OCCT {
          * @default 0.06
          * @minimum 0
          * @maximum Infinity
+         * @step 0.01
          */
         faceIndexHeight = 0.06;
         /**
@@ -253,6 +260,7 @@ export namespace OCCT {
          * @default 10
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         nrDivisionsU: number = 10;
         /**
@@ -260,6 +268,7 @@ export namespace OCCT {
          * @default 10
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         nrDivisionsV: number = 10;
         /**
@@ -310,6 +319,7 @@ export namespace OCCT {
          * @default 10
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         nrDivisionsU: number = 10;
         /**
@@ -317,6 +327,7 @@ export namespace OCCT {
          * @default 10
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         nrDivisionsV: number = 10;
         /**
@@ -324,6 +335,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         shiftHalfStepNthU: number = 1;
         /**
@@ -331,6 +343,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         shiftHalfStepUOffsetN: number = 1;
         /**
@@ -338,6 +351,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         removeStartEdgeNthU: number = 1;
         /**
@@ -345,6 +359,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         removeStartEdgeUOffsetN: number = 1;
         /**
@@ -352,6 +367,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         removeEndEdgeNthU: number = 1;
         /**
@@ -359,6 +375,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         removeEndEdgeUOffsetN: number = 1;
         /**
@@ -366,6 +383,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         shiftHalfStepNthV: number = 1;
         /**
@@ -373,6 +391,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         shiftHalfStepVOffsetN: number = 1;
         /**
@@ -380,6 +399,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         removeStartEdgeNthV: number = 1;
         /**
@@ -387,6 +407,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         removeStartEdgeVOffsetN: number = 1;
         /**
@@ -394,6 +415,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         removeEndEdgeNthV: number = 1;
         /**
@@ -401,6 +423,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         removeEndEdgeVOffsetN: number = 1;
     }
@@ -426,6 +449,7 @@ export namespace OCCT {
          * @default 0.5
          * @minimum 0
          * @maximum 1
+         * @step 0.1
          */
         param: number = 0.5;
         /**
@@ -433,6 +457,7 @@ export namespace OCCT {
          * @default 10
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         nrPoints: number = 10;
         /**
@@ -469,6 +494,7 @@ export namespace OCCT {
          * @default 0.5
          * @minimum 0
          * @maximum 1
+         * @step 0.1
          */
         paramU: number = 0.5;
         /**
@@ -476,6 +502,7 @@ export namespace OCCT {
          * @default 0.5
          * @minimum 0
          * @maximum 1
+         * @step 0.1
          */
         paramV: number = 0.5;
     }
@@ -513,6 +540,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 1
          */
         size: number = 1;
         /**
@@ -532,6 +560,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 1
          */
         width: number = 1;
         /**
@@ -539,6 +568,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 1
          */
         length: number = 2;
         /**
@@ -566,6 +596,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         width: number = 1;
         /**
@@ -573,6 +604,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         length: number = 2;
         /**
@@ -580,13 +612,12 @@ export namespace OCCT {
          * @default 3
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         height: number = 3;
         /**
          * Center of the box
          * @default [0, 0, 0]
-         * @minimum 0
-         * @maximum Infinity
          */
         center: Base.Point3 = [0, 0, 0];
     }
@@ -604,6 +635,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         width: number = 1;
         /**
@@ -611,6 +643,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         length: number = 2;
         /**
@@ -618,6 +651,7 @@ export namespace OCCT {
          * @default 3
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         height: number = 3;
         /**
@@ -638,6 +672,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius: number = 1;
         /**
@@ -660,6 +695,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius1: number = 2;
         /**
@@ -667,6 +703,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius2: number = 1;
         /**
@@ -674,6 +711,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         height: number = 2;
         /**
@@ -681,6 +719,7 @@ export namespace OCCT {
          * @default 360
          * @minimum 0
          * @maximum 360
+         * @step 1
          */
         angle: number = 360;
         /**
@@ -731,6 +770,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius: number = 1;
         /**
@@ -738,6 +778,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         height: number = 2;
         /**
@@ -757,6 +798,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius: number;
         /**
@@ -781,6 +823,7 @@ export namespace OCCT {
          * @default 0.1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          * @optional true
          */
         radius?: number = 0.1;
@@ -813,6 +856,7 @@ export namespace OCCT {
          * @minimum 0
          * @maximum Infinity
          * @optional true
+         * @step 0.1
          */
         distance?: number = 0.1;
         /**
@@ -863,6 +907,7 @@ export namespace OCCT {
          * @default 1e-7
          * @minimum 0
          * @maximum Infinity
+         * @step 0.00001
          */
         tolerance: number = 1e-7;
     }
@@ -901,6 +946,7 @@ export namespace OCCT {
          * @default 10
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         nrOfDivisions: number = 10;
         /**
@@ -930,6 +976,7 @@ export namespace OCCT {
          * @default 0.5
          * @minimum 0
          * @maximum 1
+         * @step 0.1
          */
         param: number = 0.5;
     }
@@ -956,6 +1003,7 @@ export namespace OCCT {
          * @default 0.5
          * @minimum 0
          * @maximum 1
+         * @step 0.1
          */
         tEdgeParam: number = 0.5;
         /**
@@ -963,6 +1011,7 @@ export namespace OCCT {
          * @default 0.5
          * @minimum -Infinity
          * @maximum Infinity
+         * @step 0.1
          */
         distance2DParam: number = 0.5;
     }
@@ -982,6 +1031,7 @@ export namespace OCCT {
          * @default 0.5
          * @minimum -Infinity
          * @maximum Infinity
+         * @step 0.1
          */
         length: number = 0.5;
     }
@@ -996,6 +1046,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius: number = 1;
         /**
@@ -1061,6 +1112,7 @@ export namespace OCCT {
          * @default 10
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         nrPeriodicSections = 10;
         /**
@@ -1078,6 +1130,7 @@ export namespace OCCT {
          * @default 1.0e-7
          * @minimum 0
          * @maximum Infinity
+         * @step 0.000001
          */
         tolerance = 1.0e-7;
         /**
@@ -1114,6 +1167,7 @@ export namespace OCCT {
          * @default 0.2
          * @minimum -Infinity
          * @maximum Infinity
+         * @step 0.1
          */
         distance: number = 0.2;
         /**
@@ -1121,6 +1175,7 @@ export namespace OCCT {
          * @default 0.1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.01
          */
         tolerance = 0.1;
     }
@@ -1143,6 +1198,7 @@ export namespace OCCT {
          * @default 360
          * @minimum 0
          * @maximum 360
+         * @step 1
          */
         angle: number = 360;
         /**
@@ -1302,6 +1358,7 @@ export namespace OCCT {
          * @default 1.0e-7
          * @minimum 0
          * @maximum Infinity
+         * @step 0.000001
          */
         tolerance = 1.0e-7;
     }
@@ -1319,6 +1376,7 @@ export namespace OCCT {
          * @default 1.0e-7
          * @minimum 0
          * @maximum Infinity
+         * @step 0.000001
          */
         tolerance = 1.0e-7;
     }
@@ -1338,6 +1396,7 @@ export namespace OCCT {
          * @default 0
          * @minimum 0
          * @maximum Infinity
+         * @step 1
          */
         index: number = 0;
     }
@@ -1357,6 +1416,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         height: number = 1;
         /**
@@ -1364,6 +1424,7 @@ export namespace OCCT {
          * @default 360
          * @minimum 0
          * @maximum 360
+         * @step 1
          */
         angle: number = 360;
     }
@@ -1390,6 +1451,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         offset: number = 1;
         /**
@@ -1397,6 +1459,7 @@ export namespace OCCT {
          * @default 1.0e-3
          * @minimum 0
          * @maximum Infinity
+         * @step 0.000001
          */
         tolerance = 1.e-3;
         /**
@@ -1449,6 +1512,7 @@ export namespace OCCT {
          * @default 0
          * @minimum 0
          * @maximum 360
+         * @step 1
          */
         rotationAngle: number = 0;
         /**
@@ -1456,6 +1520,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         scaleFactor: number = 1;
     }
@@ -1704,6 +1769,7 @@ export namespace OCCT {
          * @default 0
          * @minimum 0
          * @maximum 360
+         * @step 1
          */
         angle: number = 0;
     }
@@ -1744,6 +1810,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         factor: number = 1;
     }
@@ -1827,6 +1894,7 @@ export namespace OCCT {
          * @default 0.01
          * @minimum 0
          * @maximum Infinity
+         * @step 0.001
          */
         precision = 0.01;
         /**
@@ -1949,6 +2017,7 @@ export namespace OCCT {
          * @default 1
          * @minimum -Infinity
          * @maximum Infinity
+         * @step 0.1
          */
         offset: number = 1;
     }
@@ -1999,6 +2068,7 @@ export namespace OCCT {
          * @default 1.0e-7
          * @minimum 0
          * @maximum Infinity
+         * @step 0.00001
          */
         tolerance = 1.0e-7;
     }
@@ -2018,6 +2088,7 @@ export namespace OCCT {
          * @default 0.5
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         param: number;
         /**
@@ -2041,6 +2112,7 @@ export namespace OCCT {
          * @default 10
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         nrOfPointsU = 10;
         /**
@@ -2048,6 +2120,7 @@ export namespace OCCT {
          * @default 10
          * @minimum 1
          * @maximum Infinity
+         * @step 1
          */
         nrOfPointsV = 10;
         /**
@@ -2073,15 +2146,17 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radiusMinor: number = 1;
         /**
          * Major radius of an ellipse
-         * @default 1
+         * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
-        radiusMajor: number = 1;
+        radiusMajor: number = 2;
         /**
          * If true will sense the direction
          * @default false
@@ -2104,6 +2179,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius: number = 1;
         /**
@@ -2129,6 +2205,7 @@ export namespace OCCT {
          * @default 7
          * @minimum 3
          * @maximum Infinity
+         * @step 1
          */
         numRays: number = 7;
         /**
@@ -2136,6 +2213,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         outerRadius: number;
         /**
@@ -2143,6 +2221,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         innerRadius: number;
         /**
@@ -2172,6 +2251,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         width: number = 2;
         /**
@@ -2179,6 +2259,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         height: number = 1;
         /**
@@ -2186,6 +2267,7 @@ export namespace OCCT {
          * @default 15
          * @minimum -Infinity
          * @maximum Infinity
+         * @step 1
          */
         angle: number = 15;
     }
@@ -2205,6 +2287,7 @@ export namespace OCCT {
          * @default 6
          * @minimum 3
          * @maximum Infinity
+         * @step 1
          */
         nrCorners: number = 6;
         /**
@@ -2212,6 +2295,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius: number = 1;
     }
@@ -2231,15 +2315,17 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radiusMinor: number = 1;
         /**
          * Major radius of an ellipse
-         * @default 1
+         * @default 2
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
-        radiusMajor: number = 1;
+        radiusMajor: number = 2;
     }
     export class GeomCylindricalSurfaceDto {
         /**
@@ -2247,6 +2333,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         radius: number = 1;
         /**
@@ -2271,6 +2358,7 @@ export namespace OCCT {
          * @default 0
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         u1: number = 0;
         /**
@@ -2278,6 +2366,7 @@ export namespace OCCT {
          * @default 1
          * @minimum 0
          * @maximum Infinity
+         * @step 0.1
          */
         u2: number = 1;
         /**
@@ -2319,6 +2408,7 @@ export namespace OCCT {
          * @default 2
          * @minimum 1
          * @maximum Infinity
+         * @step 0.1
          */
         step: number = 2;
         /**
