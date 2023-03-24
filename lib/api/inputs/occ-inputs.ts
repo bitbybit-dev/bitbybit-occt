@@ -805,7 +805,7 @@ export namespace OCCT {
          * Lines between which to span cylinders
          * @default undefined
          */
-        lines: { start: Base.Point3, end: Base.Point3 }[];
+        lines: Base.Line3[];
     }
     export class FilletDto<T> {
         constructor(shape?: T, radius?: number, indexes?: number[], all?: boolean) {
