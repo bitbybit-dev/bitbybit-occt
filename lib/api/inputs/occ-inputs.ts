@@ -1918,7 +1918,7 @@ export namespace OCCT {
         shape: T;
         /**
          * File name
-         * @default "shape.step"
+         * @default shape.step
          */
         filename: string = "shape.step";
         /**
@@ -1941,7 +1941,7 @@ export namespace OCCT {
         shape: T;
         /**
          * File name
-         * @default "shape.stl"
+         * @default shape.stl
          */
         filename: string = "shape.stl";
         /**
@@ -1985,7 +1985,7 @@ export namespace OCCT {
         filetext: any;
         /**
          * File name
-         * @default "shape.igs"
+         * @default shape.igs
          */
         filename: string = "shape.igs";
         /**
