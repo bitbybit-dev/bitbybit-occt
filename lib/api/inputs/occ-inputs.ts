@@ -1143,11 +1143,13 @@ export namespace OCCT {
         /**
          * Optional if loft should start with a vertex
          * @default undefined
+         * @optional true
          */
         startVertex?: Base.Point3;
         /**
          * Optional if loft should end with a vertex
          * @default undefined
+         * @optional true
          */
         endVertex?: Base.Point3;
     }
