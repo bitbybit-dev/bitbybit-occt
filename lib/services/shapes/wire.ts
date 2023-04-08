@@ -14,6 +14,10 @@ export class OCCTWire {
         return this.och.createPolygonWire(inputs);
     }
 
+    createPolylineWire(inputs: Inputs.OCCT.PolylineDto): any {
+        return this.och.createPolylineWire(inputs);
+    }
+
     combineEdgesAndWiresIntoAWire(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire | TopoDS_Edge>): any {
         return this.och.combineEdgesAndWiresIntoAWire(inputs);
     }

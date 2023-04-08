@@ -332,100 +332,100 @@ export namespace OCCT {
         nrDivisionsV: number = 10;
         /**
          * Shift half step every nth U row
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        shiftHalfStepNthU: number = 1;
+        shiftHalfStepNthU: number = 0;
         /**
          * Offset for shift half step every nth U row
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        shiftHalfStepUOffsetN: number = 1;
+        shiftHalfStepUOffsetN: number = 0;
         /**
          * Removes start edge points on U
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        removeStartEdgeNthU: number = 1;
+        removeStartEdgeNthU: number = 0;
         /**
          * Offset for remove start edge points on U
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        removeStartEdgeUOffsetN: number = 1;
+        removeStartEdgeUOffsetN: number = 0;
         /**
          * Removes end edge points on U 
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        removeEndEdgeNthU: number = 1;
+        removeEndEdgeNthU: number = 0;
         /**
          * Offset for remove end edge points on U
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        removeEndEdgeUOffsetN: number = 1;
+        removeEndEdgeUOffsetN: number = 0;
         /**
          * Shift half step every nth V row
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        shiftHalfStepNthV: number = 1;
+        shiftHalfStepNthV: number = 0;
         /**
          * Offset for shift half step every nth V row
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        shiftHalfStepVOffsetN: number = 1;
+        shiftHalfStepVOffsetN: number = 0;
         /**
          * Removes start edge points on V
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        removeStartEdgeNthV: number = 1;
+        removeStartEdgeNthV: number = 0;
         /**
          * Offset for remove start edge points on V
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        removeStartEdgeVOffsetN: number = 1;
+        removeStartEdgeVOffsetN: number = 0;
         /**
          * Removes end edge points on V 
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        removeEndEdgeNthV: number = 1;
+        removeEndEdgeNthV: number = 0;
         /**
          * Offset for remove end edge points on V
-         * @default 1
-         * @minimum 1
+         * @default 0
+         * @minimum 0
          * @maximum Infinity
          * @step 1
          */
-        removeEndEdgeVOffsetN: number = 1;
+        removeEndEdgeVOffsetN: number = 0;
     }
     export class FaceLinearSubdivisionDto<T> {
         /**
@@ -525,6 +525,16 @@ export namespace OCCT {
         paramsUV: [number, number][] = [[0.5, 0.5]];
     }
     export class PolygonDto {
+        constructor(points?: Base.Point3[]) {
+            this.points = points;
+        }
+        /**
+         * Points points
+         * @default undefined
+         */
+        points: Base.Point3[];
+    }
+    export class PolylineDto {
         constructor(points?: Base.Point3[]) {
             this.points = points;
         }

@@ -668,6 +668,25 @@ export class OccHelper {
         return wire;
     }
 
+    createPolylineWire(inputs: Inputs.OCCT.PolylineDto) {
+        const gpPoints = [];
+        for (let ind = 0; ind < inputs.points.length; ind++) {
+            gpPoints.push(this.gpPnt(inputs.points[ind]));
+        }
+
+        const wireMaker = new this.occ.BRepBuilderAPI_MakeWire_1();
+        for (let ind = 0; ind < inputs.points.length - 1; ind++) {
+            const pt1 = gpPoints[ind];
+            const pt2 = gpPoints[ind + 1];
+            const innerWire = this.makeWireBetweenTwoPoints(pt1, pt2);
+            wireMaker.Add_2(innerWire);
+        }
+
+        const wire = wireMaker.Wire();
+        wireMaker.delete();
+        return wire;
+    }
+
     private makeWireBetweenTwoPoints(pt1: any, pt2: any) {
         const seg = new this.occ.GC_MakeSegment_1(pt1, pt2);
         const segVal = seg.Value();

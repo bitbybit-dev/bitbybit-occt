@@ -87,6 +87,13 @@ describe('OCCT wire unit tests', () => {
         w.delete();
     });
 
+    it('should create a polyline wire', async () => {
+        const w = wire.createPolylineWire({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]] });
+        const length = wire.getWireLength({ shape: w });
+        expect(length).toBe(6.610365985079727);
+        w.delete();
+    });
+
     it('should create a star wire', async () => {
         const w = wire.createStarWire({ numRays: 9, outerRadius: 5, innerRadius: 2, center: [0, 0, 0], direction: [0, 0, 1], half: false });
         const length = wire.getWireLength({ shape: w });
