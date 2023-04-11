@@ -10,8 +10,24 @@ export class OCCTOperations {
     ) {
     }
 
-    closestPointsBetweenTwoShapes(inputs: Inputs.OCCT.ShapesDto<TopoDS_Shape>): [Inputs.Base.Point3, Inputs.Base.Point3] {
+    closestPointsBetweenTwoShapes(inputs: Inputs.OCCT.ClosestPointsBetweenTwoShapesDto<TopoDS_Shape>): [Inputs.Base.Point3, Inputs.Base.Point3] {
         return this.och.closestPointsBetweenTwoShapes(inputs.shapes[0], inputs.shapes[1]);
+    }
+
+    closestPointsOnShapeFromPoints(inputs: Inputs.OCCT.ClosestPointsOnShapeFromPointsDto<TopoDS_Shape>): Inputs.Base.Point3[] {
+        const vertexes = inputs.points.map(p => this.och.makeVertex(p));
+        const pointsOnShape = vertexes.map(v => this.och.closestPointsBetweenTwoShapes(v, inputs.shape));
+        return pointsOnShape.map(p => p[1]);
+    }
+
+    closestPointsOnShapesFromPoints(inputs: Inputs.OCCT.ClosestPointsOnShapesFromPointsDto<TopoDS_Shape>): Inputs.Base.Point3[] {
+        const vertexes = inputs.points.map(p => this.och.makeVertex(p));
+        let result = [];
+        inputs.shapes.forEach((s) => {
+            const pointsOnShape = vertexes.map(v => this.och.closestPointsBetweenTwoShapes(v, s));
+            result.push(...pointsOnShape.map(p => p[1]))
+        });
+        return result;
     }
 
     loft(inputs: Inputs.OCCT.LoftDto<TopoDS_Wire>) {

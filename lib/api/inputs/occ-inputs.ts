@@ -94,7 +94,42 @@ export namespace OCCT {
          */
         solution?= -1;
     }
-
+    export class ClosestPointsOnShapeFromPointsDto<T> {
+        /**
+         * The OCCT shape
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * The list of points
+         * @default undefined
+         */
+        points: Base.Point3[];
+    } 
+    export class ClosestPointsOnShapesFromPointsDto<T> {
+        /**
+         * The OCCT shapes
+         * @default undefined
+         */
+        shapes: T[];
+        /**
+         * The list of points
+         * @default undefined
+         */
+        points: Base.Point3[];
+    }
+    export class ClosestPointsBetweenTwoShapesDto<T> extends ShapesDto<T> {
+        /**
+         * The OCCT shapes
+         * @default undefined
+         */
+        shape1?: T;
+        /**
+        * The OCCT shapes
+        * @default undefined
+        */
+        shape2?: T;
+    }
     export class FaceFromSurfaceAndWireDto<T, U> extends ShapesDto<T> {
         /**
          * Surface from which to create a face
@@ -1192,6 +1227,42 @@ export namespace OCCT {
          * @step 0.01
          */
         tolerance = 0.1;
+    }
+    export class OffsetAdvancedDto<T> {
+        constructor(shape?: T, distance?: number, tolerance?: number) {
+            this.shape = shape;
+            this.distance = distance;
+            if (tolerance) {
+                this.tolerance = tolerance;
+            }
+        }
+        /**
+         * Shape to offset
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Distance of offset
+         * @default 0.2
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 0.1
+         */
+        distance: number = 0.2;
+        /**
+         * Offset tolerance
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        tolerance = 0.1;
+        /**
+         * Join defines how to fill the holes that may appear between parallels to the two adjacent faces. It may take values GeomAbs_Arc or GeomAbs_Intersection:
+         * if Join is equal to GeomAbs_Arc, then pipes are generated between two free edges of two adjacent parallels, and spheres are generated on "images" of vertices; it is the default value
+         * @default arc
+        */
+        joinType = JoinTypeEnum.arc;
     }
     export class RevolveDto<T> {
         constructor(shape?: T, degrees?: number, direction?: Base.Vector3, copy?: boolean) {
