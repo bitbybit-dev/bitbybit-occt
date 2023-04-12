@@ -344,6 +344,10 @@ async function start() {
         'gp_Ax22d',
         'gp_Pln',
         'gp_Vec2d',
+        'TopOpeBRepTool',
+        'TopOpeBRepTool_PurgeInternalEdges',
+        'TopTools_DataMapOfShapeListOfShape',
+        'TopTools_IndexedDataMapOfShapeListOfShape'
     ];
     files.forEach(file => {
         const data = fs.readFileSync(file, 'utf8');

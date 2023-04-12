@@ -1,5 +1,5 @@
 import { Approx_ParametrizationType, BRepFill_TypeOfContact, BRepOffsetAPI_MakeOffsetShape, BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, GeomAbs_JoinType, OpenCascadeInstance, TopoDS_Shape, TopoDS_Wire } from '../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper } from '../occ-helper';
+import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from '../occ-helper';
 import * as Inputs from '../api/inputs/inputs';
 
 export class OCCTOperations {
@@ -111,38 +111,61 @@ export class OCCTOperations {
     }
 
     offset(inputs: Inputs.OCCT.OffsetDto<TopoDS_Shape>) {
+        return this.offsetAdv({ shape: inputs.shape, distance: inputs.distance, tolerance: inputs.tolerance, joinType: Inputs.OCCT.JoinTypeEnum.arc, removeIntEdges: false });
+    }
+
+    offsetAdv(inputs: Inputs.OCCT.OffsetAdvancedDto<TopoDS_Shape>) {
         if (!inputs.tolerance) { inputs.tolerance = 0.1; }
         if (inputs.distance === 0.0) { return inputs.shape; }
         let offset = null;
+        let joinType: GeomAbs_JoinType = this.getJoinType(inputs.joinType);
+        // only this mode is implemented currently, so we cannot expose others...
+        let brepOffsetMode: BRepOffset_Mode = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
+
         const wires = [];
-        if (inputs.shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_WIRE ||
-            inputs.shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_EDGE) {
+
+        if ((this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.wire ||
+            this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.edge)) {
             let wire;
-            if (inputs.shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_EDGE) {
+            if (this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.edge) {
                 wire = this.och.bRepBuilderAPIMakeWire(inputs.shape);
                 wires.push(wire);
             } else {
                 wire = inputs.shape;
             }
-            offset = new this.occ.BRepOffsetAPI_MakeOffset_1();
-            (offset as BRepOffsetAPI_MakeOffset_1).Init_2(this.occ.GeomAbs_JoinType.GeomAbs_Arc as GeomAbs_JoinType, false);
-            (offset as BRepOffsetAPI_MakeOffset_1).AddWire(wire);
-            (offset as BRepOffsetAPI_MakeOffset_1).Perform(inputs.distance, 0.0);
-        } else {
-            let shell = inputs.shape;
-            if (inputs.shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_FACE) {
-                shell = this.och.bRepBuilderAPIMakeShell(inputs.shape);
+            try {
+                offset = new this.occ.BRepOffsetAPI_MakeOffset_1();
+                (offset as BRepOffsetAPI_MakeOffset_1).Init_2(joinType, false);
+                (offset as BRepOffsetAPI_MakeOffset_1).AddWire(wire);
+                (offset as BRepOffsetAPI_MakeOffset_1).Perform(inputs.distance, 0.0);
+            } catch (ex) {
+                // if first method fails we can still try the second one on wire
+                offset = new this.occ.BRepOffsetAPI_MakeOffsetShape();
+                (offset as BRepOffsetAPI_MakeOffsetShape).PerformByJoin(
+                    wire,
+                    inputs.distance,
+                    inputs.tolerance,
+                    brepOffsetMode,
+                    false,
+                    false,
+                    joinType,
+                    inputs.removeIntEdges,
+                    new this.occ.Message_ProgressRange_1()
+                );
             }
+
+        } else {
+            let shapeToOffset = inputs.shape;
             offset = new this.occ.BRepOffsetAPI_MakeOffsetShape();
             (offset as BRepOffsetAPI_MakeOffsetShape).PerformByJoin(
-                shell,
+                shapeToOffset,
                 inputs.distance,
                 inputs.tolerance,
-                this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode,
+                brepOffsetMode,
                 false,
                 false,
-                this.occ.GeomAbs_JoinType.GeomAbs_Arc as GeomAbs_JoinType,
-                false,
+                joinType,
+                inputs.removeIntEdges,
                 new this.occ.Message_ProgressRange_1()
             );
         }
@@ -166,17 +189,7 @@ export class OCCTOperations {
     }
 
     extrude(inputs: Inputs.OCCT.ExtrudeDto<TopoDS_Shape>): TopoDS_Shape {
-        const gpVec = new this.occ.gp_Vec_4(inputs.direction[0], inputs.direction[1], inputs.direction[2]);
-        const prismMaker = new this.occ.BRepPrimAPI_MakePrism_1(
-            inputs.shape,
-            gpVec,
-            false,
-            true
-        );
-        const prismShape = prismMaker.Shape();
-        prismMaker.delete();
-        gpVec.delete();
-        return prismShape;
+        return this.och.extrude(inputs);
     }
 
     splitShapeWithShapes(inputs: Inputs.OCCT.SplitDto<TopoDS_Shape>) {
@@ -285,6 +298,90 @@ export class OCCTOperations {
         return result;
     }
 
+    pipePolylineWireNGon(inputs: Inputs.OCCT.PipePolygonWireNGonDto<TopoDS_Wire>) {
+        const wire = inputs.shape;
+        const shapesToPassThrough = [];
+        const edges = this.och.getEdges({ shape: wire });
+        edges.forEach((e, index) => {
+            const edgeStartPt = this.och.startPointOnEdge({ shape: e });
+            const tangent = this.och.tangentOnEdgeAtParam({ shape: e, param: 0 });
+            let tangentPreviousEdgeEnd;
+            let averageTangentVec = tangent;
+
+            if (index > 0 && index < edges.length - 1) {
+                const previousEdge = edges[index - 1];
+                tangentPreviousEdgeEnd = this.och.tangentOnEdgeAtParam({ shape: previousEdge, param: 1 });
+                averageTangentVec = [tangent[0] + tangentPreviousEdgeEnd[0] / 2, tangent[1] + tangentPreviousEdgeEnd[1] / 2, tangent[2] + tangentPreviousEdgeEnd[2] / 2];
+            }
+            const ngon = this.och.createNGonWire({ radius: inputs.radius, center: edgeStartPt, direction: averageTangentVec, nrCorners: inputs.nrCorners }) as TopoDS_Wire;
+            shapesToPassThrough.push(ngon);
+            if (index === edges.length - 1) {
+                const edgeEndPt = this.och.endPointOnEdge({ shape: e });
+                const tangentEndPt = this.och.tangentOnEdgeAtParam({ shape: e, param: 1 });
+                const ngon = this.och.createNGonWire({ radius: inputs.radius, center: edgeEndPt, direction: tangentEndPt, nrCorners: inputs.nrCorners }) as TopoDS_Wire;
+                shapesToPassThrough.push(ngon);
+            }
+        })
+
+        const pipe = new this.occ.BRepOffsetAPI_MakePipeShell(wire);
+        shapesToPassThrough.forEach(s => {
+            pipe.Add_1(s, false, false);
+        })
+
+        pipe.Build(new this.occ.Message_ProgressRange_1());
+        pipe.MakeSolid();
+        const pipeShape = pipe.Shape();
+        const result = this.och.getActualTypeOfShape(pipeShape);
+        pipeShape.delete();
+        pipe.delete();
+        return result;
+    }
+
+    pipeWireCylindrical(inputs: Inputs.OCCT.PipeWireCylindricalDto<TopoDS_Wire>) {
+        const wire = inputs.shape;
+        const shapesToPassThrough = [];
+        const edges = this.och.getEdges({ shape: wire });
+        edges.forEach((e, index) => {
+            const edgeStartPt = this.och.startPointOnEdge({ shape: e });
+            const tangent = this.och.tangentOnEdgeAtParam({ shape: e, param: 0 });
+            let tangentPreviousEdgeEnd;
+            let averageTangentVec = tangent;
+
+            if (index > 0 && index < edges.length - 1) {
+                const previousEdge = edges[index - 1];
+                tangentPreviousEdgeEnd = this.och.tangentOnEdgeAtParam({ shape: previousEdge, param: 1 });
+                averageTangentVec = [tangent[0] + tangentPreviousEdgeEnd[0] / 2, tangent[1] + tangentPreviousEdgeEnd[1] / 2, tangent[2] + tangentPreviousEdgeEnd[2] / 2];
+            }
+            const circle = this.och.createCircle(inputs.radius, edgeStartPt, averageTangentVec, typeSpecificityEnum.wire) as TopoDS_Wire;
+            shapesToPassThrough.push(circle);
+            if (index === edges.length - 1) {
+                const edgeEndPt = this.och.endPointOnEdge({ shape: e });
+                const tangentEndPt = this.och.tangentOnEdgeAtParam({ shape: e, param: 1 });
+                const line = this.och.createCircle(inputs.radius, edgeEndPt, tangentEndPt, typeSpecificityEnum.wire) as TopoDS_Wire;
+                shapesToPassThrough.push(line);
+            }
+        })
+
+        const pipe = new this.occ.BRepOffsetAPI_MakePipeShell(wire);
+        shapesToPassThrough.forEach(s => {
+            pipe.Add_1(s, false, false);
+        })
+
+        pipe.Build(new this.occ.Message_ProgressRange_1());
+        pipe.MakeSolid();
+        const pipeShape = pipe.Shape();
+        const result = this.och.getActualTypeOfShape(pipeShape);
+        pipeShape.delete();
+        pipe.delete();
+        return result;
+    }
+
+    pipeWiresCylindrical(inputs: Inputs.OCCT.PipeWiresCylindricalDto<TopoDS_Wire>) {
+        return inputs.shapes.map(wire => {
+            return this.pipeWireCylindrical({ shape: wire, radius: inputs.radius });
+        });
+    }
+
     makeThickSolidSimple(inputs: Inputs.OCCT.ThisckSolidSimpleDto<TopoDS_Shape>) {
         const maker = new this.occ.BRepOffsetAPI_MakeThickSolid();
         maker.MakeThickSolidBySimple(inputs.shape, inputs.offset);
@@ -302,15 +399,7 @@ export class OCCTOperations {
             facesToRemove.Append_1(shape);
         })
         const myBody = new this.occ.BRepOffsetAPI_MakeThickSolid();
-        let jointType: GeomAbs_JoinType;
-
-        if (inputs.joinType === Inputs.OCCT.JoinTypeEnum.arc) {
-            jointType = this.occ.GeomAbs_JoinType.GeomAbs_Arc as GeomAbs_JoinType;
-        } else if (inputs.joinType === Inputs.OCCT.JoinTypeEnum.intersection) {
-            jointType = this.occ.GeomAbs_JoinType.GeomAbs_Intersection as GeomAbs_JoinType;
-        } else if (inputs.joinType === Inputs.OCCT.JoinTypeEnum.tangent) {
-            jointType = this.occ.GeomAbs_JoinType.GeomAbs_Tangent as GeomAbs_JoinType;
-        }
+        let jointType: GeomAbs_JoinType = this.getJoinType(inputs.joinType);
 
         myBody.MakeThickSolidByJoin(
             inputs.shape,
@@ -331,4 +420,29 @@ export class OCCTOperations {
         return result;
     }
 
+    private getJoinType(jointType: Inputs.OCCT.JoinTypeEnum): GeomAbs_JoinType {
+        let res: GeomAbs_JoinType;
+        if (jointType === Inputs.OCCT.JoinTypeEnum.arc) {
+            res = this.occ.GeomAbs_JoinType.GeomAbs_Arc as GeomAbs_JoinType;
+        } else if (jointType === Inputs.OCCT.JoinTypeEnum.intersection) {
+            res = this.occ.GeomAbs_JoinType.GeomAbs_Intersection as GeomAbs_JoinType;
+        } else if (jointType === Inputs.OCCT.JoinTypeEnum.tangent) {
+            res = this.occ.GeomAbs_JoinType.GeomAbs_Tangent as GeomAbs_JoinType;
+        }
+        return res;
+    }
+
+
+
+    private getBRepOffsetMode(offsetMode: Inputs.OCCT.BRepOffsetModeEnum): BRepOffset_Mode {
+        let res: BRepOffset_Mode;
+        if (offsetMode === Inputs.OCCT.BRepOffsetModeEnum.skin) {
+            res = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
+        } else if (offsetMode === Inputs.OCCT.BRepOffsetModeEnum.pipe) {
+            res = this.occ.BRepOffset_Mode.BRepOffset_Pipe as BRepOffset_Mode;
+        } else if (offsetMode === Inputs.OCCT.BRepOffsetModeEnum.rectoVerso) {
+            res = this.occ.BRepOffset_Mode.BRepOffset_RectoVerso as BRepOffset_Mode;
+        }
+        return res;
+    }
 }

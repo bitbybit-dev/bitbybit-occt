@@ -69,6 +69,20 @@ export class OccHelper {
         return shape;
     }
 
+    extrude(inputs: Inputs.OCCT.ExtrudeDto<TopoDS_Shape>): TopoDS_Shape {
+        const gpVec = new this.occ.gp_Vec_4(inputs.direction[0], inputs.direction[1], inputs.direction[2]);
+        const prismMaker = new this.occ.BRepPrimAPI_MakePrism_1(
+            inputs.shape,
+            gpVec,
+            false,
+            true
+        );
+        const prismShape = prismMaker.Shape();
+        prismMaker.delete();
+        gpVec.delete();
+        return prismShape;
+    }
+
     makeCompound(inputs: Inputs.OCCT.CompoundShapesDto<TopoDS_Shape>): TopoDS_Compound {
         const resCompound = new this.occ.TopoDS_Compound();
         const builder = new this.occ.BRep_Builder();

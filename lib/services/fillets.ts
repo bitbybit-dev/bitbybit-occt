@@ -141,6 +141,21 @@ export class OCCTFillets {
         return result;
     }
 
+    fillet3DWire(inputs: Inputs.OCCT.Fillet3DWireDto<TopoDS_Wire>) {
+        const extrusion = this.och.extrude({ shape: inputs.shape, direction: inputs.direction });
+        const filletShape = this.filletEdges({ shape: extrusion, radius: inputs.radius, indexes: inputs.indexes, radiusList: inputs.radiusList });
+        const faceEdges = [];
+        this.och.getFaces({shape: filletShape}).forEach(f => {
+            const firstEdge = this.och.getEdges({shape: f})[0];
+            faceEdges.push(firstEdge);
+        });
+        const result = this.och.combineEdgesAndWiresIntoAWire({ shapes: faceEdges });
+        extrusion.delete();
+        filletShape.delete();
+        faceEdges.forEach(e => e.delete());
+        return result;
+    }
+
     fillet2d(inputs: Inputs.OCCT.FilletDto<TopoDS_Wire | TopoDS_Face>): TopoDS_Face | TopoDS_Wire {
         if (inputs.indexes && inputs.radiusList && inputs.radiusList.length !== inputs.indexes.length) {
             throw new Error('When using radius list, length of the list must match index list of corners that you want to fillet.');
