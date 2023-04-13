@@ -48,7 +48,6 @@ export class OccHelper {
                 const pt2g = [pt2.X(), pt2.Y(), pt2.Z()];
                 pt1.delete();
                 pt2.delete();
-                crv.delete();
                 points.push(pt1g);
                 points.push(pt2g);
             } catch {
