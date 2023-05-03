@@ -21,6 +21,7 @@ export class OCCTService {
     public readonly booleans: OCCTBooleans;
     public readonly fillets: OCCTFillets;
     public readonly io: OCCTIO;
+    public plugins?: any;
     private inctementalMeshBuilder;
 
     constructor(
