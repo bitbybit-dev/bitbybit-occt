@@ -10,19 +10,19 @@ export class OCCTWire {
     ) {
     }
 
-    createPolygonWire(inputs: Inputs.OCCT.PolygonDto): any {
+    createPolygonWire(inputs: Inputs.OCCT.PolygonDto): TopoDS_Wire {
         return this.och.createPolygonWire(inputs);
     }
 
-    createPolylineWire(inputs: Inputs.OCCT.PolylineDto): any {
+    createPolylineWire(inputs: Inputs.OCCT.PolylineDto): TopoDS_Wire {
         return this.och.createPolylineWire(inputs);
     }
 
-    combineEdgesAndWiresIntoAWire(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire | TopoDS_Edge>): any {
+    combineEdgesAndWiresIntoAWire(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire | TopoDS_Edge>): TopoDS_Wire {
         return this.och.combineEdgesAndWiresIntoAWire(inputs);
     }
 
-    addEdgesAndWiresToWire(inputs: Inputs.OCCT.ShapeShapesDto<TopoDS_Wire, TopoDS_Wire | TopoDS_Edge>): any {
+    addEdgesAndWiresToWire(inputs: Inputs.OCCT.ShapeShapesDto<TopoDS_Wire, TopoDS_Wire | TopoDS_Edge>): TopoDS_Wire {
         const makeWire = new this.occ.BRepBuilderAPI_MakeWire_1();
         makeWire.Add_2(inputs.shape);
         inputs.shapes.forEach((shape) => {
