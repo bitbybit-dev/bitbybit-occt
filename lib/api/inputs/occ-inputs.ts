@@ -44,6 +44,7 @@ export namespace OCCT {
             tri_indexes: number[];
             vertex_coord: Base.Point3;
             vertex_coord_vec: Base.Vector3[];
+            uvs: Base.Point2[];
         }[];
         /**
          * Edge list

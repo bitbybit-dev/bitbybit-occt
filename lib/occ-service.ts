@@ -46,6 +46,7 @@ export class OCCTService {
             tri_indexes: number[];
             vertex_coord: number[];
             vertex_coord_vec: number[][];
+            uvs: [number, number][];
         }[],
         edgeList: {
             edge_index: number;
@@ -59,6 +60,7 @@ export class OCCTService {
             tri_indexes: number[];
             vertex_coord: number[];
             vertex_coord_vec: number[][];
+            uvs: [number, number][];
         }[] = [];
         const edgeList: {
             edge_index: number;
@@ -93,6 +95,7 @@ export class OCCTService {
             const thisFace = {
                 vertex_coord: [],
                 normal_coord: [],
+                uvs: [],
                 tri_indexes: [],
                 vertex_coord_vec: [],
                 number_of_triangles: 0,
@@ -107,6 +110,9 @@ export class OCCTService {
             thisFace.vertex_coord_vec = [];
             for (let i = 0; i < triangulation.NbNodes(); i++) {
                 const p = triangulation.Node(i + 1).Transformed(aLocation.Transformation());
+                const uv = triangulation.UVNode(i + 1);
+                thisFace.uvs[(i * 2) + 0] = uv.X();
+                thisFace.uvs[(i * 2) + 1] = uv.Y();
                 thisFace.vertex_coord[(i * 3) + 0] = p.X();
                 thisFace.vertex_coord[(i * 3) + 1] = p.Y();
                 thisFace.vertex_coord[(i * 3) + 2] = p.Z();
@@ -194,7 +200,7 @@ export class OCCTService {
             }
         });
         inctementalMeshBuilder.delete();
-        
+
         return { faceList, edgeList };
     }
 
