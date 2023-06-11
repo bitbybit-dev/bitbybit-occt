@@ -37,22 +37,25 @@ export namespace OCCT {
         /**
          * Face list
          */
-        faceList: {
-            face_index: number;
-            normal_coord: Base.Vector3;
-            number_of_triangles: number;
-            tri_indexes: number[];
-            vertex_coord: Base.Point3;
-            vertex_coord_vec: Base.Vector3[];
-            uvs: Base.Point2[];
-        }[];
+        faceList: DecomposedFaceDto[];
         /**
          * Edge list
          */
-        edgeList: {
-            edge_index: number;
-            vertex_coord: Base.Point3[];
-        }[]
+        edgeList: DecomposedEdgeDto[]
+    }
+
+    export class DecomposedFaceDto {
+        face_index: number;
+        normal_coord:  number[];
+        number_of_triangles: number;
+        tri_indexes: number[];
+        vertex_coord: number[];
+        vertex_coord_vec: Base.Vector3[];
+        uvs: number[];
+    }
+    export class DecomposedEdgeDto {
+        edge_index: number;
+        vertex_coord: Base.Vector3[];
     }
     export class ShapesDto<T> {
         constructor(shapes?: T[]) {

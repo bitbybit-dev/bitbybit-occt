@@ -38,34 +38,9 @@ export class OCCTService {
         this.io = new OCCTIO(occ, och);
     }
 
-    shapeToMesh(shape, maxDeviation, adjustYtoZ): {
-        faceList: {
-            face_index: number;
-            normal_coord: number[];
-            number_of_triangles: number;
-            tri_indexes: number[];
-            vertex_coord: number[];
-            vertex_coord_vec: number[][];
-            uvs: [number, number][];
-        }[],
-        edgeList: {
-            edge_index: number;
-            vertex_coord: number[][];
-        }[]
-    } {
-        const faceList: {
-            face_index: number;
-            normal_coord: number[];
-            number_of_triangles: number;
-            tri_indexes: number[];
-            vertex_coord: number[];
-            vertex_coord_vec: number[][];
-            uvs: [number, number][];
-        }[] = [];
-        const edgeList: {
-            edge_index: number;
-            vertex_coord: number[][];
-        }[] = [];
+    shapeToMesh(shape, maxDeviation, adjustYtoZ): Inputs.OCCT.DecomposedMeshDto {
+        const faceList: Inputs.OCCT.DecomposedFaceDto[] = [];
+        const edgeList: Inputs.OCCT.DecomposedEdgeDto[] = [];
 
         let shapeToUse = shape;
 
@@ -92,7 +67,8 @@ export class OCCTService {
             const aLocation = new this.occ.TopLoc_Location_1();
             const myT = this.occ.BRep_Tool.Triangulation(myFace, aLocation, 0);
             if (myT.IsNull()) { console.error('Encountered Null Face!'); return; }
-            const thisFace = {
+
+            const thisFace: Inputs.OCCT.DecomposedFaceDto = {
                 vertex_coord: [],
                 normal_coord: [],
                 uvs: [],
@@ -145,12 +121,10 @@ export class OCCTService {
                     n1 = n2;
                     n2 = tmp;
                 }
-                // if(TriangleIsValid(Nodes.Value(1), Nodes.Value(n2), Nodes.Value(n3))) {
                 thisFace.tri_indexes[(validFaceTriCount * 3) + 0] = n1 - 1;
                 thisFace.tri_indexes[(validFaceTriCount * 3) + 1] = n2 - 1;
                 thisFace.tri_indexes[(validFaceTriCount * 3) + 2] = n3 - 1;
                 validFaceTriCount++;
-                // }
             }
             thisFace.number_of_triangles = validFaceTriCount;
             faceList.push(thisFace);
@@ -170,7 +144,7 @@ export class OCCTService {
         this.och.forEachEdge(shapeToUse, (index, myEdge) => {
             const edgeHash = myEdge.HashCode(100000000);
             if (!fullShapeEdgeHashes2.hasOwnProperty(edgeHash)) {
-                const thisEdge = {
+                const thisEdge: Inputs.OCCT.DecomposedEdgeDto = {
                     vertex_coord: [],
                     edge_index: -1
                 };
