@@ -499,21 +499,22 @@ export class OccHelper {
 
     getShapeTypeEnum(shape: TopoDS_Shape): shapeTypeEnum {
         let result = shapeTypeEnum.unknown;
-        if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_EDGE) {
+        const st = shape.ShapeType();
+        if (st === this.occ.TopAbs_ShapeEnum.TopAbs_EDGE) {
             result = shapeTypeEnum.edge;
-        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_WIRE) {
+        } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_WIRE) {
             result = shapeTypeEnum.wire;
-        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_VERTEX) {
+        } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_VERTEX) {
             result = shapeTypeEnum.vertex;
-        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_SOLID) {
+        } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_SOLID) {
             result = shapeTypeEnum.solid;
-        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_SHELL) {
+        } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_SHELL) {
             result = shapeTypeEnum.shell;
-        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_FACE) {
+        } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_FACE) {
             result = shapeTypeEnum.face;
-        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_COMPSOLID) {
+        } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_COMPSOLID) {
             result = shapeTypeEnum.compSolid;
-        } else if (shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_COMPOUND) {
+        } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_COMPOUND) {
             result = shapeTypeEnum.compound;
         } else {
             result = shapeTypeEnum.shape;
