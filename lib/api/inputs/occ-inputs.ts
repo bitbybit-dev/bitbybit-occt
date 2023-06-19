@@ -1,4 +1,3 @@
-// import { TopoDS_Face } from "projects/bitbybit-core/src/bitbybit-dev-occt/bitbybit-dev-occt";
 import { Base } from "./inputs";
 // tslint:disable-next-line: no-namespace
 export namespace OCCT {
