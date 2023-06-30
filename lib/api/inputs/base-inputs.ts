@@ -1,5 +1,6 @@
 
 // tslint:disable-next-line: no-namespace
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Base {
     // Can't use BabylonJS types here as that crashes worker, which tries to include them
     export type Color = string;
@@ -14,8 +15,8 @@ export namespace Base {
     
     // tslint:disable-next-line: no-namespace
     export enum skyboxEnum {
-        default = 'default',
-        clearSky = 'clearSky',
-        city = 'city'
+        default = "default",
+        clearSky = "clearSky",
+        city = "city"
     }
 }

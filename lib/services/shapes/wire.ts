@@ -1,6 +1,6 @@
-import { Geom_Surface, TopoDS_Face, OpenCascadeInstance, TopoDS_Wire, TopoDS_Shape, TopoDS_Edge } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from '../../occ-helper';
-import * as Inputs from '../../api/inputs/inputs';
+import { Geom_Surface, TopoDS_Face, OpenCascadeInstance, TopoDS_Wire, TopoDS_Shape, TopoDS_Edge } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from "../../occ-helper";
+import * as Inputs from "../../api/inputs/inputs";
 
 export class OCCTWire {
 
@@ -36,13 +36,13 @@ export class OCCTWire {
         if (makeWire.IsDone()) {
             result = makeWire.Wire();
         } else {
-            throw new Error('Wire could not be constructed. Check if edges and wires do not have disconnected elements.');
+            throw new Error("Wire could not be constructed. Check if edges and wires do not have disconnected elements.");
         }
         makeWire.delete();
         return result;
     }
 
-    createBSpline(inputs: Inputs.OCCT.BSplineDto): any {
+    createBSpline(inputs: Inputs.OCCT.BSplineDto): TopoDS_Wire {
         return this.och.createBSpline(inputs);
     }
 
@@ -177,7 +177,7 @@ export class OCCTWire {
 
     getWire(inputs: Inputs.OCCT.ShapeIndexDto<TopoDS_Shape>): TopoDS_Wire {
         if (!inputs.shape || this.och.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.wire || inputs.shape.IsNull()) {
-            throw (new Error('Shape is not provided or is of incorrect type'));
+            throw (new Error("Shape is not provided or is of incorrect type"));
         }
         if (!inputs.index) { inputs.index = 0; }
         let innerWire: any = {}; let wiresFound = 0;
@@ -208,24 +208,24 @@ export class OCCTWire {
     }
 
     placeWireOnFace(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire | TopoDS_Face>) {
-        let wire: TopoDS_Wire = inputs.shapes[0] as TopoDS_Wire;
-        let face: TopoDS_Face = inputs.shapes[1] as TopoDS_Face;
+        const wire = inputs.shapes[0] as TopoDS_Wire;
+        const face = inputs.shapes[1] as TopoDS_Face;
         const srf = this.och.surfaceFromFace({ shape: face });
-        let result = this.placeWire(wire, srf);
+        const result = this.placeWire(wire, srf);
         return result;
     }
 
     placeWiresOnFace(inputs: Inputs.OCCT.ShapeShapesDto<TopoDS_Face, TopoDS_Wire>) {
-        let wires = inputs.shapes;
-        let face = inputs.shape;
+        const wires = inputs.shapes;
+        const face = inputs.shape;
         const srf = this.och.surfaceFromFace({ shape: face });
-        let result = wires.map(wire => this.placeWire(wire, srf));
+        const result = wires.map(wire => this.placeWire(wire, srf));
         return result;
     }
 
     private placeWire(wire: TopoDS_Wire, surface: Geom_Surface) {
-        let edges = this.och.getEdges({ shape: wire });
-        let newEdges: TopoDS_Edge[] = [];
+        const edges = this.och.getEdges({ shape: wire });
+        const newEdges: TopoDS_Edge[] = [];
         edges.forEach(e => {
             const umin = { current: 0 };
             const umax = { current: 0 };
@@ -245,7 +245,7 @@ export class OCCTWire {
             crv.delete();
         });
         edges.forEach(e => e.delete());
-        let res = this.och.combineEdgesAndWiresIntoAWire({ shapes: newEdges });
+        const res = this.och.combineEdgesAndWiresIntoAWire({ shapes: newEdges });
         newEdges.forEach(e => e.delete());
         return res;
     }

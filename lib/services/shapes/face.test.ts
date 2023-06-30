@@ -1,5 +1,4 @@
-import initOpenCascade, { OpenCascadeInstance, TopoDS_Face, TopoDS_Shape } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
-import { OCCTEdge } from "./edge";
+import initOpenCascade, { OpenCascadeInstance, TopoDS_Face } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper } from "../../occ-helper";
 import { OCCTWire } from "./wire";
 import { VectorHelperService } from "../../api/vector-helper.service";
@@ -8,7 +7,7 @@ import { OCCTFace } from "./face";
 import { OCCTGeom } from "../geom/geom";
 import { OCCT } from "../../api/inputs";
 
-describe('OCCT face unit tests', () => {
+describe("OCCT face unit tests", () => {
     let occt: OpenCascadeInstance;
     let wire: OCCTWire;
     let face: OCCTFace;
@@ -25,7 +24,7 @@ describe('OCCT face unit tests', () => {
         geom = new OCCTGeom(occt, occHelper);
     });
 
-    it('should create a face from closed planar wire', async () => {
+    it("should create a face from closed planar wire", async () => {
         const w = wire.createCircleWire({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const f = face.createFaceFromWire({ shape: w, planar: true });
         const area = face.getFaceArea({ shape: f });
@@ -35,7 +34,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should create a face from closed non-planar wire', async () => {
+    it("should create a face from closed non-planar wire", async () => {
         const w = wire.interpolatePoints({ points: [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]], periodic: true, tolerance: 1e-7 });
         const f = face.createFaceFromWire({ shape: w, planar: false });
         const area = face.getFaceArea({ shape: f });
@@ -45,7 +44,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should not create a good face from open non-planar wire', async () => {
+    it("should not create a good face from open non-planar wire", async () => {
         const w = wire.createBezier({ points: [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]], closed: false });
         const f = face.createFaceFromWire({ shape: w, planar: false });
         const area = face.getFaceArea({ shape: f });
@@ -56,13 +55,13 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should not create a good face from shape that is not a wire', async () => {
+    it("should not create a good face from shape that is not a wire", async () => {
         const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
-        expect(() => face.createFaceFromWire({ shape: b, planar: false })).toThrowError('Provided input shape is not a wire');
+        expect(() => face.createFaceFromWire({ shape: b, planar: false })).toThrowError("Provided input shape is not a wire");
         b.delete();
     });
 
-    it('should create a faces from closed planar wires', async () => {
+    it("should create a faces from closed planar wires", async () => {
         const w1 = wire.createCircleWire({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const w2 = wire.createCircleWire({ radius: 2, center: [0, 0, 1], direction: [0, 0, 1] });
         const f = face.createFacesFromWires({ shapes: [w1, w2], planar: true });
@@ -75,7 +74,7 @@ describe('OCCT face unit tests', () => {
         f.forEach(s => s.delete());
     });
 
-    it('should create an infinite face from surface', async () => {
+    it("should create an infinite face from surface", async () => {
         const srf = geom.surfaces.cylindricalSurface({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const f = face.faceFromSurface({ shape: srf, tolerance: 1e-7 });
         const area = face.getFaceArea({ shape: f });
@@ -84,7 +83,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should create an face from surface and wire', async () => {
+    it("should create an face from surface and wire", async () => {
         const f1 = face.createCircleFace({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const srf = geom.surfaces.surfaceFromFace({ shape: f1 });
         const w = wire.createCircleWire({ radius: 2, center: [0, 0, 1], direction: [0, 0, 1] });
@@ -97,35 +96,35 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should get u min bound', () => {
+    it("should get u min bound", () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const uMin = face.getUMinBound({ shape: f });
         expect(uMin).toBe(-1);
         f.delete();
     });
 
-    it('should get u max bound', () => {
+    it("should get u max bound", () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const uMax = face.getUMaxBound({ shape: f });
         expect(uMax).toBe(1);
         f.delete();
     });
 
-    it('should get v min bound', () => {
+    it("should get v min bound", () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const vMin = face.getVMinBound({ shape: f });
         expect(vMin).toBe(-0.5);
         f.delete();
     });
 
-    it('should get v max bound', () => {
+    it("should get v max bound", () => {
         const f = face.createRectangleFace({ width: 1, length: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const vMax = face.getVMaxBound({ shape: f });
         expect(vMax).toBe(0.5);
         f.delete();
     });
 
-    it('should subdivide face into points', () => {
+    it("should subdivide face into points", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const pts = face.subdivideToPoints({
@@ -176,7 +175,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide face into points controlled', () => {
+    it("should subdivide face into points controlled", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const subdOpt = new OCCT.FaceSubdivisionControlledDto<TopoDS_Face>(f);
@@ -223,7 +222,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide face into points controlled with removals', () => {
+    it("should subdivide face into points controlled with removals", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const subdOpt = new OCCT.FaceSubdivisionControlledDto<TopoDS_Face>(f);
@@ -256,7 +255,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide face into points', () => {
+    it("should subdivide face into points", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const pts = face.subdivideToPoints({
@@ -289,7 +288,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide face into points, remove end edges and shift u and v directions', () => {
+    it("should subdivide face into points, remove end edges and shift u and v directions", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const pts = face.subdivideToPoints({
@@ -316,7 +315,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide into normals', () => {
+    it("should subdivide into normals", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const normals = face.subdivideToNormals({
@@ -349,7 +348,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide face into normals, remove end edges and shift u and v directions', () => {
+    it("should subdivide face into normals, remove end edges and shift u and v directions", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const normals = face.subdivideToNormals({
@@ -376,7 +375,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide to points on param on u', () => {
+    it("should subdivide to points on param on u", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.subdivideToPointsOnParam({
@@ -399,7 +398,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide to points on param on v', () => {
+    it("should subdivide to points on param on v", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.subdivideToPointsOnParam({
@@ -422,7 +421,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide to points on param, remove start and end points and shift half step on v', () => {
+    it("should subdivide to points on param, remove start and end points and shift half step on v", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.subdivideToPointsOnParam({
@@ -446,7 +445,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide to points on param, remove start and end points and shift half step on u', () => {
+    it("should subdivide to points on param, remove start and end points and shift half step on u", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.subdivideToPointsOnParam({
@@ -470,7 +469,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide to points on param on u', () => {
+    it("should subdivide to points on param on u", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
@@ -493,7 +492,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide to points on param on u', () => {
+    it("should subdivide to points on param on u", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
@@ -516,7 +515,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide to points on param on v', () => {
+    it("should subdivide to points on param on v", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
@@ -539,7 +538,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide to points on param on u and remove edge points and shift step', () => {
+    it("should subdivide to points on param on u and remove edge points and shift step", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
@@ -564,7 +563,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide to points on param on v and remove edge points and shift step', () => {
+    it("should subdivide to points on param on v and remove edge points and shift step", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
@@ -589,7 +588,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide face into uvs', () => {
+    it("should subdivide face into uvs", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUV({
@@ -640,7 +639,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should subdivide face into uvs', () => {
+    it("should subdivide face into uvs", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUV({
@@ -674,7 +673,7 @@ describe('OCCT face unit tests', () => {
     });
 
 
-    it('should subdivide face into uvs remove end and start edges and shift half step both on u and v', () => {
+    it("should subdivide face into uvs remove end and start edges and shift half step both on u and v", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUV({
@@ -707,7 +706,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should get uv on face', () => {
+    it("should get uv on face", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uv = face.uvOnFace({ shape: f, paramU: 0.2, paramV: 0.3 });
@@ -719,7 +718,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should get points on uvs', () => {
+    it("should get points on uvs", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.pointsOnUVs({ shape: f, paramsUV: [[0.2, 0.3], [0, 0], [0.5, 0.4]] });
@@ -734,7 +733,7 @@ describe('OCCT face unit tests', () => {
     });
 
 
-    it('should get normals on uvs', () => {
+    it("should get normals on uvs", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const normals = face.normalsOnUVs({ shape: f, paramsUV: [[0.2, 0.3], [0, 0], [0.5, 0.4]] });
@@ -748,7 +747,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should get point on uv', () => {
+    it("should get point on uv", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const point = face.pointOnUV({ shape: f, paramU: 0.2, paramV: 0.3 });
@@ -758,7 +757,7 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should get normal on uv', () => {
+    it("should get normal on uv", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const normal = face.normalOnUV({ shape: f, paramU: 0.2, paramV: 0.3 });
@@ -768,51 +767,51 @@ describe('OCCT face unit tests', () => {
         f.delete();
     });
 
-    it('should create polygon face', () => {
+    it("should create polygon face", () => {
         const f = face.createPolygonFace({ points: [[0, 0, 0], [1, 0, -2], [1, 0, 0], [0, 0, 1]] });
         const area = face.getFaceArea({ shape: f });
         expect(area).toBe(1.5);
         f.delete();
     });
 
-    it('should create ellipse face', () => {
+    it("should create ellipse face", () => {
         const f = face.createEllipseFace({ center: [0, 0, 0], radiusMinor: 1, radiusMajor: 2, direction: [0, 1, 0] });
         const area = face.getFaceArea({ shape: f });
         expect(area).toBe(6.283185307179584);
         f.delete();
     });
 
-    it('should not create ellipse face when radius major is smaller then minor', () => {
+    it("should not create ellipse face when radius major is smaller then minor", () => {
         expect(() => face.createEllipseFace({ center: [0, 0, 0], radiusMinor: 2, radiusMajor: 1, direction: [0, 1, 0] }))
-            .toThrowError('Ellipse could not be created');
+            .toThrowError("Ellipse could not be created");
     });
 
-    it('should create square face', () => {
+    it("should create square face", () => {
         const f = face.createSquareFace({ center: [0, 0, 0], size: 2, direction: [0, 1, 0] });
         const area = face.getFaceArea({ shape: f });
         expect(area).toBe(4);
         f.delete();
     });
 
-    it('should not get a face of a shape that does not have faces', async () => {
+    it("should not get a face of a shape that does not have faces", async () => {
         const d = occHelper.lineEdge({ start: [0, 0, 0], end: [1, 1, 1] });
-        expect(() => face.getFace({ shape: d, index: 22 })).toThrowError('Shape is not provided or is of incorrect type');
+        expect(() => face.getFace({ shape: d, index: 22 })).toThrowError("Shape is not provided or is of incorrect type");
         d.delete();
     });
 
-    it('should not get a face of a shape that does not have particular index', async () => {
+    it("should not get a face of a shape that does not have particular index", async () => {
         const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
-        expect(() => face.getFace({ shape: b, index: 22 })).toThrowError('Face index is out of range');
+        expect(() => face.getFace({ shape: b, index: 22 })).toThrowError("Face index is out of range");
         b.delete();
     });
 
-    it('should not get a face of a shape that does not have particular index', async () => {
+    it("should not get a face of a shape that does not have particular index", async () => {
         const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
-        expect(() => face.getFace({ shape: b, index: -22 })).toThrowError('Face index is out of range');
+        expect(() => face.getFace({ shape: b, index: -22 })).toThrowError("Face index is out of range");
         b.delete();
     });
 
-    it('should get faces', async () => {
+    it("should get faces", async () => {
         const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
         const faces = face.getFaces({ shape: b });
         expect(faces.length).toBe(6);
@@ -820,7 +819,7 @@ describe('OCCT face unit tests', () => {
         faces.forEach(f => f.delete());
     });
 
-    it('should reverse a face', async () => {
+    it("should reverse a face", async () => {
         const f = face.createRectangleFace({ center: [0, 0, 0], width: 2, length: 1, direction: [0, 1, 0] });
         const w = wire.getWire({ shape: f, index: 0 });
         const fr = face.reversedFace({ shape: f });
@@ -834,7 +833,7 @@ describe('OCCT face unit tests', () => {
         wr.delete();
     });
 
-    it('should get faces areas', async () => {
+    it("should get faces areas", async () => {
         const f1 = face.createRectangleFace({ center: [0, 0, 0], width: 2, length: 1, direction: [0, 1, 0] });
         const f2 = face.createCircleFace({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const areas = face.getFacesAreas({ shapes: [f1, f2] });
@@ -845,7 +844,7 @@ describe('OCCT face unit tests', () => {
         f2.delete();
     });
 
-    it('should get faces centers of mass', async () => {
+    it("should get faces centers of mass", async () => {
         const f1 = face.createRectangleFace({ center: [0, 1, 0], width: 2, length: 1, direction: [0, 1, 0] });
         const f2 = face.createCircleFace({ radius: 3, center: [0, 3, 3], direction: [0, 0, 1] });
         const centers = face.getFacesCentersOfMass({ shapes: [f1, f2] });
@@ -858,7 +857,7 @@ describe('OCCT face unit tests', () => {
     });
 
 
-    it('should get face center of mass', async () => {
+    it("should get face center of mass", async () => {
         const f1 = face.createRectangleFace({ center: [0, 1, 0], width: 2, length: 1, direction: [0, 1, 0] });
         const center = face.getFaceCenterOfMass({ shape: f1 });
         expect(center).toEqual(

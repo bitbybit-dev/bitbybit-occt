@@ -1,8 +1,8 @@
-import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Circle, Handle_Geom_Curve, Handle_Geom_Ellipse, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from '../bitbybit-dev-occt/bitbybit-dev-occt';
-import { VectorHelperService } from './api/vector-helper.service';
-import { Base } from './api/inputs/base-inputs';
-import * as Inputs from './api/inputs/inputs';
-import { ShapesHelperService } from './api/shapes-helper.service';
+import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Circle, Handle_Geom_Curve, Handle_Geom_Ellipse, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import { VectorHelperService } from "./api/vector-helper.service";
+import { Base } from "./api/inputs/base-inputs";
+import * as Inputs from "./api/inputs/inputs";
+import { ShapesHelperService } from "./api/shapes-helper.service";
 
 export enum typeSpecificityEnum {
     curve,
@@ -50,7 +50,8 @@ export class OccHelper {
                 pt2.delete();
                 points.push(pt1g);
                 points.push(pt2g);
-            } catch {
+            } catch (ex) {
+                console.log(ex);
             }
         });
         if (points.length > 0) {
@@ -136,7 +137,7 @@ export class OccHelper {
         const pt = this.gpPnt2d(point);
         const dir1 = this.gpDir2d(direction1);
         const dir2 = this.gpDir2d(direction2);
-        let ax = new this.occ.gp_Ax22d_2(pt, dir1, dir2);
+        const ax = new this.occ.gp_Ax22d_2(pt, dir1, dir2);
         dir1.delete();
         dir2.delete();
         pt.delete();
@@ -146,7 +147,7 @@ export class OccHelper {
     gpPln(point: Base.Point3, direction: Base.Vector3): gp_Pln_3 {
         const gpPnt = this.gpPnt(point);
         const gpDir = this.gpDir(direction);
-        let pln = new this.occ.gp_Pln_3(gpPnt, gpDir);
+        const pln = new this.occ.gp_Pln_3(gpPnt, gpDir);
         gpPnt.delete();
         gpDir.delete();
         return pln;
@@ -205,7 +206,7 @@ export class OccHelper {
     bRepBuilderAPIMakeEdge(curve: Geom_Curve): TopoDS_Edge {
         const crv = this.castToHandleGeomCurve(curve);
         const edge = new this.occ.BRepBuilderAPI_MakeEdge_24(crv);
-        let ed = edge.Edge();
+        const ed = edge.Edge();
         edge.delete();
         crv.delete();
         return ed;
@@ -333,7 +334,7 @@ export class OccHelper {
 
     getEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Edge[] {
         if (!inputs.shape || this.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.wire || inputs.shape.IsNull()) {
-            throw (new Error('Shape is not provided or is of incorrect type'));
+            throw (new Error("Shape is not provided or is of incorrect type"));
         }
         const edges = [];
         this.forEachEdge(inputs.shape, (i, edge) => {
@@ -629,7 +630,7 @@ export class OccHelper {
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
         })
-        let wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
+        const wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
         const alignedWire = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
         return alignedWire;
@@ -641,8 +642,8 @@ export class OccHelper {
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
         })
-        let wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
-        let aligned = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
+        const wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
+        const aligned = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
         return aligned;
     }
@@ -653,8 +654,8 @@ export class OccHelper {
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
         })
-        let wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
-        let aligned = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
+        const wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
+        const aligned = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
         return aligned;
     }
@@ -947,7 +948,7 @@ export class OccHelper {
             this.getShapeTypeEnum(shape) !== shapeTypeEnum.compound ||
             shape.IsNull()
         ) {
-            throw new Error('Shape is not a compound or is null.');
+            throw new Error("Shape is not a compound or is null.");
         }
         let solidsFound = 0;
         this.forEachSolid(shape, (i, s) => { solidsFound++; });
@@ -959,7 +960,7 @@ export class OccHelper {
             shape.ShapeType() > this.occ.TopAbs_ShapeEnum.TopAbs_COMPSOLID ||
             shape.IsNull()
         ) {
-            console.error('Not a compound shape!');
+            console.error("Not a compound shape!");
             return shape;
         }
         if (!index) {
@@ -971,7 +972,7 @@ export class OccHelper {
         this.forEachSolid(shape, (i, s) => {
             if (i === index) { innerSolid = this.occ.TopoDS.Solid_1(s); } solidsFound++;
         });
-        if (solidsFound === 0) { console.error('NO SOLIDS FOUND IN SHAPE!'); innerSolid = shape; }
+        if (solidsFound === 0) { console.error("NO SOLIDS FOUND IN SHAPE!"); innerSolid = shape; }
         innerSolid.hash = (shape as any).hash + 1;
         return innerSolid;
     }
@@ -1083,9 +1084,9 @@ export class OccHelper {
         return (
             Array.isArray(item) ||
             (!!item &&
-                typeof item === 'object' &&
-                item.hasOwnProperty('length') &&
-                typeof item.length === 'number' &&
+                typeof item === "object" &&
+                item.hasOwnProperty("length") &&
+                typeof item.length === "number" &&
                 item.length > 0 &&
                 (item.length - 1) in item
             )
@@ -1094,7 +1095,7 @@ export class OccHelper {
 
     intersection(inputs: Inputs.OCCT.IntersectionDto<TopoDS_Shape>): TopoDS_Shape[] {
         if (inputs.shapes.length < 2) {
-            throw (new Error('Less than 2 shapes provided for intersection'));
+            throw (new Error("Less than 2 shapes provided for intersection"));
         }
 
         const intersectShape = inputs.shapes[0];
@@ -1124,7 +1125,7 @@ export class OccHelper {
             intersectionResults = intersectionResults.map(i => {
                 const fusor = new this.occ.ShapeUpgrade_UnifySameDomain_2(i, true, true, false);
                 fusor.Build();
-                let fusedShape = fusor.Shape();
+                const fusedShape = fusor.Shape();
                 fusor.delete();
                 return fusedShape;
             });
@@ -1152,13 +1153,13 @@ export class OccHelper {
             let errorMessage;
             const error = makeWire.Error();
             if (error === this.occ.BRepBuilderAPI_WireError.BRepBuilderAPI_DisconnectedWire) {
-                errorMessage = 'Wire is disconnected and can not be constructed';
+                errorMessage = "Wire is disconnected and can not be constructed";
             } else if (error === this.occ.BRepBuilderAPI_WireError.BRepBuilderAPI_EmptyWire) {
-                errorMessage = 'Wire is empty and can not be constructed';
+                errorMessage = "Wire is empty and can not be constructed";
             } else if (error === this.occ.BRepBuilderAPI_WireError.BRepBuilderAPI_NonManifoldWire) {
-                errorMessage = 'Wire is non manifold and can not be constructed';
+                errorMessage = "Wire is non manifold and can not be constructed";
             } else if (error === this.occ.BRepBuilderAPI_WireError.BRepBuilderAPI_WireDone) {
-                errorMessage = 'Wire is done';
+                errorMessage = "Wire is done";
             }
             throw new Error(errorMessage);
         }
@@ -1282,7 +1283,7 @@ export class OccHelper {
             ax.delete();
             rotation.delete();
         }
-        let actualShape = this.getActualTypeOfShape(rotated);
+        const actualShape = this.getActualTypeOfShape(rotated);
         if (inputs.angle !== 0) {
             rotated.delete();
         }
@@ -1322,28 +1323,28 @@ export class OccHelper {
     startPointOnEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Base.Point3 {
         const edge = inputs.shape;
         const wire = this.combineEdgesAndWiresIntoAWire({ shapes: [edge] });
-        let res = this.pointOnWireAtParam({ shape: wire, param: 0 });
+        const res = this.pointOnWireAtParam({ shape: wire, param: 0 });
         return res;
     }
 
     endPointOnEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Base.Point3 {
         const edge = inputs.shape;
         const wire = this.combineEdgesAndWiresIntoAWire({ shapes: [edge] });
-        let res = this.pointOnWireAtParam({ shape: wire, param: 1 });
+        const res = this.pointOnWireAtParam({ shape: wire, param: 1 });
         return res;
     }
 
     startPointOnWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): Base.Point3 {
         const wire = inputs.shape;
         const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
-        let res = this.startPointOnCurve({ ...inputs, shape: curve });
+        const res = this.startPointOnCurve({ ...inputs, shape: curve });
         return res;
     }
 
     endPointOnWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): Base.Point3 {
         const wire = inputs.shape;
         const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
-        let res = this.endPointOnCurve({ ...inputs, shape: curve });
+        const res = this.endPointOnCurve({ ...inputs, shape: curve });
         return res;
     }
 
@@ -1351,7 +1352,7 @@ export class OccHelper {
         const curve = inputs.shape;
         const gpPnt = this.gpPnt([0, 0, 0]);
         curve.D0(curve.FirstParameter(), gpPnt);
-        let pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
+        const pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
         gpPnt.delete();
         return pt;
     }

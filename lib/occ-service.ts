@@ -1,17 +1,15 @@
-import { OpenCascadeInstance, TopoDS_Face } from '../bitbybit-dev-occt/bitbybit-dev-occt';
-import * as Inputs from './api/inputs/inputs';
-import { OCCTBooleans } from './services/booleans';
-import { OCCTGeom } from './services/geom/geom';
-import { OCCTIO } from './services/io';
-import { OCCTOperations } from './services/operations';
-import { OCCTShapes } from './services/shapes/shapes';
-import { OCCTTransforms } from './services/transforms';
-import { OCCTAssembly } from './services/assembly/assembly';
-import { OCCTFillets } from './services/fillets';
-import { OccHelper } from './occ-helper';
+import { OpenCascadeInstance, TopoDS_Face } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import * as Inputs from "./api/inputs/inputs";
+import { OCCTBooleans } from "./services/booleans";
+import { OCCTGeom } from "./services/geom/geom";
+import { OCCTIO } from "./services/io";
+import { OCCTOperations } from "./services/operations";
+import { OCCTShapes } from "./services/shapes/shapes";
+import { OCCTTransforms } from "./services/transforms";
+import { OCCTAssembly } from "./services/assembly/assembly";
+import { OCCTFillets } from "./services/fillets";
+import { OccHelper } from "./occ-helper";
 
-
-// Worker make an instance of this class itself
 export class OCCTService {
     public readonly shapes: OCCTShapes;
     public readonly geom: OCCTGeom;
@@ -21,8 +19,7 @@ export class OCCTService {
     public readonly booleans: OCCTBooleans;
     public readonly fillets: OCCTFillets;
     public readonly io: OCCTIO;
-    public plugins?: any;
-    private inctementalMeshBuilder;
+    public plugins?;
 
     constructor(
         private readonly occ: OpenCascadeInstance,
@@ -66,7 +63,7 @@ export class OCCTService {
         this.och.forEachFace(shapeToUse, (faceIndex, myFace: TopoDS_Face) => {
             const aLocation = new this.occ.TopLoc_Location_1();
             const myT = this.occ.BRep_Tool.Triangulation(myFace, aLocation, 0);
-            if (myT.IsNull()) { console.error('Encountered Null Face!'); return; }
+            if (myT.IsNull()) { console.error("Encountered Null Face!"); return; }
 
             const thisFace: Inputs.OCCT.DecomposedFaceDto = {
                 vertex_coord: [],

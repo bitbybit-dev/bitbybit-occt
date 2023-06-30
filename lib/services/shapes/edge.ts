@@ -1,6 +1,6 @@
-import { Geom2d_Curve, Geom_Surface, OpenCascadeInstance, TopoDS_Edge, TopoDS_Shape } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper, typeSpecificityEnum } from '../../occ-helper';
-import * as Inputs from '../../api/inputs/inputs';
+import { Geom2d_Curve, Geom_Surface, OpenCascadeInstance, TopoDS_Edge, TopoDS_Shape } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper, typeSpecificityEnum } from "../../occ-helper";
+import * as Inputs from "../../api/inputs/inputs";
 
 export class OCCTEdge {
 
@@ -62,7 +62,7 @@ export class OCCTEdge {
 
     getEdge(inputs: Inputs.OCCT.ShapeIndexDto<TopoDS_Shape>): TopoDS_Edge {
         if (!inputs.shape || (inputs.shape.ShapeType && inputs.shape.ShapeType() > this.occ.TopAbs_ShapeEnum.TopAbs_WIRE) || inputs.shape.IsNull()) {
-            throw (new Error('Edge can not be found for shape that is not provided or is of incorrect type'));
+            throw (new Error("Edge can not be found for shape that is not provided or is of incorrect type"));
         }
         if (!inputs.index) { inputs.index = 0; }
         let innerEdge = {}; let edgesFound = 0;

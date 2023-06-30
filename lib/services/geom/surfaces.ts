@@ -1,6 +1,6 @@
-import { OpenCascadeInstance, TopoDS_Face, TopoDS_Shape } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper } from '../../occ-helper';
-import * as Inputs from '../../api/inputs/inputs';
+import { OpenCascadeInstance, TopoDS_Face } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper } from "../../occ-helper";
+import * as Inputs from "../../api/inputs/inputs";
 
 export class OCCTSurfaces {
 
@@ -12,7 +12,7 @@ export class OCCTSurfaces {
 
     cylindricalSurface(inputs: Inputs.OCCT.GeomCylindricalSurfaceDto) {
         const ax = this.och.gpAx3(inputs.center, inputs.direction);
-        let res = new this.occ.Geom_CylindricalSurface_1(ax, inputs.radius);
+        const res = new this.occ.Geom_CylindricalSurface_1(ax, inputs.radius);
         ax.delete();
         return res;
     }

@@ -1,6 +1,6 @@
-import { OpenCascadeInstance, TopoDS_Shape } from '../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper } from '../occ-helper';
-import * as Inputs from '../api/inputs/inputs';
+import { OpenCascadeInstance, TopoDS_Shape } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper } from "../occ-helper";
+import * as Inputs from "../api/inputs/inputs";
 
 export class OCCTBooleans {
 
@@ -37,7 +37,7 @@ export class OCCTBooleans {
         let difference = inputs.shape;
         const objectsToSubtract = inputs.shapes;
         for (let i = 0; i < objectsToSubtract.length; i++) {
-            if (!objectsToSubtract[i] || objectsToSubtract[i].IsNull()) { console.error('Tool in Difference is null!'); }
+            if (!objectsToSubtract[i] || objectsToSubtract[i].IsNull()) { console.error("Tool in Difference is null!"); }
             const messageProgress1 = new this.occ.Message_ProgressRange_1();
             const differenceCut = new this.occ.BRepAlgoAPI_Cut_3(difference, objectsToSubtract[i], messageProgress1);
             const messageProgress2 = new this.occ.Message_ProgressRange_1();
@@ -51,14 +51,14 @@ export class OCCTBooleans {
         if (!inputs.keepEdges) {
             const fusor = new this.occ.ShapeUpgrade_UnifySameDomain_2(difference, true, true, false);
             fusor.Build();
-            let fusedShape = fusor.Shape();
+            const fusedShape = fusor.Shape();
             difference.delete();
             difference = fusedShape;
             fusor.delete();
         }
 
         if (this.och.getNumSolidsInCompound(difference) === 1) {
-            let solid = this.och.getSolidFromCompound(difference, 0);
+            const solid = this.och.getSolidFromCompound(difference, 0);
             difference.delete();
             difference = solid;
         }
@@ -67,7 +67,7 @@ export class OCCTBooleans {
     }
 
     intersection(inputs: Inputs.OCCT.IntersectionDto<TopoDS_Shape>): TopoDS_Shape {
-        let int = this.och.intersection(inputs);
+        const int = this.och.intersection(inputs);
         const res = this.och.makeCompound({ shapes: int });
         return res;
     }

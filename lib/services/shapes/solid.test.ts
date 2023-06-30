@@ -1,4 +1,4 @@
-import initOpenCascade, { OpenCascadeInstance, TopoDS_Shape } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import initOpenCascade, { OpenCascadeInstance } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper, shapeTypeEnum } from "../../occ-helper";
 import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
@@ -6,7 +6,7 @@ import { OCCTFace } from "./face";
 import { OCCTShell } from "./shell";
 import { OCCTSolid } from "./solid";
 
-describe('OCCT solid unit tests', () => {
+describe("OCCT solid unit tests", () => {
     let occt: OpenCascadeInstance;
     let face: OCCTFace;
     let shell: OCCTShell;
@@ -23,7 +23,7 @@ describe('OCCT solid unit tests', () => {
         solid = new OCCTSolid(occt, occHelper);
     });
 
-    it('should recreate a solid from closed shell if sewing all edges of the box', async () => {
+    it("should recreate a solid from closed shell if sewing all edges of the box", async () => {
         const box = occHelper.bRepPrimAPIMakeBox(2, 2, 2, [0, 0, 0]);
         const faces = face.getFaces({ shape: box });
         const s = shell.sewFaces({ shapes: faces, tolerance: 1e-7 });
@@ -36,13 +36,13 @@ describe('OCCT solid unit tests', () => {
         so.delete();
     });
 
-    it('should create a box solid', async () => {
+    it("should create a box solid", async () => {
         const box = solid.createBox({ width: 2, height: 2, length: 2, center: [0, 0, 0] });
         expect(solid.getSolidVolume({ shape: box })).toBeCloseTo(8);
         box.delete();
     });
 
-    it('should create a box solid from corner', async () => {
+    it("should create a box solid from corner", async () => {
         const box = solid.createBoxFromCorner({ corner: [-1, -1, -1], width: 3, height: 2, length: 2 });
         const center = solid.getSolidCenterOfMass({ shape: box });
         expect(solid.getSolidVolume({ shape: box })).toBeCloseTo(12);
@@ -53,44 +53,44 @@ describe('OCCT solid unit tests', () => {
         box.delete();
     });
 
-    it('should create a cylinder solid', async () => {
+    it("should create a cylinder solid", async () => {
         const cylinder = solid.createCylinder({ radius: 2, height: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         expect(solid.getSolidVolume({ shape: cylinder })).toBeCloseTo(25.13274122871834);
         cylinder.delete();
     });
 
-    it('should create a cylinder solid wit default direction', async () => {
+    it("should create a cylinder solid wit default direction", async () => {
         const cylinder = solid.createCylinder({ radius: 2, height: 2, center: [0, 0, 0] });
         expect(solid.getSolidVolume({ shape: cylinder })).toBeCloseTo(25.13274122871834);
         cylinder.delete();
     });
 
-    it('should create a sphere solid', async () => {
+    it("should create a sphere solid", async () => {
         const sphere = solid.createSphere({ radius: 2, center: [0, 0, 0] });
         expect(solid.getSolidVolume({ shape: sphere })).toBeCloseTo(33.51032163829113);
         sphere.delete();
     });
 
-    it('should create a cone solid', async () => {
+    it("should create a cone solid", async () => {
         const cone = solid.createCone({ height: 3, radius1: 3, radius2: 1, angle: Math.PI, direction: [0, 1, 0], center: [0, 0, 0] });
         expect(solid.getSolidVolume({ shape: cone })).toBeCloseTo(20.42035224833366);
         expect(solid.getSolidSurfaceArea({ shape: cone })).toBeCloseTo(50.36231006622692);
         cone.delete();
     });
 
-    it('should create a cone of half angle solid', async () => {
+    it("should create a cone of half angle solid", async () => {
         const cone = solid.createCone({ height: 3, radius1: 3, radius2: 1, angle: Math.PI / 2, direction: [0, 1, 0], center: [0, 0, 0] });
         expect(solid.getSolidVolume({ shape: cone })).toBeCloseTo(20.42035224833366 / 2);
         cone.delete();
     });
 
-    it('should create a cone of half angle solid', async () => {
+    it("should create a cone of half angle solid", async () => {
         const cone = solid.createCone({ height: 3, radius1: 3, radius2: 1, angle: Math.PI / 2, direction: [0, 1, 0], center: [0, 0, 0] });
         expect(solid.getSolidVolume({ shape: cone })).toBeCloseTo(20.42035224833366 / 2);
         cone.delete();
     });
 
-    it('should create cylinders on lines and get volumes', async () => {
+    it("should create cylinders on lines and get volumes", async () => {
         const cylinders = solid.createCylindersOnLines({
             radius: 2,
             lines: [

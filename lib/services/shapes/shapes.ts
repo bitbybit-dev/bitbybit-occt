@@ -1,11 +1,11 @@
-import { OpenCascadeInstance } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper } from '../../occ-helper';
-import { OCCTCompound } from './compound';
-import { OCCTEdge } from './edge';
-import { OCCTFace } from './face';
-import { OCCTShell } from './shell';
-import { OCCTSolid } from './solid';
-import { OCCTWire } from './wire';
+import { OpenCascadeInstance } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper } from "../../occ-helper";
+import { OCCTCompound } from "./compound";
+import { OCCTEdge } from "./edge";
+import { OCCTFace } from "./face";
+import { OCCTShell } from "./shell";
+import { OCCTSolid } from "./solid";
+import { OCCTWire } from "./wire";
 
 export class OCCTShapes {
     public readonly edge: OCCTEdge;

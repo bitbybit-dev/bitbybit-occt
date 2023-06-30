@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import { Base } from "./inputs";
 // tslint:disable-next-line: no-namespace
 export namespace OCCT {
@@ -17,19 +18,19 @@ export namespace OCCT {
     export type TopoDSShapePointer = TopoDSVertexPointer | TopoDSEdgePointer | TopoDSWirePointer | TopoDSFacePointer | TopoDSShellPointer | TopoDSSolidPointer | TopoDSCompoundPointer;
 
     export enum JoinTypeEnum {
-        arc = 'arc',
-        intersection = 'intersection',
-        tangent = 'tangent'
+        arc = "arc",
+        intersection = "intersection",
+        tangent = "tangent"
     }
     export enum BRepOffsetModeEnum {
-        skin = 'skin',
-        pipe = 'pipe',
-        rectoVerso = 'rectoVerso'
+        skin = "skin",
+        pipe = "pipe",
+        rectoVerso = "rectoVerso"
     }
     export enum ApproxParametrizationTypeEnum {
-        approxChordLength = 'approxChordLength',
-        approxCentripetal = 'approxCentripetal',
-        approxIsoParametric = 'approxIsoParametric'
+        approxChordLength = "approxChordLength",
+        approxCentripetal = "approxCentripetal",
+        approxIsoParametric = "approxIsoParametric"
     }
 
     export class DecomposedMeshDto {
@@ -71,12 +72,12 @@ export namespace OCCT {
          * First OCCT edge to fillet
          * @default undefined
          */
-        edge1: any;
+        edge1: T;
         /**
          * Second OCCT edge to fillet
          * @default undefined
          */
-        edge2: any;
+        edge2: T;
         /**
          * Plane origin that is also used to find the closest solution if two solutions exist.
          * @default [0, 0, 0]
@@ -94,7 +95,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius: number = 0.3;
+        radius = 0.3;
         /**
          * if solution is -1 planeOrigin chooses a particular fillet in case of several fillets may be constructed (for example, a circle intersecting a segment in 2 points). Put the intersecting (or common) point of the edges
          * @default -1
@@ -211,7 +212,7 @@ export namespace OCCT {
          * Hex colour string for the edges
          * @default #ffffff
          */
-        edgeColour: Base.Color = '#ffffff';
+        edgeColour: Base.Color = "#ffffff";
         /**
          * Face material
          * @default undefined
@@ -222,7 +223,7 @@ export namespace OCCT {
          * Hex colour string for face colour
          * @default #ff0000
          */
-        faceColour: Base.Color = '#ff0000';
+        faceColour: Base.Color = "#ff0000";
         /**
          * Edge width
          * @default 2
@@ -266,7 +267,7 @@ export namespace OCCT {
          * Edge index colour if the edges are drawn
          * @default #ff00ff
          */
-        edgeIndexColour: Base.Color = '#ff00ff';
+        edgeIndexColour: Base.Color = "#ff00ff";
         /**
          * Draw indexes of faces in space
          * @default false
@@ -284,7 +285,7 @@ export namespace OCCT {
          * Edge index colour if the edges are drawn
          * @default #0000ff
          */
-        faceIndexColour: Base.Color = '#0000ff';
+        faceIndexColour: Base.Color = "#0000ff";
     }
     export class FaceSubdivisionDto<T> {
         /**
@@ -305,7 +306,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        nrDivisionsU: number = 10;
+        nrDivisionsU = 10;
         /**
          * Number of subdivisions on V direction
          * @default 10
@@ -313,7 +314,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        nrDivisionsV: number = 10;
+        nrDivisionsV = 10;
         /**
          * Sometimes you want to shift your points half way the step distance, especially on periodic surfaces
          * @default false
@@ -364,7 +365,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        nrDivisionsU: number = 10;
+        nrDivisionsU = 10;
         /**
          * Number of subdivisions on V direction
          * @default 10
@@ -372,7 +373,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        nrDivisionsV: number = 10;
+        nrDivisionsV = 10;
         /**
          * Shift half step every nth U row
          * @default 0
@@ -380,7 +381,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        shiftHalfStepNthU: number = 0;
+        shiftHalfStepNthU = 0;
         /**
          * Offset for shift half step every nth U row
          * @default 0
@@ -388,7 +389,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        shiftHalfStepUOffsetN: number = 0;
+        shiftHalfStepUOffsetN = 0;
         /**
          * Removes start edge points on U
          * @default 0
@@ -396,7 +397,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        removeStartEdgeNthU: number = 0;
+        removeStartEdgeNthU = 0;
         /**
          * Offset for remove start edge points on U
          * @default 0
@@ -404,7 +405,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        removeStartEdgeUOffsetN: number = 0;
+        removeStartEdgeUOffsetN = 0;
         /**
          * Removes end edge points on U 
          * @default 0
@@ -412,7 +413,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        removeEndEdgeNthU: number = 0;
+        removeEndEdgeNthU = 0;
         /**
          * Offset for remove end edge points on U
          * @default 0
@@ -420,7 +421,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        removeEndEdgeUOffsetN: number = 0;
+        removeEndEdgeUOffsetN = 0;
         /**
          * Shift half step every nth V row
          * @default 0
@@ -428,7 +429,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        shiftHalfStepNthV: number = 0;
+        shiftHalfStepNthV = 0;
         /**
          * Offset for shift half step every nth V row
          * @default 0
@@ -436,7 +437,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        shiftHalfStepVOffsetN: number = 0;
+        shiftHalfStepVOffsetN = 0;
         /**
          * Removes start edge points on V
          * @default 0
@@ -444,7 +445,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        removeStartEdgeNthV: number = 0;
+        removeStartEdgeNthV = 0;
         /**
          * Offset for remove start edge points on V
          * @default 0
@@ -452,7 +453,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        removeStartEdgeVOffsetN: number = 0;
+        removeStartEdgeVOffsetN = 0;
         /**
          * Removes end edge points on V 
          * @default 0
@@ -460,7 +461,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        removeEndEdgeNthV: number = 0;
+        removeEndEdgeNthV = 0;
         /**
          * Offset for remove end edge points on V
          * @default 0
@@ -468,7 +469,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        removeEndEdgeVOffsetN: number = 0;
+        removeEndEdgeVOffsetN = 0;
     }
     export class FaceLinearSubdivisionDto<T> {
         /**
@@ -486,7 +487,7 @@ export namespace OCCT {
          * Linear subdivision direction true - U, false - V
          * @default true
          */
-        isU: boolean = true;
+        isU = true;
         /**
          * Param on direction 0 - 1
          * @default 0.5
@@ -494,7 +495,7 @@ export namespace OCCT {
          * @maximum 1
          * @step 0.1
          */
-        param: number = 0.5;
+        param = 0.5;
         /**
          * Number of subdivisions on opposite direction
          * @default 10
@@ -502,7 +503,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        nrPoints: number = 10;
+        nrPoints = 10;
         /**
          * Sometimes you want to shift your points half way the step distance, especially on periodic surfaces
          * @default false
@@ -539,7 +540,7 @@ export namespace OCCT {
          * @maximum 1
          * @step 0.1
          */
-        paramU: number = 0.5;
+        paramU = 0.5;
         /**
          * Param on V direction 0 to 1
          * @default 0.5
@@ -547,7 +548,7 @@ export namespace OCCT {
          * @maximum 1
          * @step 0.1
          */
-        paramV: number = 0.5;
+        paramV = 0.5;
     }
     export class DataOnUVsDto<T> {
         /**
@@ -595,7 +596,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        size: number = 1;
+        size = 1;
         /**
          * Center of the square
          * @default [0, 0, 0]
@@ -615,7 +616,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        width: number = 1;
+        width = 1;
         /**
          * Height of the rectangle
          * @default 2
@@ -623,7 +624,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        length: number = 2;
+        length = 2;
         /**
          * Center of the rectangle
          * @default [0, 0, 0]
@@ -651,7 +652,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        width: number = 1;
+        width = 1;
         /**
          * Length of the box
          * @default 2
@@ -659,7 +660,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        length: number = 2;
+        length = 2;
         /**
          * Height of the box
          * @default 3
@@ -667,7 +668,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        height: number = 3;
+        height = 3;
         /**
          * Center of the box
          * @default [0, 0, 0]
@@ -690,7 +691,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        width: number = 1;
+        width = 1;
         /**
          * Length of the box
          * @default 2
@@ -698,7 +699,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        length: number = 2;
+        length = 2;
         /**
          * Height of the box
          * @default 3
@@ -706,7 +707,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        height: number = 3;
+        height = 3;
         /**
          * Corner of the box
          * @default [0, 0, 0]
@@ -727,7 +728,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius: number = 1;
+        radius = 1;
         /**
          * Center of the sphere
          * @default [0, 0, 0]
@@ -750,7 +751,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius1: number = 2;
+        radius1 = 2;
         /**
          * Second radius of the cone
          * @default 1
@@ -758,7 +759,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius2: number = 1;
+        radius2 = 1;
         /**
          * Height of the cone
          * @default 2
@@ -766,7 +767,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        height: number = 2;
+        height = 2;
         /**
          * Angle of the cone
          * @default 360
@@ -774,7 +775,7 @@ export namespace OCCT {
          * @maximum 360
          * @step 1
          */
-        angle: number = 360;
+        angle = 360;
         /**
          * Center of the cone
          * @default [0, 0, 0]
@@ -825,7 +826,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius: number = 1;
+        radius = 1;
         /**
          * Height of the cylinder
          * @default 2
@@ -833,7 +834,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        height: number = 2;
+        height = 2;
         /**
          * Center of the cylinder
          * @default [0, 0, 0]
@@ -879,7 +880,7 @@ export namespace OCCT {
          * @step 0.1
          * @optional true
          */
-        radius?: number = 0.1;
+        radius? = 0.1;
         /**
          * Radius list
          * @default undefined
@@ -911,7 +912,7 @@ export namespace OCCT {
          * @step 0.1
          * @optional true
          */
-        radius?: number = 0.1;
+        radius? = 0.1;
         /**
          * Radius list
          * @default undefined
@@ -949,7 +950,7 @@ export namespace OCCT {
          * @optional true
          * @step 0.1
          */
-        distance?: number = 0.1;
+        distance? = 0.1;
         /**
          * Distance for the chamfer
          * @default undefined
@@ -977,7 +978,7 @@ export namespace OCCT {
          * Indicates wether BSpline will be cloed
          * @default false
          */
-        closed: boolean = false;
+        closed = false;
     }
     export class InterpolationDto {
         constructor(points?: Base.Point3[], periodic?: boolean) {
@@ -993,7 +994,7 @@ export namespace OCCT {
          * Indicates wether BSpline will be periodic
          * @default false
          */
-        periodic: boolean = false;
+        periodic = false;
         /**
          * tolerance
          * @default 1e-7
@@ -1001,7 +1002,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.00001
          */
-        tolerance: number = 1e-7;
+        tolerance = 1e-7;
     }
 
     export class BezierDto {
@@ -1018,7 +1019,7 @@ export namespace OCCT {
          * Indicates wether Bezier will be cloed
          * @default false
          */
-        closed: boolean = false;
+        closed = false;
     }
 
     export class DivideDto<T> {
@@ -1040,17 +1041,17 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        nrOfDivisions: number = 10;
+        nrOfDivisions = 10;
         /**
          * Indicates if algorithm should remove start point
          * @default false
          */
-        removeStartPoint: boolean = false;
+        removeStartPoint = false;
         /**
          * Indicates if algorithm should remove end point
          * @default false
          */
-        removeEndPoint: boolean = false;
+        removeEndPoint = false;
     }
 
     export class DataOnGeometryAtParamDto<T> {
@@ -1070,10 +1071,10 @@ export namespace OCCT {
          * @maximum 1
          * @step 0.1
          */
-        param: number = 0.5;
+        param = 0.5;
     }
     export class PointInFaceDto<T> extends ShapesDto<T> {
-        constructor(face: any, edge: any, tEdgeParam?: number, distance2DParam?: number) {
+        constructor(face: T, edge: T, tEdgeParam?: number, distance2DParam?: number) {
             super();
             this.face = face;
             this.edge = edge;
@@ -1084,12 +1085,12 @@ export namespace OCCT {
          * OCCT face to be used for calculation 
          * @default undefined
          */
-        face: any;
+        face: T;
         /**
          * OCCT edge to be used for calculation
          * @default undefined
          */
-        edge: any;
+        edge: T;
         /**
          * 0 - 1 value
          * @default 0.5
@@ -1097,7 +1098,7 @@ export namespace OCCT {
          * @maximum 1
          * @step 0.1
          */
-        tEdgeParam: number = 0.5;
+        tEdgeParam = 0.5;
         /**
          * The point will be distanced on <distance2DParam> from the 2d curve.
          * @default 0.5
@@ -1105,7 +1106,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        distance2DParam: number = 0.5;
+        distance2DParam = 0.5;
     }
 
     export class DataOnGeometryAtLengthDto<T> {
@@ -1125,7 +1126,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        length: number = 0.5;
+        length = 0.5;
     }
     export class CircleDto {
         constructor(radius?: number, center?: Base.Point3, direction?: Base.Vector3) {
@@ -1140,7 +1141,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius: number = 1;
+        radius = 1;
         /**
          * Center of the circle
          * @default [0, 0, 0]
@@ -1166,7 +1167,7 @@ export namespace OCCT {
          * Tries to make a solid when lofting
          * @default false
          */
-        makeSolid: boolean = false;
+        makeSolid = false;
     }
     export class LoftAdvancedDto<T> {
         constructor(
@@ -1263,7 +1264,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        distance: number = 0.2;
+        distance = 0.2;
         /**
          * Offset tolerance
          * @default 0.1
@@ -1293,7 +1294,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        distance: number = 0.2;
+        distance = 0.2;
         /**
          * Offset tolerance
          * @default 0.1
@@ -1312,7 +1313,7 @@ export namespace OCCT {
          * Removes internal edges
          * @default false
          */
-        removeIntEdges: boolean = false;
+        removeIntEdges = false;
     }
     export class RevolveDto<T> {
         constructor(shape?: T, degrees?: number, direction?: Base.Vector3, copy?: boolean) {
@@ -1335,7 +1336,7 @@ export namespace OCCT {
          * @maximum 360
          * @step 1
          */
-        angle: number = 360;
+        angle = 360;
         /**
          * Direction vector
          * @default [0, 1, 0]
@@ -1379,7 +1380,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        radius: number = 0.1;
+        radius = 0.1;
     }
     export class PipeWireCylindricalDto<T> {
         constructor(shapes?: T) {
@@ -1397,7 +1398,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        radius: number = 0.1;
+        radius = 0.1;
     }
     export class PipePolygonWireNGonDto<T> {
         constructor(shapes?: T) {
@@ -1415,7 +1416,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        radius: number = 0.1;
+        radius = 0.1;
         /**
          * Nr of ngon corners to be used
          * @default 6
@@ -1423,7 +1424,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        nrCorners: number = 6;
+        nrCorners = 6;
     }
     export class ExtrudeDto<T> {
         constructor(shape?: T, direction?: Base.Vector3) {
@@ -1595,7 +1596,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        index: number = 0;
+        index = 0;
     }
     export class RotationExtrudeDto<T> {
         constructor(shape?: T, height?: number, degrees?: number) {
@@ -1615,7 +1616,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        height: number = 1;
+        height = 1;
         /**
          * Rotation in degrees
          * @default 360
@@ -1623,7 +1624,7 @@ export namespace OCCT {
          * @maximum 360
          * @step 1
          */
-        angle: number = 360;
+        angle = 360;
     }
 
     // Threading : Create Surfaces
@@ -1650,7 +1651,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        offset: number = 1;
+        offset = 1;
         /**
          * Tolerance defines the tolerance criterion for coincidence in generated shapes
          * @default 1.0e-3
@@ -1711,7 +1712,7 @@ export namespace OCCT {
          * @maximum 360
          * @step 1
          */
-        rotationAngle: number = 0;
+        rotationAngle = 0;
         /**
          * Scale factor to apply
          * @default 1
@@ -1719,7 +1720,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        scaleFactor: number = 1;
+        scaleFactor = 1;
     }
     export class TransformShapesDto<T> {
         constructor(shapes?: T[], translation?: Base.Vector3[], rotationAxes?: Base.Vector3[], rotationDegrees?: number[], scaleFactors?: number[]) {
@@ -1968,7 +1969,7 @@ export namespace OCCT {
          * @maximum 360
          * @step 1
          */
-        angle: number = 0;
+        angle = 0;
     }
     export class RotateShapesDto<T> {
         constructor(shapes?: T[], axes?: Base.Vector3[], angles?: number[]) {
@@ -2009,7 +2010,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        factor: number = 1;
+        factor = 1;
     }
     export class ScaleShapesDto<T> {
         constructor(shapes?: T[], factors?: number[]) {
@@ -2115,12 +2116,12 @@ export namespace OCCT {
          * File name
          * @default shape.step
          */
-        filename: string = "shape.step";
+        filename = "shape.step";
         /**
          * Adjust Y (up) coordinate system to Z (up) coordinate system
          * @default false
          */
-        adjustYtoZ: boolean = false;
+        adjustYtoZ = false;
     }
     export class SaveStlDto<T> {
         constructor(shape?: T, filename?: string, precision?: number, adjustYtoZ?: boolean) {
@@ -2138,19 +2139,19 @@ export namespace OCCT {
          * File name
          * @default shape.stl
          */
-        filename: string = "shape.stl";
+        filename = "shape.stl";
         /**
          * Precision of the mesh - lower means higher res
          * @default 0.01
          */
-        precision: number = 0.01;
+        precision = 0.01;
         /**
          * Adjust Y (up) coordinate system to Z (up) coordinate system
          * @default false
          */
-        adjustYtoZ: boolean = false;
+        adjustYtoZ = false;
     }
-    export class ImportStepIgesDto<T> {
+    export class ImportStepIgesDto {
         constructor(assetFile?: File, adjustZtoY?: boolean) {
             this.assetFile = assetFile;
             this.adjustZtoY = adjustZtoY;
@@ -2167,8 +2168,8 @@ export namespace OCCT {
          */
         adjustZtoY = true;
     }
-    export class LoadStepOrIgesDto<T> {
-        constructor(filetext?: any, filename?: string, adjustZtoY?: boolean) {
+    export class LoadStepOrIgesDto {
+        constructor(filetext?: string | ArrayBuffer, filename?: string, adjustZtoY?: boolean) {
             this.filetext = filetext;
             this.filename = filename;
             this.adjustZtoY = adjustZtoY;
@@ -2177,12 +2178,12 @@ export namespace OCCT {
          * File text
          * @default undefined
          */
-        filetext: any;
+        filetext: string | ArrayBuffer;
         /**
          * File name
          * @default shape.igs
          */
-        filename: string = "shape.igs";
+        filename = "shape.igs";
         /**
          * Adjusts models that use Z coordinate as up to Y up system.
          * @default true
@@ -2216,7 +2217,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        offset: number = 1;
+        offset = 1;
     }
     export class FaceFromWireDto<T> {
         constructor(shape?: T, planar?: boolean) {
@@ -2232,7 +2233,7 @@ export namespace OCCT {
          * Should plane be planar
          * @default false
          */
-        planar: boolean = false;
+        planar = false;
     }
     export class FacesFromWiresDto<T> {
         constructor(shapes?: T[], planar?: boolean) {
@@ -2248,7 +2249,7 @@ export namespace OCCT {
          * Should plane be planar
          * @default false
          */
-        planar: boolean = false;
+        planar = false;
     }
     export class SewDto<T> {
         constructor(shapes: T[], tolerance?: number) {
@@ -2292,7 +2293,7 @@ export namespace OCCT {
          * Direction to find the isocurve
          * @default u
          */
-        dir: 'u' | 'v' = 'u'
+        dir: "u" | "v" = "u"
     }
 
     export class DivideFaceToUVPointsDto<T> {
@@ -2345,7 +2346,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radiusMinor: number = 1;
+        radiusMinor = 1;
         /**
          * Major radius of an ellipse
          * @default 2
@@ -2353,7 +2354,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radiusMajor: number = 2;
+        radiusMajor = 2;
         /**
          * If true will sense the direction
          * @default false
@@ -2378,7 +2379,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius: number = 1;
+        radius = 1;
         /**
          * If true will sense the direction
          * @default false
@@ -2404,7 +2405,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        numRays: number = 7;
+        numRays = 7;
         /**
          * Angle of the rays
          * @default 2
@@ -2425,7 +2426,7 @@ export namespace OCCT {
          * Construct half of the star
          * @default false
          */
-        half: boolean = false;
+        half = false;
     }
     export class ParallelogramDto {
         /**
@@ -2442,7 +2443,7 @@ export namespace OCCT {
          * Indicates whether to draw the parallelogram around the center point or start from corner.
          * @default true
          */
-        aroundCenter: boolean = true;
+        aroundCenter = true;
         /**
          * Width of bounding rectangle
          * @default 2
@@ -2450,7 +2451,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        width: number = 2;
+        width = 2;
         /**
          * Height of bounding rectangle
          * @default 1
@@ -2458,7 +2459,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        height: number = 1;
+        height = 1;
         /**
          * Sharp angle of the parallelogram
          * @default 15
@@ -2466,7 +2467,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        angle: number = 15;
+        angle = 15;
     }
     export class NGonWireDto {
         /**
@@ -2486,7 +2487,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 1
          */
-        nrCorners: number = 6;
+        nrCorners = 6;
         /**
          * Radius of nGon
          * @default 1
@@ -2494,7 +2495,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius: number = 1;
+        radius = 1;
     }
     export class EllipseDto {
         /**
@@ -2514,7 +2515,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radiusMinor: number = 1;
+        radiusMinor = 1;
         /**
          * Major radius of an ellipse
          * @default 2
@@ -2522,7 +2523,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radiusMajor: number = 2;
+        radiusMajor = 2;
     }
     export class GeomCylindricalSurfaceDto {
         /**
@@ -2532,7 +2533,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius: number = 1;
+        radius = 1;
         /**
          * Center of the cylindrical surface
          * @default [0, 0, 0]
@@ -2557,7 +2558,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        u1: number = 0;
+        u1 = 0;
         /**
          * Second parameter on the curve for trimming
          * @default 1
@@ -2565,7 +2566,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        u2: number = 1;
+        u2 = 1;
         /**
          *  If the basis curve C is periodic there is an ambiguity because two parts are available. 
          *  In this case by default the trimmed curve has the same orientation as the basis curve (Sense = True). 
@@ -2607,7 +2608,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        step: number = 2;
+        step = 2;
         /**
          * Direction vector
          * @default [0, 1, 0]

@@ -4,7 +4,7 @@ import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
 import { OCCTShapes } from "./shapes";
 
-describe('OCCT face unit tests', () => {
+describe("OCCT face unit tests", () => {
     let occt: OpenCascadeInstance;
     let occHelper: OccHelper
 
@@ -15,7 +15,7 @@ describe('OCCT face unit tests', () => {
         occHelper = new OccHelper(vec, s, occt);
     });
 
-    it('should create shapes object', async () => {
+    it("should create shapes object", async () => {
         const shapes = new OCCTShapes(occt, occHelper);
         expect(shapes).toBeDefined();
         expect(shapes.compound).toBeDefined();
@@ -24,7 +24,6 @@ describe('OCCT face unit tests', () => {
         expect(shapes.face).toBeDefined();
         expect(shapes.solid).toBeDefined();
         expect(shapes.shell).toBeDefined();
-
     });
 
 });

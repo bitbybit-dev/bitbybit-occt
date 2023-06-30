@@ -1,6 +1,6 @@
-import { Approx_ParametrizationType, BRepFill_TypeOfContact, BRepOffsetAPI_MakeOffsetShape, BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, GeomAbs_JoinType, OpenCascadeInstance, TopoDS_Shape, TopoDS_Wire } from '../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from '../occ-helper';
-import * as Inputs from '../api/inputs/inputs';
+import { Approx_ParametrizationType, BRepFill_TypeOfContact, BRepOffsetAPI_MakeOffsetShape, BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, GeomAbs_JoinType, OpenCascadeInstance, TopoDS_Shape, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from "../occ-helper";
+import * as Inputs from "../api/inputs/inputs";
 
 export class OCCTOperations {
 
@@ -22,7 +22,7 @@ export class OCCTOperations {
 
     closestPointsOnShapesFromPoints(inputs: Inputs.OCCT.ClosestPointsOnShapesFromPointsDto<TopoDS_Shape>): Inputs.Base.Point3[] {
         const vertexes = inputs.points.map(p => this.och.makeVertex(p));
-        let result = [];
+        const result = [];
         inputs.shapes.forEach((s) => {
             const pointsOnShape = vertexes.map(v => this.och.closestPointsBetweenTwoShapes(v, s));
             result.push(...pointsOnShape.map(p => p[1]))
@@ -36,8 +36,8 @@ export class OCCTOperations {
             pipe.AddWire(wire);
         });
         pipe.CheckCompatibility(false);
-        let pipeShape = pipe.Shape();
-        let res = this.och.getActualTypeOfShape(pipeShape);
+        const pipeShape = pipe.Shape();
+        const res = this.och.getActualTypeOfShape(pipeShape);
         pipeShape.delete();
         pipe.delete();
         return res;
@@ -45,7 +45,7 @@ export class OCCTOperations {
 
     loftAdvanced(inputs: Inputs.OCCT.LoftAdvancedDto<TopoDS_Wire>) {
         if (inputs.periodic && !inputs.closed) {
-            throw new Error('Cant construct periodic non closed loft.');
+            throw new Error("Cant construct periodic non closed loft.");
         }
         const pipe = new this.occ.BRepOffsetAPI_ThruSections(inputs.makeSolid, inputs.straight, inputs.tolerance);
         const wires = [];
@@ -118,9 +118,9 @@ export class OCCTOperations {
         if (!inputs.tolerance) { inputs.tolerance = 0.1; }
         if (inputs.distance === 0.0) { return inputs.shape; }
         let offset = null;
-        let joinType: GeomAbs_JoinType = this.getJoinType(inputs.joinType);
+        const joinType: GeomAbs_JoinType = this.getJoinType(inputs.joinType);
         // only this mode is implemented currently, so we cannot expose others...
-        let brepOffsetMode: BRepOffset_Mode = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
+        const brepOffsetMode: BRepOffset_Mode = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
 
         const wires = [];
 
@@ -155,7 +155,7 @@ export class OCCTOperations {
             }
 
         } else {
-            let shapeToOffset = inputs.shape;
+            const shapeToOffset = inputs.shape;
             offset = new this.occ.BRepOffsetAPI_MakeOffsetShape();
             (offset as BRepOffsetAPI_MakeOffsetShape).PerformByJoin(
                 shapeToOffset,
@@ -181,8 +181,8 @@ export class OCCTOperations {
 
     extrudeShapes(inputs: Inputs.OCCT.ExtrudeShapesDto<TopoDS_Shape>): TopoDS_Shape[] {
         return inputs.shapes.map(shape => {
-            let extruded = this.extrude({ shape, direction: inputs.direction });
-            let result = this.och.getActualTypeOfShape(extruded);
+            const extruded = this.extrude({ shape, direction: inputs.direction });
+            const result = this.och.getActualTypeOfShape(extruded);
             extruded.delete();
             return result;
         })
@@ -399,7 +399,7 @@ export class OCCTOperations {
             facesToRemove.Append_1(shape);
         })
         const myBody = new this.occ.BRepOffsetAPI_MakeThickSolid();
-        let jointType: GeomAbs_JoinType = this.getJoinType(inputs.joinType);
+        const jointType: GeomAbs_JoinType = this.getJoinType(inputs.joinType);
 
         myBody.MakeThickSolidByJoin(
             inputs.shape,

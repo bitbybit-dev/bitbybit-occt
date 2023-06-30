@@ -1,6 +1,6 @@
-import { OccHelper } from '../occ-helper';
-import { BRepFilletAPI_MakeFillet2d_2, ChFi3d_FilletShape, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from '../../bitbybit-dev-occt/bitbybit-dev-occt';
-import * as Inputs from '../api/inputs/inputs';
+import { OccHelper } from "../occ-helper";
+import { BRepFilletAPI_MakeFillet2d_2, ChFi3d_FilletShape, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import * as Inputs from "../api/inputs/inputs";
 
 export class OCCTFillets {
 
@@ -19,7 +19,7 @@ export class OCCTFillets {
                 inputs.shape, (this.occ.TopAbs_ShapeEnum.TopAbs_EDGE as TopAbs_ShapeEnum),
                 (this.occ.TopAbs_ShapeEnum.TopAbs_SHAPE as TopAbs_ShapeEnum)
             );
-            let edges = [];
+            const edges = [];
             while (anEdgeExplorer.More()) {
                 const anEdge = this.occ.TopoDS.Edge_1(anEdgeExplorer.Current());
                 edges.push(anEdge);
@@ -50,13 +50,13 @@ export class OCCTFillets {
                 }
             });
             if (foundEdges === 0) {
-                throw (new Error('Fillet Edges Not Found!  Make sure you are looking at the object _before_ the Fillet is applied!'));
+                throw (new Error("Fillet Edges Not Found!  Make sure you are looking at the object _before_ the Fillet is applied!"));
             }
             else {
                 curFillet = mkFillet.Shape();
             }
             mkFillet.delete();
-            let result = this.och.getActualTypeOfShape(curFillet);
+            const result = this.och.getActualTypeOfShape(curFillet);
             curFillet.delete();
             return result;
         }
@@ -103,14 +103,14 @@ export class OCCTFillets {
                 }
             });
             if (foundEdges === 0) {
-                console.error('Chamfer Edges Not Found!  Make sure you are looking at the object _before_ the Fillet is applied!');
+                console.error("Chamfer Edges Not Found!  Make sure you are looking at the object _before_ the Fillet is applied!");
                 curChamfer = inputs.shape;
             }
             else {
                 curChamfer = mkChamfer.Shape();
             }
             mkChamfer.delete();
-            let result = this.och.getActualTypeOfShape(curChamfer);
+            const result = this.och.getActualTypeOfShape(curChamfer);
             curChamfer.delete();
             return result;
         }
@@ -131,7 +131,7 @@ export class OCCTFillets {
         }
         const filletedEdge = fil.Result(pt, edge1, edge2, solution);
 
-        let result = this.och.combineEdgesAndWiresIntoAWire({ shapes: [edge1, filletedEdge, edge2] });
+        const result = this.och.combineEdgesAndWiresIntoAWire({ shapes: [edge1, filletedEdge, edge2] });
         fil.delete();
         pt.delete();
         pln.delete();
@@ -158,7 +158,7 @@ export class OCCTFillets {
 
     fillet2d(inputs: Inputs.OCCT.FilletDto<TopoDS_Wire | TopoDS_Face>): TopoDS_Face | TopoDS_Wire {
         if (inputs.indexes && inputs.radiusList && inputs.radiusList.length !== inputs.indexes.length) {
-            throw new Error('When using radius list, length of the list must match index list of corners that you want to fillet.');
+            throw new Error("When using radius list, length of the list must match index list of corners that you want to fillet.");
         }
         let face;
         let isShapeFace = false;
@@ -169,23 +169,23 @@ export class OCCTFillets {
             const faceBuilder = new this.occ.BRepBuilderAPI_MakeFace_15(inputs.shape, true);
             const messageProgress = new this.occ.Message_ProgressRange_1();
             faceBuilder.Build(messageProgress);
-            let shape = faceBuilder.Shape();
+            const shape = faceBuilder.Shape();
             face = this.och.getActualTypeOfShape(shape);
             shape.delete();
             messageProgress.delete();
             faceBuilder.delete();
         } else {
-            throw new Error(`You can only fillet a 2d wire or a 2d face.`);
+            throw new Error("You can only fillet a 2d wire or a 2d face.");
         }
 
         const filletMaker = new this.occ.BRepFilletAPI_MakeFillet2d_2(face);
 
-        let anVertexExplorer = new this.occ.TopExp_Explorer_2(
+        const anVertexExplorer = new this.occ.TopExp_Explorer_2(
             inputs.shape, (this.occ.TopAbs_ShapeEnum.TopAbs_VERTEX as TopAbs_ShapeEnum),
             (this.occ.TopAbs_ShapeEnum.TopAbs_SHAPE as TopAbs_ShapeEnum)
         );
         let i = 1;
-        let cornerVertices: TopoDS_Vertex[] = [];
+        const cornerVertices: TopoDS_Vertex[] = [];
         for (anVertexExplorer; anVertexExplorer.More(); anVertexExplorer.Next()) {
             const vertex: TopoDS_Vertex = this.occ.TopoDS.Vertex_1(anVertexExplorer.Current());
             if (i % 2 === 0) {
@@ -219,7 +219,7 @@ export class OCCTFillets {
                 result = filletedWires[0];
             }
             else {
-                throw new Error('There was an error when computing fillet.')
+                throw new Error("There was an error when computing fillet.")
             }
         }
         anVertexExplorer.delete();

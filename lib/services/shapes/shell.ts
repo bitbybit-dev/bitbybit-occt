@@ -1,6 +1,6 @@
-import { OpenCascadeInstance, TopoDS_Face, TopoDS_Shell } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper } from '../../occ-helper';
-import * as Inputs from '../../api/inputs/inputs';
+import { OpenCascadeInstance, TopoDS_Face, TopoDS_Shell } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper } from "../../occ-helper";
+import * as Inputs from "../../api/inputs/inputs";
 
 export class OCCTShell {
 
@@ -18,7 +18,7 @@ export class OCCTShell {
         const messageProgress = new this.occ.Message_ProgressRange_1();
         sew.Perform(messageProgress);
         const res = sew.SewedShape();
-        let result = this.och.getActualTypeOfShape(res);
+        const result = this.och.getActualTypeOfShape(res);
         sew.delete();
         messageProgress.delete();
         res.delete();

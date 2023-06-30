@@ -1,6 +1,6 @@
-import { OccHelper } from '../../occ-helper';
-import { OpenCascadeInstance, TopoDS_Shape, TDF_Label, TDF_LabelSequence, XCAFDoc_ShapeTool } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import * as Inputs from '../../api/inputs/inputs';
+import { OccHelper } from "../../occ-helper";
+import { OpenCascadeInstance, TopoDS_Shape, TDF_Label, TDF_LabelSequence, XCAFDoc_ShapeTool, TDataStd_Name } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import * as Inputs from "../../api/inputs/inputs";
 
 type Assembly = {
     name: string;
@@ -31,7 +31,7 @@ export class OCCTAssembly {
         // const app = this.occ.XCAFApp_Application.GetApplication();
 
         if(mainDoc.IsNull()){
-            throw new Error('Document is null');
+            throw new Error("Document is null");
         }
 
         // const tool = new this.occ.Handle_XCAFDoc_ShapeTool_1().get();
@@ -45,7 +45,6 @@ export class OCCTAssembly {
     traverseLabel(label: TDF_Label): (Assembly | Part) {
         const att = new this.occ.Handle_TDF_Attribute_2(new this.occ.TDataStd_Name() as any);
         label.FindAttribute_1(this.occ.TDataStd_Name.GetID(), att);
-        // @ts-ignore
         const name = this.occ.BitByBitDev.ConvertAsciiString(new this.occ.TCollection_AsciiString_13((att.get() as TDataStd_Name).Get(), 0));
 
         const components = new this.occ.TDF_LabelSequence_1();

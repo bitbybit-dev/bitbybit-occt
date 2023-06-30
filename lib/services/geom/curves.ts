@@ -1,6 +1,6 @@
-import { Geom2d_Curve, Geom_Circle, Geom_Curve, Geom_Ellipse, OpenCascadeInstance } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper, typeSpecificityEnum } from '../../occ-helper';
-import * as Inputs from '../../api/inputs/inputs';
+import { Geom2d_Curve, Geom_Circle, Geom_Ellipse, OpenCascadeInstance } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper, typeSpecificityEnum } from "../../occ-helper";
+import * as Inputs from "../../api/inputs/inputs";
 
 export class OCCTCurves {
 
@@ -12,14 +12,14 @@ export class OCCTCurves {
 
     geom2dEllipse(inputs: Inputs.OCCT.Geom2dEllipseDto) {
         const axis2d = this.och.gpAx2d(inputs.center, inputs.direction);
-        let res = new this.occ.Geom2d_Ellipse_2(axis2d, inputs.radiusMajor, inputs.radiusMinor, inputs.sense);
+        const res = new this.occ.Geom2d_Ellipse_2(axis2d, inputs.radiusMajor, inputs.radiusMinor, inputs.sense);
         axis2d.delete();
         return res;
     }
 
     geom2dCircle(inputs: Inputs.OCCT.Geom2dCircleDto) {
         const axis2d = this.och.gpAx2d(inputs.center, inputs.direction);
-        let res = new this.occ.Geom2d_Circle_2(axis2d, inputs.radius, inputs.sense);
+        const res = new this.occ.Geom2d_Circle_2(axis2d, inputs.radius, inputs.sense);
         axis2d.delete();
         return res;
     }
@@ -34,15 +34,15 @@ export class OCCTCurves {
         const pt1 = this.och.gpPnt2d(inputs.start);
         const pt2 = this.och.gpPnt2d(inputs.end);
         const res = new this.occ.GCE2d_MakeSegment_1(pt1, pt2);
-        let resValue = res.Value();
-        let r = resValue.get();
+        const resValue = res.Value();
+        const r = resValue.get();
         pt1.delete();
         pt2.delete();
         res.delete();
         return r;
     }
 
-    get2dPointFrom2dCurveOnParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<Geom2d_Curve>) {
+    get2dPointFrom2dCurveOnParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<Geom2d_Curve | Geom_Circle>) {
         const pt2d = inputs.shape.Value(inputs.param);
         const pt = [pt2d.X(), pt2d.Y()] 
         pt2d.delete();

@@ -1,7 +1,7 @@
-import { OccHelper } from '../../occ-helper';
-import { OpenCascadeInstance, TopoDS_Shell, TopoDS_Solid } from '../../../bitbybit-dev-occt/bitbybit-dev-occt';
-import * as Inputs from '../../api/inputs/inputs';
-import { Base } from '../../api/inputs/inputs';
+import { OccHelper } from "../../occ-helper";
+import { OpenCascadeInstance, TopoDS_Shape, TopoDS_Shell, TopoDS_Solid } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import * as Inputs from "../../api/inputs/inputs";
+import { Base } from "../../api/inputs/inputs";
 
 export class OCCTSolid {
 
@@ -14,7 +14,7 @@ export class OCCTSolid {
     fromClosedShell(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shell>): TopoDS_Solid {
         const shell = this.och.getActualTypeOfShape(inputs.shape);
         const builder = new this.occ.BRepBuilderAPI_MakeSolid_3(shell);
-        let result = builder.Solid();
+        const result = builder.Solid();
         builder.delete();
         shell.delete();
         return result;
@@ -51,11 +51,11 @@ export class OCCTSolid {
         return cylinders;
     }
 
-    createSphere(inputs: Inputs.OCCT.SphereDto): any {
+    createSphere(inputs: Inputs.OCCT.SphereDto): TopoDS_Shape {
         return this.och.bRepPrimAPIMakeSphere(inputs.center, [0., 0., 1.], inputs.radius);
     }
 
-    createCone(inputs: Inputs.OCCT.ConeDto): any {
+    createCone(inputs: Inputs.OCCT.ConeDto): TopoDS_Shape {
         const ax = this.och.gpAx2(inputs.center, inputs.direction);
         const makeCone = new this.occ.BRepPrimAPI_MakeCone_4(ax, inputs.radius1, inputs.radius2, inputs.height, inputs.angle);
         const coneShape = makeCone.Shape();

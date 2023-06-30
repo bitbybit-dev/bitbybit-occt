@@ -1,7 +1,7 @@
-import { OpenCascadeInstance, TopoDS_Shape } from '../../bitbybit-dev-occt/bitbybit-dev-occt';
-import { OccHelper } from '../occ-helper';
-import * as Inputs from '../api/inputs/inputs';
-import { Base } from '../api/inputs/inputs';
+import { OpenCascadeInstance, TopoDS_Shape } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper } from "../occ-helper";
+import * as Inputs from "../api/inputs/inputs";
+import { Base } from "../api/inputs/inputs";
 
 export class OCCTTransforms {
 
@@ -64,7 +64,7 @@ export class OCCTTransforms {
             scaledShape.delete();
             messageProps.delete();
         } catch (ex) {
-            throw new Error('Could not scale the shape')
+            throw new Error("Could not scale the shape")
         }
         shapeTranslated.delete();
         transformation.delete();
@@ -160,7 +160,7 @@ export class OCCTTransforms {
         const firstLength = lists[0].length;
         const notSameLength = lists.some(s => s.length !== firstLength);
         if (notSameLength) {
-            throw new Error('Some of the list lengths are not the same. For this operation to work all lists need to be of equal length');
+            throw new Error("Some of the list lengths are not the same. For this operation to work all lists need to be of equal length");
         }
     }
 }
