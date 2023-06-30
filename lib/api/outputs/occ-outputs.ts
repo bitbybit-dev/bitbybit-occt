@@ -1,8 +1,10 @@
+export class ShapeWithId<U>{
+    id: string;
+    shape: U;
+}
+
 export class ObjectDefinition<M, U>{
     compound?: U;
-    shapes?: {
-        id: string,
-        shape: U
-    }[];
+    shapes?: ShapeWithId<U>[];
     data?: M;
 }
