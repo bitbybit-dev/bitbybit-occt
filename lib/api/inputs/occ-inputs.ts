@@ -861,7 +861,7 @@ export namespace OCCT {
         lines: Base.Line3[];
     }
     export class FilletDto<T> {
-        constructor(shape?: T, radius?: number, indexes?: number[], all?: boolean) {
+        constructor(shape?: T, radius?: number, indexes?: number[]) {
             this.shape = shape;
             this.radius = radius;
             this.indexes = indexes;
@@ -931,7 +931,7 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class ChamferDto<T> {
-        constructor(shape?: T, distance?: number, indexes?: number[], all?: boolean) {
+        constructor(shape?: T, distance?: number, indexes?: number[]) {
             this.shape = shape;
             this.distance = distance;
             this.indexes = indexes;
