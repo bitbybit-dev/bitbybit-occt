@@ -660,6 +660,15 @@ export class OccHelper {
         return aligned;
     }
 
+    createLPolygonWire(inputs: Inputs.OCCT.LPolygonDto) {
+        const wire = this.createPolygonWire({
+            points: this.shapesHelperServide.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond)
+        });
+        const aligned = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
+        wire.delete();
+        return aligned;
+    }
+
     createPolygonWire(inputs: Inputs.OCCT.PolygonDto) {
         const gpPoints = [];
         for (let ind = 0; ind < inputs.points.length; ind++) {

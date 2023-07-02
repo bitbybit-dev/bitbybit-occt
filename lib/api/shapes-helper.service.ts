@@ -86,4 +86,14 @@ export class ShapesHelperService {
 
         return edges;
     }
+    polygonL(widthFirst: number, lengthFirst: number, widthSecond: number, lengthSecond: number): Base.Point3[] {
+        return [
+            [0, 0, 0],
+            [lengthFirst, 0, 0],
+            [lengthFirst, 0, -widthFirst],
+            [-widthSecond, 0, -widthFirst],
+            [-widthSecond, 0, lengthSecond],
+            [0, 0, lengthSecond],
+        ]
+    }
 }

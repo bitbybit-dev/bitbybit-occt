@@ -636,6 +636,50 @@ export namespace OCCT {
          */
         direction: Base.Vector3 = [0, 1, 0];
     }
+    export class LPolygonDto {
+        /**
+         * Width of the first side of L polygon
+         * @default 1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        widthFirst = 1;
+        /**
+         * Length of the first side of L polygon
+         * @default 2
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        lengthFirst = 2;
+        /**
+         * Width of the second side of L polygon
+         * @default 0.5
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        widthSecond = 0.5;
+        /**
+         * Length of the second side of L polygon
+         * @default 1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        lengthSecond = 1;
+        /**
+         * Center of the L polygon
+         * @default [0, 0, 0]
+         */
+        center: Base.Point3 = [0, 0, 0];
+        /**
+         * Direction of the  L polygon
+         * @default [0, 1, 0]
+         */
+        direction: Base.Vector3 = [0, 1, 0];
+    }
     export class BoxDto {
         constructor(width?: number, length?: number, height?: number, center?: Base.Point3) {
             this.width = width;

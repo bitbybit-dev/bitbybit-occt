@@ -175,6 +175,10 @@ export class OCCTWire {
         return this.och.createRectangleWire(inputs);
     }
 
+    createLPolygonWire(inputs: Inputs.OCCT.LPolygonDto): TopoDS_Wire {
+        return this.och.createLPolygonWire(inputs);
+    }
+
     getWire(inputs: Inputs.OCCT.ShapeIndexDto<TopoDS_Shape>): TopoDS_Wire {
         if (!inputs.shape || this.och.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.wire || inputs.shape.IsNull()) {
             throw (new Error("Shape is not provided or is of incorrect type"));
