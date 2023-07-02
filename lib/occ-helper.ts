@@ -664,8 +664,10 @@ export class OccHelper {
         const wire = this.createPolygonWire({
             points: this.shapesHelperServide.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond)
         });
-        const aligned = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
+        const rotated = this.rotate({ shape: wire, angle: inputs.rotation, axis: [0, 1, 0] });
+        const aligned = this.alignAndTranslateShape({ shape: rotated, direction: inputs.direction, center: inputs.center });
         wire.delete();
+        rotated.delete();
         return aligned;
     }
 

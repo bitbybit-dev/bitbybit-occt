@@ -46,7 +46,7 @@ export namespace OCCT {
 
     export class DecomposedFaceDto {
         face_index: number;
-        normal_coord:  number[];
+        normal_coord: number[];
         number_of_triangles: number;
         tri_indexes: number[];
         vertex_coord: number[];
@@ -670,6 +670,14 @@ export namespace OCCT {
          */
         lengthSecond = 1;
         /**
+         * Rotation of the L polygon
+         * @default 0
+         * @minimum 0
+         * @maximum Infinity
+         * @step 15
+         */
+        rotation = 0;
+        /**
          * Center of the L polygon
          * @default [0, 0, 0]
          */
@@ -924,7 +932,7 @@ export namespace OCCT {
          * @step 0.1
          * @optional true
          */
-        radius? = 0.1;
+        radius?= 0.1;
         /**
          * Radius list
          * @default undefined
@@ -956,7 +964,7 @@ export namespace OCCT {
          * @step 0.1
          * @optional true
          */
-        radius? = 0.1;
+        radius?= 0.1;
         /**
          * Radius list
          * @default undefined
@@ -994,7 +1002,7 @@ export namespace OCCT {
          * @optional true
          * @step 0.1
          */
-        distance? = 0.1;
+        distance?= 0.1;
         /**
          * Distance for the chamfer
          * @default undefined
