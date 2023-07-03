@@ -28,7 +28,7 @@ export class OccHelper {
 
     constructor(
         public readonly vecHelper: VectorHelperService,
-        public readonly shapesHelperServide: ShapesHelperService,
+        public readonly shapesHelperService: ShapesHelperService,
         private readonly occ: OpenCascadeInstance) {
     }
 
@@ -625,7 +625,7 @@ export class OccHelper {
     }
 
     createStarWire(inputs: Inputs.OCCT.StarDto) {
-        const lines = this.shapesHelperServide.starLines(inputs.innerRadius, inputs.outerRadius, inputs.numRays, inputs.half);
+        const lines = this.shapesHelperService.starLines(inputs.innerRadius, inputs.outerRadius, inputs.numRays, inputs.half);
         const edges = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
@@ -637,7 +637,7 @@ export class OccHelper {
     }
 
     createParallelogramWire(inputs: Inputs.OCCT.ParallelogramDto) {
-        const lines = this.shapesHelperServide.parallelogram(inputs.width, inputs.height, inputs.angle, inputs.aroundCenter);
+        const lines = this.shapesHelperService.parallelogram(inputs.width, inputs.height, inputs.angle, inputs.aroundCenter);
         const edges = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
@@ -649,7 +649,7 @@ export class OccHelper {
     }
 
     createNGonWire(inputs: Inputs.OCCT.NGonWireDto) {
-        const lines = this.shapesHelperServide.ngon(inputs.nrCorners, inputs.radius, [0, 0]);
+        const lines = this.shapesHelperService.ngon(inputs.nrCorners, inputs.radius, [0, 0]);
         const edges = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
@@ -662,7 +662,9 @@ export class OccHelper {
 
     createLPolygonWire(inputs: Inputs.OCCT.LPolygonDto) {
         const wire = this.createPolygonWire({
-            points: this.shapesHelperServide.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond)
+            points: inputs.invert ?
+                this.shapesHelperService.polygonLInverted(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond) :
+                this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond)
         });
         const rotated = this.rotate({ shape: wire, angle: inputs.rotation, axis: [0, 1, 0] });
         const aligned = this.alignAndTranslateShape({ shape: rotated, direction: inputs.direction, center: inputs.center });

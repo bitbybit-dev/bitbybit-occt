@@ -663,12 +663,17 @@ export namespace OCCT {
         widthSecond = 0.5;
         /**
          * Length of the second side of L polygon
-         * @default 1
+         * @default 2
          * @minimum 0
          * @maximum Infinity
          * @step 0.1
          */
-        lengthSecond = 1;
+        lengthSecond = 2;
+        /**
+         * Indicates if the L polygon should be inverted
+         * @default false
+         */
+        invert = false;
         /**
          * Rotation of the L polygon
          * @default 0
