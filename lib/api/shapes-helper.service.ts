@@ -115,4 +115,26 @@ export class ShapesHelperService {
             [0, 0, lengthSecond],
         ]
     }
+
+    polygonLMiddle(widthFirst: number, lengthFirst: number, widthSecond: number, lengthSecond: number): Base.Point3[] {
+        if (widthFirst >= lengthSecond) {
+            widthFirst = lengthSecond - 1e-6;
+            console.warn("width first is bigger than length second, to make it work, width second is set to length first - 1e-6");
+        }
+        if (widthSecond >= lengthFirst) {
+            widthSecond = lengthFirst - 1e-6;
+            console.warn("width second is bigger than length first, to make it work, width second is set to length first - 1e-6");
+        }
+
+        return [
+            [widthSecond / 2, 0, widthFirst / 2],
+            [widthSecond / 2, 0, lengthSecond ],
+            [-widthSecond / 2, 0, lengthSecond],
+            [-widthSecond / 2, 0, -widthFirst / 2],
+            [lengthFirst, 0, -widthFirst / 2],
+            [lengthFirst, 0, widthFirst / 2],
+        ]
+    }
 }
+
+

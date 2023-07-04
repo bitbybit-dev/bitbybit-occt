@@ -33,6 +33,12 @@ export namespace OCCT {
         approxIsoParametric = "approxIsoParametric"
     }
 
+    export enum directionEnum {
+        outside = "outside",
+        inside = "inside",
+        middle = "middle"
+    }
+
     export class DecomposedMeshDto {
         /**
          * Face list
@@ -670,10 +676,10 @@ export namespace OCCT {
          */
         lengthSecond = 2;
         /**
-         * Indicates if the L polygon should be inverted
-         * @default false
+         * Indicates if the L polygon should be aligned inside/outside or middle
+         * @default outside
          */
-        invert = false;
+        align = directionEnum.outside;
         /**
          * Rotation of the L polygon
          * @default 0

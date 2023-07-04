@@ -661,11 +661,24 @@ export class OccHelper {
     }
 
     createLPolygonWire(inputs: Inputs.OCCT.LPolygonDto) {
+        let points;
+        switch (inputs.align) {
+            case Inputs.OCCT.directionEnum.outside:
+                points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+                break;
+            case Inputs.OCCT.directionEnum.inside:
+                points = this.shapesHelperService.polygonLInverted(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+                break;
+            case Inputs.OCCT.directionEnum.middle:
+                points = this.shapesHelperService.polygonLMiddle(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+                break;
+            default:
+                points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+        }
         const wire = this.createPolygonWire({
-            points: inputs.invert ?
-                this.shapesHelperService.polygonLInverted(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond) :
-                this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond)
+            points
         });
+
         const rotated = this.rotate({ shape: wire, angle: inputs.rotation, axis: [0, 1, 0] });
         const aligned = this.alignAndTranslateShape({ shape: rotated, direction: inputs.direction, center: inputs.center });
         wire.delete();
