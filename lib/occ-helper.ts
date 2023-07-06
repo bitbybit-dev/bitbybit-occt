@@ -590,13 +590,13 @@ export class OccHelper {
         const pt4: Base.Point3 = [cw, 0, -cl];
         const points = [pt1, pt2, pt3, pt4];
         const wire = this.createPolygonWire({ points });
-        const alignedWire = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
+        const alignedWire = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
         return alignedWire;
     }
 
-    alignAndTranslateShape(inputs: { shape: TopoDS_Shape, direction: Base.Vector3, center: Base.Vector3 }) {
-        const alignedWire = this.align(
+    alignAndTranslate(inputs: Inputs.OCCT.AlignAndTranslateDto<TopoDS_Shape>): TopoDS_Shape {
+        const alignedShape = this.align(
             {
                 shape: inputs.shape,
                 fromOrigin: [0, 0, 0],
@@ -607,11 +607,11 @@ export class OccHelper {
         );
         const translatedWire = this.translate(
             {
-                shape: alignedWire,
+                shape: alignedShape,
                 translation: inputs.center
             }
         );
-        alignedWire.delete();
+        alignedShape.delete();
         return translatedWire;
     }
 
@@ -631,7 +631,7 @@ export class OccHelper {
             edges.push(this.lineEdge(line));
         })
         const wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
-        const alignedWire = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
+        const alignedWire = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
         return alignedWire;
     }
@@ -643,7 +643,7 @@ export class OccHelper {
             edges.push(this.lineEdge(line));
         })
         const wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
-        const aligned = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
+        const aligned = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
         return aligned;
     }
@@ -655,7 +655,7 @@ export class OccHelper {
             edges.push(this.lineEdge(line));
         })
         const wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
-        const aligned = this.alignAndTranslateShape({ shape: wire, direction: inputs.direction, center: inputs.center });
+        const aligned = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
         return aligned;
     }
@@ -680,7 +680,7 @@ export class OccHelper {
         });
 
         const rotated = this.rotate({ shape: wire, angle: inputs.rotation, axis: [0, 1, 0] });
-        const aligned = this.alignAndTranslateShape({ shape: rotated, direction: inputs.direction, center: inputs.center });
+        const aligned = this.alignAndTranslate({ shape: rotated, direction: inputs.direction, center: inputs.center });
         wire.delete();
         rotated.delete();
         return aligned;

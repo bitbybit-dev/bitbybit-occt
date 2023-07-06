@@ -2009,6 +2009,49 @@ export namespace OCCT {
          */
         normals: Base.Vector3[] = [[0, 0, 1]];
     }
+    export class AlignAndTranslateDto<T>{
+        constructor(shape?: T, direction?: Base.Vector3, center?: Base.Vector3) {
+            this.shape = shape;
+            this.direction = direction;
+            this.center = center;
+        }
+        /**
+         * Shape to align and translate
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Direction on which to align
+         * @default [0, 0, 1]
+         */
+        direction: Base.Vector3 = [0, 1, 0];
+        /**
+         * Position to translate
+         */
+        center: Base.Vector3 = [0, 0, 0]
+    }
+
+    export class AlignAndTranslateShapesDto<T>{
+        constructor(shapes?: T[], directions?: Base.Vector3[], centers?: Base.Vector3[]) {
+            this.shapes = shapes;
+            this.directions = directions;
+            this.centers = centers;
+        }
+        /**
+         * Shapes to align and translate
+         * @default undefined
+         */
+        shapes: T[];
+        /**
+         * Directions on which to align
+         * @default [0, 0, 1]
+         */
+        directions: Base.Vector3[] = [[0, 1, 0]];
+        /**
+         * Positions to translate
+         */
+        centers: Base.Vector3[] = [[0, 0, 0]]
+    }
     export class RotateDto<T> {
         constructor(shape?: T, axis?: Base.Vector3, degrees?: number) {
             this.shape = shape;

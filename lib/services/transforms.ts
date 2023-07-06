@@ -29,6 +29,10 @@ export class OCCTTransforms {
         return this.och.align(inputs);
     }
 
+    alignAndTranslate(inputs: Inputs.OCCT.AlignAndTranslateDto<TopoDS_Shape>): TopoDS_Shape {
+        return this.och.alignAndTranslate(inputs);
+    }
+
     translate(inputs: Inputs.OCCT.TranslateDto<TopoDS_Shape>): TopoDS_Shape{
         return this.och.translate(inputs);
     }
@@ -109,6 +113,15 @@ export class OCCTTransforms {
             fromDirection: inputs.fromDirections[index],
             toOrigin: inputs.toOrigins[index],
             toDirection: inputs.toDirections[index]
+        }));
+    }
+
+    alignAndTranslateShapes(inputs: Inputs.OCCT.AlignAndTranslateShapesDto<TopoDS_Shape>): TopoDS_Shape[] {
+        this.checkIfListsEqualLength([inputs.shapes, inputs.centers, inputs.directions]);
+        return inputs.shapes.map((s, index) => this.alignAndTranslate({
+            shape: s,
+            center: inputs.centers[index],
+            direction: inputs.directions[index],
         }));
     }
 
