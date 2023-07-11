@@ -2077,6 +2077,34 @@ export namespace OCCT {
          */
         angle = 0;
     }
+    export class RotateAroundCenterDto<T> {
+        constructor(shape?: T, angle?: number, center?: Base.Point3, axis?: Base.Vector3) {
+            this.shape = shape;
+            this.angle = angle;
+            this.center = center;
+            this.axis = axis;
+        }
+        /**
+         * Shape to rotate
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Angle of rotation to apply
+         * @default 0
+         */
+        angle = 0;
+        /**
+         * Center of the rotation
+         * @default [0, 0, 0]
+         */
+        center: Base.Point3 = [0, 0, 0];
+        /**
+         * Axis around which to rotate
+         * @default [0, 0, 1]
+         */
+        axis: Base.Vector3 = [0, 0, 1];
+    }
     export class RotateShapesDto<T> {
         constructor(shapes?: T[], axes?: Base.Vector3[], angles?: number[]) {
             this.shapes = shapes;
@@ -2098,6 +2126,34 @@ export namespace OCCT {
          * @default [0]
          */
         angles: number[] = [0];
+    }
+    export class RotateAroundCenterShapesDto<T> {
+        constructor(shapes?: T[], angles?: number[], centers?: Base.Point3[], axes?: Base.Vector3[]) {
+            this.shapes = shapes;
+            this.angles = angles;
+            this.centers = centers;
+            this.axes = axes;
+        }
+        /**
+         * Shape to scale
+         * @default undefined
+         */
+        shapes: T[];
+        /**
+         * Angles of rotation to apply
+         * @default [0]
+         */
+        angles = [0];
+        /**
+         * Centers around which to rotate
+         * @default [[0, 0, 0]]
+         */
+        centers: Base.Point3[] = [[0, 0, 0]];
+        /**
+         * Axes around which to rotate
+         * @default [[0, 0, 1]]
+         */
+        axes: Base.Vector3[] = [[0, 0, 1]];
     }
     export class ScaleDto<T> {
         constructor(shape?: T, scale?: number) {

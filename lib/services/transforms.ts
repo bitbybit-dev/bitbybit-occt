@@ -25,7 +25,17 @@ export class OCCTTransforms {
         return this.och.rotate(inputs);
     }
 
-    align(inputs: Inputs.OCCT.AlignDto<TopoDS_Shape>): TopoDS_Shape{
+    rotateAroundCenter(inputs: Inputs.OCCT.RotateAroundCenterDto<TopoDS_Shape>): TopoDS_Shape {
+        const shapeTranslated = this.translate({ shape: inputs.shape, translation: inputs.center.map(c => -c) as Base.Vector3 });
+        const angle = inputs.angle;
+        const rotatedShape = this.rotate({ shape: shapeTranslated, axis: inputs.axis, angle });
+        const result = this.translate({ shape: rotatedShape, translation: inputs.center });
+        rotatedShape.delete();
+        shapeTranslated.delete();
+        return result;
+    }
+
+    align(inputs: Inputs.OCCT.AlignDto<TopoDS_Shape>): TopoDS_Shape {
         return this.och.align(inputs);
     }
 
@@ -33,7 +43,7 @@ export class OCCTTransforms {
         return this.och.alignAndTranslate(inputs);
     }
 
-    translate(inputs: Inputs.OCCT.TranslateDto<TopoDS_Shape>): TopoDS_Shape{
+    translate(inputs: Inputs.OCCT.TranslateDto<TopoDS_Shape>): TopoDS_Shape {
         return this.och.translate(inputs);
     }
 
@@ -102,6 +112,16 @@ export class OCCTTransforms {
             shape: s,
             axis: inputs.axes[index],
             angle: inputs.angles[index],
+        }));
+    }
+
+    rotateAroundCenterShapes(inputs: Inputs.OCCT.RotateAroundCenterShapesDto<TopoDS_Shape>): TopoDS_Shape[] {
+        this.checkIfListsEqualLength([inputs.shapes, inputs.axes, inputs.angles]);
+        return inputs.shapes.map((s, index) => this.rotateAroundCenter({
+            shape: s,
+            axis: inputs.axes[index],
+            angle: inputs.angles[index],
+            center: inputs.centers[index],
         }));
     }
 
