@@ -31,7 +31,7 @@ tsc -p tsconfig.bitbybit.json
 npm run test
 
 # Run Live Unit Tests With Coverage
-npm run test-c
+npm run test-c-l
 
 # Media Channels
 Discord: https://discord.gg/GSe3VMe  
