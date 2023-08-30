@@ -605,14 +605,14 @@ export class OccHelper {
                 toDirection: inputs.direction
             }
         );
-        const translatedWire = this.translate(
+        const translated = this.translate(
             {
                 shape: alignedShape,
                 translation: inputs.center
             }
         );
         alignedShape.delete();
-        return translatedWire;
+        return translated;
     }
 
     createSquareWire(inputs: Inputs.OCCT.SquareDto): TopoDS_Wire {
