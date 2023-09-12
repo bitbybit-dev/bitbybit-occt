@@ -648,6 +648,39 @@ export class OccHelper {
         return aligned;
     }
 
+    createHeartWire(inputs: Inputs.OCCT.Heart2DDto) {
+        const sizeOfBox = 2;
+        const halfSize = sizeOfBox / 2;
+
+        const points1: Inputs.Base.Point3[] = [
+            [0, 0, halfSize * 0.7],
+            [halfSize / 6, 0, halfSize * 0.9],
+            [halfSize / 2, 0, halfSize],
+            [halfSize * 0.75, 0, halfSize * 0.9],
+            [halfSize, 0, halfSize / 4],
+            [halfSize / 2, 0, -halfSize / 2],
+            [0, 0, -halfSize],
+        ];
+
+        const points2: Inputs.Base.Point3[] = points1.map(p => [-p[0], p[1], p[2]]);
+
+        const tolerance = 0.00001;
+        const wireFirstHalf = this.interpolatePoints({
+            points: points1, periodic: false, tolerance
+        });
+
+        const wireSecondHalf = this.interpolatePoints({
+            points: points2.reverse(), periodic: false, tolerance
+        });
+
+        const wire = this.combineEdgesAndWiresIntoAWire({ shapes: [wireFirstHalf, wireSecondHalf] });
+        const aligned = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
+        wire.delete();
+        wireFirstHalf.delete();
+        wireSecondHalf.delete();
+        return aligned;
+    }
+
     createNGonWire(inputs: Inputs.OCCT.NGonWireDto) {
         const lines = this.shapesHelperService.ngon(inputs.nrCorners, inputs.radius, [0, 0]);
         const edges = [];
@@ -1175,9 +1208,9 @@ export class OccHelper {
             makeWire.delete();
             return wire;
         } else {
-            makeWire.delete();
             let errorMessage;
             const error = makeWire.Error();
+            makeWire.delete();
             if (error === this.occ.BRepBuilderAPI_WireError.BRepBuilderAPI_DisconnectedWire) {
                 errorMessage = "Wire is disconnected and can not be constructed";
             } else if (error === this.occ.BRepBuilderAPI_WireError.BRepBuilderAPI_EmptyWire) {

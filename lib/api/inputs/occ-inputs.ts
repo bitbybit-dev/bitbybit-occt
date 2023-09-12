@@ -2631,6 +2631,27 @@ export namespace OCCT {
          */
         angle = 15;
     }
+
+    export class Heart2DDto {
+        /**
+         * Center of the circle
+         * @default [0, 0, 0]
+         */
+        center: Base.Point3 = [0, 0, 0];
+        /**
+         * Direction
+         * @default [0, 1, 0]
+         */
+        direction: Base.Vector3 = [0, 1, 0];
+        /**
+         * Size of the bounding box within which the heart gets drawn
+         * @default 2
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        sizeApprox = 2;
+    }
     export class NGonWireDto {
         /**
          * Center of the circle

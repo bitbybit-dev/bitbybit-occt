@@ -167,6 +167,10 @@ export class OCCTWire {
         return this.och.createParallelogramWire(inputs);
     }
 
+    createHeartWire(inputs: Inputs.OCCT.Heart2DDto): TopoDS_Wire {
+        return this.och.createHeartWire(inputs);
+    }
+
     createNGonWire(inputs: Inputs.OCCT.NGonWireDto): TopoDS_Wire {
         return this.och.createNGonWire(inputs);
     }
