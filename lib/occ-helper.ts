@@ -649,7 +649,7 @@ export class OccHelper {
     }
 
     createHeartWire(inputs: Inputs.OCCT.Heart2DDto) {
-        const sizeOfBox = 2;
+        const sizeOfBox = inputs.sizeApprox;
         const halfSize = sizeOfBox / 2;
 
         const points1: Inputs.Base.Point3[] = [
@@ -674,8 +674,10 @@ export class OccHelper {
         });
 
         const wire = this.combineEdgesAndWiresIntoAWire({ shapes: [wireFirstHalf, wireSecondHalf] });
-        const aligned = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
+        const rotated = this.rotate({ shape: wire, angle: inputs.rotation, axis: [0, 1, 0] });
+        const aligned = this.alignAndTranslate({ shape: rotated, direction: inputs.direction, center: inputs.center });
         wire.delete();
+        rotated.delete();
         wireFirstHalf.delete();
         wireSecondHalf.delete();
         return aligned;

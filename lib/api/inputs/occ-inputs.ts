@@ -2631,7 +2631,6 @@ export namespace OCCT {
          */
         angle = 15;
     }
-
     export class Heart2DDto {
         /**
          * Center of the circle
@@ -2643,6 +2642,14 @@ export namespace OCCT {
          * @default [0, 1, 0]
          */
         direction: Base.Vector3 = [0, 1, 0];
+        /**
+         * Rotation of the hear
+         * @default 0
+         * @minimum 0
+         * @maximum Infinity
+         * @step 15
+         */
+        rotation = 0;
         /**
          * Size of the bounding box within which the heart gets drawn
          * @default 2
