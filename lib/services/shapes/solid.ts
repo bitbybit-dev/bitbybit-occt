@@ -83,4 +83,8 @@ export class OCCTSolid {
     getSolidsCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): Base.Point3[] {
         return this.och.getSolidsCentersOfMass(inputs)
     }
+
+    getSolids(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Solid[] {
+        return this.och.getSolids(inputs);
+    }
 }

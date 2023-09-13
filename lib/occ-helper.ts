@@ -406,6 +406,14 @@ export class OccHelper {
         return faces;
     }
 
+    getSolids(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Solid[] {
+        const solids = [];
+        this.forEachSolid(inputs.shape, (faceIndex, myFace) => {
+            solids.push(myFace);
+        });
+        return solids;
+    }
+
     getFaceArea(inputs: Inputs.OCCT.ShapeDto<TopoDS_Face>): number {
         const gprops = new this.occ.GProp_GProps_1();
         this.occ.BRepGProp.SurfaceProperties_1(inputs.shape, gprops, false, false);
