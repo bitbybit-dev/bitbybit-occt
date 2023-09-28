@@ -140,12 +140,12 @@ export namespace OCCT {
             }
         }
         /**
-         * The OCCT shapes
+         * First OCCT shape
          * @default undefined
          */
         shape1?: T;
         /**
-        * The OCCT shapes
+        * Second OCCT shape
         * @default undefined
         */
         shape2?: T;
