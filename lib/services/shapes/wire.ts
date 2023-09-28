@@ -188,10 +188,13 @@ export class OCCTWire {
             throw (new Error("Shape is not provided or is of incorrect type"));
         }
         if (!inputs.index) { inputs.index = 0; }
-        let innerWire: any = {}; let wiresFound = 0;
+        let innerWire: TopoDS_Wire | undefined;
         this.och.forEachWire(inputs.shape, (i, s) => {
-            if (i === inputs.index) { innerWire = this.occ.TopoDS.Wire_1(s); } wiresFound++;
+            if (i === inputs.index) { innerWire = this.occ.TopoDS.Wire_1(s); }
         });
+        if(!innerWire) {
+            throw (Error("Wire not found"));
+        }
         return innerWire;
     }
 
@@ -216,6 +219,9 @@ export class OCCTWire {
     }
 
     placeWireOnFace(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire | TopoDS_Face>) {
+        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+            throw (Error(("Shapes needs to be an array of length 2")));
+        }
         const wire = inputs.shapes[0] as TopoDS_Wire;
         const face = inputs.shapes[1] as TopoDS_Face;
         const srf = this.och.surfaceFromFace({ shape: face });
@@ -237,7 +243,7 @@ export class OCCTWire {
         edges.forEach(e => {
             const umin = { current: 0 };
             const umax = { current: 0 };
-            this.occ.BRep_Tool.Range_1(e, umin as any, umax as any);
+            this.occ.BRep_Tool.Range_1(e, umin.current, umax.current);
             const crv = this.occ.BRep_Tool.Curve_2(e, umin.current, umax.current);
             if (!crv.IsNull()) {
                 const plane = this.och.gpPln([0, 0, 0], [0, 1, 0]);

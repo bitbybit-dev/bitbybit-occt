@@ -12,7 +12,7 @@ export class OCCTFace {
     }
 
     createFaceFromWire(inputs: Inputs.OCCT.FaceFromWireDto<TopoDS_Wire>): TopoDS_Face {
-        let result;
+        let result: TopoDS_Face;
         if (this.och.getShapeTypeEnum(inputs.shape) !== shapeTypeEnum.wire) {
             throw new Error("Provided input shape is not a wire");
         }
@@ -30,8 +30,7 @@ export class OCCTFace {
             const TolAng = 0.01;
             const TolCurv = 0.1;
             const MaxDeg = 8;
-            const MaxSegments = 9;
-            // )		
+            const MaxSegments = 9;	
 
             const bs = new this.occ.BRepFill_Filling(Degree, NbPtsOnCur, NbIter, Anisotropie, Tol2d, Tol3d, TolAng, TolCurv, MaxDeg, MaxSegments);
             const edges = this.och.getEdges(inputs);
@@ -68,6 +67,9 @@ export class OCCTFace {
     }
 
     faceFromSurfaceAndWire(inputs: Inputs.OCCT.FaceFromSurfaceAndWireDto<Geom_Surface | TopoDS_Wire, undefined>) {
+        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+            throw (Error(("Shapes needs to be an array of length 2")));
+        }
         const face = this.och.bRepBuilderAPIMakeFaceFromSurfaceAndWire(inputs.shapes[0] as Geom_Surface, inputs.shapes[1] as TopoDS_Wire, inputs.inside) as TopoDS_Face;
         if (face.IsNull()) {
             face.delete();
@@ -102,6 +104,9 @@ export class OCCTFace {
     }
 
     subdivideToPointsControlled(inputs: Inputs.OCCT.FaceSubdivisionControlledDto<TopoDS_Face>): Base.Point3[] {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
@@ -146,6 +151,9 @@ export class OCCTFace {
     }
 
     subdivideToPoints(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point3[] {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
@@ -180,6 +188,9 @@ export class OCCTFace {
     }
 
     subdivideToNormals(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point3[] {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const handle = this.occ.BRep_Tool.Surface_2(face);
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
@@ -215,6 +226,9 @@ export class OCCTFace {
     }
 
     subdivideToPointsOnParam(inputs: Inputs.OCCT.FaceLinearSubdivisionDto<TopoDS_Face>): Base.Point3[] {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
@@ -258,6 +272,9 @@ export class OCCTFace {
     }
 
     subdivideToUVOnParam(inputs: Inputs.OCCT.FaceLinearSubdivisionDto<TopoDS_Face>): Base.Point2[] {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const uvs: Base.Point2[] = [];
@@ -295,6 +312,9 @@ export class OCCTFace {
     }
 
     subdivideToUV(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point2[] {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
 
@@ -323,6 +343,9 @@ export class OCCTFace {
     }
 
     uvOnFace(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Point2 {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const u = uMin + (uMax - uMin) * inputs.paramU;
@@ -331,6 +354,9 @@ export class OCCTFace {
     }
 
     pointsOnUVs(inputs: Inputs.OCCT.DataOnUVsDto<TopoDS_Face>): Base.Point3[] {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
@@ -349,6 +375,9 @@ export class OCCTFace {
     }
 
     normalsOnUVs(inputs: Inputs.OCCT.DataOnUVsDto<TopoDS_Face>): Base.Vector3[] {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const handle = this.occ.BRep_Tool.Surface_2(face);
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
@@ -366,6 +395,9 @@ export class OCCTFace {
     }
 
     pointOnUV(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Point3 {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
@@ -381,6 +413,9 @@ export class OCCTFace {
     }
 
     normalOnUV(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Vector3 {
+        if(inputs.shape === undefined) {
+            throw (Error(("Face not defined")));
+        }
         const face = inputs.shape;
         const handle = this.occ.BRep_Tool.Surface_2(face);
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);

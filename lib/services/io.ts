@@ -65,7 +65,7 @@ export class OCCTIO {
     /** This function parses the ASCII contents of a `.STEP` or `.IGES`
      * File as a Shape into the `externalShapes` dictionary.
      */
-    loadSTEPorIGES(inputs: Inputs.OCCT.LoadStepOrIgesDto): TopoDS_Shape {
+    loadSTEPorIGES(inputs: Inputs.OCCT.LoadStepOrIgesDto): TopoDS_Shape|undefined {
         const fileName = inputs.filename;
         const fileText = inputs.filetext;
         const fileType = (() => {
@@ -83,17 +83,20 @@ export class OCCTIO {
         // Writes the uploaded file to Emscripten's Virtual Filesystem
         this.occ.FS.createDataFile("/", `file.${fileType}`, fileText as string, true, true, true);
         // Choose the correct OpenCascade file parsers to read the CAD file
-        let reader: STEPControl_Reader_1 | IGESControl_Reader_1 = null;
+        let reader: STEPControl_Reader_1 | IGESControl_Reader_1;
         if (fileType === "step") {
             reader = new this.occ.STEPControl_Reader_1();
         } else if (fileType === "iges") {
             reader = new this.occ.IGESControl_Reader_1();
-        } else { console.error("opencascade can't parse this extension! (yet)"); }
+        } else { 
+            console.error("opencascade can't parse this extension! (yet)"); 
+            return undefined; 
+        }
         const readResult = reader.ReadFile(`file.${fileType}`);            // Read the file
         if (readResult === this.occ.IFSelect_ReturnStatus.IFSelect_RetDone) {
             // Translate all transferable roots to OpenCascade
             const messageProgress = new this.occ.Message_ProgressRange_1();
-            const numRootsTransferred = reader.TransferRoots(
+            reader.TransferRoots(
                 messageProgress
             );
             messageProgress.delete();

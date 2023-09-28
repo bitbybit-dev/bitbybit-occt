@@ -1,11 +1,12 @@
+import { Base } from "./inputs";
 
 export class VectorHelperService {
 
     private readonly tolerance = 0.00001;
 
     // this algorithm is more costly for longer arrays of points.
-    removeAllDuplicateVectors(items: number[][], tolerance = 1e-7) {
-        const cleanItems = [];
+    removeAllDuplicateVectors(items: Base.Point3[], tolerance = 1e-7):Base.Point3[] {
+        const cleanItems:Base.Point3[] = [];
         items.forEach(item => {
             // when there are no points in cleanPoints array that match the current point, push it in.
             if (!cleanItems.some(s => this.vectorsTheSame(item, s, tolerance))) {
@@ -15,8 +16,8 @@ export class VectorHelperService {
         return cleanItems;
     }
 
-    removeConsecutiveDuplicates(points: number[][], checkFirstAndLast = true): number[][] {
-        const pointsRemaining = [];
+    removeConsecutiveDuplicates(points: Base.Point3[], checkFirstAndLast = true): Base.Point3[] {
+        const pointsRemaining: Base.Point3[] = [];
         if (points.length > 1) {
             for (let i = 1; i < points.length; i++) {
                 const currentPoint = points[i];

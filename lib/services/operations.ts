@@ -1,4 +1,4 @@
-import { Approx_ParametrizationType, BRepFill_TypeOfContact, BRepOffsetAPI_MakeOffsetShape, BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, GeomAbs_JoinType, OpenCascadeInstance, TopoDS_Shape, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { Approx_ParametrizationType, BRepFill_TypeOfContact, BRepOffsetAPI_MakeOffsetShape, BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, GeomAbs_JoinType, OpenCascadeInstance, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from "../occ-helper";
 import * as Inputs from "../api/inputs/inputs";
 
@@ -11,6 +11,9 @@ export class OCCTOperations {
     }
 
     closestPointsBetweenTwoShapes(inputs: Inputs.OCCT.ClosestPointsBetweenTwoShapesDto<TopoDS_Shape>): [Inputs.Base.Point3, Inputs.Base.Point3] {
+        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+            throw (Error(("Shapes needs to be an array of length 2")));
+        }
         return this.och.closestPointsBetweenTwoShapes(inputs.shapes[0], inputs.shapes[1]);
     }
 
@@ -22,7 +25,7 @@ export class OCCTOperations {
 
     closestPointsOnShapesFromPoints(inputs: Inputs.OCCT.ClosestPointsOnShapesFromPointsDto<TopoDS_Shape>): Inputs.Base.Point3[] {
         const vertexes = inputs.points.map(p => this.och.makeVertex(p));
-        const result = [];
+        const result: Inputs.Base.Point3[] = [];
         inputs.shapes.forEach((s) => {
             const pointsOnShape = vertexes.map(v => this.och.closestPointsBetweenTwoShapes(v, s));
             result.push(...pointsOnShape.map(p => p[1]));
@@ -48,8 +51,8 @@ export class OCCTOperations {
             throw new Error("Cant construct periodic non closed loft.");
         }
         const pipe = new this.occ.BRepOffsetAPI_ThruSections(inputs.makeSolid, inputs.straight, inputs.tolerance);
-        const wires = [];
-        const vertices = [];
+        const wires:TopoDS_Wire[] = [];
+        const vertices:TopoDS_Vertex[] = [];
         if (inputs.startVertex) {
             const v = this.och.makeVertex(inputs.startVertex);
             pipe.AddVertex(v);
@@ -58,7 +61,7 @@ export class OCCTOperations {
         if (inputs.closed && !inputs.periodic) {
             inputs.shapes.push(inputs.shapes[0]);
         } else if (inputs.closed && inputs.periodic) {
-            const pointsOnCrvs = [];
+            const pointsOnCrvs:Inputs.Base.Point3[][] = [];
             inputs.shapes.forEach((s: TopoDS_Wire) => {
                 const pts = this.och.divideWireByParamsToPoints({ shape: s, nrOfDivisions: inputs.nrPeriodicSections, removeStartPoint: false, removeEndPoint: false });
                 pointsOnCrvs.push(pts);
@@ -76,7 +79,7 @@ export class OCCTOperations {
                 pipe.AddWire(wire);
             });
         }
-        const endVertices = [];
+        const endVertices:TopoDS_Vertex[] = [];
         if (inputs.endVertex) {
             const v = this.och.makeVertex(inputs.endVertex);
             pipe.AddVertex(v);
@@ -88,7 +91,7 @@ export class OCCTOperations {
         if (inputs.maxUDegree) {
             pipe.SetMaxDegree(inputs.maxUDegree);
         }
-        let parType: Approx_ParametrizationType;
+        let parType: Approx_ParametrizationType|undefined = undefined;
         if (inputs.parType === Inputs.OCCT.ApproxParametrizationTypeEnum.approxChordLength) {
             parType = this.occ.Approx_ParametrizationType.Approx_ChordLength as Approx_ParametrizationType;
         } else if (inputs.parType === Inputs.OCCT.ApproxParametrizationTypeEnum.approxCentripetal) {
@@ -117,16 +120,16 @@ export class OCCTOperations {
     offsetAdv(inputs: Inputs.OCCT.OffsetAdvancedDto<TopoDS_Shape>) {
         if (!inputs.tolerance) { inputs.tolerance = 0.1; }
         if (inputs.distance === 0.0) { return inputs.shape; }
-        let offset = null;
+        let offset:BRepOffsetAPI_MakeOffset_1 | BRepOffsetAPI_MakeOffsetShape;
         const joinType: GeomAbs_JoinType = this.getJoinType(inputs.joinType);
         // only this mode is implemented currently, so we cannot expose others...
         const brepOffsetMode: BRepOffset_Mode = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
 
-        const wires = [];
+        const wires:TopoDS_Wire[] = [];
 
         if ((this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.wire ||
             this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.edge)) {
-            let wire;
+            let wire: TopoDS_Wire;
             if (this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.edge) {
                 wire = this.och.bRepBuilderAPIMakeWire(inputs.shape);
                 wires.push(wire);
@@ -253,7 +256,7 @@ export class OCCTOperations {
 
         // Define the guiding helical auxiliary spine (which controls the rotation)
         const steps = 30;
-        const aspinePoints = [];
+        const aspinePoints:Inputs.Base.Point3[] = [];
         for (let i = 0; i <= steps; i++) {
             const alpha = i / steps;
             aspinePoints.push([
@@ -300,12 +303,12 @@ export class OCCTOperations {
 
     pipePolylineWireNGon(inputs: Inputs.OCCT.PipePolygonWireNGonDto<TopoDS_Wire>) {
         const wire = inputs.shape;
-        const shapesToPassThrough = [];
+        const shapesToPassThrough: TopoDS_Shape[] = [];
         const edges = this.och.getEdges({ shape: wire });
         edges.forEach((e, index) => {
             const edgeStartPt = this.och.startPointOnEdge({ shape: e });
             const tangent = this.och.tangentOnEdgeAtParam({ shape: e, param: 0 });
-            let tangentPreviousEdgeEnd;
+            let tangentPreviousEdgeEnd:Inputs.Base.Vector3;
             let averageTangentVec = tangent;
 
             if (index > 0 && index < edges.length - 1) {
@@ -339,12 +342,12 @@ export class OCCTOperations {
 
     pipeWireCylindrical(inputs: Inputs.OCCT.PipeWireCylindricalDto<TopoDS_Wire>) {
         const wire = inputs.shape;
-        const shapesToPassThrough = [];
+        const shapesToPassThrough:TopoDS_Shape[] = [];
         const edges = this.och.getEdges({ shape: wire });
         edges.forEach((e, index) => {
             const edgeStartPt = this.och.startPointOnEdge({ shape: e });
             const tangent = this.och.tangentOnEdgeAtParam({ shape: e, param: 0 });
-            let tangentPreviousEdgeEnd;
+            let tangentPreviousEdgeEnd:Inputs.Base.Vector3;
             let averageTangentVec = tangent;
 
             if (index > 0 && index < edges.length - 1) {
@@ -422,12 +425,19 @@ export class OCCTOperations {
 
     private getJoinType(jointType: Inputs.OCCT.JoinTypeEnum): GeomAbs_JoinType {
         let res: GeomAbs_JoinType;
-        if (jointType === Inputs.OCCT.JoinTypeEnum.arc) {
+        switch(jointType) {
+        case Inputs.OCCT.JoinTypeEnum.arc: {
             res = this.occ.GeomAbs_JoinType.GeomAbs_Arc as GeomAbs_JoinType;
-        } else if (jointType === Inputs.OCCT.JoinTypeEnum.intersection) {
+            break;
+        }
+        case Inputs.OCCT.JoinTypeEnum.intersection: {
             res = this.occ.GeomAbs_JoinType.GeomAbs_Intersection as GeomAbs_JoinType;
-        } else if (jointType === Inputs.OCCT.JoinTypeEnum.tangent) {
+            break;
+        }
+        case Inputs.OCCT.JoinTypeEnum.tangent: {
             res = this.occ.GeomAbs_JoinType.GeomAbs_Tangent as GeomAbs_JoinType;
+            break;
+        }
         }
         return res;
     }
@@ -436,12 +446,19 @@ export class OCCTOperations {
 
     private getBRepOffsetMode(offsetMode: Inputs.OCCT.BRepOffsetModeEnum): BRepOffset_Mode {
         let res: BRepOffset_Mode;
-        if (offsetMode === Inputs.OCCT.BRepOffsetModeEnum.skin) {
+        switch(offsetMode) {
+        case Inputs.OCCT.BRepOffsetModeEnum.skin: {
             res = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
-        } else if (offsetMode === Inputs.OCCT.BRepOffsetModeEnum.pipe) {
+            break;
+        }
+        case Inputs.OCCT.BRepOffsetModeEnum.pipe: {
             res = this.occ.BRepOffset_Mode.BRepOffset_Pipe as BRepOffset_Mode;
-        } else if (offsetMode === Inputs.OCCT.BRepOffsetModeEnum.rectoVerso) {
+            break;
+        }
+        case Inputs.OCCT.BRepOffsetModeEnum.rectoVerso: {
             res = this.occ.BRepOffset_Mode.BRepOffset_RectoVerso as BRepOffset_Mode;
+            break;
+        }
         }
         return res;
     }

@@ -1,4 +1,4 @@
-import { OpenCascadeInstance, TopoDS_Face } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OpenCascadeInstance, TopoDS_Face, Handle_Poly_Triangulation } from "../bitbybit-dev-occt/bitbybit-dev-occt";
 import * as Inputs from "./api/inputs/inputs";
 import { OCCTBooleans } from "./services/booleans";
 import { OCCTGeom } from "./services/geom/geom";
@@ -59,7 +59,7 @@ export class OCCTService {
         const fullShapeEdgeHashes2 = {};
 
         // Iterate through the faces and triangulate each one
-        const triangulations = [];
+        const triangulations:Handle_Poly_Triangulation[] = [];
         this.och.forEachFace(shapeToUse, (faceIndex, myFace: TopoDS_Face) => {
             const aLocation = new this.occ.TopLoc_Location_1();
             const myT = this.occ.BRep_Tool.Triangulation(myFace, aLocation, 0);
@@ -140,7 +140,7 @@ export class OCCTService {
         // Get the free edges that aren't on any triangulated face/surface
         this.och.forEachEdge(shapeToUse, (index, myEdge) => {
             const edgeHash = myEdge.HashCode(100000000);
-            if (!fullShapeEdgeHashes2.hasOwnProperty(edgeHash)) {
+            if(!Object.prototype.hasOwnProperty.call(fullShapeEdgeHashes2, edgeHash)){
                 const thisEdge: Inputs.OCCT.DecomposedEdgeDto = {
                     vertex_coord: [],
                     edge_index: -1

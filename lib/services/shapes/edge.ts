@@ -11,6 +11,9 @@ export class OCCTEdge {
     }
 
     makeEdgeFromGeom2dCurveAndSurface(inputs: Inputs.OCCT.ShapesDto<Geom2d_Curve | Geom_Surface>) {
+        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+            throw (Error(("Shapes needs to be an array of length 2")));
+        }
         const curve2d = new this.occ.Handle_Geom2d_Curve_2(inputs.shapes[0] as Geom2d_Curve);
         const surface = new this.occ.Handle_Geom_Surface_2(inputs.shapes[1] as Geom_Surface);
         const makeEdge = new this.occ.BRepBuilderAPI_MakeEdge_30(curve2d, surface);
@@ -65,13 +68,13 @@ export class OCCTEdge {
             throw (new Error("Edge can not be found for shape that is not provided or is of incorrect type"));
         }
         if (!inputs.index) { inputs.index = 0; }
-        let innerEdge = {}; let edgesFound = 0;
+        let innerEdge = {};
         let foundEdge = false;
-        this.och.forEachEdge(inputs.shape, (i, s) => {
+        this.och.forEachEdge(inputs.shape, (i: number, s: TopoDS_Edge) => {
             if (i === inputs.index) {
                 innerEdge = s;
                 foundEdge = true;
-            } edgesFound++;
+            }
         });
 
         if (!foundEdge) {
