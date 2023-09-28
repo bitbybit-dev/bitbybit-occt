@@ -1198,9 +1198,14 @@ export namespace OCCT {
     }
     export class CircleDto {
         constructor(radius?: number, center?: Base.Point3, direction?: Base.Vector3) {
-            this.radius = radius;
-            this.center = center;
-            this.direction = direction;
+            //Option 1
+            this.radius = radius ?? this.radius;
+            //Option 2
+            if( center !== undefined) {
+                this.center = center;
+            }
+            //Option 3
+            this.direction = direction ?? [0, 1, 0];
         }
         /**
          * Radius of the circle
@@ -1219,7 +1224,7 @@ export namespace OCCT {
          * Direction vector for circle
          * @default [0, 1, 0]
          */
-        direction: Base.Vector3 = [0, 1, 0];
+        direction: Base.Vector3;
     }
     export class LoftDto<T> {
         constructor(shapes?: T[], makeSolid?: boolean) {
