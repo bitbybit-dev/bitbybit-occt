@@ -134,23 +134,17 @@ export namespace OCCT {
         points: Base.Point3[];
     }
     export class ClosestPointsBetweenTwoShapesDto<T> extends ShapesDto<T> {
-        constructor(shapes?: T[]) {
-            super(shapes);
-            if(shapes.length > 0) {
-                this.shape1 = shapes[0];
-            }
-            if(shapes.length > 1) {
-                this.shape2 = shapes[1];
-            }
+        constructor(shape1?: T, shape2?: T) {
+            super([shape1, shape2]);
         }
         /**
          * The OCCT shapes
-         * @default shapes[0]
+         * @default undefined
          */
         shape1?: T;
         /**
         * The OCCT shapes
-        * @default shapes[1]
+        * @default undefined
         */
         shape2?: T;
     }
