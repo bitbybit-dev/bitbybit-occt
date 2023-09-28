@@ -29,7 +29,7 @@ export class OccHelper {
     constructor(
         public readonly vecHelper: VectorHelperService,
         public readonly shapesHelperService: ShapesHelperService,
-        private readonly occ: OpenCascadeInstance) {
+        public readonly occ: OpenCascadeInstance) {
     }
 
     getCornerPointsOfEdgesForShape(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Inputs.Base.Point3[] {
