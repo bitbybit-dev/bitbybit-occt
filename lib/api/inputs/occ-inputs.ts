@@ -135,7 +135,9 @@ export namespace OCCT {
     }
     export class ClosestPointsBetweenTwoShapesDto<T> extends ShapesDto<T> {
         constructor(shape1?: T, shape2?: T) {
-            super([shape1, shape2]);
+            if (shape1 && shape2) {
+                super([shape1, shape2]);
+            }
         }
         /**
          * The OCCT shapes
