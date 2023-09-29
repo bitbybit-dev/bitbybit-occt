@@ -15,7 +15,7 @@ export class OCCTBooleans {
         for (let i = 0; i < inputs.shapes.length; i++) {
             const messageProgress1 = new this.occ.Message_ProgressRange_1();
             const combinedFuse = new this.occ.BRepAlgoAPI_Fuse_3(combined, inputs.shapes[i], messageProgress1);
-            const messageProgress2 = new this.occ.Message_ProgressRange_1()
+            const messageProgress2 = new this.occ.Message_ProgressRange_1();
             combinedFuse.Build(messageProgress2);
             combined = combinedFuse.Shape();
             messageProgress1.delete();

@@ -70,14 +70,14 @@ export class OCCTIO {
         const fileText = inputs.filetext;
         const fileType = (() => {
             switch (fileName.toLowerCase().split(".").pop()) {
-                case "step":
-                case "stp":
-                    return "step";
-                case "iges":
-                case "igs":
-                    return "iges";
-                default:
-                    return undefined;
+            case "step":
+            case "stp":
+                return "step";
+            case "iges":
+            case "igs":
+                return "iges";
+            default:
+                return undefined;
             }
         })();
         // Writes the uploaded file to Emscripten's Virtual Filesystem

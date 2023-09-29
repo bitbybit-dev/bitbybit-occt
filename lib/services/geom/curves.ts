@@ -44,7 +44,7 @@ export class OCCTCurves {
 
     get2dPointFrom2dCurveOnParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<Geom2d_Curve | Geom_Circle>) {
         const pt2d = inputs.shape.Value(inputs.param);
-        const pt = [pt2d.X(), pt2d.Y()] 
+        const pt = [pt2d.X(), pt2d.Y()]; 
         pt2d.delete();
         return pt;
     }
@@ -54,7 +54,7 @@ export class OCCTCurves {
     }
 
     geomEllipseCurve(inputs: Inputs.OCCT.EllipseDto): Geom_Ellipse {
-        return this.och.createEllipse(inputs.radiusMinor, inputs.radiusMajor, inputs.center, inputs.direction, typeSpecificityEnum.curve) as Geom_Ellipse
+        return this.och.createEllipse(inputs.radiusMinor, inputs.radiusMajor, inputs.center, inputs.direction, typeSpecificityEnum.curve) as Geom_Ellipse;
     }
 
 }

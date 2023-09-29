@@ -78,7 +78,7 @@ export class OCCTTransforms {
             scaledShape.delete();
             messageProps.delete();
         } catch (ex) {
-            throw new Error("Could not scale the shape")
+            throw new Error("Could not scale the shape");
         }
         shapeTranslated.delete();
         transformation.delete();

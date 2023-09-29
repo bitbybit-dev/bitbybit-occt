@@ -47,7 +47,7 @@ export namespace OCCT {
         /**
          * Edge list
          */
-        edgeList: DecomposedEdgeDto[]
+        edgeList: DecomposedEdgeDto[];
     }
 
     export class DecomposedFaceDto {
@@ -810,7 +810,7 @@ export namespace OCCT {
             this.height = height;
             this.angle = angle;
             this.center = center;
-            this.direction = direction
+            this.direction = direction;
         }
         /**
          * First radius of the cone
@@ -2033,7 +2033,7 @@ export namespace OCCT {
         /**
          * Position to translate
          */
-        center: Base.Vector3 = [0, 0, 0]
+        center: Base.Vector3 = [0, 0, 0];
     }
 
     export class AlignAndTranslateShapesDto<T>{
@@ -2055,7 +2055,7 @@ export namespace OCCT {
         /**
          * Positions to translate
          */
-        centers: Base.Vector3[] = [[0, 0, 0]]
+        centers: Base.Vector3[] = [[0, 0, 0]];
     }
     export class RotateDto<T> {
         constructor(shape?: T, axis?: Base.Vector3, degrees?: number) {
@@ -2460,7 +2460,7 @@ export namespace OCCT {
          * Direction to find the isocurve
          * @default u
          */
-        dir: "u" | "v" = "u"
+        dir: "u" | "v" = "u";
     }
 
     export class DivideFaceToUVPointsDto<T> {

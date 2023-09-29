@@ -6,7 +6,7 @@ import { OCCTShapes } from "./shapes";
 
 describe("OCCT face unit tests", () => {
     let occt: OpenCascadeInstance;
-    let occHelper: OccHelper
+    let occHelper: OccHelper;
 
     beforeAll(async () => {
         occt = await initOpenCascade();

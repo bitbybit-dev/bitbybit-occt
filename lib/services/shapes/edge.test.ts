@@ -8,7 +8,7 @@ import { ShapesHelperService } from "../../api/shapes-helper.service";
 describe("OCCT edge unit tests", () => {
     let edge: OCCTEdge;
     let geom: OCCTGeom;
-    let occHelper: OccHelper
+    let occHelper: OccHelper;
     let occt: OpenCascadeInstance;
     let vec: VectorHelperService;
     let s: ShapesHelperService;
@@ -48,7 +48,7 @@ describe("OCCT edge unit tests", () => {
         const length = edge.getEdgeLength({ shape: e });
         expect(length).toEqual(3.4641016151377544);
         e.delete();
-    })
+    });
 
     it("should create an edge line between two points and the point on it will be at specific location", async () => {
         const e = edge.line({ start: [-1, -1, -1], end: [1, 1, 1] });
@@ -75,7 +75,7 @@ describe("OCCT edge unit tests", () => {
 
         const e = edge.makeEdgeFromGeom2dCurveAndSurface({
             shapes: [elipse2d, cylinderSrf]
-        })
+        });
         const length = edge.getEdgeLength({ shape: e });
         expect(length).toEqual(12.566370614359172);
         e.delete();

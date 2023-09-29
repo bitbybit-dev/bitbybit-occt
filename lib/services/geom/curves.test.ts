@@ -6,7 +6,7 @@ import { ShapesHelperService } from "../../api/shapes-helper.service";
 
 describe("OCCT edge unit tests", () => {
     let geom: OCCTGeom;
-    let occHelper: OccHelper
+    let occHelper: OccHelper;
     let occt: OpenCascadeInstance;
     let vec: VectorHelperService;
     let s: ShapesHelperService;

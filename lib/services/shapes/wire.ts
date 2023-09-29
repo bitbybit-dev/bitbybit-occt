@@ -130,9 +130,9 @@ export class OCCTWire {
         }
         if (inputs.closed) { ptList.SetValue(inputs.points.length + 1, ptList.Value(1)); }
         const geomBezierCurveHandle = new this.occ.Geom_BezierCurve_1(ptList);
-        const geomCurve = new this.occ.Handle_Geom_Curve_2(geomBezierCurveHandle)
+        const geomCurve = new this.occ.Handle_Geom_Curve_2(geomBezierCurveHandle);
         const edgeMaker = new this.occ.BRepBuilderAPI_MakeEdge_24(geomCurve);
-        const edge = edgeMaker.Edge()
+        const edge = edgeMaker.Edge();
         const makeWire = new this.occ.BRepBuilderAPI_MakeWire_2(edge);
         const result = makeWire.Wire();
         makeWire.delete();
@@ -240,7 +240,7 @@ export class OCCTWire {
             this.occ.BRep_Tool.Range_1(e, umin as any, umax as any);
             const crv = this.occ.BRep_Tool.Curve_2(e, umin.current, umax.current);
             if (!crv.IsNull()) {
-                const plane = this.och.gpPln([0, 0, 0], [0, 1, 0])
+                const plane = this.och.gpPln([0, 0, 0], [0, 1, 0]);
                 const c2dHandle = this.occ.GeomAPI.To2d(crv, plane);
                 const c2 = c2dHandle.get();
                 const newEdgeOnSrf = this.och.makeEdgeFromGeom2dCurveAndSurfaceBounded({ shapes: [c2, surface] }, umin.current, umax.current);

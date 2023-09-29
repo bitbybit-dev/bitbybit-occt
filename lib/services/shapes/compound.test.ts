@@ -9,7 +9,7 @@ describe("OCCT compound unit tests", () => {
     let occt: OpenCascadeInstance;
     let solid: OCCTSolid;
     let compound: OCCTCompound;
-    let occHelper: OccHelper
+    let occHelper: OccHelper;
 
     beforeAll(async () => {
         occt = await initOpenCascade();

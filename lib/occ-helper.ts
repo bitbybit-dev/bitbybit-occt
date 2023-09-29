@@ -64,7 +64,7 @@ export class OccHelper {
         const listOfShapes = new this.occ.TopTools_ListOfShape_1();
         inputs.shapes.forEach(shape => {
             listOfShapes.Append_1(shape);
-        })
+        });
         const shape = this.occ.BitByBitDev.BitSplit(inputs.shape, listOfShapes);
         return shape;
     }
@@ -437,7 +437,7 @@ export class OccHelper {
     }
 
     getFacesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Face>): Base.Point3[] {
-        return inputs.shapes.map(face => this.getFaceCenterOfMass({ shape: face }))
+        return inputs.shapes.map(face => this.getFaceCenterOfMass({ shape: face }));
     }
 
     getSolidVolume(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): number {
@@ -637,7 +637,7 @@ export class OccHelper {
         const edges = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
-        })
+        });
         const wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
         const alignedWire = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
@@ -649,7 +649,7 @@ export class OccHelper {
         const edges = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
-        })
+        });
         const wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
         const aligned = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
@@ -696,7 +696,7 @@ export class OccHelper {
         const edges = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
-        })
+        });
         const wire = this.combineEdgesAndWiresIntoAWire({ shapes: edges });
         const aligned = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();
@@ -706,17 +706,17 @@ export class OccHelper {
     createLPolygonWire(inputs: Inputs.OCCT.LPolygonDto) {
         let points;
         switch (inputs.align) {
-            case Inputs.OCCT.directionEnum.outside:
-                points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
-                break;
-            case Inputs.OCCT.directionEnum.inside:
-                points = this.shapesHelperService.polygonLInverted(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
-                break;
-            case Inputs.OCCT.directionEnum.middle:
-                points = this.shapesHelperService.polygonLMiddle(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
-                break;
-            default:
-                points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+        case Inputs.OCCT.directionEnum.outside:
+            points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+            break;
+        case Inputs.OCCT.directionEnum.inside:
+            points = this.shapesHelperService.polygonLInverted(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+            break;
+        case Inputs.OCCT.directionEnum.middle:
+            points = this.shapesHelperService.polygonLMiddle(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+            break;
+        default:
+            points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
         }
         const wire = this.createPolygonWire({
             points
@@ -946,7 +946,7 @@ export class OccHelper {
             const param = absc.Parameter();
             absc.delete();
             return param;
-        })
+        });
 
         const points = paramsLength.map(r => {
             const gpPnt = this.gpPnt([0, 0, 0]);
@@ -1249,7 +1249,7 @@ export class OccHelper {
 
         const bsplineHandle = ptsToBspline.Curve();
         const bspline = bsplineHandle.get();
-        const bsplineCrv = new this.occ.Handle_Geom_Curve_2(bspline)
+        const bsplineCrv = new this.occ.Handle_Geom_Curve_2(bspline);
         const edgeMaker = new this.occ.BRepBuilderAPI_MakeEdge_24(bsplineCrv);
         const edge = edgeMaker.Edge();
         const wireMaker = new this.occ.BRepBuilderAPI_MakeWire_2(edge);
@@ -1338,7 +1338,7 @@ export class OccHelper {
         } else {
             const transformation = new this.occ.gp_Trsf_1();
             const pt1 = new this.occ.gp_Pnt_3(0, 0, 0);
-            const gpVec = new this.occ.gp_Vec_4(inputs.axis[0], inputs.axis[1], inputs.axis[2])
+            const gpVec = new this.occ.gp_Vec_4(inputs.axis[0], inputs.axis[1], inputs.axis[2]);
             const dir = new this.occ.gp_Dir_2(gpVec);
             const ax = new this.occ.gp_Ax1_2(pt1, dir);
             transformation.SetRotation_1(ax, inputs.angle * 0.0174533);

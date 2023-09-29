@@ -15,6 +15,7 @@
             "double"
         ],
     "import/no-unresolved": 0,
-    "indent": ["error", 4]
+    "indent": ["error", 4],
+    "semi": ["error", "always"]
     }
 }

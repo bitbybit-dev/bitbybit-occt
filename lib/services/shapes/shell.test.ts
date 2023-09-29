@@ -9,7 +9,7 @@ describe("OCCT shell unit tests", () => {
     let occt: OpenCascadeInstance;
     let face: OCCTFace;
     let shell: OCCTShell;
-    let occHelper: OccHelper
+    let occHelper: OccHelper;
 
     beforeAll(async () => {
         occt = await initOpenCascade();

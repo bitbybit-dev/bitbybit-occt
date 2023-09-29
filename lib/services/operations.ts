@@ -25,7 +25,7 @@ export class OCCTOperations {
         const result = [];
         inputs.shapes.forEach((s) => {
             const pointsOnShape = vertexes.map(v => this.och.closestPointsBetweenTwoShapes(v, s));
-            result.push(...pointsOnShape.map(p => p[1]))
+            result.push(...pointsOnShape.map(p => p[1]));
         });
         return result;
     }
@@ -62,7 +62,7 @@ export class OCCTOperations {
             inputs.shapes.forEach((s: TopoDS_Wire) => {
                 const pts = this.och.divideWireByParamsToPoints({ shape: s, nrOfDivisions: inputs.nrPeriodicSections, removeStartPoint: false, removeEndPoint: false });
                 pointsOnCrvs.push(pts);
-            })
+            });
 
             for (let i = 0; i < inputs.nrPeriodicSections; i++) {
                 const ptsForPerpWire = pointsOnCrvs.map(p => p[i]);
@@ -97,7 +97,7 @@ export class OCCTOperations {
             parType = this.occ.Approx_ParametrizationType.Approx_IsoParametric as Approx_ParametrizationType;
         }
         if (parType) {
-            pipe.SetParType(parType)
+            pipe.SetParType(parType);
         }
         pipe.CheckCompatibility(false);
         const pipeShape = pipe.Shape();
@@ -185,7 +185,7 @@ export class OCCTOperations {
             const result = this.och.getActualTypeOfShape(extruded);
             extruded.delete();
             return result;
-        })
+        });
     }
 
     extrude(inputs: Inputs.OCCT.ExtrudeDto<TopoDS_Shape>): TopoDS_Shape {
@@ -321,12 +321,12 @@ export class OCCTOperations {
                 const ngon = this.och.createNGonWire({ radius: inputs.radius, center: edgeEndPt, direction: tangentEndPt, nrCorners: inputs.nrCorners }) as TopoDS_Wire;
                 shapesToPassThrough.push(ngon);
             }
-        })
+        });
 
         const pipe = new this.occ.BRepOffsetAPI_MakePipeShell(wire);
         shapesToPassThrough.forEach(s => {
             pipe.Add_1(s, false, false);
-        })
+        });
 
         pipe.Build(new this.occ.Message_ProgressRange_1());
         pipe.MakeSolid();
@@ -360,12 +360,12 @@ export class OCCTOperations {
                 const line = this.och.createCircle(inputs.radius, edgeEndPt, tangentEndPt, typeSpecificityEnum.wire) as TopoDS_Wire;
                 shapesToPassThrough.push(line);
             }
-        })
+        });
 
         const pipe = new this.occ.BRepOffsetAPI_MakePipeShell(wire);
         shapesToPassThrough.forEach(s => {
             pipe.Add_1(s, false, false);
-        })
+        });
 
         pipe.Build(new this.occ.Message_ProgressRange_1());
         pipe.MakeSolid();
@@ -397,7 +397,7 @@ export class OCCTOperations {
         const facesToRemove = new this.occ.TopTools_ListOfShape_1();
         inputs.shapes.forEach(shape => {
             facesToRemove.Append_1(shape);
-        })
+        });
         const myBody = new this.occ.BRepOffsetAPI_MakeThickSolid();
         const jointType: GeomAbs_JoinType = this.getJoinType(inputs.joinType);
 

@@ -207,7 +207,7 @@ export class OCCTFillets {
                 this.applyRadiusToVertex(inputs, filletMaker, cvx, radiusAddedCounter);
                 radiusAddedCounter++;
             }
-        })
+        });
         const messageProgress = new this.occ.Message_ProgressRange_1();
         filletMaker.Build(messageProgress);
         let result;
@@ -219,7 +219,7 @@ export class OCCTFillets {
                 result = filletedWires[0];
             }
             else {
-                throw new Error("There was an error when computing fillet.")
+                throw new Error("There was an error when computing fillet.");
             }
         }
         anVertexExplorer.delete();

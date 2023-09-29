@@ -94,7 +94,7 @@ export class ShapesHelperService {
             [-widthSecond, 0, -widthFirst],
             [-widthSecond, 0, lengthSecond],
             [0, 0, lengthSecond],
-        ]
+        ];
     }
     polygonLInverted(widthFirst: number, lengthFirst: number, widthSecond: number, lengthSecond: number): Base.Point3[] {
         if (widthFirst >= lengthSecond) {
@@ -113,7 +113,7 @@ export class ShapesHelperService {
             [widthSecond, 0, widthFirst],
             [widthSecond, 0, lengthSecond],
             [0, 0, lengthSecond],
-        ]
+        ];
     }
 
     polygonLMiddle(widthFirst: number, lengthFirst: number, widthSecond: number, lengthSecond: number): Base.Point3[] {
@@ -133,7 +133,7 @@ export class ShapesHelperService {
             [-widthSecond / 2, 0, -widthFirst / 2],
             [lengthFirst, 0, -widthFirst / 2],
             [lengthFirst, 0, widthFirst / 2],
-        ]
+        ];
     }
 }
 

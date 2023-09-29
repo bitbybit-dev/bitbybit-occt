@@ -12,7 +12,7 @@ describe("OCCT face unit tests", () => {
     let wire: OCCTWire;
     let face: OCCTFace;
     let geom: OCCTGeom;
-    let occHelper: OccHelper
+    let occHelper: OccHelper;
 
     beforeAll(async () => {
         occt = await initOpenCascade();
@@ -310,7 +310,7 @@ describe("OCCT face unit tests", () => {
             [-0.7071067811865479, 1.732050807568877, -0.7071067811865481],
             [-1.4142135623730954, -4.440892098500626e-16, 1.4142135623730947],
             [-0.7071067811865481, 1.732050807568877, 0.7071067811865478]
-        ])
+        ]);
         sph.delete();
         f.delete();
     });
@@ -343,7 +343,7 @@ describe("OCCT face unit tests", () => {
             [-2.999519565323715e-32, -1, 1.2246467991473532e-16],
             [-2.4492935982947064e-16, 0, 1],
             [-2.999519565323715e-32, 1, 1.2246467991473532e-16]
-        ])
+        ]);
         sph.delete();
         f.delete();
     });
@@ -713,7 +713,7 @@ describe("OCCT face unit tests", () => {
         expect(uv.length).toBe(2);
         expect(uv).toEqual([
             1.2566370614359172, -0.6283185307179586
-        ])
+        ]);
         sph.delete();
         f.delete();
     });
@@ -727,7 +727,7 @@ describe("OCCT face unit tests", () => {
             [1.5388417685876268, -1.1755705045849463, 0.5000000000000001],
             [0, -2, 1.2246467991473532e-16],
             [2.3294166369781847e-16, -0.6180339887498948, -1.902113032590307]
-        ])
+        ]);
         sph.delete();
         f.delete();
     });
@@ -742,7 +742,7 @@ describe("OCCT face unit tests", () => {
             [0.7694208842938133, -0.5877852522924731, 0.25000000000000006],
             [0, -1, 1.2246467991473532e-16],
             [1.1647083184890923e-16, -0.3090169943749474, -0.9510565162951536]
-        ])
+        ]);
         sph.delete();
         f.delete();
     });
@@ -752,7 +752,7 @@ describe("OCCT face unit tests", () => {
         const f = face.getFace({ shape: sph, index: 0 });
         const point = face.pointOnUV({ shape: f, paramU: 0.2, paramV: 0.3 });
         expect(point.length).toBe(3);
-        expect(point).toEqual([1.5388417685876268, -1.1755705045849463, 0.5000000000000001])
+        expect(point).toEqual([1.5388417685876268, -1.1755705045849463, 0.5000000000000001]);
         sph.delete();
         f.delete();
     });
@@ -762,7 +762,7 @@ describe("OCCT face unit tests", () => {
         const f = face.getFace({ shape: sph, index: 0 });
         const normal = face.normalOnUV({ shape: f, paramU: 0.2, paramV: 0.3 });
         expect(normal.length).toBe(3);
-        expect(normal).toEqual([0.7694208842938133, -0.5877852522924731, 0.25000000000000006])
+        expect(normal).toEqual([0.7694208842938133, -0.5877852522924731, 0.25000000000000006]);
         sph.delete();
         f.delete();
     });

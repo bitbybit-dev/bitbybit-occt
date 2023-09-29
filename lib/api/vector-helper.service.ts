@@ -11,7 +11,7 @@ export class VectorHelperService {
             if (!cleanItems.some(s => this.vectorsTheSame(item, s, tolerance))) {
                 cleanItems.push(item);
             }
-        })
+        });
         return cleanItems;
     }
 

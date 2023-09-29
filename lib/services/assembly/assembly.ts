@@ -56,7 +56,7 @@ export class OCCTAssembly {
             return {
                 name,
                 children
-            }
+            };
         } else {
             const referredShapeLabel = new this.occ.TDF_Label();
             const shape = this.occ.XCAFDoc_ShapeTool.GetReferredShape(label, referredShapeLabel);

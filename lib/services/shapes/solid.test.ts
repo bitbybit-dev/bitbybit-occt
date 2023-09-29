@@ -11,7 +11,7 @@ describe("OCCT solid unit tests", () => {
     let face: OCCTFace;
     let shell: OCCTShell;
     let solid: OCCTSolid;
-    let occHelper: OccHelper
+    let occHelper: OccHelper;
 
     beforeAll(async () => {
         occt = await initOpenCascade();

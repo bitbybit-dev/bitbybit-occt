@@ -8,7 +8,7 @@ import { OCCTOperations } from "./operations";
 describe("OCCT operations unit tests", () => {
     let occt: OpenCascadeInstance;
     let operations: OCCTOperations;
-    let occHelper: OccHelper
+    let occHelper: OccHelper;
 
     beforeAll(async () => {
         occt = await initOpenCascade();
@@ -74,8 +74,8 @@ describe("OCCT operations unit tests", () => {
                 [ 0.471404520791032, -0.47140452079103173, 8.114381916835873 ],
                 [ -0.733016666137831, 0.7330166661378313, 8.289627779011727 ],
                 [ 0.5298129428260179, 0.5298129428260177, 8.145654700108938 ]
-              ]
-        )
+            ]
+        );
     });
 });
 

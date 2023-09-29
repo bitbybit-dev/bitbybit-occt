@@ -52,8 +52,8 @@ export class OCCTFace {
 
     createFacesFromWires(inputs: Inputs.OCCT.FacesFromWiresDto<TopoDS_Wire>): TopoDS_Face[] {
         const result = inputs.shapes.map(shape => {
-            return this.createFaceFromWire({ shape, planar: inputs.planar })
-        })
+            return this.createFaceFromWire({ shape, planar: inputs.planar });
+        });
         return result;
     }
 
@@ -103,7 +103,7 @@ export class OCCTFace {
 
     subdivideToPointsControlled(inputs: Inputs.OCCT.FaceSubdivisionControlledDto<TopoDS_Face>): Base.Point3[] {
         const face = inputs.shape;
-        const handle = this.occ.BRep_Tool.Surface_2(face)
+        const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const points: Base.Point3[] = [];
@@ -147,7 +147,7 @@ export class OCCTFace {
 
     subdivideToPoints(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point3[] {
         const face = inputs.shape;
-        const handle = this.occ.BRep_Tool.Surface_2(face)
+        const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const points: Base.Point3[] = [];
@@ -181,7 +181,7 @@ export class OCCTFace {
 
     subdivideToNormals(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point3[] {
         const face = inputs.shape;
-        const handle = this.occ.BRep_Tool.Surface_2(face)
+        const handle = this.occ.BRep_Tool.Surface_2(face);
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const points: Base.Point3[] = [];
 
@@ -216,7 +216,7 @@ export class OCCTFace {
 
     subdivideToPointsOnParam(inputs: Inputs.OCCT.FaceLinearSubdivisionDto<TopoDS_Face>): Base.Point3[] {
         const face = inputs.shape;
-        const handle = this.occ.BRep_Tool.Surface_2(face)
+        const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const points: Base.Point3[] = [];
@@ -332,7 +332,7 @@ export class OCCTFace {
 
     pointsOnUVs(inputs: Inputs.OCCT.DataOnUVsDto<TopoDS_Face>): Base.Point3[] {
         const face = inputs.shape;
-        const handle = this.occ.BRep_Tool.Surface_2(face)
+        const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const pts: Base.Point3[] = inputs.paramsUV.map(uv => {
@@ -343,14 +343,14 @@ export class OCCTFace {
             const pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
             gpPnt.delete();
             return pt;
-        })
+        });
         surface.delete();
         return pts;
     }
 
     normalsOnUVs(inputs: Inputs.OCCT.DataOnUVsDto<TopoDS_Face>): Base.Vector3[] {
         const face = inputs.shape;
-        const handle = this.occ.BRep_Tool.Surface_2(face)
+        const handle = this.occ.BRep_Tool.Surface_2(face);
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const nrmls: Base.Vector3[] = inputs.paramsUV.map(uv => {
             const u = uMin + (uMax - uMin) * uv[0];
@@ -360,14 +360,14 @@ export class OCCTFace {
             const pt = [gpDir.X(), gpDir.Y(), gpDir.Z()];
             gpDir.delete();
             return pt as Base.Vector3;
-        })
+        });
         handle.delete();
         return nrmls;
     }
 
     pointOnUV(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Point3 {
         const face = inputs.shape;
-        const handle = this.occ.BRep_Tool.Surface_2(face)
+        const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const u = uMin + (uMax - uMin) * inputs.paramU;
@@ -382,7 +382,7 @@ export class OCCTFace {
 
     normalOnUV(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Vector3 {
         const face = inputs.shape;
-        const handle = this.occ.BRep_Tool.Surface_2(face)
+        const handle = this.occ.BRep_Tool.Surface_2(face);
         const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
         const u = uMin + (uMax - uMin) * inputs.paramU;
         const v = vMin + (vMax - vMin) * inputs.paramV;
@@ -406,7 +406,7 @@ export class OCCTFace {
     }
 
     createEllipseFace(inputs: Inputs.OCCT.EllipseDto): TopoDS_Face {
-        return this.och.createEllipse(inputs.radiusMinor, inputs.radiusMajor, inputs.center, inputs.direction, typeSpecificityEnum.face) as TopoDS_Face
+        return this.och.createEllipse(inputs.radiusMinor, inputs.radiusMajor, inputs.center, inputs.direction, typeSpecificityEnum.face) as TopoDS_Face;
     }
 
     createSquareFace(inputs: Inputs.OCCT.SquareDto): TopoDS_Face {

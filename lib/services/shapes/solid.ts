@@ -47,7 +47,7 @@ export class OCCTSolid {
                 line.end,
                 inputs.radius,
             );
-        })
+        });
         return cylinders;
     }
 
@@ -81,7 +81,7 @@ export class OCCTSolid {
     }
 
     getSolidsCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): Base.Point3[] {
-        return this.och.getSolidsCentersOfMass(inputs)
+        return this.och.getSolidsCentersOfMass(inputs);
     }
 
     getSolids(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Solid[] {
