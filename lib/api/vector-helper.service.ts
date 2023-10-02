@@ -1,45 +1,44 @@
-import { Base } from "./inputs";
-
 export class VectorHelperService {
 
     private readonly tolerance = 0.00001;
 
-    // this algorithm is more costly for longer arrays of points.
-    removeAllDuplicateVectors(items: Base.Point3[], tolerance = 1e-7):Base.Point3[] {
-        const cleanItems:Base.Point3[] = [];
-        items.forEach(item => {
-            // when there are no points in cleanPoints array that match the current point, push it in.
-            if (!cleanItems.some(s => this.vectorsTheSame(item, s, tolerance))) {
-                cleanItems.push(item);
+    // Algorithm works with arbitrary length numeric vectors. This algorithm is more costly for longer arrays of vectors
+    removeAllDuplicateVectors(vectors: number[][], tolerance = 1e-7): number[][] {
+        const cleanVectors: number[][] = [];
+        vectors.forEach(vector => {
+            // when there are no vectors in cleanVectors array that match the current vector, push it in.
+            if (!cleanVectors.some(s => this.vectorsTheSame(vector, s, tolerance))) {
+                cleanVectors.push(vector);
             }
         });
-        return cleanItems;
+        return cleanVectors;
     }
 
-    removeConsecutiveDuplicates(points: Base.Point3[], checkFirstAndLast = true): Base.Point3[] {
-        const pointsRemaining: Base.Point3[] = [];
-        if (points.length > 1) {
-            for (let i = 1; i < points.length; i++) {
-                const currentPoint = points[i];
-                const previousPoint = points[i - 1];
-                if (!this.vectorsTheSame(currentPoint, previousPoint, this.tolerance)) {
-                    pointsRemaining.push(previousPoint);
+    // Algorithm works with arbitrary length numeric vectors. 
+    removeConsecutiveDuplicates(vectors: number[][], checkFirstAndLast = true): number[][] {
+        const vectorsRemaining: number[][] = [];
+        if (vectors.length > 1) {
+            for (let i = 1; i < vectors.length; i++) {
+                const currentVector = vectors[i];
+                const previousVector = vectors[i - 1];
+                if (!this.vectorsTheSame(currentVector, previousVector, this.tolerance)) {
+                    vectorsRemaining.push(previousVector);
                 }
-                if (i === points.length - 1) {
-                    pointsRemaining.push(currentPoint);
+                if (i === vectors.length - 1) {
+                    vectorsRemaining.push(currentVector);
                 }
             }
             if (checkFirstAndLast) {
-                const firstPoint = pointsRemaining[0];
-                const lastPoint = pointsRemaining[pointsRemaining.length - 1];
-                if (this.vectorsTheSame(firstPoint, lastPoint, this.tolerance)) {
-                    pointsRemaining.pop();
+                const firstVector = vectorsRemaining[0];
+                const lastVector = vectorsRemaining[vectorsRemaining.length - 1];
+                if (this.vectorsTheSame(firstVector, lastVector, this.tolerance)) {
+                    vectorsRemaining.pop();
                 }
             }
-        } else if (points.length === 1) {
-            pointsRemaining.push(...points);
+        } else if (vectors.length === 1) {
+            vectorsRemaining.push(...vectors);
         }
-        return pointsRemaining;
+        return vectorsRemaining;
     }
 
     vectorsTheSame(vec1: number[], vec2: number[], tolerance: number) {

@@ -55,7 +55,7 @@ export class OccHelper {
             }
         });
         if (points.length > 0) {
-            points = this.vecHelper.removeAllDuplicateVectors(points);
+            points = this.vecHelper.removeAllDuplicateVectors(points) as Inputs.Base.Point3[];
         }
         return points;
     }
