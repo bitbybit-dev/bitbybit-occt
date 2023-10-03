@@ -1,4 +1,4 @@
-import { OpenCascadeInstance, TopoDS_Edge, TopoDS_Face } from "bitbybit-dev-occt/bitbybit-dev-occt";
+import { OpenCascadeInstance, TopoDS_Edge, TopoDS_Face } from "../bitbybit-dev-occt/bitbybit-dev-occt";
 
 // This is patching a disconnect between types of OpenCascade.js and their actual implementation
 
