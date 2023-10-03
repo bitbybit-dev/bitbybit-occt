@@ -1,4 +1,3 @@
-export * from "./assembly";
 export * from "./geom";
 export * from "./shapes";
 export * from "./booleans";

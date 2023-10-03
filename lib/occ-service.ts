@@ -6,7 +6,6 @@ import { OCCTIO } from "./services/io";
 import { OCCTOperations } from "./services/operations";
 import { OCCTShapes } from "./services/shapes/shapes";
 import { OCCTTransforms } from "./services/transforms";
-import { OCCTAssembly } from "./services/assembly/assembly";
 import { OCCTFillets } from "./services/fillets";
 import { OccHelper } from "./occ-helper";
 
@@ -15,7 +14,6 @@ export class OCCTService {
     public readonly geom: OCCTGeom;
     public readonly transforms: OCCTTransforms;
     public readonly operations: OCCTOperations;
-    public readonly assembly: OCCTAssembly;
     public readonly booleans: OCCTBooleans;
     public readonly fillets: OCCTFillets;
     public readonly io: OCCTIO;
@@ -27,7 +25,6 @@ export class OCCTService {
     ) {
         this.shapes = new OCCTShapes(occ, och);
         this.geom = new OCCTGeom(occ, och);
-        this.assembly = new OCCTAssembly(occ, och);
         this.transforms = new OCCTTransforms(occ, och);
         this.operations = new OCCTOperations(occ, och);
         this.booleans = new OCCTBooleans(occ, och);
