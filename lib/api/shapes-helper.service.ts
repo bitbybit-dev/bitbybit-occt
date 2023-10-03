@@ -2,22 +2,22 @@ import { Base } from "./inputs";
 
 export class ShapesHelperService {
 
-    starLines(innerRadius: number, outerRadius: number, numRays: number, half: boolean) {
-        let lines = [];
+    starLines(innerRadius: number, outerRadius: number, numRays: number, half: boolean):Base.Line3[] {
+        let lines: Base.Line3[] = [];
         const angle_step = (2 * Math.PI) / numRays;
         for (let i = 0; i < numRays; i++) {
             const angle_i = i * angle_step;
-            const outer_point = [
+            const outer_point: Base.Point3 = [
                 outerRadius * Math.cos(angle_i),
                 0,
                 outerRadius * Math.sin(angle_i)
             ];
-            const inner_point = [
+            const inner_point: Base.Point3 = [
                 innerRadius * Math.cos(angle_i + angle_step / 2),
                 0,
                 innerRadius * Math.sin(angle_i + angle_step / 2)
             ];
-            const next_outer_point = [
+            const next_outer_point: Base.Point3 = [
                 outerRadius * Math.cos(angle_i + angle_step),
                 0,
                 outerRadius * Math.sin(angle_i + angle_step)
@@ -34,7 +34,7 @@ export class ShapesHelperService {
     parallelogram(width: number, height: number, angle: number, center: boolean): Base.Line3[] {
         const radians = (angle * Math.PI) / 180;
 
-        let x1, y1, x2, y2, x3, y3, x4, y4;
+        let x1: number, y1: number, x2: number, y2: number, x3: number, y3: number, x4: number, y4: number;
         if (center) {
             x1 = -width / 2;
             y1 = -height / 2;

@@ -72,7 +72,7 @@ export class OCCTAssembly {
     traverseAssembly(assembly: XCAFDoc_ShapeTool) {
         const freeShapes = new this.occ.TDF_LabelSequence_1();
         assembly.GetFreeShapes(freeShapes as TDF_LabelSequence);
-        const children = [];
+        const children: (Assembly | Part)[] = [];
         for (let i = 1; i <= freeShapes.Length(); i++) {
             children.push(this.traverseLabel(freeShapes.Value(i)));
         }
