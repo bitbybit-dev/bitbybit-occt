@@ -1,8 +1,9 @@
-import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Circle, Handle_Geom_Curve, Handle_Geom_Ellipse, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from "../bitbybit-dev-occt/bitbybit-dev-occt";
 import { VectorHelperService } from "./api/vector-helper.service";
 import { Base } from "./api/inputs/base-inputs";
 import * as Inputs from "./api/inputs/inputs";
 import { ShapesHelperService } from "./api/shapes-helper.service";
+import { OCCReferencedReturns } from "./occ-referenced-returns";
 
 export enum typeSpecificityEnum {
     curve,
@@ -24,28 +25,36 @@ export enum shapeTypeEnum {
     shape,
 }
 
+interface TopoDS_ShapeHash extends TopoDS_Shape {
+    hash?: number;
+}
+
 export class OccHelper {
+
+    private occRefReturns: OCCReferencedReturns;
 
     constructor(
         public readonly vecHelper: VectorHelperService,
         public readonly shapesHelperService: ShapesHelperService,
-        public readonly occ: OpenCascadeInstance) {
+        public readonly occ: OpenCascadeInstance,
+    ) {
+        this.occRefReturns = new OCCReferencedReturns(occ);
     }
 
     getCornerPointsOfEdgesForShape(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Inputs.Base.Point3[] {
         const edges = this.getEdges(inputs);
-        let points:Inputs.Base.Point3[] = [];
+        let points: Inputs.Base.Point3[] = [];
         edges.forEach((edge) => {
             const param1 = { current: 0 };
             const param2 = { current: 0 };
-            const crvHandle = this.occ.BRep_Tool.Curve_2(edge, param1 as any, param2 as any);
+            const crvHandle = this.occRefReturns.BRep_Tool_Curve_2(edge, param1, param2);
 
             try {
                 const crv = crvHandle.get();
                 const pt1 = crv.Value(param1.current);
                 const pt2 = crv.Value(param2.current);
                 const pt1g: Inputs.Base.Point3 = [pt1.X(), pt1.Y(), pt1.Z()];
-                const pt2g:Inputs.Base.Point3 = [pt2.X(), pt2.Y(), pt2.Z()];
+                const pt2g: Inputs.Base.Point3 = [pt2.X(), pt2.Y(), pt2.Z()];
                 pt1.delete();
                 pt2.delete();
                 points.push(pt1g);
@@ -371,7 +380,7 @@ export class OccHelper {
     }
 
     getEdgesLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): number[] {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         return inputs.shapes.map(edge => this.getEdgeLength({ shape: edge }));
@@ -388,7 +397,7 @@ export class OccHelper {
     }
 
     getShapesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): Base.Point3[] {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         return inputs.shapes.map(edge => this.getLinearCenterOfMass({ shape: edge }));
@@ -401,14 +410,14 @@ export class OccHelper {
     }
 
     getWiresLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire>): number[] {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         return inputs.shapes.map(wire => this.getWireLength({ shape: wire }));
     }
 
     getFaces(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Face[] {
-        const faces:TopoDS_Face[] = [];
+        const faces: TopoDS_Face[] = [];
         this.forEachFace(inputs.shape, (faceIndex, myFace) => {
             faces.push(myFace);
         });
@@ -416,7 +425,7 @@ export class OccHelper {
     }
 
     getSolids(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Solid[] {
-        const solids:TopoDS_Face[] = [];
+        const solids: TopoDS_Face[] = [];
         this.forEachSolid(inputs.shape, (faceIndex, myFace) => {
             solids.push(myFace);
         });
@@ -432,7 +441,7 @@ export class OccHelper {
     }
 
     getFacesAreas(inputs: Inputs.OCCT.ShapesDto<TopoDS_Face>): number[] {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         return inputs.shapes.map(face => this.getFaceArea({ shape: face }));
@@ -449,7 +458,7 @@ export class OccHelper {
     }
 
     getFacesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Face>): Base.Point3[] {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         return inputs.shapes.map(face => this.getFaceCenterOfMass({ shape: face }));
@@ -476,7 +485,7 @@ export class OccHelper {
     }
 
     getSolidsVolumes(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): number[] {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         return inputs.shapes.map(s => this.getSolidVolume({ shape: s }));
@@ -493,7 +502,7 @@ export class OccHelper {
     }
 
     getSolidsCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): Base.Point3[] {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         return inputs.shapes.map(s => this.getSolidCenterOfMass({ shape: s }));
@@ -667,7 +676,7 @@ export class OccHelper {
 
     createParallelogramWire(inputs: Inputs.OCCT.ParallelogramDto) {
         const lines = this.shapesHelperService.parallelogram(inputs.width, inputs.height, inputs.angle, inputs.aroundCenter);
-        const edges:TopoDS_Edge[] = [];
+        const edges: TopoDS_Edge[] = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
         });
@@ -714,7 +723,7 @@ export class OccHelper {
 
     createNGonWire(inputs: Inputs.OCCT.NGonWireDto) {
         const lines = this.shapesHelperService.ngon(inputs.nrCorners, inputs.radius, [0, 0]);
-        const edges:TopoDS_Edge[] = [];
+        const edges: TopoDS_Edge[] = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));
         });
@@ -751,7 +760,7 @@ export class OccHelper {
     }
 
     createPolygonWire(inputs: Inputs.OCCT.PolygonDto) {
-        const gpPoints:gp_Pnt_3[] = [];
+        const gpPoints: gp_Pnt_3[] = [];
         for (let ind = 0; ind < inputs.points.length; ind++) {
             gpPoints.push(this.gpPnt(inputs.points[ind]));
         }
@@ -950,7 +959,7 @@ export class OccHelper {
         const curveLength = this.occ.GCPnts_AbscissaPoint.Length_5(curve, curve.FirstParameter(), curve.LastParameter());
         const step = curveLength / inputs.nrOfDivisions;
 
-        const lengths:number[] = [];
+        const lengths: number[] = [];
         for (let i = 0; i <= curveLength + 0.000000001; i += step) {
             lengths.push(i);
         }
@@ -982,7 +991,7 @@ export class OccHelper {
     divideCurveToNrSegments(inputs: Inputs.OCCT.DivideDto<Geom_Curve | BRepAdaptor_CompCurve_2>, uMin: number, uMax: number) {
         const curve = inputs.shape;
 
-        const ranges:number[] = [];
+        const ranges: number[] = [];
         for (let i = 0; i <= inputs.nrOfDivisions; i++) {
             const param = (i / inputs.nrOfDivisions);
             const paramMapped = this.remap(param, 0, 1, uMin, uMax);
@@ -1009,7 +1018,7 @@ export class OccHelper {
 
     interpolatePoints(inputs: Inputs.OCCT.InterpolationDto) {
         const ptList = new this.occ.TColgp_Array1OfPnt_2(1, inputs.points.length);
-        const gpPnts:gp_Pnt_3[] = [];
+        const gpPnts: gp_Pnt_3[] = [];
         for (let pIndex = 1; pIndex <= inputs.points.length; pIndex++) {
             const gpPnt = this.gpPnt(inputs.points[pIndex - 1]);
             gpPnts.push(gpPnt);
@@ -1045,7 +1054,7 @@ export class OccHelper {
         return solidsFound;
     }
 
-    getSolidFromCompound(shape: TopoDS_Shape, index: number) {
+    getSolidFromCompound(shape: TopoDS_ShapeHash, index: number) {
         if (!shape ||
             shape.ShapeType() > this.occ.TopAbs_ShapeEnum.TopAbs_COMPSOLID ||
             shape.IsNull()
@@ -1063,7 +1072,7 @@ export class OccHelper {
             if (i === index) { innerSolid = this.occ.TopoDS.Solid_1(s); } solidsFound++;
         });
         if (solidsFound === 0) { console.error("NO SOLIDS FOUND IN SHAPE!"); }
-        (innerSolid as any).hash = (shape as any).hash + 1;
+        innerSolid.hash = shape.hash + 1;
         return innerSolid;
     }
 
@@ -1081,7 +1090,7 @@ export class OccHelper {
     }
 
     getWires(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire[] {
-        const wires:TopoDS_Wire[] = [];
+        const wires: TopoDS_Wire[] = [];
         this.forEachWire(inputs.shape, (wireIndex: number, myWire: TopoDS_Wire) => {
             wires.push(myWire);
         });
@@ -1114,7 +1123,7 @@ export class OccHelper {
         ) {
             const edge = this.occ.TopoDS.Edge_1(anExplorer.Current());
             const edgeHash = edge.HashCode(100000000);
-            if(!Object.prototype.hasOwnProperty.call(edgeHashes, edgeHash)){
+            if (!Object.prototype.hasOwnProperty.call(edgeHashes, edgeHash)) {
                 edgeHashes[edgeHash] = edgeIndex;
                 edgeIndex++;
                 callback(edgeIndex, edge);
@@ -1225,7 +1234,7 @@ export class OccHelper {
     }
 
     combineEdgesAndWiresIntoAWire(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge | TopoDS_Wire>): TopoDS_Wire {
-        if(inputs.shapes === undefined) {
+        if (inputs.shapes === undefined) {
             throw (Error(("Shapes are not defined")));
         }
         const makeWire = new this.occ.BRepBuilderAPI_MakeWire_1();
@@ -1260,7 +1269,7 @@ export class OccHelper {
 
     createBSpline(inputs: Inputs.OCCT.BSplineDto): TopoDS_Wire {
         const ptList = new this.occ.TColgp_Array1OfPnt_2(1, inputs.points.length + (inputs.closed ? 1 : 0));
-        const gpPnts:gp_Pnt_3[] = [];
+        const gpPnts: gp_Pnt_3[] = [];
         for (let pIndex = 1; pIndex <= inputs.points.length; pIndex++) {
             const gpPnt = this.gpPnt(inputs.points[pIndex - 1]);
             gpPnts.push(gpPnt);
@@ -1392,7 +1401,7 @@ export class OccHelper {
 
 
     makeEdgeFromGeom2dCurveAndSurfaceBounded(inputs: Inputs.OCCT.ShapesDto<Geom2d_Curve | Geom_Surface>, umin: number, umax: number): TopoDS_Edge {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         const curve2d = new this.occ.Handle_Geom2d_Curve_2(inputs.shapes[0] as Geom2d_Curve);
@@ -1406,7 +1415,7 @@ export class OccHelper {
     }
 
     makeEdgeFromGeom2dCurveAndSurface(inputs: Inputs.OCCT.ShapesDto<Geom2d_Curve | Geom_Surface>): TopoDS_Edge {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         const curve2d = new this.occ.Handle_Geom2d_Curve_2(inputs.shapes[0] as Geom2d_Curve);
@@ -1475,7 +1484,7 @@ export class OccHelper {
     getEdgeBounds(edge: TopoDS_Edge): { uMin: number, uMax: number } {
         const p1 = { current: 0 };
         const p2 = { current: 0 };
-        this.occ.BRep_Tool.Range_1(edge, p1 as any, p2 as any);
+        this.occRefReturns.BRep_Tool_Range_1(edge, p1, p2);
         return { uMin: p1.current, uMax: p2.current };
     }
 
@@ -1484,7 +1493,7 @@ export class OccHelper {
         const uMax = { current: 0 };
         const vMin = { current: 0 };
         const vMax = { current: 0 };
-        this.occ.BRepTools.UVBounds_1(face, uMin as any, uMax as any, vMin as any, vMax as any);
+        this.occRefReturns.BRepTools_UVBounds_1(face, uMin, uMax, vMin, vMax);
         return { uMin: uMin.current, uMax: uMax.current, vMin: vMin.current, vMax: vMax.current };
     }
 
