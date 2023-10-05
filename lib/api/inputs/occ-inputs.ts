@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
+import { TopoDS_Shape } from "bitbybit-dev-occt/bitbybit-dev-occt";
 import { Base } from "./inputs";
 // tslint:disable-next-line: no-namespace
 export namespace OCCT {
@@ -74,6 +75,16 @@ export namespace OCCT {
         shapes?: T[];
     }
     export class FilletTwoEdgesInPlaneDto<T> extends ShapesDto<T> {
+        constructor(shapes?: T[], planeOrigin?: Base.Point3, planeDirection?: Base.Vector3, radius?: number, solution?: number) {
+            super(shapes);
+            
+            this.edge1 = shapes ? shapes[0] : undefined;
+            this.edge2 = shapes ? shapes[1] : undefined;
+            this.planeOrigin = planeOrigin ?? this.planeOrigin;
+            this.planeDirection = planeDirection ?? this.planeDirection;
+            this.radius = radius ?? this.radius;
+            this.solution = solution ?? this.solution;
+        }
         /**
          * First OCCT edge to fillet
          * @default undefined
@@ -122,6 +133,11 @@ export namespace OCCT {
         points: Base.Point3[];
     }
     export class ClosestPointsOnShapesFromPointsDto<T> {
+        constructor(shapes?: T[], points?: Base.Point3[]) {
+            this.shapes = shapes;
+            this.points = points;
+        }
+
         /**
          * The OCCT shapes
          * @default undefined
@@ -135,9 +151,9 @@ export namespace OCCT {
     }
     export class ClosestPointsBetweenTwoShapesDto<T> extends ShapesDto<T> {
         constructor(shape1?: T, shape2?: T) {
-            if (shape1 && shape2) {
-                super([shape1, shape2]);
-            }
+            super((shape1 && shape2) ? [shape1, shape2] : undefined);
+            this.shape1 = shape1;
+            this.shape2 = shape2;
         }
         /**
          * First OCCT shape
@@ -151,6 +167,14 @@ export namespace OCCT {
         shape2?: T;
     }
     export class FaceFromSurfaceAndWireDto<T, U> extends ShapesDto<T> {
+        constructor(surface?: T, wire?: U, inside?: boolean) {
+            super(surface ? [surface] : undefined);
+            
+            this.surface = surface ?? this.surface;
+            this.wire = wire ?? this.wire;
+            this.inside = inside ?? this.inside;
+        }
+        
         /**
          * Surface from which to create a face
          * @default undefined
@@ -168,6 +192,13 @@ export namespace OCCT {
         inside = true;
     }
     export class EdgeFromGeom2dCurveAndSurfaceDto<T, U> extends ShapesDto<T> {
+        constructor(curve?: T, surface?: U) {
+            super( curve ? [curve]: undefined);
+            
+            this.curve = curve;
+            this.surface = surface;
+        }
+        
         /**
          * Curve 2d
          * @default undefined
@@ -180,6 +211,13 @@ export namespace OCCT {
         surface: U;
     }
     export class WireOnFaceDto<T, U> extends ShapesDto<T> {
+        constructor(wire?: T, face?: U) {
+            super( wire ? [wire]: undefined);
+            
+            this.wire = wire;
+            this.face = face;
+        }
+        
         /**
          * Wire to place on face
          * @default undefined
@@ -1176,7 +1214,6 @@ export namespace OCCT {
          */
         distance2DParam = 0.5;
     }
-
     export class DataOnGeometryAtLengthDto<T> {
         constructor(shape: T, length?: number) {
             this.shape = shape;
@@ -1198,14 +1235,9 @@ export namespace OCCT {
     }
     export class CircleDto {
         constructor(radius?: number, center?: Base.Point3, direction?: Base.Vector3) {
-            //Option 1
             this.radius = radius ?? this.radius;
-            //Option 2
-            if( center !== undefined) {
-                this.center = center;
-            }
-            //Option 3
-            this.direction = direction ?? [0, 1, 0];
+            this.center = center ?? this.center;
+            this.direction = direction ?? this.direction;
         }
         /**
          * Radius of the circle
@@ -1224,7 +1256,7 @@ export namespace OCCT {
          * Direction vector for circle
          * @default [0, 1, 0]
          */
-        direction: Base.Vector3;
+        direction: Base.Vector3 = [0, 1, 0];
     }
     export class LoftDto<T> {
         constructor(shapes?: T[], makeSolid?: boolean) {

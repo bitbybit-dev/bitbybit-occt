@@ -68,6 +68,7 @@
             "lib/occ-service.ts",
             "lib/api/shapes-helper.service.ts",
             "lib/api/vector-helper.service.ts",
+            "lib/api/inputs/occ-inputs.ts",
             "!**/index.ts"
         ]
     }
