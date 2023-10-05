@@ -83,6 +83,11 @@ describe("OCCT edge unit tests", () => {
         cylinderSrf.delete();
     });
 
+    it("makeEdgeFromGeom2dCurveAndSurface should throw", async () => {
+        expect(() => edge.makeEdgeFromGeom2dCurveAndSurface({
+        })).toThrowError("Shapes needs to be an array of length 2");
+    });
+
     it("should make ellipse edge", async () => {
         const e = edge.createEllipseEdge({ radiusMinor: 2, radiusMajor: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const length = edge.getEdgeLength({ shape: e });
