@@ -638,6 +638,11 @@ export namespace OCCT {
         points: Base.Point3[];
     }
     export class SquareDto {
+        constructor(size?: number, center?: Base.Point3, direction?: Base.Vector3) {
+            this.size = size ?? this.size;
+            this.center = center ?? this.center;
+            this.direction = direction ?? this.direction;
+        }
         /**
          * size of square
          * @default 1
@@ -658,6 +663,12 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class RectangleDto {
+        constructor(width?: number, length?: number, center?: Base.Point3, direction?: Base.Vector3) {
+            this.width = width ?? this.width;
+            this.length = length ?? this.length;
+            this.center = center ?? this.center;
+            this.direction = direction ?? this.direction;
+        }
         /**
          * width of the rectangle
          * @default 1
@@ -744,12 +755,10 @@ export namespace OCCT {
     }
     export class BoxDto {
         constructor(width?: number, length?: number, height?: number, center?: Base.Point3) {
-            this.width = width;
-            this.length = length;
-            this.height = height;
-            if (center) {
-                this.center = center;
-            }
+            this.width = width ?? this.width;
+            this.length = length ?? this.length;
+            this.height = height ?? this.height;
+            this.center = center ?? this.center;
         }
         /**
          * Width of the box
@@ -783,12 +792,10 @@ export namespace OCCT {
     }
     export class BoxFromCornerDto {
         constructor(width?: number, length?: number, height?: number, corner?: Base.Point3) {
-            this.width = width;
-            this.length = length;
-            this.height = height;
-            if (corner) {
-                this.corner = corner;
-            }
+            this.width = width ?? this.width;
+            this.length = length ?? this.length;
+            this.height = height ?? this.height;
+            this.corner = corner ?? this.corner;
         }
         /**
          * Width of the box
@@ -822,10 +829,8 @@ export namespace OCCT {
     }
     export class SphereDto {
         constructor(radius?: number, center?: Base.Point3) {
-            this.radius = radius;
-            if (center) {
-                this.center = center;
-            }
+            this.radius = radius ?? this.radius;
+            this.center = center ?? this.center;
         }
         /**
          * Radius of the sphere
