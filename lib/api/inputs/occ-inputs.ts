@@ -2834,7 +2834,7 @@ export namespace OCCT {
     }
     export class SliceDto<T> {
         /**
-         * THe shape to slice
+         * The shape to slice
          * @default undefined
          */
         shape: T;
