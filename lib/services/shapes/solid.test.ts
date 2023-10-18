@@ -5,12 +5,14 @@ import { ShapesHelperService } from "../../api/shapes-helper.service";
 import { OCCTFace } from "./face";
 import { OCCTShell } from "./shell";
 import { OCCTSolid } from "./solid";
+import { OCCTCompound } from "./compound";
 
 describe("OCCT solid unit tests", () => {
     let occt: OpenCascadeInstance;
     let face: OCCTFace;
     let shell: OCCTShell;
     let solid: OCCTSolid;
+    let compound: OCCTCompound;
     let occHelper: OccHelper;
 
     beforeAll(async () => {
@@ -21,6 +23,7 @@ describe("OCCT solid unit tests", () => {
         face = new OCCTFace(occt, occHelper);
         shell = new OCCTShell(occt, occHelper);
         solid = new OCCTSolid(occt, occHelper);
+        compound = new OCCTCompound(occt, occHelper);
     });
 
     it("should recreate a solid from closed shell if sewing all edges of the box", async () => {
@@ -125,4 +128,19 @@ describe("OCCT solid unit tests", () => {
     });
 
 
+    it("get solids of a compound", async () => {
+        const cone1 = solid.createCone({ height: 3, radius1: 3, radius2: 1, angle: Math.PI / 2, direction: [0, 1, 0], center: [0, 0, 0] });
+        const cone2 = solid.createCone({ height: 3, radius1: 3, radius2: 1, angle: Math.PI / 2, direction: [0, 1, 0], center: [0, 10, 0] });
+        const cone3 = solid.createCone({ height: 3, radius1: 3, radius2: 1, angle: Math.PI / 2, direction: [0, 1, 0], center: [0, 0, 10] });
+
+        const compundShape = compound.makeCompound({shapes: [cone1, cone2, cone3]});
+        const solidShapes = solid.getSolids({shape: compundShape});
+        
+        expect(solidShapes).toHaveLength(3);
+
+        cone1.delete();
+        cone2.delete();
+        cone3.delete();
+        compundShape.delete();
+    });
 });

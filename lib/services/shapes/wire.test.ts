@@ -185,6 +185,11 @@ describe("OCCT wire unit tests", () => {
         b.delete();
     });
 
+    it("should throw error if innerWire not found", async () => {
+        const rect = wire.createRectangleWire({width: 10, length: 10, center: [0, 0, 0], direction: [0, 1, 0]});
+        expect(() => wire.getWire({ shape: rect, index: 10 })).toThrowError("Wire not found");
+    });
+
     it("should get start point on a wire", async () => {
         const w = wire.createBezier({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]], closed: false });
         const ptOnEnd = wire.startPointOnWire({ shape: w });
@@ -452,6 +457,10 @@ describe("OCCT wire unit tests", () => {
             ]
         );
         w.delete();
+    });   
+    
+    it("placeWireOnFace throws with undefined shapes", () => {
+        expect(() => wire.placeWireOnFace({})).toThrowError("Shapes needs to be an array of length 2");
     });
 });
 
