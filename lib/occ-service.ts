@@ -50,7 +50,7 @@ export class OCCTService {
         // This allows to get lower res models out of higher res that was once computed and cached.
         this.occ.BRepTools.Clean(shapeToUse, true);
 
-        const inctementalMeshBuilder = new this.occ.BRepMesh_IncrementalMesh_2(shapeToUse, maxDeviation, false, 0.5, true);
+        const incrementalMeshBuilder = new this.occ.BRepMesh_IncrementalMesh_2(shapeToUse, maxDeviation, false, 0.5, true);
 
         // Construct the edge hashes to assign proper indices to the edges
         const fullShapeEdgeHashes2 = {};
@@ -167,7 +167,7 @@ export class OCCTService {
                 tangDef.delete();
             }
         });
-        inctementalMeshBuilder.delete();
+        incrementalMeshBuilder.delete();
 
         return { faceList, edgeList };
     }
