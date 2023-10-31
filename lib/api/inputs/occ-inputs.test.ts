@@ -301,6 +301,214 @@ describe("OCC Inputs", () => {
         expect(dto.center).toMatchObject([2, 5, 7]);
     });
 
+    test("ConeDto - defaults", ()=>{
+        const dto = new OCCT.ConeDto();
+
+        expect(dto.radius1).toBe(2);
+        expect(dto.radius2).toBe(1);
+        expect(dto.height).toBe(2);
+        expect(dto.angle).toBe(360);
+        expect(dto.center).toMatchObject([0, 0, 0]);
+        expect(dto.direction).toMatchObject([0, 1, 0]);
+    });
+
+    test("ConeDto - passing arguments", ()=>{
+        const dto = new OCCT.ConeDto(7, 3, 20, 273, [2, 5, 7], [0,0,1]);
+
+        expect(dto.radius1).toBe(7);
+        expect(dto.radius2).toBe(3);
+        expect(dto.height).toBe(20);
+        expect(dto.angle).toBe(273);
+        expect(dto.center).toMatchObject([2, 5, 7]);
+        expect(dto.direction).toMatchObject([0, 0, 1]);
+    });
+
+    test("LineDto - defaults", ()=>{
+        const dto = new OCCT.LineDto();
+
+        expect(dto.start).toMatchObject([0, 0, 0]);
+        expect(dto.end).toMatchObject([0, 1, 0]);
+    });
+
+    test("ArcEdgeThreePointsDto - defaults", ()=>{
+        const dto = new OCCT.ArcEdgeThreePointsDto();
+
+        expect(dto.start).toMatchObject([0, 0, 0]);
+        expect(dto.middle).toMatchObject([0, 1, 0]);
+        expect(dto.end).toMatchObject([0, 0, 1]);
+    });
+
+    test("CylinderDto - defaults", ()=>{
+        const dto = new OCCT.CylinderDto();
+
+        expect(dto.radius).toBe(1);
+        expect(dto.height).toBe(2);
+        expect(dto.center).toMatchObject([0, 0, 0]);
+        expect(dto.direction).toMatchObject([0, 1, 0]);
+    });
+
+    test("CylindersOnLinesDto - defaults", ()=>{
+        const dto = new OCCT.CylindersOnLinesDto();
+
+        expect(dto.radius).toBe(1);
+        expect(dto.lines).toBeUndefined();
+    });
+
+    test("FilletDto - defaults", ()=>{
+        const dto = new OCCT.FilletDto();
+
+        expect(dto.shape).toBeUndefined();
+        expect(dto.radius).toBe(0.1);
+        expect(dto.radiusList).toBeUndefined();
+        expect(dto.indexes).toBeUndefined();
+    });
+
+    test("FilletDto - passing arguments", ()=>{
+        const dto = new OCCT.FilletDto(5, 2, [1], [3]);
+
+        expect(dto.shape).toBeDefined();
+        expect(dto.radius).toBe(2);
+        expect(dto.radiusList).toMatchObject([3]);
+        expect(dto.indexes).toMatchObject([1]);
+    });
+
+    test("Fillet3DWireDto - defaults", ()=>{
+        const dto = new OCCT.Fillet3DWireDto();
+
+        expect(dto.shape).toBeUndefined();
+    });
+
+    test("Fillet3DWireDto - passing arguments", ()=>{
+        const dto = new OCCT.Fillet3DWireDto(5);
+
+        expect(dto.shape).toBeDefined();
+    });
+
+    test("ChamferDto - defaults", ()=>{
+        const dto = new OCCT.ChamferDto();
+
+        expect(dto.shape).toBeUndefined();
+        expect(dto.distance).toBe(0.1);
+        expect(dto.distanceList).toBeUndefined();
+        expect(dto.indexes).toBeUndefined();
+    });
+
+    test("ChamferDto - passing arguments", ()=>{
+        const dto = new OCCT.ChamferDto(5, 2, [1], [3]);
+
+        expect(dto.shape).toBeDefined();
+        expect(dto.distance).toBe(2);
+        expect(dto.distanceList).toMatchObject([3]);
+        expect(dto.indexes).toMatchObject([1]);
+    });
+
+    test("BSplineDto - defaults", ()=>{
+        const dto = new OCCT.BSplineDto();
+
+        expect(dto.points).toBeUndefined();
+        expect(dto.closed).toBeFalsy();
+    });
+
+    test("BSplineDto - passing arguments", ()=>{
+        const dto = new OCCT.BSplineDto([[0,0,0]], true);
+
+        expect(dto.points).toBeDefined();
+        expect(dto.closed).toBeTruthy();
+    });
+
+    test("InterpolationDto - InterpolationDto", ()=>{
+        const dto = new OCCT.InterpolationDto();
+
+        expect(dto.points).toBeUndefined();
+        expect(dto.periodic).toBeFalsy();
+        expect(dto.tolerance).toBe(1e-7);
+    });
+
+    test("InterpolationDto - passing arguments", ()=>{
+        const dto = new OCCT.InterpolationDto([[0,0,0]], true);
+
+        expect(dto.points).toBeDefined();
+        expect(dto.periodic).toBeTruthy();
+        expect(dto.tolerance).toBe(1e-7);
+    });
+
+    test("BezierDto - defaults", ()=>{
+        const dto = new OCCT.BezierDto();
+
+        expect(dto.points).toBeUndefined();
+        expect(dto.closed).toBeFalsy();
+    });
+
+    test("BezierDto - passing arguments", ()=>{
+        const dto = new OCCT.BezierDto([[0,0,0]], true);
+
+        expect(dto.points).toBeDefined();
+        expect(dto.closed).toBeTruthy();
+    });
+
+    test("DivideDto - defaults", ()=>{
+        const dto = new OCCT.DivideDto();
+
+        expect(dto.shape).toBeUndefined();
+        expect(dto.nrOfDivisions).toBe(10);
+        expect(dto.removeStartPoint).toBeFalsy();
+        expect(dto.removeEndPoint).toBeFalsy();
+    });
+
+    test("DivideDto - passing arguments", ()=>{
+        const dto = new OCCT.DivideDto(1, 25, true, true);
+
+        expect(dto.shape).toBeDefined();
+        expect(dto.nrOfDivisions).toBe(25);
+        expect(dto.removeStartPoint).toBeTruthy();
+        expect(dto.removeEndPoint).toBeTruthy();
+    });
+
+    test("DataOnGeometryAtParamDto - defaults", ()=>{
+        const dto = new OCCT.DataOnGeometryAtParamDto();
+
+        expect(dto.shape).toBeUndefined();
+        expect(dto.param).toBe(0.5);
+    });
+
+    test("DataOnGeometryAtParamDto - passing arguments", ()=>{
+        const dto = new OCCT.DataOnGeometryAtParamDto(1, 1.3);
+
+        expect(dto.shape).toBeDefined();
+        expect(dto.param).toBe(1.3);
+    });
+
+    test("PointInFaceDto - defaults", ()=>{
+        const dto = new OCCT.PointInFaceDto();
+
+        expect(dto.face).toBeUndefined();
+        expect(dto.edge).toBeUndefined();
+        expect(dto.tEdgeParam).toBe(0.5);
+        expect(dto.distance2DParam).toBe(0.5);
+    });
+
+    test("PointInFaceDto - passing arguments", ()=>{
+        const dto = new OCCT.PointInFaceDto(1, 2, 1.3, 2.7);
+
+        expect(dto.face).toBeDefined();
+        expect(dto.edge).toBeDefined();
+        expect(dto.tEdgeParam).toBe(1.3);
+        expect(dto.distance2DParam).toBe(2.7);
+    });
+
+    test("DataOnGeometryAtLengthDto - defaults", ()=>{
+        const dto = new OCCT.DataOnGeometryAtLengthDto();
+
+        expect(dto.shape).toBeUndefined();
+        expect(dto.length).toBe(0.5);
+    });
+
+    test("DataOnGeometryAtLengthDto - passing arguments", ()=>{
+        const dto = new OCCT.DataOnGeometryAtLengthDto(1, 1.3);
+
+        expect(dto.shape).toBeDefined();
+        expect(dto.length).toBe(1.3);
+    });
 
     test("CircleDto - defaults", ()=>{
         const dto = new OCCT.CircleDto();

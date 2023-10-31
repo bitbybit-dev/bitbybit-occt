@@ -848,12 +848,12 @@ export namespace OCCT {
     }
     export class ConeDto {
         constructor(radius1?: number, radius2?: number, height?: number, angle?: number, center?: Base.Point3, direction?: Base.Point3) {
-            this.radius1 = radius1;
-            this.radius2 = radius2;
-            this.height = height;
-            this.angle = angle;
-            this.center = center;
-            this.direction = direction;
+            this.radius1 = radius1 ?? this.radius1;
+            this.radius2 = radius2 ?? this.radius2;
+            this.height = height ?? this.height;
+            this.angle = angle ?? this.angle;
+            this.center = center ?? this.center;
+            this.direction = direction ?? this.direction;
         }
         /**
          * First radius of the cone
@@ -965,7 +965,7 @@ export namespace OCCT {
          * @maximum Infinity
          * @step 0.1
          */
-        radius: number;
+        radius = 1;
         /**
          * Lines between which to span cylinders
          * @default undefined
@@ -973,10 +973,11 @@ export namespace OCCT {
         lines: Base.Line3[];
     }
     export class FilletDto<T> {
-        constructor(shape?: T, radius?: number, indexes?: number[]) {
+        constructor(shape?: T, radius?: number, indexes?: number[], radiusList?: number[]) {
             this.shape = shape;
-            this.radius = radius;
+            this.radius = radius ?? this.radius;
             this.indexes = indexes;
+            this.radiusList = radiusList;
         }
         /**
          * Shape to apply the fillets
@@ -1043,10 +1044,11 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class ChamferDto<T> {
-        constructor(shape?: T, distance?: number, indexes?: number[]) {
+        constructor(shape?: T, distance?: number, indexes?: number[], distanceList?: number[]) {
             this.shape = shape;
-            this.distance = distance;
+            this.distance = distance ?? this.distance;
             this.indexes = indexes;
+            this.distanceList = distanceList;
         }
         /**
          * Shape to apply the chamfer
@@ -1078,7 +1080,7 @@ export namespace OCCT {
     export class BSplineDto {
         constructor(points?: Base.Point3[], closed?: boolean) {
             this.points = points;
-            this.closed = closed;
+            this.closed = closed ?? this.closed;
         }
         /**
          * Points through which the BSpline will be created
@@ -1094,7 +1096,7 @@ export namespace OCCT {
     export class InterpolationDto {
         constructor(points?: Base.Point3[], periodic?: boolean) {
             this.points = points;
-            this.periodic = periodic;
+            this.periodic = periodic ?? this.periodic;
         }
         /**
          * Points through which the BSpline will be created
@@ -1119,7 +1121,7 @@ export namespace OCCT {
     export class BezierDto {
         constructor(points?: Base.Point3[], closed?: boolean) {
             this.points = points;
-            this.closed = closed;
+            this.closed = closed ?? this.closed;
         }
         /**
          * Points through which the Bezier curve will be created
@@ -1134,11 +1136,11 @@ export namespace OCCT {
     }
 
     export class DivideDto<T> {
-        constructor(shape: T, nrOfDivisions?: number, removeStartPoint?: boolean, removeEndPoint?: boolean) {
+        constructor(shape?: T, nrOfDivisions?: number, removeStartPoint?: boolean, removeEndPoint?: boolean) {
             this.shape = shape;
-            this.nrOfDivisions = nrOfDivisions;
-            this.removeStartPoint = removeStartPoint;
-            this.removeEndPoint = removeEndPoint;
+            this.nrOfDivisions = nrOfDivisions ?? this.nrOfDivisions;
+            this.removeStartPoint = removeStartPoint ?? this.removeStartPoint;
+            this.removeEndPoint = removeEndPoint ?? this.removeEndPoint;
         }
         /**
          * Shape representing a wire
@@ -1166,9 +1168,9 @@ export namespace OCCT {
     }
 
     export class DataOnGeometryAtParamDto<T> {
-        constructor(shape: T, param?: number) {
+        constructor(shape?: T, param?: number) {
             this.shape = shape;
-            this.param = param;
+            this.param = param ?? this.param;
         }
         /**
          * Shape representing a geometry
@@ -1185,12 +1187,12 @@ export namespace OCCT {
         param = 0.5;
     }
     export class PointInFaceDto<T> extends ShapesDto<T> {
-        constructor(face: T, edge: T, tEdgeParam?: number, distance2DParam?: number) {
+        constructor(face?: T, edge?: T, tEdgeParam?: number, distance2DParam?: number) {
             super();
             this.face = face;
             this.edge = edge;
-            this.tEdgeParam = tEdgeParam;
-            this.distance2DParam = distance2DParam;
+            this.tEdgeParam = tEdgeParam ?? this.tEdgeParam;
+            this.distance2DParam = distance2DParam ?? this.distance2DParam;
         }
         /** 
          * OCCT face to be used for calculation 
@@ -1220,9 +1222,9 @@ export namespace OCCT {
         distance2DParam = 0.5;
     }
     export class DataOnGeometryAtLengthDto<T> {
-        constructor(shape: T, length?: number) {
+        constructor(shape?: T, length?: number) {
             this.shape = shape;
-            this.length = length;
+            this.length = length ?? this.length;
         }
         /**
          * Shape representing a wire
