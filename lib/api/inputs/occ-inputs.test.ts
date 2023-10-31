@@ -130,7 +130,79 @@ describe("OCC Inputs", () => {
 
     });
 
+    test("FaceSubdivisionDto - defaults", ()=>{
+        const dto = new OCCT.FaceSubdivisionDto();
 
+        expect(dto.shape).toBeUndefined();
+    });
+
+    test("FaceSubdivisionDto - passing parameters", ()=>{
+        const dto = new OCCT.FaceSubdivisionDto(1);
+
+        expect(dto.shape).toBeDefined();
+    });
+
+    test("FaceLinearSubdivisionDto - defaults", ()=>{
+        const dto = new OCCT.FaceLinearSubdivisionDto();
+
+        expect(dto.shape).toBeUndefined();
+    });
+
+    test("FaceLinearSubdivisionDto - passing parameters", ()=>{
+        const dto = new OCCT.FaceLinearSubdivisionDto(1);
+
+        expect(dto.shape).toBeDefined();
+    });
+
+    test("DataOnUVDto - defaults", ()=>{
+        const dto = new OCCT.DataOnUVDto();
+
+        expect(dto.shape).toBeUndefined();
+    });
+
+    test("DataOnUVDto - passing parameters", ()=>{
+        const dto = new OCCT.DataOnUVDto(1);
+
+        expect(dto.shape).toBeDefined();
+    });
+
+    test("DataOnUVsDto - defaults", ()=>{
+        const dto = new OCCT.DataOnUVsDto();
+
+        expect(dto.shape).toBeUndefined();
+    });
+
+    test("DataOnUVsDto - passing parameters", ()=>{
+        const dto = new OCCT.DataOnUVsDto(1);
+
+        expect(dto.shape).toBeDefined();
+    });
+
+    test("PolygonDto - defaults", ()=>{
+        const dto = new OCCT.PolygonDto();
+
+        expect(dto.points).toBeUndefined();
+    });
+
+    test("PolygonDto - passing parameters", ()=>{
+        const dto = new OCCT.PolygonDto([[0,0,0]]);
+
+        expect(dto.points).toBeDefined();
+        expect(dto.points).toHaveLength(1);
+    });
+
+    test("PolylineDto - defaults", ()=>{
+        const dto = new OCCT.PolylineDto();
+
+        expect(dto.points).toBeUndefined();
+    });
+
+    test("PolylineDto - passing parameters", ()=>{
+        const dto = new OCCT.PolylineDto([[0,0,0]]);
+
+        expect(dto.points).toBeDefined();
+        expect(dto.points).toHaveLength(1);
+    });
 
     test("SquareDto - defaults", ()=>{
         const dto = new OCCT.SquareDto();
@@ -164,6 +236,19 @@ describe("OCC Inputs", () => {
         expect(dto.length).toBe(10);
         expect(dto.center).toMatchObject([1, 2, 3]);
         expect(dto.direction).toMatchObject([1, 0, 0]);
+    });
+
+    test("LPolygonDto - defaults", ()=>{
+        const dto = new OCCT.LPolygonDto();
+
+        expect(dto.widthFirst).toBe(1);
+        expect(dto.lengthFirst).toBe(2);
+        expect(dto.widthSecond).toBe(0.5);
+        expect(dto.lengthSecond).toBe(2);
+        expect(dto.align).toBe("outside");
+        expect(dto.rotation).toBe(0);
+        expect(dto.center).toMatchObject([0, 0, 0]);
+        expect(dto.direction).toMatchObject([0, 1, 0]);
     });
 
     test("BoxDto - defaults", ()=>{
