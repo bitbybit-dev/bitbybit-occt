@@ -107,6 +107,16 @@ export class OccHelper {
         return resCompound;
     }
 
+    makeCompoundIfNeeded(shapes: TopoDS_Shape[], returnCompound: boolean) {
+        if (returnCompound) {
+            const compound = this.makeCompound({ shapes });
+            shapes.forEach(w => w.delete());
+            return compound;
+        } else {
+            return shapes;
+        }
+    }
+
     gpAx3(point: Base.Point3, direction: Base.Vector3): gp_Ax3 {
         return new this.occ.gp_Ax3_4(
             this.gpPnt(point),
@@ -342,6 +352,9 @@ export class OccHelper {
     }
 
     getEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Edge[] {
+        if (inputs.shape && this.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.edge) {
+            return [inputs.shape];
+        }
         if (!inputs.shape || this.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.wire || inputs.shape.IsNull()) {
             throw (new Error("Shape is not provided or is of incorrect type"));
         }
@@ -736,17 +749,17 @@ export class OccHelper {
     createLPolygonWire(inputs: Inputs.OCCT.LPolygonDto) {
         let points: Base.Point3[];
         switch (inputs.align) {
-        case Inputs.OCCT.directionEnum.outside:
-            points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
-            break;
-        case Inputs.OCCT.directionEnum.inside:
-            points = this.shapesHelperService.polygonLInverted(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
-            break;
-        case Inputs.OCCT.directionEnum.middle:
-            points = this.shapesHelperService.polygonLMiddle(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
-            break;
-        default:
-            points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+            case Inputs.OCCT.directionEnum.outside:
+                points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+                break;
+            case Inputs.OCCT.directionEnum.inside:
+                points = this.shapesHelperService.polygonLInverted(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+                break;
+            case Inputs.OCCT.directionEnum.middle:
+                points = this.shapesHelperService.polygonLMiddle(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
+                break;
+            default:
+                points = this.shapesHelperService.polygonL(inputs.widthFirst, inputs.lengthFirst, inputs.widthSecond, inputs.lengthSecond);
         }
         const wire = this.createPolygonWire({
             points
@@ -790,6 +803,24 @@ export class OccHelper {
 
         const wireMaker = new this.occ.BRepBuilderAPI_MakeWire_1();
         for (let ind = 0; ind < inputs.points.length - 1; ind++) {
+            const pt1 = gpPoints[ind];
+            const pt2 = gpPoints[ind + 1];
+            const innerWire = this.makeWireBetweenTwoPoints(pt1, pt2);
+            wireMaker.Add_2(innerWire);
+        }
+
+        const wire = wireMaker.Wire();
+        wireMaker.delete();
+        return wire;
+    }
+
+    createLineWire(inputs: Inputs.OCCT.LineDto) {
+        const gpPoints: gp_Pnt_3[] = [];
+        gpPoints.push(this.gpPnt(inputs.start));
+        gpPoints.push(this.gpPnt(inputs.end));
+
+        const wireMaker = new this.occ.BRepBuilderAPI_MakeWire_1();
+        for (let ind = 0; ind < gpPoints.length - 1; ind++) {
             const pt1 = gpPoints[ind];
             const pt2 = gpPoints[ind + 1];
             const innerWire = this.makeWireBetweenTwoPoints(pt1, pt2);
@@ -1017,6 +1048,7 @@ export class OccHelper {
     }
 
     interpolatePoints(inputs: Inputs.OCCT.InterpolationDto) {
+
         const ptList = new this.occ.TColgp_Array1OfPnt_2(1, inputs.points.length);
         const gpPnts: gp_Pnt_3[] = [];
         for (let pIndex = 1; pIndex <= inputs.points.length; pIndex++) {
@@ -1025,21 +1057,30 @@ export class OccHelper {
             ptList.SetValue(pIndex, gpPnt);
         }
         const geomBSplineHandle = this.occ.BitByBitDev.BitInterpolate(ptList, inputs.periodic, inputs.tolerance);
-        const geomBSpline = geomBSplineHandle.get();
-        const geomCrvHandle = new this.occ.Handle_Geom_Curve_2(geomBSpline);
-        const edgeMaker = new this.occ.BRepBuilderAPI_MakeEdge_24(geomCrvHandle);
-        const edge = edgeMaker.Edge();
-        const wireMaker = new this.occ.BRepBuilderAPI_MakeWire_2(edge);
-        const wire = wireMaker.Wire();
+        if (!geomBSplineHandle.IsNull()) {
+            const geomBSpline = geomBSplineHandle.get();
+            const geomCrvHandle = new this.occ.Handle_Geom_Curve_2(geomBSpline);
+            const edgeMaker = new this.occ.BRepBuilderAPI_MakeEdge_24(geomCrvHandle);
+            const edge = edgeMaker.Edge();
+            const wireMaker = new this.occ.BRepBuilderAPI_MakeWire_2(edge);
+            const wire = wireMaker.Wire();
 
-        geomBSplineHandle.delete();
-        geomCrvHandle.delete();
-        edgeMaker.delete();
-        edge.delete();
-        wireMaker.delete();
-        ptList.delete();
-        gpPnts.forEach(p => p.delete());
-        return wire;
+            geomBSplineHandle.Nullify();
+            geomBSplineHandle.delete();
+            geomCrvHandle.Nullify();
+            geomCrvHandle.delete();
+            edgeMaker.delete();
+            edge.delete();
+            wireMaker.delete();
+            gpPnts.forEach(p => p.delete());
+            ptList.delete();
+            return wire;
+        } else {
+            gpPnts.forEach(p => p.delete());
+            ptList.delete();
+            return undefined;
+        }
+
     }
 
     getNumSolidsInCompound(shape: TopoDS_Shape): number {
@@ -1233,6 +1274,39 @@ export class OccHelper {
         return intersectionResults;
     }
 
+    difference(inputs: Inputs.OCCT.DifferenceDto<TopoDS_Shape>): TopoDS_Shape {
+        let difference = inputs.shape;
+        const objectsToSubtract = inputs.shapes;
+        for (let i = 0; i < objectsToSubtract.length; i++) {
+            if (!objectsToSubtract[i] || objectsToSubtract[i].IsNull()) { console.error("Tool in Difference is null!"); }
+            const messageProgress1 = new this.occ.Message_ProgressRange_1();
+            const differenceCut = new this.occ.BRepAlgoAPI_Cut_3(difference, objectsToSubtract[i], messageProgress1);
+            const messageProgress2 = new this.occ.Message_ProgressRange_1();
+            differenceCut.Build(messageProgress2);
+            difference = differenceCut.Shape();
+            messageProgress1.delete();
+            messageProgress2.delete();
+            differenceCut.delete();
+        }
+
+        if (!inputs.keepEdges) {
+            const fusor = new this.occ.ShapeUpgrade_UnifySameDomain_2(difference, true, true, false);
+            fusor.Build();
+            const fusedShape = fusor.Shape();
+            difference.delete();
+            difference = fusedShape;
+            fusor.delete();
+        }
+
+        if (this.getNumSolidsInCompound(difference) === 1) {
+            const solid = this.getSolidFromCompound(difference, 0);
+            difference.delete();
+            difference = solid;
+        }
+
+        return difference;
+    }
+
     combineEdgesAndWiresIntoAWire(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge | TopoDS_Wire>): TopoDS_Wire {
         if (inputs.shapes === undefined) {
             throw (Error(("Shapes are not defined")));
@@ -1291,7 +1365,9 @@ export class OccHelper {
         gpPnts.forEach(p => p.delete());
         ptList.delete();
         ptsToBspline.delete();
+        bsplineHandle.Nullify();
         bsplineHandle.delete();
+        bsplineCrv.Nullify();
         bsplineCrv.delete();
         edgeMaker.delete();
         edge.delete();

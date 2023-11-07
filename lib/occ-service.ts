@@ -1,4 +1,4 @@
-import { OpenCascadeInstance, TopoDS_Face, Handle_Poly_Triangulation } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OpenCascadeInstance, Handle_Poly_Triangulation, TopoDS_Shape } from "../bitbybit-dev-occt/bitbybit-dev-occt";
 import * as Inputs from "./api/inputs/inputs";
 import { OCCTBooleans } from "./services/booleans";
 import { OCCTGeom } from "./services/geom/geom";
@@ -32,102 +32,117 @@ export class OCCTService {
         this.io = new OCCTIO(occ, och);
     }
 
+    shapesToMeshes(shapes, maxDeviation, adjustYtoZ): Inputs.OCCT.DecomposedMeshDto[] {
+        return shapes.map(shape => this.shapeToMesh(shape, maxDeviation, adjustYtoZ));
+    }
+
     shapeToMesh(shape, maxDeviation, adjustYtoZ): Inputs.OCCT.DecomposedMeshDto {
+
         const faceList: Inputs.OCCT.DecomposedFaceDto[] = [];
         const edgeList: Inputs.OCCT.DecomposedEdgeDto[] = [];
 
-        let shapeToUse = shape;
-
-        if (adjustYtoZ) {
-            shapeToUse = this.och.rotate({ shape, axis: [1, 0, 0], angle: -90 });
-            shapeToUse = this.och.mirrorAlongNormal(
-                { shape: shapeToUse, origin: [0, 0, 0], normal: [0, 0, 1] }
-            );
-        }
+        let shapeToUse = shape as TopoDS_Shape;
+        if (shapeToUse.IsNull()) return { faceList, edgeList };
 
         // This could be made optional...
         // Clean cached triangulation data for the shape.
         // This allows to get lower res models out of higher res that was once computed and cached.
         this.occ.BRepTools.Clean(shapeToUse, true);
 
-        const inctementalMeshBuilder = new this.occ.BRepMesh_IncrementalMesh_2(shapeToUse, maxDeviation, false, 0.5, true);
-
-        // Construct the edge hashes to assign proper indices to the edges
-        const fullShapeEdgeHashes2 = {};
+        if (adjustYtoZ) {
+            const shapeToUseRotated = this.och.rotate({ shape, axis: [1, 0, 0], angle: -90 });
+            const shapeMirrored = this.och.mirrorAlongNormal(
+                { shape: shapeToUseRotated, origin: [0, 0, 0], normal: [0, 0, 1] }
+            );
+            shapeToUseRotated.delete();
+            shapeToUse.delete();
+            shapeToUse = shapeMirrored;
+        }
 
         // Iterate through the faces and triangulate each one
-        const triangulations:Handle_Poly_Triangulation[] = [];
-        this.och.forEachFace(shapeToUse, (faceIndex, myFace: TopoDS_Face) => {
-            const aLocation = new this.occ.TopLoc_Location_1();
-            const myT = this.occ.BRep_Tool.Triangulation(myFace, aLocation, 0);
-            if (myT.IsNull()) { console.error("Encountered Null Face!"); return; }
+        const triangulations: Handle_Poly_Triangulation[] = [];
+        const faces = this.och.getFaces({ shape: shapeToUse });
 
-            const thisFace: Inputs.OCCT.DecomposedFaceDto = {
-                vertex_coord: [],
-                normal_coord: [],
-                uvs: [],
-                tri_indexes: [],
-                vertex_coord_vec: [],
-                number_of_triangles: 0,
-                face_index: faceIndex
-            };
+        let incrementalMeshBuilder;
+        if (faces && faces.length) {
+            incrementalMeshBuilder = new this.occ.BRepMesh_IncrementalMesh_2(shapeToUse, maxDeviation, false, 0.5, false);
+            faces.forEach((myFace, faceIndex) => {
 
-            const pc = new this.occ.Poly_Connect_2(myT);
-            const triangulation = myT.get();
+                const aLocation = new this.occ.TopLoc_Location_1();
+                const myT = this.occ.BRep_Tool.Triangulation(myFace, aLocation, 0);
+                if (myT.IsNull()) { console.error("Encountered Null Face!"); return; }
 
-            // write vertex buffer
-            thisFace.vertex_coord = new Array(triangulation.NbNodes() * 3);
-            thisFace.vertex_coord_vec = [];
-            for (let i = 0; i < triangulation.NbNodes(); i++) {
-                const p = triangulation.Node(i + 1).Transformed(aLocation.Transformation());
-                const uv = triangulation.UVNode(i + 1);
-                thisFace.uvs[(i * 2) + 0] = uv.X();
-                thisFace.uvs[(i * 2) + 1] = uv.Y();
-                thisFace.vertex_coord[(i * 3) + 0] = p.X();
-                thisFace.vertex_coord[(i * 3) + 1] = p.Y();
-                thisFace.vertex_coord[(i * 3) + 2] = p.Z();
-                thisFace.vertex_coord_vec.push([p.X(), p.Y(), p.Z()]);
-            }
+                const thisFace: Inputs.OCCT.DecomposedFaceDto = {
+                    vertex_coord: [],
+                    normal_coord: [],
+                    uvs: [],
+                    tri_indexes: [],
+                    vertex_coord_vec: [],
+                    number_of_triangles: 0,
+                    face_index: faceIndex
+                };
 
-            // write normal buffer
-            const myNormal = new this.occ.TColgp_Array1OfDir_2(1, triangulation.NbNodes());
-            this.occ.StdPrs_ToolTriangulatedShape.Normal(myFace, pc, myNormal);
-            thisFace.normal_coord = new Array(myNormal.Length() * 3);
-            for (let i = 0; i < myNormal.Length(); i++) {
-                const d = myNormal.Value(i + 1).Transformed(aLocation.Transformation());
-                thisFace.normal_coord[(i * 3) + 0] = d.X();
-                thisFace.normal_coord[(i * 3) + 1] = d.Y();
-                thisFace.normal_coord[(i * 3) + 2] = d.Z();
-            }
+                const pc = new this.occ.Poly_Connect_2(myT);
+                const triangulation = myT.get();
 
-            // write triangle buffer
-            const orient = myFace.Orientation_1();
-            const triangles = myT.get().Triangles();
-            thisFace.tri_indexes = new Array(triangles.Length() * 3);
-            let validFaceTriCount = 0;
-            for (let nt = 1; nt <= myT.get().NbTriangles(); nt++) {
-                const t = triangles.Value(nt);
-                let n1 = t.Value(1);
-                let n2 = t.Value(2);
-                const n3 = t.Value(3);
-                if (orient !== this.occ.TopAbs_Orientation.TopAbs_FORWARD) {
-                    const tmp = n1;
-                    n1 = n2;
-                    n2 = tmp;
+                // write vertex buffer
+                thisFace.vertex_coord = new Array(triangulation.NbNodes() * 3);
+                thisFace.vertex_coord_vec = [];
+                for (let i = 0; i < triangulation.NbNodes(); i++) {
+                    const p = triangulation.Node(i + 1).Transformed(aLocation.Transformation());
+                    const uv = triangulation.UVNode(i + 1);
+                    thisFace.uvs[(i * 2) + 0] = uv.X();
+                    thisFace.uvs[(i * 2) + 1] = uv.Y();
+                    thisFace.vertex_coord[(i * 3) + 0] = p.X();
+                    thisFace.vertex_coord[(i * 3) + 1] = p.Y();
+                    thisFace.vertex_coord[(i * 3) + 2] = p.Z();
+                    thisFace.vertex_coord_vec.push([p.X(), p.Y(), p.Z()]);
                 }
-                thisFace.tri_indexes[(validFaceTriCount * 3) + 0] = n1 - 1;
-                thisFace.tri_indexes[(validFaceTriCount * 3) + 1] = n2 - 1;
-                thisFace.tri_indexes[(validFaceTriCount * 3) + 2] = n3 - 1;
-                validFaceTriCount++;
-            }
-            thisFace.number_of_triangles = validFaceTriCount;
-            faceList.push(thisFace);
 
-            triangulations.push(myT);
+                // write normal buffer
+                const myNormal = new this.occ.TColgp_Array1OfDir_2(1, triangulation.NbNodes());
+                this.occ.StdPrs_ToolTriangulatedShape.Normal(myFace, pc, myNormal);
+                thisFace.normal_coord = new Array(myNormal.Length() * 3);
+                for (let i = 0; i < myNormal.Length(); i++) {
+                    const d = myNormal.Value(i + 1);
+                    thisFace.normal_coord[(i * 3) + 0] = d.X();
+                    thisFace.normal_coord[(i * 3) + 1] = d.Y();
+                    thisFace.normal_coord[(i * 3) + 2] = d.Z();
+                }
 
-            aLocation.delete();
-            pc.delete();
-        });
+                // write triangle buffer
+                const orient = myFace.Orientation_1();
+                const triangles = myT.get().Triangles();
+                thisFace.tri_indexes = new Array(triangles.Length() * 3);
+                let validFaceTriCount = 0;
+                for (let nt = 1; nt <= myT.get().NbTriangles(); nt++) {
+                    const t = triangles.Value(nt);
+                    let n1 = t.Value(1);
+                    let n2 = t.Value(2);
+                    const n3 = t.Value(3);
+                    if (orient !== this.occ.TopAbs_Orientation.TopAbs_FORWARD) {
+                        const tmp = n1;
+                        n1 = n2;
+                        n2 = tmp;
+                    }
+                    thisFace.tri_indexes[(validFaceTriCount * 3) + 0] = n1 - 1;
+                    thisFace.tri_indexes[(validFaceTriCount * 3) + 1] = n2 - 1;
+                    thisFace.tri_indexes[(validFaceTriCount * 3) + 2] = n3 - 1;
+                    validFaceTriCount++;
+                }
+                thisFace.number_of_triangles = validFaceTriCount;
+                faceList.push(thisFace);
+
+                triangulations.push(myT);
+
+                aLocation.delete();
+                myNormal.delete();
+                triangles.delete();
+                pc.delete();
+
+            });
+        }
+
         // Nullify Triangulations between runs so they're not stored in the cache
         for (let i = 0; i < triangulations.length; i++) {
             triangulations[i].Nullify();
@@ -135,40 +150,44 @@ export class OCCTService {
         }
 
         // Get the free edges that aren't on any triangulated face/surface
-        this.och.forEachEdge(shapeToUse, (index, myEdge) => {
-            const edgeHash = myEdge.HashCode(100000000);
-            if(!Object.prototype.hasOwnProperty.call(fullShapeEdgeHashes2, edgeHash)){
-                const thisEdge: Inputs.OCCT.DecomposedEdgeDto = {
-                    vertex_coord: [],
-                    edge_index: -1
-                };
+        const edges = this.och.getEdges({ shape: shapeToUse });
+        edges.forEach((myEdge, index) => {
+            const thisEdge: Inputs.OCCT.DecomposedEdgeDto = {
+                vertex_coord: [],
+                edge_index: -1
+            };
 
-                const aLocation = new this.occ.TopLoc_Location_1();
-                const adaptorCurve = new this.occ.BRepAdaptor_Curve_2(myEdge);
-                const tangDef = new this.occ.GCPnts_TangentialDeflection_2(adaptorCurve, maxDeviation, 0.1, 2, 1.0e-9, 1.0e-7);
+            const aLocation = new this.occ.TopLoc_Location_1();
+            const adaptorCurve = new this.occ.BRepAdaptor_Curve_2(myEdge);
+            const tangDef = new this.occ.GCPnts_TangentialDeflection_2(adaptorCurve, maxDeviation, 0.1, 2, 1.0e-9, 1.0e-7);
 
-                // write vertex buffer
-                thisEdge.vertex_coord = new Array(tangDef.NbPoints());
-                for (let j = 0; j < tangDef.NbPoints(); j++) {
-                    const vertex = tangDef.Value(j + 1).Transformed(aLocation.Transformation());
-                    thisEdge.vertex_coord.push([
-                        vertex.X(),
-                        vertex.Y(),
-                        vertex.Z()
-                    ]);
-                }
-                thisEdge.edge_index = index;
-                fullShapeEdgeHashes2[edgeHash] = edgeHash;
-
-                edgeList.push(thisEdge);
-
-                aLocation.delete();
-                adaptorCurve.delete();
-                tangDef.delete();
+            // write vertex buffer
+            thisEdge.vertex_coord = [];
+            const nrPoints = tangDef.NbPoints();
+            const tangDefValues = [];
+            for (let j = 0; j < nrPoints; j++) {
+                const tangDefVal = tangDef.Value(j + 1);
+                thisEdge.vertex_coord.push([
+                    tangDefVal.X(),
+                    tangDefVal.Y(),
+                    tangDefVal.Z()
+                ]);
+                tangDefValues.push(tangDefVal);
             }
-        });
-        inctementalMeshBuilder.delete();
+            thisEdge.edge_index = index;
 
+            edgeList.push(thisEdge);
+            tangDefValues.forEach(v => v.delete());
+            aLocation.delete();
+            adaptorCurve.delete();
+            tangDef.delete();
+            this.occ.BRepTools.Clean(myEdge, true);
+        });
+
+        if (incrementalMeshBuilder) {
+            incrementalMeshBuilder.Delete();
+        }
+        this.occ.BRepTools.Clean(shapeToUse, true);
         return { faceList, edgeList };
     }
 

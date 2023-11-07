@@ -34,36 +34,7 @@ export class OCCTBooleans {
     }
 
     difference(inputs: Inputs.OCCT.DifferenceDto<TopoDS_Shape>): TopoDS_Shape {
-        let difference = inputs.shape;
-        const objectsToSubtract = inputs.shapes;
-        for (let i = 0; i < objectsToSubtract.length; i++) {
-            if (!objectsToSubtract[i] || objectsToSubtract[i].IsNull()) { console.error("Tool in Difference is null!"); }
-            const messageProgress1 = new this.occ.Message_ProgressRange_1();
-            const differenceCut = new this.occ.BRepAlgoAPI_Cut_3(difference, objectsToSubtract[i], messageProgress1);
-            const messageProgress2 = new this.occ.Message_ProgressRange_1();
-            differenceCut.Build(messageProgress2);
-            difference = differenceCut.Shape();
-            messageProgress1.delete();
-            messageProgress2.delete();
-            differenceCut.delete();
-        }
-
-        if (!inputs.keepEdges) {
-            const fusor = new this.occ.ShapeUpgrade_UnifySameDomain_2(difference, true, true, false);
-            fusor.Build();
-            const fusedShape = fusor.Shape();
-            difference.delete();
-            difference = fusedShape;
-            fusor.delete();
-        }
-
-        if (this.och.getNumSolidsInCompound(difference) === 1) {
-            const solid = this.och.getSolidFromCompound(difference, 0);
-            difference.delete();
-            difference = solid;
-        }
-
-        return difference;
+        return this.och.difference(inputs);
     }
 
     intersection(inputs: Inputs.OCCT.IntersectionDto<TopoDS_Shape>): TopoDS_Shape {

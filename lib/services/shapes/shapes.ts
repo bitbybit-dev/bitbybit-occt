@@ -14,10 +14,10 @@ export class OCCTShapes {
     public readonly shell: OCCTShell;
     public readonly solid: OCCTSolid;
     public readonly compound: OCCTCompound;
-    
+
     constructor(
         occ: OpenCascadeInstance,
-        och: OccHelper
+        och: OccHelper,
     ) {
         this.edge = new OCCTEdge(occ, och);
         this.wire = new OCCTWire(occ, och);
