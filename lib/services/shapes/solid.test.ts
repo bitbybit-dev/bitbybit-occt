@@ -56,6 +56,12 @@ describe("OCCT solid unit tests", () => {
         box.delete();
     });
 
+    it("should create a cube solid", async () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        expect(solid.getSolidVolume({ shape: cube })).toBeCloseTo(8);
+        cube.delete();
+    });
+
     it("should create a cylinder solid", async () => {
         const cylinder = solid.createCylinder({ radius: 2, height: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         expect(solid.getSolidVolume({ shape: cylinder })).toBeCloseTo(25.13274122871834);
@@ -133,9 +139,9 @@ describe("OCCT solid unit tests", () => {
         const cone2 = solid.createCone({ height: 3, radius1: 3, radius2: 1, angle: Math.PI / 2, direction: [0, 1, 0], center: [0, 10, 0] });
         const cone3 = solid.createCone({ height: 3, radius1: 3, radius2: 1, angle: Math.PI / 2, direction: [0, 1, 0], center: [0, 0, 10] });
 
-        const compundShape = compound.makeCompound({shapes: [cone1, cone2, cone3]});
-        const solidShapes = solid.getSolids({shape: compundShape});
-        
+        const compundShape = compound.makeCompound({ shapes: [cone1, cone2, cone3] });
+        const solidShapes = solid.getSolids({ shape: compundShape });
+
         expect(solidShapes).toHaveLength(3);
 
         cone1.delete();

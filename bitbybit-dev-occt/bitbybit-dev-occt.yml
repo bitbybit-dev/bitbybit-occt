@@ -12,6 +12,7 @@
       - symbol: BRepAlgoAPI_Common
       - symbol: BRepAlgoAPI_Cut
       - symbol: BRepAlgoAPI_Fuse
+      - symbol: BRepAlgoAPI_Section
       - symbol: BRepBndLib
       - symbol: BRepBuilderAPI_Command
       - symbol: BRepBuilderAPI_Copy
@@ -203,8 +204,12 @@
       - symbol: STEPControl_Reader
       - symbol: STEPControl_StepModelType
       - symbol: STEPControl_Writer
+      - symbol: ShapeExtend_Status
+      - symbol: ShapeFix_Edge
       - symbol: ShapeFix_Face
       - symbol: ShapeFix_Root
+      - symbol: ShapeFix_Shape
+      - symbol: ShapeFix_Shell
       - symbol: ShapeFix_Solid
       - symbol: ShapeFix_Wire
       - symbol: ShapeUpgrade_UnifySameDomain
@@ -237,8 +242,14 @@
       - symbol: TopAbs_ShapeEnum
       - symbol: TopExp_Explorer
       - symbol: TopLoc_Location
+      - symbol: TopOpeBRepTool
+      - symbol: TopOpeBRepTool_PurgeInternalEdges
+      - symbol: TopTools_DataMapOfShapeListOfShape
+      - symbol: TopTools_IndexedDataMapOfShapeListOfShape
       - symbol: TopTools_IndexedMapOfShape
+      - symbol: TopTools_ListIteratorOfListOfShape
       - symbol: TopTools_ListOfShape
+      - symbol: TopTools_MapOfShape
       - symbol: TopTools_SequenceOfShape
       - symbol: TopoDS
       - symbol: TopoDS_Builder

@@ -121,6 +121,19 @@ export namespace OCCT {
          */
         points: Base.Point3[];
     }
+    export class SplitWireOnPointsDto<T>{
+        /**
+         * The OCCT wire shape
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * The list of points
+         * @default undefined
+         */
+        points: Base.Point3[];
+    }
+
     export class ClosestPointsOnShapesFromPointsDto<T> {
         /**
          * The OCCT shapes
@@ -203,6 +216,113 @@ export namespace OCCT {
          * @default undefined
          */
         shape?: T;
+        /**
+         * Face opacity value between 0 and 1
+         * @default 1
+         * @minimum 0
+         * @maximum 1
+         * @step 0.1
+         */
+        faceOpacity = 1;
+        /**
+         * Edge opacity value between 0 and 1
+         * @default 1
+         * @minimum 0
+         * @maximum 1
+         * @step 0.1
+         */
+        edgeOpacity = 1;
+        /**
+         * Hex colour string for the edges
+         * @default #ffffff
+         */
+        edgeColour: Base.Color = "#ffffff";
+        /**
+         * Face material
+         * @default undefined
+         * @optional true
+         */
+        faceMaterial?: Base.Material;
+        /**
+         * Hex colour string for face colour
+         * @default #ff0000
+         */
+        faceColour: Base.Color = "#ff0000";
+        /**
+         * Edge width
+         * @default 2
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        edgeWidth = 2;
+        /**
+         * You can turn off drawing of edges via this property
+         * @default true
+         */
+        drawEdges = true;
+        /**
+         * You can turn off drawing of faces via this property
+         * @default true
+         */
+        drawFaces = true;
+        /**
+         * Precision of the mesh that will be generated for the shape, lower number will mean more triangles
+         * @default 0.01
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        precision = 0.01;
+        /**
+         * Draw index of edges in space
+         * @default false
+         */
+        drawEdgeIndexes = false;
+        /**
+         * Indicates the edge index height if they are drawn
+         * @default 0.06
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        edgeIndexHeight = 0.06;
+        /**
+         * Edge index colour if the edges are drawn
+         * @default #ff00ff
+         */
+        edgeIndexColour: Base.Color = "#ff00ff";
+        /**
+         * Draw indexes of faces in space
+         * @default false
+         */
+        drawFaceIndexes = false;
+        /**
+         * Indicates the edge index height if they are drawn
+         * @default 0.06
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        faceIndexHeight = 0.06;
+        /**
+         * Edge index colour if the edges are drawn
+         * @default #0000ff
+         */
+        faceIndexColour: Base.Color = "#0000ff";
+    }
+    export class DrawShapesDto<T> {
+        /**
+         * Provide options without default values
+         */
+        constructor(shapes?: T[]) {
+            this.shapes = shapes;
+        }
+        /**
+         * Brep OpenCascade geometry
+         * @default undefined
+         */
+        shapes?: T[];
         /**
          * Face opacity value between 0 and 1
          * @default 1
@@ -589,6 +709,20 @@ export namespace OCCT {
          */
         points: Base.Point3[];
     }
+    export class PolygonsDto {
+        constructor(polygons?: PolygonDto[]) {
+            this.polygons = polygons;
+        }
+        /**
+         * Polygons
+         * @default undefined
+         */
+        polygons: PolygonDto[];
+        /**
+         * Indicates whether the shapes should be returned as a compound
+         */
+        returnCompound = false;
+    }
     export class PolylineDto {
         constructor(points?: Base.Point3[]) {
             this.points = points;
@@ -598,6 +732,20 @@ export namespace OCCT {
          * @default undefined
          */
         points: Base.Point3[];
+    }
+    export class PolylinesDto {
+        constructor(polylines?: PolylineDto[]) {
+            this.polylines = polylines;
+        }
+        /**
+         * Polylines
+         * @default undefined
+         */
+        polylines: PolylineDto[];
+        /**
+         * Indicates whether the shapes should be returned as a compound
+         */
+        returnCompound = false;
     }
     export class SquareDto {
         /**
@@ -743,6 +891,29 @@ export namespace OCCT {
          */
         center: Base.Point3 = [0, 0, 0];
     }
+    export class CubeDto {
+        constructor(size?: number, center?: Base.Point3) {
+            if (size) {
+                this.size = size;
+            }
+            if (center) {
+                this.center = center;
+            }
+        }
+        /**
+         * Size of the cube
+         * @default 1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        size = 1;
+        /**
+         * Center of the box
+         * @default [0, 0, 0]
+         */
+        center: Base.Point3 = [0, 0, 0];
+    }
     export class BoxFromCornerDto {
         constructor(width?: number, length?: number, height?: number, corner?: Base.Point3) {
             this.width = width;
@@ -868,7 +1039,20 @@ export namespace OCCT {
          */
         end: Base.Point3 = [0, 1, 0];
     }
-
+    export class LinesDto {
+        constructor(lines?: LineDto[]) {
+            this.lines = lines;
+        }
+        /**
+         * Lines
+         * @default undefined
+         */
+        lines: LineDto[];
+        /**
+         * Indicates whether the shapes should be returned as a compound
+         */
+        returnCompound = false;
+    }
     export class ArcEdgeThreePointsDto {
         /**
          * Start of the arc
@@ -1048,6 +1232,20 @@ export namespace OCCT {
          */
         closed = false;
     }
+    export class BSplinesDto {
+        constructor(bSplines?: BSplineDto[]) {
+            this.bSplines = bSplines;
+        }
+        /**
+         * BSpline definitions
+         * @default undefined
+         */
+        bSplines: BSplineDto[];
+        /**
+         * Indicates whether the shapes should be returned as a compound
+         */
+        returnCompound = false;
+    }
     export class InterpolationDto {
         constructor(points?: Base.Point3[], periodic?: boolean) {
             this.points = points;
@@ -1072,7 +1270,20 @@ export namespace OCCT {
          */
         tolerance = 1e-7;
     }
-
+    export class InterpolateWiresDto {
+        constructor(interpolations?: InterpolationDto[]) {
+            this.interpolations = interpolations;
+        }
+        /**
+         * Interpolation definitions
+         * @default undefined
+         */
+        interpolations: InterpolationDto[];
+        /**
+         * Indicates whether the shapes should be returned as a compound
+         */
+        returnCompound = false;
+    }
     export class BezierDto {
         constructor(points?: Base.Point3[], closed?: boolean) {
             this.points = points;
@@ -1089,7 +1300,20 @@ export namespace OCCT {
          */
         closed = false;
     }
-
+    export class BezierWiresDto {
+        constructor(bezierWires?: BezierDto[]) {
+            this.bezierWires = bezierWires;
+        }
+        /**
+         * Bezier wires
+         * @default undefined
+         */
+        bezierWires: BezierDto[];
+        /**
+         * Indicates whether the shapes should be returned as a compound
+         */
+        returnCompound = false;
+    }
     export class DivideDto<T> {
         constructor(shape: T, nrOfDivisions?: number, removeStartPoint?: boolean, removeEndPoint?: boolean) {
             this.shape = shape;
@@ -1122,6 +1346,37 @@ export namespace OCCT {
         removeEndPoint = false;
     }
 
+    export class DivideShapesDto<T> {
+        constructor(shapes: T[], nrOfDivisions?: number, removeStartPoint?: boolean, removeEndPoint?: boolean) {
+            this.shapes = shapes;
+            this.nrOfDivisions = nrOfDivisions;
+            this.removeStartPoint = removeStartPoint;
+            this.removeEndPoint = removeEndPoint;
+        }
+        /**
+         * Shapes
+         * @default undefined
+         */
+        shapes: T[];
+        /**
+         * The number of divisions that will be performed on the curve
+         * @default 10
+         * @minimum 1
+         * @maximum Infinity
+         * @step 1
+         */
+        nrOfDivisions = 10;
+        /**
+         * Indicates if algorithm should remove start point
+         * @default false
+         */
+        removeStartPoint = false;
+        /**
+         * Indicates if algorithm should remove end point
+         * @default false
+         */
+        removeEndPoint = false;
+    }
     export class DataOnGeometryAtParamDto<T> {
         constructor(shape: T, param?: number) {
             this.shape = shape;
@@ -2241,7 +2496,9 @@ export namespace OCCT {
     }
     export class ShapeToMeshDto<T>{
         constructor(shape?: T, precision?: number, adjustYtoZ?: boolean) {
-            this.shape = shape;
+            if (shape) {
+                this.shape = shape;
+            }
             if (precision) {
                 this.precision = precision;
             }
@@ -2254,6 +2511,37 @@ export namespace OCCT {
          * @default undefined
          */
         shape: T;
+        /**
+         * Precision of the mesh
+         * @default 0.01
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.001
+         */
+        precision = 0.01;
+        /**
+         * Adjust Y (up) coordinate system to Z (up) coordinate system
+         * @default false
+         */
+        adjustYtoZ = false;
+    }
+    export class ShapesToMeshesDto<T>{
+        constructor(shapes?: T[], precision?: number, adjustYtoZ?: boolean) {
+            if (shapes) {
+                this.shapes = shapes;
+            }
+            if (precision) {
+                this.precision = precision;
+            }
+            if (adjustYtoZ) {
+                this.adjustYtoZ = adjustYtoZ;
+            }
+        }
+        /**
+         * Shapes to transform
+         * @default undefined
+         */
+        shapes: T[];
         /**
          * Precision of the mesh
          * @default 0.01

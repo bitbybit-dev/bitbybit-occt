@@ -24,6 +24,10 @@ export class OCCTSolid {
         return this.och.bRepPrimAPIMakeBox(inputs.width, inputs.length, inputs.height, inputs.center);
     }
 
+    createCube(inputs: Inputs.OCCT.CubeDto): TopoDS_Solid {
+        return this.och.bRepPrimAPIMakeBox(inputs.size, inputs.size, inputs.size, inputs.center);
+    }
+
     createBoxFromCorner(inputs: Inputs.OCCT.BoxFromCornerDto): TopoDS_Solid {
         const box = this.och.bRepPrimAPIMakeBox(inputs.width, inputs.length, inputs.height, inputs.corner);
         const cornerBox = this.och.translate({ shape: box, translation: [inputs.width / 2, inputs.height / 2, inputs.length / 2] });

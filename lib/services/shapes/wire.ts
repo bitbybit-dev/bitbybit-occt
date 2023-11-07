@@ -1,4 +1,4 @@
-import { Geom_Surface, TopoDS_Face, OpenCascadeInstance, TopoDS_Wire, TopoDS_Shape, TopoDS_Edge } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { Geom_Surface, TopoDS_Face, OpenCascadeInstance, TopoDS_Wire, TopoDS_Compound, TopoDS_Shape, TopoDS_Edge } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from "../../occ-helper";
 import * as Inputs from "../../api/inputs/inputs";
 
@@ -14,8 +14,141 @@ export class OCCTWire {
         return this.och.createPolygonWire(inputs);
     }
 
+    createPolygons(inputs: Inputs.OCCT.PolygonsDto): TopoDS_Wire[] | TopoDS_Compound {
+        const wires = inputs.polygons.map(p => this.createPolygonWire(p)).filter(s => s !== undefined);
+        return this.och.makeCompoundIfNeeded(wires, inputs.returnCompound);
+    }
+
     createPolylineWire(inputs: Inputs.OCCT.PolylineDto): TopoDS_Wire {
         return this.och.createPolylineWire(inputs);
+    }
+
+    createPolylines(inputs: Inputs.OCCT.PolylinesDto): TopoDS_Wire[] | TopoDS_Compound {
+        const wires = inputs.polylines.map(p => this.createPolylineWire(p)).filter(s => s !== undefined);
+        return this.och.makeCompoundIfNeeded(wires, inputs.returnCompound);
+    }
+
+    createLineWire(inputs: Inputs.OCCT.LineDto): TopoDS_Wire {
+        return this.och.createLineWire(inputs);
+    }
+
+    createLines(inputs: Inputs.OCCT.LinesDto): TopoDS_Wire[] | TopoDS_Compound {
+        const wires = inputs.lines.map(p => this.createLineWire(p)).filter(s => s !== undefined);
+        return this.och.makeCompoundIfNeeded(wires, inputs.returnCompound);
+    }
+
+    createBezier(inputs: Inputs.OCCT.BezierDto) {
+        const ptList = new this.occ.TColgp_Array1OfPnt_2(1, inputs.points.length + (inputs.closed ? 1 : 0));
+        for (let pIndex = 1; pIndex <= inputs.points.length; pIndex++) {
+            ptList.SetValue(pIndex, this.och.gpPnt(inputs.points[pIndex - 1]));
+        }
+        if (inputs.closed) { ptList.SetValue(inputs.points.length + 1, ptList.Value(1)); }
+        const geomBezierCurveHandle = new this.occ.Geom_BezierCurve_1(ptList);
+        const geomCurve = new this.occ.Handle_Geom_Curve_2(geomBezierCurveHandle);
+        const edgeMaker = new this.occ.BRepBuilderAPI_MakeEdge_24(geomCurve);
+        const edge = edgeMaker.Edge();
+        const makeWire = new this.occ.BRepBuilderAPI_MakeWire_2(edge);
+        const result = makeWire.Wire();
+        makeWire.delete();
+        edgeMaker.delete();
+        edge.delete();
+        geomCurve.delete();
+        ptList.delete();
+        return result;
+    }
+
+    createBezierWires(inputs: Inputs.OCCT.BezierWiresDto): TopoDS_Wire[] | TopoDS_Compound {
+        const wires = inputs.bezierWires.map(p => this.createBezier(p)).filter(s => s !== undefined);
+        return this.och.makeCompoundIfNeeded(wires, inputs.returnCompound);
+    }
+
+    interpolatePoints(inputs: Inputs.OCCT.InterpolationDto): TopoDS_Wire {
+        return this.och.interpolatePoints(inputs);
+    }
+
+    interpolateWires(inputs: Inputs.OCCT.InterpolateWiresDto): TopoDS_Wire[] | TopoDS_Compound {
+        const wires = inputs.interpolations.map(p => this.interpolatePoints(p)).filter(s => s !== undefined);
+        return this.och.makeCompoundIfNeeded(wires, inputs.returnCompound);
+    }
+
+    splitOnPoints(inputs: Inputs.OCCT.SplitWireOnPointsDto<TopoDS_Wire>): TopoDS_Wire[] {
+
+        const tolerance = 1.0e-7;
+        const startPointOnWire = this.och.startPointOnWire({ shape: inputs.shape });
+        const endPointOnWire = this.och.endPointOnWire({ shape: inputs.shape });
+
+        // This is needed to make follow up algorithm to work properly on open wires
+        const wireIsClosed = this.och.vecHelper.vectorsTheSame(endPointOnWire, startPointOnWire, tolerance);
+        if (!wireIsClosed) {
+            if (!inputs.points.some(p => this.och.vecHelper.vectorsTheSame(p, startPointOnWire, tolerance))) {
+                inputs.points.push(startPointOnWire);
+            }
+
+            if (!inputs.points.some(p => this.och.vecHelper.vectorsTheSame(p, endPointOnWire, tolerance))) {
+                inputs.points.push(endPointOnWire);
+            }
+        }
+
+        const shortLines = this.createLines({
+            lines: inputs.points.map(p => ({ start: p, end: [p[0], p[1] + tolerance, p[2]] as Inputs.Base.Point3 })),
+            returnCompound: false
+        }) as TopoDS_Wire[];
+
+        const diff = this.och.difference({ shape: inputs.shape, shapes: shortLines, keepEdges: true });
+        const edges = this.och.getEdges({ shape: diff });
+
+        const groupedEdges: TopoDS_Edge[][] = [];
+        edges.forEach((e) => {
+            const latestArray = groupedEdges[groupedEdges.length - 1];
+
+            // direction of edges seem to be reversed, but it does not matter for this algorithm
+            // better not to start reversing things and just deal with it
+            const endPointOnEdge = this.och.endPointOnEdge({ shape: e });
+            const startPointOnEdge = this.och.startPointOnEdge({ shape: e });
+            const pointExistsOnEdgeEnd = inputs.points.some(p => this.och.vecHelper.vectorsTheSame(endPointOnEdge, p, tolerance));
+            const pointExistsOnEdgeStart = inputs.points.some(p => this.och.vecHelper.vectorsTheSame(startPointOnEdge, p, tolerance));
+
+            if (pointExistsOnEdgeEnd && !pointExistsOnEdgeStart) {
+                groupedEdges.push([e]);
+            } else if (!pointExistsOnEdgeEnd && pointExistsOnEdgeStart) {
+                if (latestArray) {
+                    latestArray.push(e);
+                } else {
+                    groupedEdges.push([e]);
+                }
+            } else if (pointExistsOnEdgeEnd && pointExistsOnEdgeStart) {
+                groupedEdges.push([e]);
+            } else if (!pointExistsOnEdgeEnd && !pointExistsOnEdgeStart) {
+                if (latestArray) {
+                    latestArray.push(e);
+                } else {
+                    groupedEdges.push([e]);
+                }
+            }
+        });
+
+        const wires = [];
+
+        groupedEdges.forEach(g => {
+            const wire = this.combineEdgesAndWiresIntoAWire({
+                shapes: g
+            });
+            wires.push(wire);
+        });
+        // when wire is closed and first wire and last wire share the corner, they need to be combined if there's no split point that matches that corner
+        if (wireIsClosed && wires.length > 1) {
+            const endPointOnFirstWire = this.och.endPointOnWire({ shape: wires[0] });
+            const startPointOnLastWire = this.och.startPointOnWire({ shape: wires[wires.length - 1] });
+            if (this.och.vecHelper.vectorsTheSame(endPointOnFirstWire, startPointOnLastWire, tolerance)) {
+                const pt = inputs.points.find(p => this.och.vecHelper.vectorsTheSame(p, endPointOnFirstWire, tolerance));
+                if (!pt) {
+                    const combined = this.addEdgesAndWiresToWire({ shape: wires[wires.length - 1], shapes: [wires[0]] });
+                    wires[0] = combined;
+                    wires.pop();
+                }
+            }
+        }
+        return wires;
     }
 
     combineEdgesAndWiresIntoAWire(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire | TopoDS_Edge>): TopoDS_Wire {
@@ -46,12 +179,25 @@ export class OCCTWire {
         return this.och.createBSpline(inputs);
     }
 
+    createBSplines(inputs: Inputs.OCCT.BSplinesDto): TopoDS_Wire[] | TopoDS_Compound {
+        const wires = inputs.bSplines.map(p => this.createBSpline(p)).filter(s => s !== undefined);
+        return this.och.makeCompoundIfNeeded(wires, inputs.returnCompound);
+    }
+
     divideWireByParamsToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Wire>): Inputs.Base.Point3[] {
         return this.och.divideWireByParamsToPoints(inputs);
     }
 
+    divideWiresByParamsToPoints(inputs: Inputs.OCCT.DivideShapesDto<TopoDS_Wire>): Inputs.Base.Point3[][] {
+        return inputs.shapes.map(s => this.divideWireByParamsToPoints({ ...inputs, shape: s }));
+    }
+
     divideWireByEqualDistanceToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Wire>): Inputs.Base.Point3[] {
         return this.och.divideWireByEqualDistanceToPoints(inputs);
+    }
+
+    divideWiresByEqualDistanceToPoints(inputs: Inputs.OCCT.DivideShapesDto<TopoDS_Wire>): Inputs.Base.Point3[][] {
+        return inputs.shapes.map(s => this.divideWireByEqualDistanceToPoints({ ...inputs, shape: s }));
     }
 
     pointOnWireAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Wire>): Inputs.Base.Point3 {
@@ -69,6 +215,7 @@ export class OCCTWire {
     tangentOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): Inputs.Base.Point3 {
         return this.och.tangentOnWireAtLength(inputs);
     }
+
     derivativesOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): [Inputs.Base.Vector3, Inputs.Base.Vector3, Inputs.Base.Vector3] {
         const wire = inputs.shape;
         const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
@@ -91,7 +238,6 @@ export class OCCTWire {
         gpPnt.delete();
         return der;
     }
-
 
     derivativesOnWireAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Wire>): [Inputs.Base.Vector3, Inputs.Base.Vector3, Inputs.Base.Vector3] {
         const wire = inputs.shape;
@@ -121,30 +267,6 @@ export class OCCTWire {
 
     endPointOnWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): Inputs.Base.Point3 {
         return this.och.endPointOnWire(inputs);
-    }
-
-    createBezier(inputs: Inputs.OCCT.BezierDto) {
-        const ptList = new this.occ.TColgp_Array1OfPnt_2(1, inputs.points.length + (inputs.closed ? 1 : 0));
-        for (let pIndex = 1; pIndex <= inputs.points.length; pIndex++) {
-            ptList.SetValue(pIndex, this.och.gpPnt(inputs.points[pIndex - 1]));
-        }
-        if (inputs.closed) { ptList.SetValue(inputs.points.length + 1, ptList.Value(1)); }
-        const geomBezierCurveHandle = new this.occ.Geom_BezierCurve_1(ptList);
-        const geomCurve = new this.occ.Handle_Geom_Curve_2(geomBezierCurveHandle);
-        const edgeMaker = new this.occ.BRepBuilderAPI_MakeEdge_24(geomCurve);
-        const edge = edgeMaker.Edge();
-        const makeWire = new this.occ.BRepBuilderAPI_MakeWire_2(edge);
-        const result = makeWire.Wire();
-        makeWire.delete();
-        edgeMaker.delete();
-        edge.delete();
-        geomCurve.delete();
-        ptList.delete();
-        return result;
-    }
-
-    interpolatePoints(inputs: Inputs.OCCT.InterpolationDto) {
-        return this.och.interpolatePoints(inputs);
     }
 
     createCircleWire(inputs: Inputs.OCCT.CircleDto) {
@@ -192,7 +314,7 @@ export class OCCTWire {
         this.och.forEachWire(inputs.shape, (i, s) => {
             if (i === inputs.index) { innerWire = this.occ.TopoDS.Wire_1(s); }
         });
-        if(!innerWire) {
+        if (!innerWire) {
             throw (Error("Wire not found"));
         }
         return innerWire;
@@ -219,7 +341,7 @@ export class OCCTWire {
     }
 
     placeWireOnFace(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire | TopoDS_Face>) {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         const wire = inputs.shapes[0] as TopoDS_Wire;
