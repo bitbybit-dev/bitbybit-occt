@@ -67,7 +67,8 @@ export class OCCTOperations {
                 pointsOnCrvs.push(pts);
             });
 
-            for (let i = 0; i < inputs.nrPeriodicSections; i++) {
+            // <= needed due to start and end points that are added
+            for (let i = 0; i <= inputs.nrPeriodicSections; i++) {
                 const ptsForPerpWire = pointsOnCrvs.map(p => p[i]);
                 const periodicWire = this.och.interpolatePoints({ points: ptsForPerpWire, tolerance: inputs.tolerance, periodic: true });
                 pipe.AddWire(periodicWire);
