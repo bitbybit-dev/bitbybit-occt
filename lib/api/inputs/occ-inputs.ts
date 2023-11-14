@@ -1346,6 +1346,41 @@ export namespace OCCT {
         removeEndPoint = false;
     }
 
+    export class ProjectWireDto<T, U> {
+        /**
+         * Wire to project
+         * @default undefined
+         */
+        wire: T;
+        /**
+         * Shape to use for projection
+         * @default undefined
+         */
+        shape: U;
+        /**
+         * Direction vector for projection
+         * @default [0, 1, 0]
+         */
+        direction: Base.Vector3 = [0, 1, 0];
+    }
+
+    export class ProjectWiresDto<T, U> {
+        /**
+         * Wire to project
+         * @default undefined
+         */
+        wires: T[];
+        /**
+         * Shape to use for projection
+         * @default undefined
+         */
+        shape: U;
+        /**
+         * Direction vector for projection
+         * @default [0, 1, 0]
+         */
+        direction: Base.Vector3 = [0, 1, 0];
+    }
     export class DivideShapesDto<T> {
         constructor(shapes: T[], nrOfDivisions?: number, removeStartPoint?: boolean, removeEndPoint?: boolean) {
             this.shapes = shapes;
@@ -3086,12 +3121,12 @@ export namespace OCCT {
         shape: T;
         /**
          * Step at which to divide the shape
-         * @default 2
-         * @minimum 1
+         * @default 0.1
+         * @minimum 0
          * @maximum Infinity
          * @step 0.1
          */
-        step = 2;
+        step = 0.1;
         /**
          * Direction vector
          * @default [0, 1, 0]

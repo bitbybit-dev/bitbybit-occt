@@ -78,6 +78,7 @@
       - symbol: BRepPrimAPI_MakeSphere
       - symbol: BRepPrimAPI_MakeSweep
       - symbol: BRepPrimAPI_MakeTorus
+      - symbol: BRepProj_Projection
       - symbol: BRepTools
       - symbol: BRep_Builder
       - symbol: BRep_Tool
@@ -247,7 +248,6 @@
       - symbol: TopTools_DataMapOfShapeListOfShape
       - symbol: TopTools_IndexedDataMapOfShapeListOfShape
       - symbol: TopTools_IndexedMapOfShape
-      - symbol: TopTools_ListIteratorOfListOfShape
       - symbol: TopTools_ListOfShape
       - symbol: TopTools_MapOfShape
       - symbol: TopTools_SequenceOfShape
