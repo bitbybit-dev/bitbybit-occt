@@ -301,5 +301,66 @@ describe("OCCT operations unit tests", () => {
         opt.nrPeriodicSections = 10;
         expect(() => operations.loftAdvanced(opt)).toThrow("Cant construct periodic non closed loft.");
     });
+
+    it("should slice a solid shape to pieces", () => {
+        const box = occHelper.bRepPrimAPIMakeBox(1, 2, 3, [0, 0, 0]);
+        const res = operations.slice({ shape: box, direction: [0, 1, 0], step: 0.1 });
+        const wires = wire.getWires({ shape: res });
+        const faces = face.getFaces({ shape: res });
+        expect(faces.length).toBe(31);
+        expect(wires.length).toBe(31);
+    });
+
+    it("should slice a solid shape to pieces", () => {
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const res = operations.slice({ shape: sphere, direction: [0, 1, 0], step: 0.1 });
+        const wires = wire.getWires({ shape: res });
+        const faces = face.getFaces({ shape: res });
+        expect(faces.length).toBe(59);
+        expect(wires.length).toBe(59);
+    });
+
+    it("should slice two compounded solid shapes to pieces", () => {
+        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const comp = occHelper.makeCompound({ shapes: [box, sphere] });
+        const res = operations.slice({ shape: comp, direction: [0, 1, 0], step: 0.1 });
+        const wires = wire.getWires({ shape: res });
+        const faces = face.getFaces({ shape: res });
+        expect(faces.length).toBe(118);
+        expect(wires.length).toBe(118);
+    });
+
+    it("should slice two compounded solid shapes to pieces on an angle", () => {
+        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const comp = occHelper.makeCompound({ shapes: [box, sphere] });
+        const res = operations.slice({ shape: comp, direction: [0, 1, 1], step: 0.2 });
+        const wires = wire.getWires({ shape: res });
+        const faces = face.getFaces({ shape: res });
+        expect(faces.length).toBe(62);
+        expect(wires.length).toBe(62);
+    });
+
+    it("should not slice shapes when step is 0", () => {
+        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        expect(() => operations.slice({ shape: box, direction: [0, 1, 1], step: 0 })).toThrow("Step needs to be positive.");
+    });
+
+    it("should not slice shapes when step is lower than 0", () => {
+        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        expect(() => operations.slice({ shape: box, direction: [0, 1, 1], step: -0.1 })).toThrow("Step needs to be positive.");
+    });
+
+    it("should not slice shapes that are not solids", () => {
+        const starWire = wire.createStarWire({ numRays: 5, innerRadius: 3, outerRadius: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
+        const starWireExtrusion = operations.extrude({ shape: starWire, direction: [0, 1, 0] });
+        expect(() => operations.slice({ shape: starWireExtrusion, direction: [0, 1, 1], step: 0.1 })).toThrow("No solids found to slice.");
+    });
+
+    it("should not slice shapes that are not solids", () => {
+        const starWire = wire.createStarWire({ numRays: 5, innerRadius: 3, outerRadius: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
+        expect(() => operations.slice({ shape: starWire, direction: [0, 1, 1], step: 0.1 })).toThrow("No solids found to slice.");
+    });
 });
 

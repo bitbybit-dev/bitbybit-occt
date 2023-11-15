@@ -1071,5 +1071,91 @@ describe("OCCT wire unit tests", () => {
         expect(segmentLengths).toEqual([9.369811423392672, 4.684905711696324, 4.6849057116963175, 4.684905711696345, 4.684905711696367, 4.68490571169632, 4.6849057116963415, 4.68490571169634, 4.684905711696342]);
     });
 
+    it("should close open wire", () => {
+        const pln = wire.createPolylineWire({
+            points: [[0, 0, 0], [0, 1, 0], [0, 1, 1], [0, 0, 1]]
+        });
+        const closed = wire.closeOpenWire({ shape: pln });
+        const lengthPln = wire.getWireLength({ shape: pln });
+        const length = wire.getWireLength({ shape: closed });
+        expect(lengthPln).toBeCloseTo(3);
+        expect(length).toBeCloseTo(4);
+        const startPt = wire.startPointOnWire({ shape: closed });
+        const endPt = wire.endPointOnWire({ shape: closed });
+        expect(startPt).toEqual(endPt);
+        pln.delete();
+        closed.delete();
+    });
+
+    it("should not close closed wire", () => {
+        const pln = wire.createPolylineWire({
+            points: [[0, 0, 0], [0, 1, 0], [0, 1, 1], [0, 0, 1]]
+        });
+        const closed = wire.closeOpenWire({ shape: pln });
+        const closed2 = wire.closeOpenWire({ shape: closed });
+        const length = wire.getWireLength({ shape: closed2 });
+        expect(length).toBeCloseTo(4);
+        const startPt = wire.startPointOnWire({ shape: closed2 });
+        const endPt = wire.endPointOnWire({ shape: closed2 });
+        expect(startPt).toEqual(endPt);
+        pln.delete();
+        closed.delete();
+    });
+
+    it("should project wire on the shape", () => {
+        const star = wire.createStarWire({
+            numRays: 23,
+            outerRadius: 2,
+            innerRadius: 1,
+            half: false,
+            center: [0, 4, 0],
+            direction: [0, 1, 0]
+        });
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const projected = wire.project({ wire: star, shape: sphere, direction: [0, -1, 0] });
+        const wires = wire.getWires({ shape: projected });
+        expect(wires.length).toBe(2);
+        const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
+        expect(wireLengths).toEqual([54.554389938555396, 54.55438993855537]);
+
+        star.delete();
+        sphere.delete();
+        projected.delete();
+        wires.forEach(w => w.delete());
+    });
+
+    it("should project wires on the shape", () => {
+        const star1 = wire.createStarWire({
+            numRays: 15,
+            outerRadius: 2,
+            innerRadius: 1,
+            half: false,
+            center: [0, 4, 0],
+            direction: [0, 1, 0]
+        });
+        const star2 = wire.createStarWire({
+            numRays: 15,
+            outerRadius: 1,
+            innerRadius: 0.5,
+            half: false,
+            center: [0, 4, 0],
+            direction: [0, 1, 0]
+        });
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const projected = wire.projectWires({ wires: [star1, star2], shape: sphere, direction: [0, -1, 0] });
+        expect(projected.length).toBe(2);
+        const wires = projected.map(p => {
+            return wire.getWires({ shape: p });
+        }).flat();
+        expect(wires.length).toBe(4);
+        const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
+        expect(wireLengths).toEqual([36.22718914885955, 36.22718914885927, 16.1396129404029, 16.139612940402888]);
+
+        star1.delete();
+        star2.delete();
+        sphere.delete();
+        projected.forEach(p => p.delete());
+        wires.forEach(w => w.delete());
+    });
 });
 

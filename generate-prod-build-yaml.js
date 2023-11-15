@@ -175,6 +175,7 @@ async function start() {
         "Adaptor3d_Surface",
         "StlAPI_Writer",
         "Handle_Law_Function",
+        "BRepProj_Projection",
         "Law_Function",
         "Law_Linear",
         "Law_Composite",

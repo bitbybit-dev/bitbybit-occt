@@ -385,4 +385,42 @@ export class OCCTWire {
         newEdges.forEach(e => e.delete());
         return res;
     }
+
+    closeOpenWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
+        const wire = inputs.shape;
+        const firstPoint = this.och.startPointOnWire({ shape: wire });
+        const lastPoint = this.och.endPointOnWire({ shape: wire });
+        const tolerance = 1.0e-7;
+        if (this.och.vecHelper.vectorsTheSame(firstPoint, lastPoint, tolerance)) {
+            return wire;
+        }
+        const edgeWire = this.createLineWire({ start: lastPoint, end: firstPoint });
+        const result = this.addEdgesAndWiresToWire({ shape: wire, shapes: [edgeWire] });
+        edgeWire.delete();
+        return result;
+    }
+
+    project(inputs: Inputs.OCCT.ProjectWireDto<TopoDS_Wire, TopoDS_Shape>): TopoDS_Compound {
+        const wire = inputs.wire;
+        const gpDir = this.och.gpDir(inputs.direction);
+        const proj = new this.occ.BRepProj_Projection_1(wire, inputs.shape, gpDir);
+        const shape = proj.Shape();
+        gpDir.delete();
+        proj.delete();
+        return shape;
+    }
+
+    projectWires(inputs: Inputs.OCCT.ProjectWiresDto<TopoDS_Wire, TopoDS_Shape>): TopoDS_Compound[] {
+        const shapes = [];
+        inputs.wires.forEach(wire => {
+            const gpDir = this.och.gpDir(inputs.direction);
+            const proj = new this.occ.BRepProj_Projection_1(wire, inputs.shape, gpDir);
+            const shape = proj.Shape();
+            shapes.push(shape);
+            gpDir.delete();
+            proj.delete();
+        });
+        
+        return shapes;
+    }
 }

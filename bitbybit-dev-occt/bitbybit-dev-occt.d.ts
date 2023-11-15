@@ -5825,6 +5825,24 @@ export declare class Bnd_Box {
     constructor(theMin: gp_Pnt, theMax: gp_Pnt);
   }
 
+export declare class BRepProj_Projection {
+  IsDone(): Standard_Boolean;
+  Init(): void;
+  More(): Standard_Boolean;
+  Next(): void;
+  Current(): TopoDS_Wire;
+  Shape(): TopoDS_Compound;
+  delete(): void;
+}
+
+  export declare class BRepProj_Projection_1 extends BRepProj_Projection {
+    constructor(Wire: TopoDS_Shape, Shape: TopoDS_Shape, D: gp_Dir);
+  }
+
+  export declare class BRepProj_Projection_2 extends BRepProj_Projection {
+    constructor(Wire: TopoDS_Shape, Shape: TopoDS_Shape, P: gp_Pnt);
+  }
+
 export declare class NCollection_BaseMap {
   NbBuckets(): Graphic3d_ZLayerId;
   Extent(): Graphic3d_ZLayerId;
@@ -9600,6 +9618,9 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   Bnd_Box: typeof Bnd_Box;
   Bnd_Box_1: typeof Bnd_Box_1;
   Bnd_Box_2: typeof Bnd_Box_2;
+  BRepProj_Projection: typeof BRepProj_Projection;
+  BRepProj_Projection_1: typeof BRepProj_Projection_1;
+  BRepProj_Projection_2: typeof BRepProj_Projection_2;
   NCollection_BaseMap: typeof NCollection_BaseMap;
   NCollection_BaseList: typeof NCollection_BaseList;
   NCollection_BaseSequence: typeof NCollection_BaseSequence;

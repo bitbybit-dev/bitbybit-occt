@@ -1,4 +1,8 @@
-import { Approx_ParametrizationType, BRepFill_TypeOfContact, BRepOffsetAPI_MakeOffsetShape, BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, GeomAbs_JoinType, OpenCascadeInstance, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import {
+    Approx_ParametrizationType, BRepFill_TypeOfContact, BRepOffsetAPI_MakeOffsetShape,
+    BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, GeomAbs_JoinType, OpenCascadeInstance,
+    TopoDS_Compound, TopoDS_Edge, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire
+} from "../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from "../occ-helper";
 import * as Inputs from "../api/inputs/inputs";
 
@@ -11,7 +15,7 @@ export class OCCTOperations {
     }
 
     closestPointsBetweenTwoShapes(inputs: Inputs.OCCT.ClosestPointsBetweenTwoShapesDto<TopoDS_Shape>): [Inputs.Base.Point3, Inputs.Base.Point3] {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         return this.och.closestPointsBetweenTwoShapes(inputs.shapes[0], inputs.shapes[1]);
@@ -33,9 +37,12 @@ export class OCCTOperations {
         return result;
     }
 
-    loft(inputs: Inputs.OCCT.LoftDto<TopoDS_Wire>) {
+    loft(inputs: Inputs.OCCT.LoftDto<TopoDS_Wire | TopoDS_Edge>) {
         const pipe = new this.occ.BRepOffsetAPI_ThruSections(inputs.makeSolid, false, 1.0e-06);
         inputs.shapes.forEach((wire) => {
+            if (this.och.getShapeTypeEnum(wire) === shapeTypeEnum.edge) {
+                wire = this.och.bRepBuilderAPIMakeWire(wire);
+            }
             pipe.AddWire(wire);
         });
         pipe.CheckCompatibility(false);
@@ -46,13 +53,13 @@ export class OCCTOperations {
         return res;
     }
 
-    loftAdvanced(inputs: Inputs.OCCT.LoftAdvancedDto<TopoDS_Wire>) {
+    loftAdvanced(inputs: Inputs.OCCT.LoftAdvancedDto<TopoDS_Wire | TopoDS_Edge>) {
         if (inputs.periodic && !inputs.closed) {
             throw new Error("Cant construct periodic non closed loft.");
         }
         const pipe = new this.occ.BRepOffsetAPI_ThruSections(inputs.makeSolid, inputs.straight, inputs.tolerance);
-        const wires:TopoDS_Wire[] = [];
-        const vertices:TopoDS_Vertex[] = [];
+        const wires: TopoDS_Wire[] = [];
+        const vertices: TopoDS_Vertex[] = [];
         if (inputs.startVertex) {
             const v = this.och.makeVertex(inputs.startVertex);
             pipe.AddVertex(v);
@@ -61,8 +68,11 @@ export class OCCTOperations {
         if (inputs.closed && !inputs.periodic) {
             inputs.shapes.push(inputs.shapes[0]);
         } else if (inputs.closed && inputs.periodic) {
-            const pointsOnCrvs:Inputs.Base.Point3[][] = [];
-            inputs.shapes.forEach((s: TopoDS_Wire) => {
+            const pointsOnCrvs: Inputs.Base.Point3[][] = [];
+            inputs.shapes.forEach((s: TopoDS_Wire | TopoDS_Edge) => {
+                if (this.och.getShapeTypeEnum(s) === shapeTypeEnum.edge) {
+                    s = this.och.bRepBuilderAPIMakeWire(s);
+                }
                 const pts = this.och.divideWireByParamsToPoints({ shape: s, nrOfDivisions: inputs.nrPeriodicSections, removeStartPoint: false, removeEndPoint: false });
                 pointsOnCrvs.push(pts);
             });
@@ -80,7 +90,7 @@ export class OCCTOperations {
                 pipe.AddWire(wire);
             });
         }
-        const endVertices:TopoDS_Vertex[] = [];
+        const endVertices: TopoDS_Vertex[] = [];
         if (inputs.endVertex) {
             const v = this.och.makeVertex(inputs.endVertex);
             pipe.AddVertex(v);
@@ -92,7 +102,7 @@ export class OCCTOperations {
         if (inputs.maxUDegree) {
             pipe.SetMaxDegree(inputs.maxUDegree);
         }
-        let parType: Approx_ParametrizationType|undefined = undefined;
+        let parType: Approx_ParametrizationType | undefined = undefined;
         if (inputs.parType === Inputs.OCCT.ApproxParametrizationTypeEnum.approxChordLength) {
             parType = this.occ.Approx_ParametrizationType.Approx_ChordLength as Approx_ParametrizationType;
         } else if (inputs.parType === Inputs.OCCT.ApproxParametrizationTypeEnum.approxCentripetal) {
@@ -121,12 +131,12 @@ export class OCCTOperations {
     offsetAdv(inputs: Inputs.OCCT.OffsetAdvancedDto<TopoDS_Shape>) {
         if (!inputs.tolerance) { inputs.tolerance = 0.1; }
         if (inputs.distance === 0.0) { return inputs.shape; }
-        let offset:BRepOffsetAPI_MakeOffset_1 | BRepOffsetAPI_MakeOffsetShape;
+        let offset: BRepOffsetAPI_MakeOffset_1 | BRepOffsetAPI_MakeOffsetShape;
         const joinType: GeomAbs_JoinType = this.getJoinType(inputs.joinType);
         // only this mode is implemented currently, so we cannot expose others...
         const brepOffsetMode: BRepOffset_Mode = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
 
-        const wires:TopoDS_Wire[] = [];
+        const wires: TopoDS_Wire[] = [];
 
         if ((this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.wire ||
             this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.edge)) {
@@ -257,7 +267,7 @@ export class OCCTOperations {
 
         // Define the guiding helical auxiliary spine (which controls the rotation)
         const steps = 30;
-        const aspinePoints:Inputs.Base.Point3[] = [];
+        const aspinePoints: Inputs.Base.Point3[] = [];
         for (let i = 0; i <= steps; i++) {
             const alpha = i / steps;
             aspinePoints.push([
@@ -309,7 +319,7 @@ export class OCCTOperations {
         edges.forEach((e, index) => {
             const edgeStartPt = this.och.startPointOnEdge({ shape: e });
             const tangent = this.och.tangentOnEdgeAtParam({ shape: e, param: 0 });
-            let tangentPreviousEdgeEnd:Inputs.Base.Vector3;
+            let tangentPreviousEdgeEnd: Inputs.Base.Vector3;
             let averageTangentVec = tangent;
 
             if (index > 0 && index < edges.length - 1) {
@@ -343,12 +353,12 @@ export class OCCTOperations {
 
     pipeWireCylindrical(inputs: Inputs.OCCT.PipeWireCylindricalDto<TopoDS_Wire>) {
         const wire = inputs.shape;
-        const shapesToPassThrough:TopoDS_Shape[] = [];
+        const shapesToPassThrough: TopoDS_Shape[] = [];
         const edges = this.och.getEdges({ shape: wire });
         edges.forEach((e, index) => {
             const edgeStartPt = this.och.startPointOnEdge({ shape: e });
             const tangent = this.och.tangentOnEdgeAtParam({ shape: e, param: 0 });
-            let tangentPreviousEdgeEnd:Inputs.Base.Vector3;
+            let tangentPreviousEdgeEnd: Inputs.Base.Vector3;
             let averageTangentVec = tangent;
 
             if (index > 0 && index < edges.length - 1) {
@@ -426,19 +436,19 @@ export class OCCTOperations {
 
     private getJoinType(jointType: Inputs.OCCT.JoinTypeEnum): GeomAbs_JoinType {
         let res: GeomAbs_JoinType;
-        switch(jointType) {
-        case Inputs.OCCT.JoinTypeEnum.arc: {
-            res = this.occ.GeomAbs_JoinType.GeomAbs_Arc as GeomAbs_JoinType;
-            break;
-        }
-        case Inputs.OCCT.JoinTypeEnum.intersection: {
-            res = this.occ.GeomAbs_JoinType.GeomAbs_Intersection as GeomAbs_JoinType;
-            break;
-        }
-        case Inputs.OCCT.JoinTypeEnum.tangent: {
-            res = this.occ.GeomAbs_JoinType.GeomAbs_Tangent as GeomAbs_JoinType;
-            break;
-        }
+        switch (jointType) {
+            case Inputs.OCCT.JoinTypeEnum.arc: {
+                res = this.occ.GeomAbs_JoinType.GeomAbs_Arc as GeomAbs_JoinType;
+                break;
+            }
+            case Inputs.OCCT.JoinTypeEnum.intersection: {
+                res = this.occ.GeomAbs_JoinType.GeomAbs_Intersection as GeomAbs_JoinType;
+                break;
+            }
+            case Inputs.OCCT.JoinTypeEnum.tangent: {
+                res = this.occ.GeomAbs_JoinType.GeomAbs_Tangent as GeomAbs_JoinType;
+                break;
+            }
         }
         return res;
     }
@@ -447,20 +457,106 @@ export class OCCTOperations {
 
     private getBRepOffsetMode(offsetMode: Inputs.OCCT.BRepOffsetModeEnum): BRepOffset_Mode {
         let res: BRepOffset_Mode;
-        switch(offsetMode) {
-        case Inputs.OCCT.BRepOffsetModeEnum.skin: {
-            res = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
-            break;
-        }
-        case Inputs.OCCT.BRepOffsetModeEnum.pipe: {
-            res = this.occ.BRepOffset_Mode.BRepOffset_Pipe as BRepOffset_Mode;
-            break;
-        }
-        case Inputs.OCCT.BRepOffsetModeEnum.rectoVerso: {
-            res = this.occ.BRepOffset_Mode.BRepOffset_RectoVerso as BRepOffset_Mode;
-            break;
-        }
+        switch (offsetMode) {
+            case Inputs.OCCT.BRepOffsetModeEnum.skin: {
+                res = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
+                break;
+            }
+            case Inputs.OCCT.BRepOffsetModeEnum.pipe: {
+                res = this.occ.BRepOffset_Mode.BRepOffset_Pipe as BRepOffset_Mode;
+                break;
+            }
+            case Inputs.OCCT.BRepOffsetModeEnum.rectoVerso: {
+                res = this.occ.BRepOffset_Mode.BRepOffset_RectoVerso as BRepOffset_Mode;
+                break;
+            }
         }
         return res;
     }
+
+    slice(inputs: Inputs.OCCT.SliceDto<TopoDS_Shape>): TopoDS_Compound {
+        if (inputs.step <= 0) {
+            throw new Error("Step needs to be positive.");
+        }
+        const shape = inputs.shape;
+        // we orient the given shape to the reverse direction of sections so that slicing
+        // would always happen in flat bbox aligned orientation
+        // after algorithm computes, we turn all intersections to original shape so that it would match a given shape.
+        // const fromDir
+        const transformedShape = this.och.align({
+            shape,
+            fromOrigin: [0, 0, 0],
+            fromDirection: inputs.direction,
+            toOrigin: [0, 0, 0],
+            toDirection: [0, 1, 0],
+        });
+        const bbox = new this.occ.Bnd_Box_1();
+        this.occ.BRepBndLib.Add(transformedShape, bbox, false);
+        const intersections = [];
+        if (!bbox.IsThin(0.0001)) {
+            const cornerMin = bbox.CornerMin();
+            const cornerMax = bbox.CornerMax();
+            const minY = cornerMin.Y();
+            const maxY = cornerMax.Y();
+
+            const minX = cornerMin.X();
+            const maxX = cornerMax.X();
+
+            const minZ = cornerMin.Z();
+            const maxZ = cornerMax.Z();
+
+            const distX = maxX - minX;
+            const distZ = maxZ - minZ;
+
+            const percentage = 1.2;
+            let maxDist = distX >= distZ ? distX : distZ;
+            maxDist *= percentage;
+
+
+
+            const planes = [];
+            for (let i = minY; i < maxY; i += inputs.step) {
+                const pq = this.och.createSquareFace({ size: maxDist, center: [0, i, 0], direction: [0, 1, 0] });
+                planes.push(pq);
+            }
+
+            const shapesToSlice = [];
+            if (this.och.getShapeTypeEnum(transformedShape) === shapeTypeEnum.solid) {
+                shapesToSlice.push(transformedShape);
+            } else {
+                const solids = this.och.getSolids({ shape: transformedShape });
+                shapesToSlice.push(...solids);
+            }
+
+            if (shapesToSlice.length === 0) {
+                throw new Error("No solids found to slice.");
+            }
+
+            shapesToSlice.forEach(s => {
+                const intInputs = new Inputs.OCCT.IntersectionDto<TopoDS_Shape>();
+                intInputs.keepEdges = true;
+                intInputs.shapes = [s];
+
+                const compound = this.och.makeCompound({ shapes: planes });
+                intInputs.shapes.push(compound);
+
+                const ints = this.och.intersection(intInputs);
+                ints.forEach(int => {
+                    if (int && !int.IsNull()) {
+                        const transformedInt = this.och.align({
+                            shape: int,
+                            fromOrigin: [0, 0, 0],
+                            fromDirection: [0, 1, 0],
+                            toOrigin: [0, 0, 0],
+                            toDirection: inputs.direction,
+                        });
+                        intersections.push(transformedInt);
+                    }
+                });
+            });
+        }
+        const res = this.och.makeCompound({ shapes: intersections });
+        return res;
+    }
+
 }
