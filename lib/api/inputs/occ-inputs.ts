@@ -38,7 +38,10 @@ export namespace OCCT {
         inside = "inside",
         middle = "middle"
     }
-
+    export enum fileTypeEnum {
+        iges = "iges",
+        step = "step"
+    }
     export class DecomposedMeshDto {
         /**
          * Face list
@@ -2641,6 +2644,27 @@ export namespace OCCT {
          */
         adjustYtoZ = false;
     }
+    export class ImportStepIgesFromTextDto {
+        constructor(text?: string, fileType?: fileTypeEnum, adjustZtoY?: boolean) {
+            this.text ??= text;
+            this.fileType ??= fileType;
+            this.adjustZtoY ??= adjustZtoY;
+        }
+        /**
+         * The text that represents step or iges contents
+         * @default undefined
+         */
+        text: string;
+        /**
+         * Identify the import type
+         */
+        fileType: fileTypeEnum = fileTypeEnum.step;
+        /**
+         * Adjusts models that use Z coordinate as up to Y up system.
+         * @default true
+         */
+        adjustZtoY = true;
+    }
     export class ImportStepIgesDto {
         constructor(assetFile?: File, adjustZtoY?: boolean) {
             this.assetFile = assetFile;
@@ -3115,7 +3139,7 @@ export namespace OCCT {
     }
     export class SliceDto<T> {
         /**
-         * THe shape to slice
+         * The shape to slice
          * @default undefined
          */
         shape: T;
@@ -3127,6 +3151,24 @@ export namespace OCCT {
          * @step 0.1
          */
         step = 0.1;
+        /**
+         * Direction vector
+         * @default [0, 1, 0]
+         */
+        direction: Base.Vector3 = [0, 1, 0];
+    }
+    export class SliceInStepPatternDto<T> {
+        /**
+         * The shape to slice
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Steps that should be used for slicing. This array is going to be treated as a pattern - 
+         * this menas that if the actual number of steps is lower than the number of steps in the pattern, the pattern will be repeated.
+         * @default [0.1, 0.2]
+         */
+        steps = [0.1, 0.2];
         /**
          * Direction vector
          * @default [0, 1, 0]

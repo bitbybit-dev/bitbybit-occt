@@ -362,5 +362,49 @@ describe("OCCT operations unit tests", () => {
         const starWire = wire.createStarWire({ numRays: 5, innerRadius: 3, outerRadius: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
         expect(() => operations.slice({ shape: starWire, direction: [0, 1, 1], step: 0.1 })).toThrow("No solids found to slice.");
     });
+
+    it("should slice two compounded solid shapes to pieces on an angle with step pattern of two numbers", () => {
+        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const comp = occHelper.makeCompound({ shapes: [box, sphere] });
+        const res = operations.sliceInStepPattern({ shape: comp, direction: [0, 1, 1], steps: [0.1, 0.2] });
+        const wires = wire.getWires({ shape: res });
+        const faces = face.getFaces({ shape: res });
+        expect(faces.length).toBe(82);
+        expect(wires.length).toBe(82);
+    });
+
+    it("should slice two compounded solid shapes to pieces on an angle with step pattern of three numbers", () => {
+        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const comp = occHelper.makeCompound({ shapes: [box, sphere] });
+        const res = operations.sliceInStepPattern({ shape: comp, direction: [0, 1, 1], steps: [0.1, 0.2, 0.3] });
+        const wires = wire.getWires({ shape: res });
+        const faces = face.getFaces({ shape: res });
+        expect(faces.length).toBe(62);
+        expect(wires.length).toBe(62);
+    });
+
+    it("should not slice in pattern if steps property is undefines", () => {
+        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        expect(() => operations.sliceInStepPattern({ shape: box, direction: [0, 1, 1], steps: undefined })).toThrow("Steps must be provided with at elast one positive value");
+    });
+
+    it("should not slice in pattern if steps property is an empty array", () => {
+        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        expect(() => operations.sliceInStepPattern({ shape: box, direction: [0, 1, 1], steps: [] })).toThrow("Steps must be provided with at elast one positive value");
+    });
+
+    it("should not slice in pattern shapes that are not solids", () => {
+        const starWire = wire.createStarWire({ numRays: 5, innerRadius: 3, outerRadius: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
+        const starWireExtrusion = operations.extrude({ shape: starWire, direction: [0, 1, 0] });
+        expect(() => operations.sliceInStepPattern({ shape: starWireExtrusion, direction: [0, 1, 1], steps: [0.1] })).toThrow("No solids found to slice.");
+    });
+
+    it("should not slice in pattern shapes that are not solids", () => {
+        const starWire = wire.createStarWire({ numRays: 5, innerRadius: 3, outerRadius: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
+        expect(() => operations.sliceInStepPattern({ shape: starWire, direction: [0, 1, 1], steps: [0.1] })).toThrow("No solids found to slice.");
+    });
+
 });
 
