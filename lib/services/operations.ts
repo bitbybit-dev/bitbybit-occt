@@ -1,6 +1,6 @@
 import {
     Approx_ParametrizationType, BRepFill_TypeOfContact, BRepOffsetAPI_MakeOffsetShape,
-    BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, GeomAbs_JoinType, OpenCascadeInstance,
+    BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, Bnd_Box_1, GeomAbs_JoinType, OpenCascadeInstance,
     TopoDS_Compound, TopoDS_Edge, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire
 } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from "../occ-helper";
@@ -453,8 +453,6 @@ export class OCCTOperations {
         return res;
     }
 
-
-
     private getBRepOffsetMode(offsetMode: Inputs.OCCT.BRepOffsetModeEnum): BRepOffset_Mode {
         let res: BRepOffset_Mode;
         switch (offsetMode) {
@@ -478,41 +476,10 @@ export class OCCTOperations {
         if (inputs.step <= 0) {
             throw new Error("Step needs to be positive.");
         }
-        const shape = inputs.shape;
-        // we orient the given shape to the reverse direction of sections so that slicing
-        // would always happen in flat bbox aligned orientation
-        // after algorithm computes, we turn all intersections to original shape so that it would match a given shape.
-        // const fromDir
-        const transformedShape = this.och.align({
-            shape,
-            fromOrigin: [0, 0, 0],
-            fromDirection: inputs.direction,
-            toOrigin: [0, 0, 0],
-            toDirection: [0, 1, 0],
-        });
-        const bbox = new this.occ.Bnd_Box_1();
-        this.occ.BRepBndLib.Add(transformedShape, bbox, false);
+        const { bbox, transformedShape } = this.createBBoxAndTransformShape(inputs.shape, inputs.direction);
         const intersections = [];
         if (!bbox.IsThin(0.0001)) {
-            const cornerMin = bbox.CornerMin();
-            const cornerMax = bbox.CornerMax();
-            const minY = cornerMin.Y();
-            const maxY = cornerMax.Y();
-
-            const minX = cornerMin.X();
-            const maxX = cornerMax.X();
-
-            const minZ = cornerMin.Z();
-            const maxZ = cornerMax.Z();
-
-            const distX = maxX - minX;
-            const distZ = maxZ - minZ;
-
-            const percentage = 1.2;
-            let maxDist = distX >= distZ ? distX : distZ;
-            maxDist *= percentage;
-
-
+            const { minY, maxY, maxDist } = this.computeBounds(bbox);
 
             const planes = [];
             for (let i = minY; i < maxY; i += inputs.step) {
@@ -520,43 +487,114 @@ export class OCCTOperations {
                 planes.push(pq);
             }
 
-            const shapesToSlice = [];
-            if (this.och.getShapeTypeEnum(transformedShape) === shapeTypeEnum.solid) {
-                shapesToSlice.push(transformedShape);
-            } else {
-                const solids = this.och.getSolids({ shape: transformedShape });
-                shapesToSlice.push(...solids);
-            }
-
-            if (shapesToSlice.length === 0) {
-                throw new Error("No solids found to slice.");
-            }
-
-            shapesToSlice.forEach(s => {
-                const intInputs = new Inputs.OCCT.IntersectionDto<TopoDS_Shape>();
-                intInputs.keepEdges = true;
-                intInputs.shapes = [s];
-
-                const compound = this.och.makeCompound({ shapes: planes });
-                intInputs.shapes.push(compound);
-
-                const ints = this.och.intersection(intInputs);
-                ints.forEach(int => {
-                    if (int && !int.IsNull()) {
-                        const transformedInt = this.och.align({
-                            shape: int,
-                            fromOrigin: [0, 0, 0],
-                            fromDirection: [0, 1, 0],
-                            toOrigin: [0, 0, 0],
-                            toDirection: inputs.direction,
-                        });
-                        intersections.push(transformedInt);
-                    }
-                });
-            });
+            this.applySlices(transformedShape, planes, inputs.direction, intersections);
         }
         const res = this.och.makeCompound({ shapes: intersections });
         return res;
     }
 
+    sliceInStepPattern(inputs: Inputs.OCCT.SliceInStepPatternDto<TopoDS_Shape>): TopoDS_Compound {
+        if (!inputs.steps || inputs.steps.length === 0) {
+            throw new Error("Steps must be provided with at elast one positive value");
+        }
+        const { bbox, transformedShape } = this.createBBoxAndTransformShape(inputs.shape, inputs.direction);
+        const intersections = [];
+        if (!bbox.IsThin(0.0001)) {
+            const { minY, maxY, maxDist } = this.computeBounds(bbox);
+
+            const planes = [];
+
+            let index = 0;
+            for (let i = minY; i < maxY; i += inputs.steps[index]) {
+                const pq = this.och.createSquareFace({ size: maxDist, center: [0, i, 0], direction: [0, 1, 0] });
+                planes.push(pq);
+                if (inputs.steps[index + 1] === undefined) {
+                    index = 0;
+                } else {
+                    index++;
+                }
+            }
+
+            this.applySlices(transformedShape, planes, inputs.direction, intersections);
+        }
+        const res = this.och.makeCompound({ shapes: intersections });
+        return res;
+    }
+
+    private createBBoxAndTransformShape(shape: TopoDS_Shape, direction: Inputs.Base.Vector3) {
+
+        // we orient the given shape to the reverse direction of sections so that slicing
+        // would always happen in flat bbox aligned orientation
+        // after algorithm computes, we turn all intersections to original shape so that it would match a given shape.
+        // const fromDir
+        const transformedShape = this.och.align({
+            shape,
+            fromOrigin: [0, 0, 0],
+            fromDirection: direction,
+            toOrigin: [0, 0, 0],
+            toDirection: [0, 1, 0],
+        });
+        const bbox = new this.occ.Bnd_Box_1();
+        this.occ.BRepBndLib.Add(transformedShape, bbox, false);
+        return { bbox, transformedShape };
+    }
+
+    private computeBounds(bbox: Bnd_Box_1) {
+        const cornerMin = bbox.CornerMin();
+        const cornerMax = bbox.CornerMax();
+        const minY = cornerMin.Y();
+        const maxY = cornerMax.Y();
+
+        const minX = cornerMin.X();
+        const maxX = cornerMax.X();
+
+        const minZ = cornerMin.Z();
+        const maxZ = cornerMax.Z();
+
+        const distX = maxX - minX;
+        const distZ = maxZ - minZ;
+
+        const percentage = 1.2;
+        let maxDist = distX >= distZ ? distX : distZ;
+        maxDist *= percentage;
+        return { minY, maxY, maxDist };
+    }
+
+
+    private applySlices(transformedShape: TopoDS_Shape, planes: any[], direction: Inputs.Base.Vector3, intersections: any[]) {
+        const shapesToSlice = [];
+        if (this.och.getShapeTypeEnum(transformedShape) === shapeTypeEnum.solid) {
+            shapesToSlice.push(transformedShape);
+        } else {
+            const solids = this.och.getSolids({ shape: transformedShape });
+            shapesToSlice.push(...solids);
+        }
+
+        if (shapesToSlice.length === 0) {
+            throw new Error("No solids found to slice.");
+        }
+
+        shapesToSlice.forEach(s => {
+            const intInputs = new Inputs.OCCT.IntersectionDto<TopoDS_Shape>();
+            intInputs.keepEdges = true;
+            intInputs.shapes = [s];
+
+            const compound = this.och.makeCompound({ shapes: planes });
+            intInputs.shapes.push(compound);
+
+            const ints = this.och.intersection(intInputs);
+            ints.forEach(int => {
+                if (int && !int.IsNull()) {
+                    const transformedInt = this.och.align({
+                        shape: int,
+                        fromOrigin: [0, 0, 0],
+                        fromDirection: [0, 1, 0],
+                        toOrigin: [0, 0, 0],
+                        toDirection: direction,
+                    });
+                    intersections.push(transformedInt);
+                }
+            });
+        });
+    }
 }
