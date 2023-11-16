@@ -406,5 +406,129 @@ describe("OCCT operations unit tests", () => {
         expect(() => operations.sliceInStepPattern({ shape: starWire, direction: [0, 1, 1], steps: [0.1] })).toThrow("No solids found to slice.");
     });
 
+    it("should offset 3D wire by distance if given a direction of a plane normal for offset", () => {
+        const points = [
+            [0, 24, -20],
+            [-10, 20, -10],
+            [0, 15, 0],
+            [0, 12, 10],
+            [20, 7, 16],
+            [40, 25, 40],
+            [-20, 7, 16],
+            [-20, 7, -16]
+        ] as Inputs.Base.Point3[];
+
+        const polylineWire = wire.createPolylineWire({
+            points,
+        });
+
+        const filletWire = occHelper.fillet3DWire({ shape: polylineWire, radius: 5, direction: [0, 30, 0] });
+        const offsetWireDir1 = operations.offset3DWire({
+            shape: filletWire,
+            direction: [0, 1, 0],
+            offset: 2,
+        }) as TopoDS_Wire;
+
+        const offsetWireDir2 = operations.offset3DWire({
+            shape: filletWire,
+            direction: [0, 1, 0],
+            offset: -2,
+        }) as TopoDS_Wire;
+
+        const filletLength = wire.getWireLength({ shape: filletWire });
+        const wireLength1 = wire.getWireLength({ shape: offsetWireDir1 });
+        const wireLength2 = wire.getWireLength({ shape: offsetWireDir2 });
+
+        expect(wireLength1).toBeCloseTo(160.25576209902422);
+        expect(filletLength).toBeCloseTo(164.11239253261422);
+        expect(wireLength2).toBeCloseTo(168.79035930627498);
+
+    });
+
+    it("should offset 3D wire by distance if given a direction of a plane normal for offset", () => {
+        const points = [
+            [0, 24, -20],
+            [-10, 20, -10],
+            [0, 15, 0],
+            [0, 12, 10],
+            [20, 7, 16],
+            [40, 25, 40],
+            [-20, 7, 16],
+            [-20, 7, -16]
+        ] as Inputs.Base.Point3[];
+
+        const interpolatedWire = wire.interpolatePoints({
+            points,
+            periodic: false,
+            tolerance: 0.1,
+        });
+
+        const offsetWireDir1 = operations.offset3DWire({
+            shape: interpolatedWire,
+            direction: [0, 1, 0],
+            offset: 2,
+        }) as TopoDS_Wire;
+
+        const offsetWireDir2 = operations.offset3DWire({
+            shape: interpolatedWire,
+            direction: [0, 1, 0],
+            offset: -2,
+        }) as TopoDS_Wire;
+
+        const interpWireLength = wire.getWireLength({ shape: interpolatedWire });
+        const wireLength1 = wire.getWireLength({ shape: offsetWireDir1 });
+        const wireLength2 = wire.getWireLength({ shape: offsetWireDir2 });
+
+        expect(wireLength1).toBeCloseTo(218.52116637474018);
+        expect(interpWireLength).toBeCloseTo(213.1483348902019);
+        expect(wireLength2).toBeCloseTo(208.59746753494878);
+
+    });
+
+    it("should offset 3D combined wire from interpolation and a line by distance if given a direction of a plane normal for offset", () => {
+        const points = [
+            [0, 0, 0],
+            [0, 1, 1],
+            [2, 0.5, 1],
+            [2, 0, 2],
+        ] as Inputs.Base.Point3[];
+
+        const polylineWire = wire.interpolatePoints({
+            points,
+            periodic: false,
+            tolerance: 0.1,
+        });
+
+        const lineWire = wire.createLineWire({
+            start: [2, 0, 2],
+            end: [5, 0, 0],
+        });
+    
+        const combinedWire = wire.combineEdgesAndWiresIntoAWire({
+            shapes: [polylineWire, lineWire]
+        });
+
+        const offsetWireDir1 = operations.offset3DWire({
+            shape: combinedWire,
+            direction: [0, 1, 0],
+            offset: 0.1,
+        }) as TopoDS_Wire;
+
+        const offsetWireDir2 = operations.offset3DWire({
+            shape: combinedWire,
+            direction: [0, 1, 0],
+            offset: -0.1,
+        }) as TopoDS_Wire;
+
+
+        const interpWireLength = wire.getWireLength({ shape: combinedWire });
+        const wireLength1 = wire.getWireLength({ shape: offsetWireDir1 });
+        const wireLength2 = wire.getWireLength({ shape: offsetWireDir2 });
+
+        expect(wireLength1).toBeCloseTo(8.606363207743371);
+        expect(interpWireLength).toBeCloseTo(8.58583309897651);
+        expect(wireLength2).toBeCloseTo(8.592691735283145);
+
+    });
 });
 

@@ -1,4 +1,4 @@
-import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, ChFi3d_FilletShape } from "../bitbybit-dev-occt/bitbybit-dev-occt";
 import { VectorHelperService } from "./api/vector-helper.service";
 import { Base } from "./api/inputs/base-inputs";
 import * as Inputs from "./api/inputs/inputs";
@@ -1307,6 +1307,81 @@ export class OccHelper {
         return difference;
     }
 
+    filletEdges(inputs: Inputs.OCCT.FilletDto<TopoDS_Shape>) {
+        if (!inputs.indexes || (inputs.indexes.length && inputs.indexes.length === 0)) {
+            if(inputs.radius === undefined) {
+                throw (Error("Radius not defined"));
+            }
+            const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
+                inputs.shape, (this.occ.ChFi3d_FilletShape.ChFi3d_Rational as ChFi3d_FilletShape)
+            );
+            const anEdgeExplorer = new this.occ.TopExp_Explorer_2(
+                inputs.shape, (this.occ.TopAbs_ShapeEnum.TopAbs_EDGE as TopAbs_ShapeEnum),
+                (this.occ.TopAbs_ShapeEnum.TopAbs_SHAPE as TopAbs_ShapeEnum)
+            );
+            const edges: TopoDS_Edge[] = [];
+            while (anEdgeExplorer.More()) {
+                const anEdge = this.occ.TopoDS.Edge_1(anEdgeExplorer.Current());
+                edges.push(anEdge);
+                mkFillet.Add_2(inputs.radius, anEdge);
+                anEdgeExplorer.Next();
+            }
+            const result = mkFillet.Shape();
+            mkFillet.delete();
+            anEdgeExplorer.delete();
+            edges.forEach(e => e.delete());
+            return result;
+        } else if (inputs.indexes && inputs.indexes.length > 0) {
+            const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
+                inputs.shape, (this.occ.ChFi3d_FilletShape.ChFi3d_Rational as ChFi3d_FilletShape)
+            );
+            let foundEdges = 0;
+            let curFillet: TopoDS_Shape;
+            let radiusIndex = 0;
+            const inputIndexes = inputs.indexes;
+            this.forEachEdge(inputs.shape, (index, edge) => {
+                if (inputIndexes.includes(index)) {
+                    let radius = inputs.radius;
+                    if (inputs.radiusList) {
+                        radius = inputs.radiusList[radiusIndex];
+                        radiusIndex++;
+                    }
+                    if(radius === undefined) {
+                        throw (Error("Radius not defined, or radiusList not correct length"));
+                    }
+                    mkFillet.Add_2(radius, edge);
+                    foundEdges++;
+                }
+            });
+            if (foundEdges === 0) {
+                throw (new Error("Fillet Edges Not Found!  Make sure you are looking at the object _before_ the Fillet is applied!"));
+            }
+            else {
+                curFillet = mkFillet.Shape();
+            }
+            mkFillet.delete();
+            const result = this.getActualTypeOfShape(curFillet);
+            curFillet.delete();
+            return result;
+        }
+        return undefined;
+    }
+
+    fillet3DWire(inputs: Inputs.OCCT.Fillet3DWireDto<TopoDS_Wire>) {
+        const extrusion = this.extrude({ shape: inputs.shape, direction: inputs.direction });
+        const filletShape = this.filletEdges({ shape: extrusion, radius: inputs.radius, indexes: inputs.indexes, radiusList: inputs.radiusList }) as TopoDS_Shape;
+        const faceEdges:TopoDS_Edge[] = [];
+        this.getFaces({shape: filletShape}).forEach(f => {
+            const firstEdge = this.getEdges({shape: f})[0];
+            faceEdges.push(firstEdge);
+        });
+        const result = this.combineEdgesAndWiresIntoAWire({ shapes: faceEdges });
+        extrusion.delete();
+        filletShape.delete();
+        faceEdges.forEach(e => e.delete());
+        return result;
+    }
+
     combineEdgesAndWiresIntoAWire(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge | TopoDS_Wire>): TopoDS_Wire {
         if (inputs.shapes === undefined) {
             throw (Error(("Shapes are not defined")));
@@ -1575,6 +1650,20 @@ export class OccHelper {
 
     remap(value: number, from1: number, to1: number, from2: number, to2: number): number {
         return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+    }
+
+    makeThickSolidSimple(inputs: Inputs.OCCT.ThisckSolidSimpleDto<TopoDS_Shape>) {
+        const maker = new this.occ.BRepOffsetAPI_MakeThickSolid();
+        maker.MakeThickSolidBySimple(inputs.shape, inputs.offset);
+        maker.Build(new this.occ.Message_ProgressRange_1());
+        let makerShape = maker.Shape();
+        if (inputs.offset > 0) {
+            makerShape = makerShape.Reversed();
+        }
+        const result = this.getActualTypeOfShape(makerShape);
+        maker.delete();
+        makerShape.delete();
+        return result;
     }
 
 }

@@ -1366,7 +1366,6 @@ export namespace OCCT {
          */
         direction: Base.Vector3 = [0, 1, 0];
     }
-
     export class ProjectWiresDto<T, U> {
         /**
          * Wire to project
@@ -2732,6 +2731,31 @@ export namespace OCCT {
          * @step 0.1
          */
         offset = 1;
+    }
+    export class Offset3DWireDto<T> {
+        constructor(shape?: T, offset?: number, direction?: Base.Vector3) {
+            this.shape ??= shape;
+            this.offset ??= offset;
+            this.direction ??= direction;
+        }
+        /**
+         * Shape to make thick
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Offset distance
+         * @default 1
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 0.1
+         */
+        offset = 1;
+        /**
+         * Direction normal of the plane for the offset
+         * @default [0, 1, 0]
+         */
+        direction: Base.Vector3 = [0, 1, 0];
     }
     export class FaceFromWireDto<T> {
         constructor(shape?: T, planar?: boolean) {

@@ -193,6 +193,45 @@ export class OCCTOperations {
         return result;
     }
 
+    offset3DWire(inputs: Inputs.OCCT.Offset3DWireDto<TopoDS_Wire>): TopoDS_Wire | TopoDS_Edge[] {
+        const extrusion = this.och.extrude({
+            shape: inputs.shape,
+            direction: inputs.direction,
+        });
+
+        const thickSolid = this.och.makeThickSolidSimple({
+            shape: extrusion,
+            offset: inputs.offset,
+        });
+
+        const nrOfEdges = this.och.getEdges({ shape: inputs.shape }).length;
+        const predictedNrOfFaces = nrOfEdges * 4 + 2;
+
+        const lastFaceIndex = predictedNrOfFaces / 2 - 1;
+        const firstFaceIndex = lastFaceIndex - nrOfEdges + 1;
+
+        const faceEdges: TopoDS_Edge[] = [];
+        this.och.getFaces({ shape: thickSolid }).forEach((f, index) => {
+            if (index >= firstFaceIndex && index <= lastFaceIndex) {
+                const firstEdge = this.och.getEdges({ shape: f })[2];
+                faceEdges.push(firstEdge);
+            }
+        });
+
+        let result: TopoDS_Wire | TopoDS_Edge[];
+        try {
+            result = this.och.combineEdgesAndWiresIntoAWire({ shapes: faceEdges });
+            result = result.Reversed();
+            result = this.och.getActualTypeOfShape(result);
+        }
+        catch {
+            result = faceEdges;
+            return result;
+        }
+        return result;
+
+    }
+
     extrudeShapes(inputs: Inputs.OCCT.ExtrudeShapesDto<TopoDS_Shape>): TopoDS_Shape[] {
         return inputs.shapes.map(shape => {
             const extruded = this.extrude({ shape, direction: inputs.direction });
@@ -397,17 +436,7 @@ export class OCCTOperations {
     }
 
     makeThickSolidSimple(inputs: Inputs.OCCT.ThisckSolidSimpleDto<TopoDS_Shape>) {
-        const maker = new this.occ.BRepOffsetAPI_MakeThickSolid();
-        maker.MakeThickSolidBySimple(inputs.shape, inputs.offset);
-        maker.Build(new this.occ.Message_ProgressRange_1());
-        let makerShape = maker.Shape();
-        if (inputs.offset > 0) {
-            makerShape = makerShape.Reversed();
-        }
-        const result = this.och.getActualTypeOfShape(makerShape);
-        maker.delete();
-        makerShape.delete();
-        return result;
+        return this.och.makeThickSolidSimple(inputs);
     }
 
     makeThickSolidByJoin(inputs: Inputs.OCCT.ThickSolidByJoinDto<TopoDS_Shape>) {

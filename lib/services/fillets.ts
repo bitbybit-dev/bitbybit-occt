@@ -11,68 +11,12 @@ export class OCCTFillets {
     }
 
     filletEdges(inputs: Inputs.OCCT.FilletDto<TopoDS_Shape>) {
-        if (!inputs.indexes || (inputs.indexes.length && inputs.indexes.length === 0)) {
-            if(inputs.radius === undefined) {
-                throw (Error("Radius not defined"));
-            }
-            const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
-                inputs.shape, (this.occ.ChFi3d_FilletShape.ChFi3d_Rational as ChFi3d_FilletShape)
-            );
-            const anEdgeExplorer = new this.occ.TopExp_Explorer_2(
-                inputs.shape, (this.occ.TopAbs_ShapeEnum.TopAbs_EDGE as TopAbs_ShapeEnum),
-                (this.occ.TopAbs_ShapeEnum.TopAbs_SHAPE as TopAbs_ShapeEnum)
-            );
-            const edges: TopoDS_Edge[] = [];
-            while (anEdgeExplorer.More()) {
-                const anEdge = this.occ.TopoDS.Edge_1(anEdgeExplorer.Current());
-                edges.push(anEdge);
-                mkFillet.Add_2(inputs.radius, anEdge);
-                anEdgeExplorer.Next();
-            }
-            const result = mkFillet.Shape();
-            mkFillet.delete();
-            anEdgeExplorer.delete();
-            edges.forEach(e => e.delete());
-            return result;
-        } else if (inputs.indexes && inputs.indexes.length > 0) {
-            const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
-                inputs.shape, (this.occ.ChFi3d_FilletShape.ChFi3d_Rational as ChFi3d_FilletShape)
-            );
-            let foundEdges = 0;
-            let curFillet: TopoDS_Shape;
-            let radiusIndex = 0;
-            const inputIndexes = inputs.indexes;
-            this.och.forEachEdge(inputs.shape, (index, edge) => {
-                if (inputIndexes.includes(index)) {
-                    let radius = inputs.radius;
-                    if (inputs.radiusList) {
-                        radius = inputs.radiusList[radiusIndex];
-                        radiusIndex++;
-                    }
-                    if(radius === undefined) {
-                        throw (Error("Radius not defined, or radiusList not correct length"));
-                    }
-                    mkFillet.Add_2(radius, edge);
-                    foundEdges++;
-                }
-            });
-            if (foundEdges === 0) {
-                throw (new Error("Fillet Edges Not Found!  Make sure you are looking at the object _before_ the Fillet is applied!"));
-            }
-            else {
-                curFillet = mkFillet.Shape();
-            }
-            mkFillet.delete();
-            const result = this.och.getActualTypeOfShape(curFillet);
-            curFillet.delete();
-            return result;
-        }
-        return undefined;
+        return this.och.filletEdges(inputs);
     }
 
     chamferEdges(inputs: Inputs.OCCT.ChamferDto<TopoDS_Shape>) {
         if (!inputs.indexes || (inputs.indexes.length && inputs.indexes.length === 0)) {
-            if(inputs.distance === undefined) {
+            if (inputs.distance === undefined) {
                 throw (Error("Distance is undefined"));
             }
             const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
@@ -82,7 +26,7 @@ export class OCCTFillets {
                 inputs.shape, (this.occ.TopAbs_ShapeEnum.TopAbs_EDGE as TopAbs_ShapeEnum),
                 (this.occ.TopAbs_ShapeEnum.TopAbs_SHAPE as TopAbs_ShapeEnum)
             );
-            const edges:TopoDS_Edge[] = [];
+            const edges: TopoDS_Edge[] = [];
             while (anEdgeExplorer.More()) {
                 const anEdge = this.occ.TopoDS.Edge_1(anEdgeExplorer.Current());
                 edges.push(anEdge);
@@ -109,7 +53,7 @@ export class OCCTFillets {
                         distance = inputs.distanceList[distanceIndex];
                         distanceIndex++;
                     }
-                    if(distance === undefined) {
+                    if (distance === undefined) {
                         throw (Error("Distance not defined and/or distance list incorrect length"));
                     }
                     mkChamfer.Add_2(distance, edge);
@@ -132,7 +76,7 @@ export class OCCTFillets {
     }
 
     filletTwoEdgesInPlaneIntoAWire(inputs: Inputs.OCCT.FilletTwoEdgesInPlaneDto<TopoDS_Edge>): TopoDS_Wire {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         const pln = this.och.gpPln(inputs.planeOrigin, inputs.planeDirection);
@@ -159,18 +103,7 @@ export class OCCTFillets {
     }
 
     fillet3DWire(inputs: Inputs.OCCT.Fillet3DWireDto<TopoDS_Wire>) {
-        const extrusion = this.och.extrude({ shape: inputs.shape, direction: inputs.direction });
-        const filletShape = this.filletEdges({ shape: extrusion, radius: inputs.radius, indexes: inputs.indexes, radiusList: inputs.radiusList }) as TopoDS_Shape;
-        const faceEdges:TopoDS_Edge[] = [];
-        this.och.getFaces({shape: filletShape}).forEach(f => {
-            const firstEdge = this.och.getEdges({shape: f})[0];
-            faceEdges.push(firstEdge);
-        });
-        const result = this.och.combineEdgesAndWiresIntoAWire({ shapes: faceEdges });
-        extrusion.delete();
-        filletShape.delete();
-        faceEdges.forEach(e => e.delete());
-        return result;
+        return this.och.fillet3DWire(inputs);
     }
 
     fillet2d(inputs: Inputs.OCCT.FilletDto<TopoDS_Wire | TopoDS_Face>): TopoDS_Face | TopoDS_Wire {
