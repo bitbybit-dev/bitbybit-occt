@@ -400,7 +400,10 @@ export class OCCTOperations {
         const maker = new this.occ.BRepOffsetAPI_MakeThickSolid();
         maker.MakeThickSolidBySimple(inputs.shape, inputs.offset);
         maker.Build(new this.occ.Message_ProgressRange_1());
-        const makerShape = maker.Shape();
+        let makerShape = maker.Shape();
+        if (inputs.offset > 0) {
+            makerShape = makerShape.Reversed();
+        }
         const result = this.och.getActualTypeOfShape(makerShape);
         maker.delete();
         makerShape.delete();
