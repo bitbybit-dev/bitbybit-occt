@@ -103,11 +103,11 @@ export class OCCTOperations {
             pipe.SetMaxDegree(inputs.maxUDegree);
         }
         let parType: Approx_ParametrizationType | undefined = undefined;
-        if (inputs.parType === Inputs.OCCT.ApproxParametrizationTypeEnum.approxChordLength) {
+        if (inputs.parType === Inputs.OCCT.approxParametrizationTypeEnum.approxChordLength) {
             parType = this.occ.Approx_ParametrizationType.Approx_ChordLength as Approx_ParametrizationType;
-        } else if (inputs.parType === Inputs.OCCT.ApproxParametrizationTypeEnum.approxCentripetal) {
+        } else if (inputs.parType === Inputs.OCCT.approxParametrizationTypeEnum.approxCentripetal) {
             parType = this.occ.Approx_ParametrizationType.Approx_Centripetal as Approx_ParametrizationType;
-        } else if (inputs.parType === Inputs.OCCT.ApproxParametrizationTypeEnum.approxIsoParametric) {
+        } else if (inputs.parType === Inputs.OCCT.approxParametrizationTypeEnum.approxIsoParametric) {
             parType = this.occ.Approx_ParametrizationType.Approx_IsoParametric as Approx_ParametrizationType;
         }
         if (parType) {
@@ -125,7 +125,7 @@ export class OCCTOperations {
     }
 
     offset(inputs: Inputs.OCCT.OffsetDto<TopoDS_Shape>) {
-        return this.offsetAdv({ shape: inputs.shape, distance: inputs.distance, tolerance: inputs.tolerance, joinType: Inputs.OCCT.JoinTypeEnum.arc, removeIntEdges: false });
+        return this.offsetAdv({ shape: inputs.shape, distance: inputs.distance, tolerance: inputs.tolerance, joinType: Inputs.OCCT.joinTypeEnum.arc, removeIntEdges: false });
     }
 
     offsetAdv(inputs: Inputs.OCCT.OffsetAdvancedDto<TopoDS_Shape>) {
@@ -466,18 +466,18 @@ export class OCCTOperations {
         return result;
     }
 
-    private getJoinType(jointType: Inputs.OCCT.JoinTypeEnum): GeomAbs_JoinType {
+    private getJoinType(jointType: Inputs.OCCT.joinTypeEnum): GeomAbs_JoinType {
         let res: GeomAbs_JoinType;
         switch (jointType) {
-            case Inputs.OCCT.JoinTypeEnum.arc: {
+            case Inputs.OCCT.joinTypeEnum.arc: {
                 res = this.occ.GeomAbs_JoinType.GeomAbs_Arc as GeomAbs_JoinType;
                 break;
             }
-            case Inputs.OCCT.JoinTypeEnum.intersection: {
+            case Inputs.OCCT.joinTypeEnum.intersection: {
                 res = this.occ.GeomAbs_JoinType.GeomAbs_Intersection as GeomAbs_JoinType;
                 break;
             }
-            case Inputs.OCCT.JoinTypeEnum.tangent: {
+            case Inputs.OCCT.joinTypeEnum.tangent: {
                 res = this.occ.GeomAbs_JoinType.GeomAbs_Tangent as GeomAbs_JoinType;
                 break;
             }
@@ -485,18 +485,18 @@ export class OCCTOperations {
         return res;
     }
 
-    private getBRepOffsetMode(offsetMode: Inputs.OCCT.BRepOffsetModeEnum): BRepOffset_Mode {
+    private getBRepOffsetMode(offsetMode: Inputs.OCCT.bRepOffsetModeEnum): BRepOffset_Mode {
         let res: BRepOffset_Mode;
         switch (offsetMode) {
-            case Inputs.OCCT.BRepOffsetModeEnum.skin: {
+            case Inputs.OCCT.bRepOffsetModeEnum.skin: {
                 res = this.occ.BRepOffset_Mode.BRepOffset_Skin as BRepOffset_Mode;
                 break;
             }
-            case Inputs.OCCT.BRepOffsetModeEnum.pipe: {
+            case Inputs.OCCT.bRepOffsetModeEnum.pipe: {
                 res = this.occ.BRepOffset_Mode.BRepOffset_Pipe as BRepOffset_Mode;
                 break;
             }
-            case Inputs.OCCT.BRepOffsetModeEnum.rectoVerso: {
+            case Inputs.OCCT.bRepOffsetModeEnum.rectoVerso: {
                 res = this.occ.BRepOffset_Mode.BRepOffset_RectoVerso as BRepOffset_Mode;
                 break;
             }

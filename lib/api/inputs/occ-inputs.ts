@@ -17,22 +17,21 @@ export namespace OCCT {
 
     export type TopoDSShapePointer = TopoDSVertexPointer | TopoDSEdgePointer | TopoDSWirePointer | TopoDSFacePointer | TopoDSShellPointer | TopoDSSolidPointer | TopoDSCompoundPointer;
 
-    export enum JoinTypeEnum {
+    export enum joinTypeEnum {
         arc = "arc",
         intersection = "intersection",
         tangent = "tangent"
     }
-    export enum BRepOffsetModeEnum {
+    export enum bRepOffsetModeEnum {
         skin = "skin",
         pipe = "pipe",
         rectoVerso = "rectoVerso"
     }
-    export enum ApproxParametrizationTypeEnum {
+    export enum approxParametrizationTypeEnum {
         approxChordLength = "approxChordLength",
         approxCentripetal = "approxCentripetal",
         approxIsoParametric = "approxIsoParametric"
     }
-
     export enum directionEnum {
         outside = "outside",
         inside = "inside",
@@ -1590,7 +1589,7 @@ export namespace OCCT {
          * Approximation parametrization type
          * @default approxCentripetal
          */
-        parType: ApproxParametrizationTypeEnum = ApproxParametrizationTypeEnum.approxCentripetal;
+        parType: approxParametrizationTypeEnum = approxParametrizationTypeEnum.approxCentripetal;
         /**
          * Optional if loft should start with a vertex
          * @default undefined
@@ -1668,7 +1667,7 @@ export namespace OCCT {
          * if Join is equal to GeomAbs_Arc, then pipes are generated between two free edges of two adjacent parallels, and spheres are generated on "images" of vertices; it is the default value
          * @default arc
         */
-        joinType = JoinTypeEnum.arc;
+        joinType = joinTypeEnum.arc;
         /**
          * Removes internal edges
          * @default false
@@ -2035,7 +2034,7 @@ export namespace OCCT {
          * if Join is equal to GeomAbs_Arc, then pipes are generated between two free edges of two adjacent parallels, and spheres are generated on "images" of vertices; it is the default value
          * @default arc
         */
-        joinType = JoinTypeEnum.arc;
+        joinType = joinTypeEnum.arc;
         /**
          * if Join is equal to GeomAbs_Intersection, then the parallels to the two adjacent faces are enlarged and intersected, so that there are no free edges on parallels to faces. RemoveIntEdges flag defines whether to remove the INTERNAL edges from the result or not. Warnings Since the algorithm of MakeThickSolid is based on MakeOffsetShape algorithm, the warnings are the same as for MakeOffsetShape.
          * @default false
