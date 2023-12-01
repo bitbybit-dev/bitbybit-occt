@@ -75,6 +75,18 @@ export namespace OCCT {
          */
         shapes?: T[];
     }
+    export class CurveAndSurfaceDto<T, U>{
+        /**
+         * Curve
+         * @default undefined
+         */
+        curve: T;
+        /**
+         * Surface
+         * @default undefined
+         */
+        surface: U;
+    }
     export class FilletTwoEdgesInPlaneDto<T> extends ShapesDto<T> {
         /**
          * First OCCT edge to fillet
@@ -182,19 +194,7 @@ export namespace OCCT {
          */
         inside = true;
     }
-    export class EdgeFromGeom2dCurveAndSurfaceDto<T, U> extends ShapesDto<T> {
-        /**
-         * Curve 2d
-         * @default undefined
-         */
-        curve: T;
-        /**
-         * Surface on which 2d curve will be evaluated
-         * @default undefined
-         */
-        surface: U;
-    }
-    export class WireOnFaceDto<T, U> extends ShapesDto<T> {
+    export class WireOnFaceDto<T, U> {
         /**
          * Wire to place on face
          * @default undefined
@@ -1723,6 +1723,22 @@ export namespace OCCT {
          */
         shapes: U[];
     }
+    export class WiresOnFaceDto<T, U> {
+        constructor(wires?: T[], face?: U) {
+            this.wires = wires;
+            this.face = face;
+        }
+        /**
+         * The wires
+         * @default undefined
+         */
+        wires: T[];
+        /**
+         * Face shape
+         * @default undefined
+         */
+        face: U;
+    }
     export class PipeWiresCylindricalDto<T> {
         constructor(shapes?: T[]) {
             this.shapes = shapes;
@@ -2593,9 +2609,9 @@ export namespace OCCT {
         adjustYtoZ = false;
     }
     export class SaveStepDto<T> {
-        constructor(shape?: T, filename?: string, adjustYtoZ?: boolean) {
+        constructor(shape?: T, fileName?: string, adjustYtoZ?: boolean) {
             this.shape = shape;
-            this.filename = filename;
+            this.fileName = fileName;
             this.adjustYtoZ = adjustYtoZ;
         }
         /**
@@ -2607,7 +2623,7 @@ export namespace OCCT {
          * File name
          * @default shape.step
          */
-        filename = "shape.step";
+        fileName = "shape.step";
         /**
          * Adjust Y (up) coordinate system to Z (up) coordinate system
          * @default false
@@ -2615,9 +2631,9 @@ export namespace OCCT {
         adjustYtoZ = false;
     }
     export class SaveStlDto<T> {
-        constructor(shape?: T, filename?: string, precision?: number, adjustYtoZ?: boolean) {
+        constructor(shape?: T, fileName?: string, precision?: number, adjustYtoZ?: boolean) {
             this.shape = shape;
-            this.filename = filename;
+            this.fileName = fileName;
             this.precision = precision;
             this.adjustYtoZ = adjustYtoZ;
         }
@@ -2630,7 +2646,7 @@ export namespace OCCT {
          * File name
          * @default shape.stl
          */
-        filename = "shape.stl";
+        fileName = "shape.stl";
         /**
          * Precision of the mesh - lower means higher res
          * @default 0.01
@@ -2681,9 +2697,9 @@ export namespace OCCT {
         adjustZtoY = true;
     }
     export class LoadStepOrIgesDto {
-        constructor(filetext?: string | ArrayBuffer, filename?: string, adjustZtoY?: boolean) {
+        constructor(filetext?: string | ArrayBuffer, fileName?: string, adjustZtoY?: boolean) {
             this.filetext = filetext;
-            this.filename = filename;
+            this.fileName = fileName;
             this.adjustZtoY = adjustZtoY;
         }
         /**
@@ -2695,7 +2711,7 @@ export namespace OCCT {
          * File name
          * @default shape.igs
          */
-        filename = "shape.igs";
+        fileName = "shape.igs";
         /**
          * Adjusts models that use Z coordinate as up to Y up system.
          * @default true
@@ -3146,7 +3162,7 @@ export namespace OCCT {
          * to compute the derivatives of the trimmed curve. So for a closed curve the rules are the same as for a open curve.
          * @default true
          */
-        theAdjustPeriodic = true;
+        adjustPeriodic = true;
     }
     export class Geom2dSegmentDto {
         /**
