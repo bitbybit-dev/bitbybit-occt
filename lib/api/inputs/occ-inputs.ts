@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { Base } from "./inputs";
-// tslint:disable-next-line: no-namespace
+
 export namespace OCCT {
 
     export type GeomCurvePointer = { hash: number, type: string };
