@@ -20,7 +20,7 @@ export class OCCTIO {
             );
             rotatedShape.delete();
         }
-        inputs.filename = "x";
+        inputs.fileName = "x";
         const writer = new this.occ.STEPControl_Writer_1();
         let transferShape;
         if (adjustedShape) {
@@ -39,11 +39,11 @@ export class OCCTIO {
         let result: string;
         if (transferResult === this.occ.IFSelect_ReturnStatus.IFSelect_RetDone) {
             // Write the STEP File to the virtual Emscripten Filesystem Temporarily
-            const writeResult = writer.Write(inputs.filename);
+            const writeResult = writer.Write(inputs.fileName);
             if (writeResult === this.occ.IFSelect_ReturnStatus.IFSelect_RetDone) {
                 // Read the STEP File from the filesystem and clean up
-                const stepFileText = this.occ.FS.readFile("/" + inputs.filename, { encoding: "utf8" });
-                this.occ.FS.unlink("/" + inputs.filename);
+                const stepFileText = this.occ.FS.readFile("/" + inputs.fileName, { encoding: "utf8" });
+                this.occ.FS.unlink("/" + inputs.fileName);
 
                 // Return the contents of the STEP File
                 result = stepFileText;
@@ -66,7 +66,7 @@ export class OCCTIO {
      * File as a Shape into the `externalShapes` dictionary.
      */
     loadSTEPorIGES(inputs: Inputs.OCCT.LoadStepOrIgesDto): TopoDS_Shape|undefined {
-        const fileName = inputs.filename;
+        const fileName = inputs.fileName;
         const fileText = inputs.filetext;
         const fileType = (() => {
             switch (fileName.toLowerCase().split(".").pop()) {

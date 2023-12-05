@@ -340,50 +340,20 @@ export class OCCTWire {
         return result;
     }
 
-    placeWireOnFace(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire | TopoDS_Face>) {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
-        }
-        const wire = inputs.shapes[0] as TopoDS_Wire;
-        const face = inputs.shapes[1] as TopoDS_Face;
+    placeWireOnFace(inputs: Inputs.OCCT.WireOnFaceDto<TopoDS_Wire, TopoDS_Face>) {
+        const wire = inputs.wire as TopoDS_Wire;
+        const face = inputs.face as TopoDS_Face;
         const srf = this.och.surfaceFromFace({ shape: face });
-        const result = this.placeWire(wire, srf);
+        const result = this.och.placeWire(wire, srf);
         return result;
     }
 
-    placeWiresOnFace(inputs: Inputs.OCCT.ShapeShapesDto<TopoDS_Face, TopoDS_Wire>) {
-        const wires = inputs.shapes;
-        const face = inputs.shape;
+    placeWiresOnFace(inputs: Inputs.OCCT.WiresOnFaceDto<TopoDS_Wire, TopoDS_Face>) {
+        const wires = inputs.wires;
+        const face = inputs.face;
         const srf = this.och.surfaceFromFace({ shape: face });
-        const result = wires.map(wire => this.placeWire(wire, srf));
+        const result = wires.map(wire => this.och.placeWire(wire, srf));
         return result;
-    }
-
-    private placeWire(wire: TopoDS_Wire, surface: Geom_Surface) {
-        const edges = this.och.getEdges({ shape: wire });
-        const newEdges: TopoDS_Edge[] = [];
-        edges.forEach(e => {
-            const umin = { current: 0 };
-            const umax = { current: 0 };
-            this.occ.BRep_Tool.Range_1(e, umin.current, umax.current);
-            const crv = this.occ.BRep_Tool.Curve_2(e, umin.current, umax.current);
-            if (!crv.IsNull()) {
-                const plane = this.och.gpPln([0, 0, 0], [0, 1, 0]);
-                const c2dHandle = this.occ.GeomAPI.To2d(crv, plane);
-                const c2 = c2dHandle.get();
-                const newEdgeOnSrf = this.och.makeEdgeFromGeom2dCurveAndSurfaceBounded({ shapes: [c2, surface] }, umin.current, umax.current);
-                if (newEdgeOnSrf) {
-                    newEdges.push(newEdgeOnSrf);
-                }
-                plane.delete();
-                c2dHandle.delete();
-            }
-            crv.delete();
-        });
-        edges.forEach(e => e.delete());
-        const res = this.och.combineEdgesAndWiresIntoAWire({ shapes: newEdges });
-        newEdges.forEach(e => e.delete());
-        return res;
     }
 
     closeOpenWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
@@ -420,7 +390,7 @@ export class OCCTWire {
             gpDir.delete();
             proj.delete();
         });
-        
+
         return shapes;
     }
 }

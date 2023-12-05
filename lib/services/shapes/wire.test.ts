@@ -782,7 +782,7 @@ describe("OCCT wire unit tests", () => {
         const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const f = face.getFace({ shape: sph, index: 0 });
         const w = wire.createEllipseWire({ radiusMajor: 0.5, radiusMinor: 0.3, center: [0, 0, 0], direction: [0, 1, 0] });
-        const placed = wire.placeWireOnFace({ shapes: [w, f] });
+        const placed = wire.placeWireOnFace({ wire: w, face: f });
         const length = wire.getWireLength({ shape: placed });
         expect(length).toBeCloseTo(7.489657680597562);
         sph.delete();
@@ -797,7 +797,7 @@ describe("OCCT wire unit tests", () => {
         const w1 = wire.createEllipseWire({ radiusMajor: 0.5, radiusMinor: 0.3, center: [0, 0, 0], direction: [0, 1, 0] });
         const w2 = wire.createEllipseWire({ radiusMajor: 0.3, radiusMinor: 0.1, center: [0, 0, 0], direction: [0, 1, 0] });
 
-        const placed = wire.placeWiresOnFace({ shape: f, shapes: [w1, w2] });
+        const placed = wire.placeWiresOnFace({ face: f, wires: [w1, w2] });
         const length1 = wire.getWireLength({ shape: placed[0] });
         const length2 = wire.getWireLength({ shape: placed[1] });
 
@@ -827,10 +827,6 @@ describe("OCCT wire unit tests", () => {
             ]
         );
         w.delete();
-    });
-
-    it("placeWireOnFace throws with undefined shapes", () => {
-        expect(() => wire.placeWireOnFace({})).toThrowError("Shapes needs to be an array of length 2");
     });
 
     it("should split circle wire by points", () => {

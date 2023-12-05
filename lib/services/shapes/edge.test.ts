@@ -74,18 +74,14 @@ describe("OCCT edge unit tests", () => {
         const cylinderSrf = geom.surfaces.cylindricalSurface({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
 
         const e = edge.makeEdgeFromGeom2dCurveAndSurface({
-            shapes: [elipse2d, cylinderSrf]
+            curve: elipse2d, 
+            surface: cylinderSrf
         });
         const length = edge.getEdgeLength({ shape: e });
         expect(length).toEqual(12.566370614359172);
         e.delete();
         elipse2d.delete();
         cylinderSrf.delete();
-    });
-
-    it("makeEdgeFromGeom2dCurveAndSurface should throw", async () => {
-        expect(() => edge.makeEdgeFromGeom2dCurveAndSurface({
-        })).toThrowError("Shapes needs to be an array of length 2");
     });
 
     it("should make ellipse edge", async () => {

@@ -174,7 +174,7 @@ describe("OCCT operations unit tests", () => {
         const ellipse3 = wire.createEllipseWire({ center: [0, 2, 0], radiusMajor: 0.5, radiusMinor: 0.3, direction: [0, 1, 0] });
 
         const opt = new Inputs.OCCT.LoftAdvancedDto<TopoDS_Wire>([ellipse1, ellipse2, ellipse3]);
-        opt.parType = Inputs.OCCT.ApproxParametrizationTypeEnum.approxChordLength;
+        opt.parType = Inputs.OCCT.approxParametrizationTypeEnum.approxChordLength;
         const res = operations.loftAdvanced(opt);
         const faces = face.getFaces({ shape: res });
         const faceOfLoft = faces[0];
@@ -203,7 +203,7 @@ describe("OCCT operations unit tests", () => {
         const ellipse3 = wire.createEllipseWire({ center: [0, 2, 0], radiusMajor: 0.5, radiusMinor: 0.3, direction: [0, 1, 0] });
 
         const opt = new Inputs.OCCT.LoftAdvancedDto<TopoDS_Wire>([ellipse1, ellipse2, ellipse3]);
-        opt.parType = Inputs.OCCT.ApproxParametrizationTypeEnum.approxIsoParametric;
+        opt.parType = Inputs.OCCT.approxParametrizationTypeEnum.approxIsoParametric;
         const res = operations.loftAdvanced(opt);
         const faces = face.getFaces({ shape: res });
         const faceOfLoft = faces[0];

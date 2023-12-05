@@ -1551,12 +1551,9 @@ export class OccHelper {
     }
 
 
-    makeEdgeFromGeom2dCurveAndSurfaceBounded(inputs: Inputs.OCCT.ShapesDto<Geom2d_Curve | Geom_Surface>, umin: number, umax: number): TopoDS_Edge {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
-        }
-        const curve2d = new this.occ.Handle_Geom2d_Curve_2(inputs.shapes[0] as Geom2d_Curve);
-        const surface = new this.occ.Handle_Geom_Surface_2(inputs.shapes[1] as Geom_Surface);
+    makeEdgeFromGeom2dCurveAndSurfaceBounded(inputs: Inputs.OCCT.CurveAndSurfaceDto<Geom2d_Curve, Geom_Surface>, umin: number, umax: number): TopoDS_Edge {
+        const curve2d = new this.occ.Handle_Geom2d_Curve_2(inputs.curve as Geom2d_Curve);
+        const surface = new this.occ.Handle_Geom_Surface_2(inputs.surface as Geom_Surface);
         const res = new this.occ.BRepBuilderAPI_MakeEdge_31(curve2d, surface, umin, umax);
         const resShape = res.Shape();
         const r = this.getActualTypeOfShape(resShape);
@@ -1565,12 +1562,9 @@ export class OccHelper {
         return r;
     }
 
-    makeEdgeFromGeom2dCurveAndSurface(inputs: Inputs.OCCT.ShapesDto<Geom2d_Curve | Geom_Surface>): TopoDS_Edge {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
-        }
-        const curve2d = new this.occ.Handle_Geom2d_Curve_2(inputs.shapes[0] as Geom2d_Curve);
-        const surface = new this.occ.Handle_Geom_Surface_2(inputs.shapes[1] as Geom_Surface);
+    makeEdgeFromGeom2dCurveAndSurface(inputs: Inputs.OCCT.CurveAndSurfaceDto<Geom2d_Curve, Geom_Surface>): TopoDS_Edge {
+        const curve2d = new this.occ.Handle_Geom2d_Curve_2(inputs.curve as Geom2d_Curve);
+        const surface = new this.occ.Handle_Geom_Surface_2(inputs.surface as Geom_Surface);
         const res = new this.occ.BRepBuilderAPI_MakeEdge_30(curve2d, surface);
         const resShape = res.Shape();
         const r = this.getActualTypeOfShape(resShape);
@@ -1604,6 +1598,33 @@ export class OccHelper {
         const wire = inputs.shape;
         const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
         const res = this.endPointOnCurve({ ...inputs, shape: curve });
+        return res;
+    }
+
+    placeWire(wire: TopoDS_Wire, surface: Geom_Surface) {
+        const edges = this.getEdges({ shape: wire });
+        const newEdges: TopoDS_Edge[] = [];
+        edges.forEach(e => {
+            const umin = { current: 0 };
+            const umax = { current: 0 };
+            this.occRefReturns.BRep_Tool_Range_1(e, umin, umax);
+            const crv = this.occRefReturns.BRep_Tool_Curve_2(e, umin, umax);
+            if (!crv.IsNull()) {
+                const plane = this.gpPln([0, 0, 0], [0, 1, 0]);
+                const c2dHandle = this.occ.GeomAPI.To2d(crv, plane);
+                const c2 = c2dHandle.get();
+                const newEdgeOnSrf = this.makeEdgeFromGeom2dCurveAndSurfaceBounded({ curve: c2, surface }, umin.current, umax.current);
+                if (newEdgeOnSrf) {
+                    newEdges.push(newEdgeOnSrf);
+                }
+                plane.delete();
+                c2dHandle.delete();
+            }
+            crv.delete();
+        });
+        edges.forEach(e => e.delete());
+        const res = this.combineEdgesAndWiresIntoAWire({ shapes: newEdges });
+        newEdges.forEach(e => e.delete());
         return res;
     }
 

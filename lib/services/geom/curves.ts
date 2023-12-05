@@ -26,7 +26,7 @@ export class OCCTCurves {
 
     geom2dTrimmedCurve(inputs: Inputs.OCCT.Geom2dTrimmedCurveDto<Geom2d_Curve>) {
         const handleCurve = new this.occ.Handle_Geom2d_Curve_2(inputs.shape);
-        const trimmed = new this.occ.Geom2d_TrimmedCurve(handleCurve, inputs.u1, inputs.u2, inputs.sense, inputs.theAdjustPeriodic);
+        const trimmed = new this.occ.Geom2d_TrimmedCurve(handleCurve, inputs.u1, inputs.u2, inputs.sense, inputs.adjustPeriodic);
         return trimmed;
     }
 

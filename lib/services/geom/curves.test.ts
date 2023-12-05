@@ -59,7 +59,7 @@ describe("OCCT edge unit tests", () => {
             u1: 0,
             u2: 0.5,
             sense: false,
-            theAdjustPeriodic: false
+            adjustPeriodic: false
         });
 
         const point = geom.curves.get2dPointFrom2dCurveOnParam({
