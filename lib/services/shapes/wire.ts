@@ -348,7 +348,7 @@ export class OCCTWire {
         return result;
     }
 
-    placeWiresOnFace(inputs: Inputs.OCCT.WiresOnFaceDto<TopoDS_Face, TopoDS_Wire>) {
+    placeWiresOnFace(inputs: Inputs.OCCT.WiresOnFaceDto<TopoDS_Wire, TopoDS_Face>) {
         const wires = inputs.wires;
         const face = inputs.face;
         const srf = this.och.surfaceFromFace({ shape: face });
