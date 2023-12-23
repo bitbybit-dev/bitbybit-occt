@@ -41,6 +41,25 @@ export namespace OCCT {
         iges = "iges",
         step = "step"
     }
+    export enum topAbsOrientationEnum {
+        forward = "forward",
+        reversed = "reversed",
+        internal = "internal",
+        external = "external"
+    }
+    export enum shapeTypeEnum {
+        unknown = "unknown",
+        vertex = "vertex",
+        edge = "edge",
+        wire = "wire",
+        face = "face",
+        shell = "shell",
+        solid = "solid",
+        compSolid = "compSolid",
+        compound = "compound",
+        shape = "shape",
+    }
+
     export class DecomposedMeshDto {
         /**
          * Face list
@@ -121,7 +140,7 @@ export namespace OCCT {
          * @default -1
          * @optional true
          */
-        solution?= -1;
+        solution? = -1;
     }
     export class ClosestPointsOnShapeFromPointsDto<T> {
         /**
@@ -1134,7 +1153,7 @@ export namespace OCCT {
          * @step 0.1
          * @optional true
          */
-        radius?= 0.1;
+        radius? = 0.1;
         /**
          * Radius list
          * @default undefined
@@ -1166,7 +1185,7 @@ export namespace OCCT {
          * @step 0.1
          * @optional true
          */
-        radius?= 0.1;
+        radius? = 0.1;
         /**
          * Radius list
          * @default undefined
@@ -1204,7 +1223,7 @@ export namespace OCCT {
          * @optional true
          * @step 0.1
          */
-        distance?= 0.1;
+        distance? = 0.1;
         /**
          * Distance for the chamfer
          * @default undefined
@@ -1917,6 +1936,93 @@ export namespace OCCT {
         shape: T;
     }
 
+    export class CompareShapesDto<T> {
+        constructor(shape?: T, otherShape?: T) {
+            this.shape ??= shape;
+            this.otherShape ??= otherShape;
+        }
+        /**
+         * Shape to be compared
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Shape to be compared against
+         * @default undefined
+         */
+        otherShape: T;
+    }
+    export class FixSmallEdgesInWireDto<T>{
+        /**
+         * Shape on which action should be performed
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Lock vertex. If true, the edge must be kept.
+         * @default false
+         */
+        lockvtx = false;
+        /**
+         * Definition of the small distance edge
+         * @default 0
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.0000000001
+         */
+        precsmall = 0.0;
+    }
+    export class BasicShapeRepairDto<T> {
+        /**
+         * Shape to repair
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Basic precision
+         * @default 0.001
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.0000000001
+         */
+        precision = 0.001;
+        /**
+         * maximum allowed tolerance. All problems will be detected for cases when a dimension of invalidity is larger than 
+         * the basic precision or a tolerance of sub-shape on that problem is detected. The maximum tolerance value limits 
+         * the increasing tolerance for fixing a problem such as fix of not connected and self-intersected wires. If a value 
+         * larger than the maximum allowed tolerance is necessary for correcting a detected problem the problem can not be fixed. 
+         * The maximal tolerance is not taking into account during computation of tolerance of edges
+         * @default 0.01
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.0000000001
+         */
+        maxTolerance = 0.01;
+        /**
+         * minimal allowed tolerance. It defines the minimal allowed length of edges.
+         * Detected edges having length less than the specified minimal tolerance will be removed.
+         * @default 0.0001
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.0000000001
+         */
+        minTolerance = 0.0001;
+    }
+    export class FixClosedDto<T>{
+        /**
+         * Shape on which action should be performed
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Precision for closed wire
+         * @default -0.1
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 0.0000000001
+         */
+        precision = -0.1;
+    }
     export class ShapesWithToleranceDto<T> {
         constructor(shapes?: T[]) {
             this.shapes = shapes;
@@ -2782,6 +2888,22 @@ export namespace OCCT {
          * @default undefined
          */
         shape: T;
+        /**
+         * Should plane be planar
+         * @default false
+         */
+        planar = false;
+    }
+    export class FaceFromWiresDto<T> {
+        constructor(shapes?: T[], planar?: boolean) {
+            this.shapes = shapes;
+            this.planar = planar;
+        }
+        /**
+         * Wire shapes to convert into a faces
+         * @default undefined
+         */
+        shapes: T[];
         /**
          * Should plane be planar
          * @default false

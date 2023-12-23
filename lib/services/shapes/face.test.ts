@@ -795,7 +795,7 @@ describe("OCCT face unit tests", () => {
 
     it("should not get a face of a shape that does not have faces", async () => {
         const d = occHelper.lineEdge({ start: [0, 0, 0], end: [1, 1, 1] });
-        expect(() => face.getFace({ shape: d, index: 22 })).toThrowError("Shape is not provided or is of incorrect type");
+        expect(() => face.getFace({ shape: d, index: 22 })).toThrowError("Shape is of incorrect type");
         d.delete();
     });
 

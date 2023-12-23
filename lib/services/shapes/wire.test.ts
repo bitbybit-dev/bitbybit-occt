@@ -510,18 +510,18 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should throw error if shape is undefined", async () => {
-        expect(() => wire.getWire({ shape: undefined, index: 0 })).toThrowError("Shape is not provided or is of incorrect type");
+        expect(() => wire.getWire({ shape: undefined, index: 0 })).toThrowError("Shape is not provided or is null");
     });
 
     it("should throw error if shape is of incorrect type", async () => {
         const b = edge.createCircleEdge({ radius: 5, center: [0, 0, 0], direction: [0, 0, 1] });
-        expect(() => wire.getWire({ shape: b, index: 0 })).toThrowError("Shape is not provided or is of incorrect type");
+        expect(() => wire.getWire({ shape: b, index: 0 })).toThrowError("Shape is of incorrect type");
         b.delete();
     });
 
     it("should throw error if innerWire not found", async () => {
         const rect = wire.createRectangleWire({ width: 10, length: 10, center: [0, 0, 0], direction: [0, 1, 0] });
-        expect(() => wire.getWire({ shape: rect, index: 10 })).toThrowError("Wire not found");
+        expect(() => wire.getWire({ shape: rect, index: 10 })).toThrowError("Shape is of incorrect type");
     });
 
     it("should get start point on a wire", async () => {

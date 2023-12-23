@@ -1,5 +1,6 @@
 import initOpenCascade, { OpenCascadeInstance } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
-import { OccHelper, shapeTypeEnum } from "../../occ-helper";
+import { OccHelper } from "../../occ-helper";
+import * as Inputs from "../../api/inputs/inputs";
 import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
 import { OCCTSolid } from "./solid";
@@ -25,7 +26,7 @@ describe("OCCT compound unit tests", () => {
         const cylinder = solid.createCylinder({ radius: 2, height: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const c = compound.makeCompound({ shapes: [box, cylinder] });
         expect(c).toBeDefined();
-        expect(occHelper.getShapeTypeEnum(c)).toBe(shapeTypeEnum.compound);
+        expect(occHelper.getShapeTypeEnum(c)).toBe(Inputs.OCCT.shapeTypeEnum.compound);
         box.delete();
         cylinder.delete();
     });
