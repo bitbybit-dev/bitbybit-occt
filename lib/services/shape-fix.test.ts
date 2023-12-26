@@ -7,7 +7,7 @@ import { OCCTEdge } from "./shapes/edge";
 import { OCCTWire } from "./shapes/wire";
 
 
-describe("OCCT booleans unit tests", () => {
+describe("OCCT shape fix unit tests", () => {
     let occt: OpenCascadeInstance;
     let edge: OCCTEdge;
     let wire: OCCTWire;
