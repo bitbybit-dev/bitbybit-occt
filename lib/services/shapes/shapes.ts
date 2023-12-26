@@ -3,6 +3,7 @@ import { OccHelper } from "../../occ-helper";
 import { OCCTCompound } from "./compound";
 import { OCCTEdge } from "./edge";
 import { OCCTFace } from "./face";
+import { OCCTShape } from "./shape";
 import { OCCTShell } from "./shell";
 import { OCCTSolid } from "./solid";
 import { OCCTWire } from "./wire";
@@ -14,6 +15,7 @@ export class OCCTShapes {
     public readonly shell: OCCTShell;
     public readonly solid: OCCTSolid;
     public readonly compound: OCCTCompound;
+    public readonly shape: OCCTShape;
 
     constructor(
         occ: OpenCascadeInstance,
@@ -25,6 +27,7 @@ export class OCCTShapes {
         this.shell = new OCCTShell(occ, och);
         this.solid = new OCCTSolid(occ, och);
         this.compound = new OCCTCompound(occ, och);
+        this.shape = new OCCTShape(occ, och);
     }
 
 }

@@ -3,7 +3,7 @@ import {
     BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, Bnd_Box_1, GeomAbs_JoinType, OpenCascadeInstance,
     TopoDS_Compound, TopoDS_Edge, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire
 } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
-import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from "../occ-helper";
+import { OccHelper, typeSpecificityEnum } from "../occ-helper";
 import * as Inputs from "../api/inputs/inputs";
 
 export class OCCTOperations {
@@ -40,7 +40,7 @@ export class OCCTOperations {
     loft(inputs: Inputs.OCCT.LoftDto<TopoDS_Wire | TopoDS_Edge>) {
         const pipe = new this.occ.BRepOffsetAPI_ThruSections(inputs.makeSolid, false, 1.0e-06);
         inputs.shapes.forEach((wire) => {
-            if (this.och.getShapeTypeEnum(wire) === shapeTypeEnum.edge) {
+            if (this.och.getShapeTypeEnum(wire) === Inputs.OCCT.shapeTypeEnum.edge) {
                 wire = this.och.bRepBuilderAPIMakeWire(wire);
             }
             pipe.AddWire(wire);
@@ -70,7 +70,7 @@ export class OCCTOperations {
         } else if (inputs.closed && inputs.periodic) {
             const pointsOnCrvs: Inputs.Base.Point3[][] = [];
             inputs.shapes.forEach((s: TopoDS_Wire | TopoDS_Edge) => {
-                if (this.och.getShapeTypeEnum(s) === shapeTypeEnum.edge) {
+                if (this.och.getShapeTypeEnum(s) === Inputs.OCCT.shapeTypeEnum.edge) {
                     s = this.och.bRepBuilderAPIMakeWire(s);
                 }
                 const pts = this.och.divideWireByParamsToPoints({ shape: s, nrOfDivisions: inputs.nrPeriodicSections, removeStartPoint: false, removeEndPoint: false });
@@ -138,10 +138,10 @@ export class OCCTOperations {
 
         const wires: TopoDS_Wire[] = [];
 
-        if ((this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.wire ||
-            this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.edge)) {
+        if ((this.och.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.wire ||
+            this.och.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.edge)) {
             let wire: TopoDS_Wire;
-            if (this.och.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.edge) {
+            if (this.och.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.edge) {
                 wire = this.och.bRepBuilderAPIMakeWire(inputs.shape);
                 wires.push(wire);
             } else {
@@ -149,9 +149,11 @@ export class OCCTOperations {
             }
             try {
                 offset = new this.occ.BRepOffsetAPI_MakeOffset_1();
-                (offset as BRepOffsetAPI_MakeOffset_1).Init_2(joinType, false);
-                (offset as BRepOffsetAPI_MakeOffset_1).AddWire(wire);
-                (offset as BRepOffsetAPI_MakeOffset_1).Perform(inputs.distance, 0.0);
+                offset.Init_2(joinType, false);
+                offset.AddWire(wire);
+                const messageProgress1 = new this.occ.Message_ProgressRange_1();
+                offset.Build(messageProgress1);
+                offset.Perform(inputs.distance, 0.0);
             } catch (ex) {
                 // if first method fails we can still try the second one on wire
                 offset = new this.occ.BRepOffsetAPI_MakeOffsetShape();
@@ -167,7 +169,6 @@ export class OCCTOperations {
                     new this.occ.Message_ProgressRange_1()
                 );
             }
-
         } else {
             const shapeToOffset = inputs.shape;
             offset = new this.occ.BRepOffsetAPI_MakeOffsetShape();
@@ -595,7 +596,7 @@ export class OCCTOperations {
 
     private applySlices(transformedShape: TopoDS_Shape, planes: any[], direction: Inputs.Base.Vector3, intersections: any[]) {
         const shapesToSlice = [];
-        if (this.och.getShapeTypeEnum(transformedShape) === shapeTypeEnum.solid) {
+        if (this.och.getShapeTypeEnum(transformedShape) === Inputs.OCCT.shapeTypeEnum.solid) {
             shapesToSlice.push(transformedShape);
         } else {
             const solids = this.och.getSolids({ shape: transformedShape });

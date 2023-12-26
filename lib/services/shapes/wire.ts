@@ -1,5 +1,5 @@
-import { Geom_Surface, TopoDS_Face, OpenCascadeInstance, TopoDS_Wire, TopoDS_Compound, TopoDS_Shape, TopoDS_Edge } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
-import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from "../../occ-helper";
+import { TopoDS_Face, OpenCascadeInstance, TopoDS_Wire, TopoDS_Compound, TopoDS_Shape, TopoDS_Edge } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OccHelper, typeSpecificityEnum } from "../../occ-helper";
 import * as Inputs from "../../api/inputs/inputs";
 
 export class OCCTWire {
@@ -155,6 +155,10 @@ export class OCCTWire {
         return this.och.combineEdgesAndWiresIntoAWire(inputs);
     }
 
+    createWireFromEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): TopoDS_Wire {
+        return this.och.createWireFromEdges(inputs);
+    }
+
     addEdgesAndWiresToWire(inputs: Inputs.OCCT.ShapeShapesDto<TopoDS_Wire, TopoDS_Wire | TopoDS_Edge>): TopoDS_Wire {
         const makeWire = new this.occ.BRepBuilderAPI_MakeWire_1();
         makeWire.Add_2(inputs.shape);
@@ -306,8 +310,14 @@ export class OCCTWire {
     }
 
     getWire(inputs: Inputs.OCCT.ShapeIndexDto<TopoDS_Shape>): TopoDS_Wire {
-        if (!inputs.shape || this.och.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.wire || inputs.shape.IsNull()) {
-            throw (new Error("Shape is not provided or is of incorrect type"));
+        if (!inputs.shape || inputs.shape.IsNull()) {
+            throw (new Error("Shape is not provided or is null"));
+        }
+        const shapeType = this.och.getShapeTypeEnum(inputs.shape);
+        if ((shapeType === Inputs.OCCT.shapeTypeEnum.wire ||
+            shapeType === Inputs.OCCT.shapeTypeEnum.edge ||
+            shapeType === Inputs.OCCT.shapeTypeEnum.vertex)) {
+            throw (new Error("Shape is of incorrect type"));
         }
         if (!inputs.index) { inputs.index = 0; }
         let innerWire: TopoDS_Wire | undefined;
@@ -330,6 +340,16 @@ export class OCCTWire {
 
     getWiresLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire>): number[] {
         return this.och.getWiresLengths(inputs);
+    }
+
+    getWireCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): Inputs.Base.Point3 {
+        return this.och.getWireCenterOfMass(inputs);
+    }
+
+    getWiresCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire>): Inputs.Base.Point3[] {
+        return inputs.shapes.map(w => this.och.getWireCenterOfMass({
+            shape: w
+        }));
     }
 
     reversedWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {

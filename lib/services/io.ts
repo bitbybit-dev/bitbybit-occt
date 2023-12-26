@@ -20,7 +20,7 @@ export class OCCTIO {
             );
             rotatedShape.delete();
         }
-        inputs.fileName = "x";
+        const fileName = "x";
         const writer = new this.occ.STEPControl_Writer_1();
         let transferShape;
         if (adjustedShape) {
@@ -29,21 +29,27 @@ export class OCCTIO {
             transferShape = shapeToUse;
         }
         // Convert to a .STEP File
+
         const messageProgress = new this.occ.Message_ProgressRange_1();
-        const transferResult = writer.Transfer(
-            transferShape,
-            (this.occ.STEPControl_StepModelType.STEPControl_AsIs as STEPControl_StepModelType),
-            true,
-            messageProgress
-        );
+        let transferResult;
+        try {
+            transferResult = writer.Transfer(
+                transferShape,
+                (this.occ.STEPControl_StepModelType.STEPControl_AsIs as STEPControl_StepModelType),
+                true,
+                messageProgress
+            );
+        } catch (ex) {
+            throw (new Error("Failed when calling writer.Transfer."));
+        }
         let result: string;
         if (transferResult === this.occ.IFSelect_ReturnStatus.IFSelect_RetDone) {
             // Write the STEP File to the virtual Emscripten Filesystem Temporarily
-            const writeResult = writer.Write(inputs.fileName);
+            const writeResult = writer.Write(fileName);
             if (writeResult === this.occ.IFSelect_ReturnStatus.IFSelect_RetDone) {
                 // Read the STEP File from the filesystem and clean up
-                const stepFileText = this.occ.FS.readFile("/" + inputs.fileName, { encoding: "utf8" });
-                this.occ.FS.unlink("/" + inputs.fileName);
+                const stepFileText = this.occ.FS.readFile("/" + fileName, { encoding: "utf8" });
+                this.occ.FS.unlink("/" + fileName);
 
                 // Return the contents of the STEP File
                 result = stepFileText;
@@ -65,19 +71,19 @@ export class OCCTIO {
     /** This function parses the ASCII contents of a `.STEP` or `.IGES`
      * File as a Shape into the `externalShapes` dictionary.
      */
-    loadSTEPorIGES(inputs: Inputs.OCCT.LoadStepOrIgesDto): TopoDS_Shape|undefined {
+    loadSTEPorIGES(inputs: Inputs.OCCT.LoadStepOrIgesDto): TopoDS_Shape | undefined {
         const fileName = inputs.fileName;
         const fileText = inputs.filetext;
         const fileType = (() => {
             switch (fileName.toLowerCase().split(".").pop()) {
-            case "step":
-            case "stp":
-                return "step";
-            case "iges":
-            case "igs":
-                return "iges";
-            default:
-                return undefined;
+                case "step":
+                case "stp":
+                    return "step";
+                case "iges":
+                case "igs":
+                    return "iges";
+                default:
+                    return undefined;
             }
         })();
         // Writes the uploaded file to Emscripten's Virtual Filesystem
@@ -88,9 +94,9 @@ export class OCCTIO {
             reader = new this.occ.STEPControl_Reader_1();
         } else if (fileType === "iges") {
             reader = new this.occ.IGESControl_Reader_1();
-        } else { 
-            console.error("opencascade can't parse this extension! (yet)"); 
-            return undefined; 
+        } else {
+            console.error("opencascade can't parse this extension! (yet)");
+            return undefined;
         }
         const readResult = reader.ReadFile(`file.${fileType}`);            // Read the file
         if (readResult === this.occ.IFSelect_ReturnStatus.IFSelect_RetDone) {
@@ -112,7 +118,7 @@ export class OCCTIO {
             // Out with the old, in with the new!
             // Remove the file when we're done (otherwise we run into errors on reupload)
             this.occ.FS.unlink(`/file.${fileType}`);
-            if(adjustedShape){
+            if (adjustedShape) {
                 stepShape.delete();
                 stepShape = adjustedShape;
             }

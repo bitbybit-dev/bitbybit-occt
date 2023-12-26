@@ -12,19 +12,6 @@ export enum typeSpecificityEnum {
     face,
 }
 
-export enum shapeTypeEnum {
-    unknown,
-    vertex,
-    edge,
-    wire,
-    face,
-    shell,
-    solid,
-    compSolid,
-    compound,
-    shape,
-}
-
 interface TopoDS_ShapeHash extends TopoDS_Shape {
     hash?: number;
 }
@@ -259,6 +246,29 @@ export class OccHelper {
         return shell;
     }
 
+    bRepBuilderAPIMakeFaceFromWires(wires: TopoDS_Wire[], planar: boolean): TopoDS_Face {
+        let face;
+        const faces = [];
+        wires.forEach(currentWire => {
+            if (faces.length > 0) {
+                const faceBuilder = new this.occ.BRepBuilderAPI_MakeFace_22(
+                    faces[faces.length - 1], currentWire);
+                faces.push(faceBuilder.Face());
+                faceBuilder.delete();
+            } else {
+                const faceBuilder = new this.occ.BRepBuilderAPI_MakeFace_15(currentWire, planar);
+                faces.push(faceBuilder.Face());
+                faceBuilder.delete();
+            }
+
+        });
+        if (faces.length > 0) {
+            face = faces.pop();
+            faces.forEach(f => f.delete());
+        }
+        return face;
+    }
+
     bRepBuilderAPIMakeFaceFromWire(wire: TopoDS_Wire, planar: boolean): TopoDS_Face {
         const faceMaker = new this.occ.BRepBuilderAPI_MakeFace_15(wire, planar);
         const face = faceMaker.Face();
@@ -352,10 +362,10 @@ export class OccHelper {
     }
 
     getEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Edge[] {
-        if (inputs.shape && this.getShapeTypeEnum(inputs.shape) === shapeTypeEnum.edge) {
+        if (inputs.shape && this.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.edge) {
             return [inputs.shape];
         }
-        if (!inputs.shape || this.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.wire || inputs.shape.IsNull()) {
+        if (!inputs.shape || (this.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.vertex) || inputs.shape.IsNull()) {
             throw (new Error("Shape is not provided or is of incorrect type"));
         }
         const edges: TopoDS_Edge[] = [];
@@ -549,27 +559,27 @@ export class OccHelper {
         return result;
     }
 
-    getShapeTypeEnum(shape: TopoDS_Shape): shapeTypeEnum {
-        let result = shapeTypeEnum.unknown;
+    getShapeTypeEnum(shape: TopoDS_Shape): Inputs.OCCT.shapeTypeEnum {
+        let result = Inputs.OCCT.shapeTypeEnum.unknown;
         const st = shape.ShapeType();
         if (st === this.occ.TopAbs_ShapeEnum.TopAbs_EDGE) {
-            result = shapeTypeEnum.edge;
+            result = Inputs.OCCT.shapeTypeEnum.edge;
         } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_WIRE) {
-            result = shapeTypeEnum.wire;
+            result = Inputs.OCCT.shapeTypeEnum.wire;
         } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_VERTEX) {
-            result = shapeTypeEnum.vertex;
+            result = Inputs.OCCT.shapeTypeEnum.vertex;
         } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_SOLID) {
-            result = shapeTypeEnum.solid;
+            result = Inputs.OCCT.shapeTypeEnum.solid;
         } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_SHELL) {
-            result = shapeTypeEnum.shell;
+            result = Inputs.OCCT.shapeTypeEnum.shell;
         } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_FACE) {
-            result = shapeTypeEnum.face;
+            result = Inputs.OCCT.shapeTypeEnum.face;
         } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_COMPSOLID) {
-            result = shapeTypeEnum.compSolid;
+            result = Inputs.OCCT.shapeTypeEnum.compSolid;
         } else if (st === this.occ.TopAbs_ShapeEnum.TopAbs_COMPOUND) {
-            result = shapeTypeEnum.compound;
+            result = Inputs.OCCT.shapeTypeEnum.compound;
         } else {
-            result = shapeTypeEnum.shape;
+            result = Inputs.OCCT.shapeTypeEnum.shape;
         }
         return result;
     }
@@ -1085,7 +1095,7 @@ export class OccHelper {
 
     getNumSolidsInCompound(shape: TopoDS_Shape): number {
         if (!shape ||
-            this.getShapeTypeEnum(shape) !== shapeTypeEnum.compound ||
+            this.getShapeTypeEnum(shape) !== Inputs.OCCT.shapeTypeEnum.compound ||
             shape.IsNull()
         ) {
             throw new Error("Shape is not a compound or is null.");
@@ -1136,6 +1146,10 @@ export class OccHelper {
             wires.push(myWire);
         });
         return wires;
+    }
+
+    getWireCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): Base.Point3 {
+        return this.getLinearCenterOfMass(inputs);
     }
 
     forEachWire(shape: TopoDS_Shape, callback: (index: number, wire: TopoDS_Wire) => void): void {
@@ -1309,7 +1323,7 @@ export class OccHelper {
 
     filletEdges(inputs: Inputs.OCCT.FilletDto<TopoDS_Shape>) {
         if (!inputs.indexes || (inputs.indexes.length && inputs.indexes.length === 0)) {
-            if(inputs.radius === undefined) {
+            if (inputs.radius === undefined) {
                 throw (Error("Radius not defined"));
             }
             const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
@@ -1346,7 +1360,7 @@ export class OccHelper {
                         radius = inputs.radiusList[radiusIndex];
                         radiusIndex++;
                     }
-                    if(radius === undefined) {
+                    if (radius === undefined) {
                         throw (Error("Radius not defined, or radiusList not correct length"));
                     }
                     mkFillet.Add_2(radius, edge);
@@ -1370,9 +1384,9 @@ export class OccHelper {
     fillet3DWire(inputs: Inputs.OCCT.Fillet3DWireDto<TopoDS_Wire>) {
         const extrusion = this.extrude({ shape: inputs.shape, direction: inputs.direction });
         const filletShape = this.filletEdges({ shape: extrusion, radius: inputs.radius, indexes: inputs.indexes, radiusList: inputs.radiusList }) as TopoDS_Shape;
-        const faceEdges:TopoDS_Edge[] = [];
-        this.getFaces({shape: filletShape}).forEach(f => {
-            const firstEdge = this.getEdges({shape: f})[0];
+        const faceEdges: TopoDS_Edge[] = [];
+        this.getFaces({ shape: filletShape }).forEach(f => {
+            const firstEdge = this.getEdges({ shape: f })[0];
             faceEdges.push(firstEdge);
         });
         const result = this.combineEdgesAndWiresIntoAWire({ shapes: faceEdges });
@@ -1380,6 +1394,13 @@ export class OccHelper {
         filletShape.delete();
         faceEdges.forEach(e => e.delete());
         return result;
+    }
+
+    createWireFromEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): TopoDS_Wire {
+        const makeWire = new this.occ.BRepBuilderAPI_MakeWire_2(inputs.shape);
+        const wire = makeWire.Wire();
+        makeWire.delete();
+        return wire;
     }
 
     combineEdgesAndWiresIntoAWire(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge | TopoDS_Wire>): TopoDS_Wire {

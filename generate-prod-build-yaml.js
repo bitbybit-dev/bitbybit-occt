@@ -38,7 +38,7 @@ async function start() {
         "TopoDS_Builder",
         "TopoDS_Iterator",
         "BRepBuilderAPI_MakeShape",
-        "BRepBuilderAPI_ModifyShape",
+        "BRepBuilderAPI_ModifyFace",
         "BRepPrimAPI_MakeSweep",
         "BRepPrimAPI_MakeOneAxis",
         "BRepAlgoAPI_BooleanOperation",

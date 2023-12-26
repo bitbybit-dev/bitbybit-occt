@@ -1,5 +1,5 @@
 import { GeomAbs_Shape, Geom_Surface, OpenCascadeInstance, TopoDS_Face, TopoDS_Shape, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
-import { OccHelper, shapeTypeEnum, typeSpecificityEnum } from "../../occ-helper";
+import { OccHelper, typeSpecificityEnum } from "../../occ-helper";
 import * as Inputs from "../../api/inputs/inputs";
 import { Base } from "../../api/inputs/inputs";
 
@@ -13,7 +13,7 @@ export class OCCTFace {
 
     createFaceFromWire(inputs: Inputs.OCCT.FaceFromWireDto<TopoDS_Wire>): TopoDS_Face {
         let result: TopoDS_Face;
-        if (this.och.getShapeTypeEnum(inputs.shape) !== shapeTypeEnum.wire) {
+        if (this.och.getShapeTypeEnum(inputs.shape) !== Inputs.OCCT.shapeTypeEnum.wire) {
             throw new Error("Provided input shape is not a wire");
         }
         if (inputs.planar) {
@@ -30,7 +30,7 @@ export class OCCTFace {
             const TolAng = 0.01;
             const TolCurv = 0.1;
             const MaxDeg = 8;
-            const MaxSegments = 9;	
+            const MaxSegments = 9;
 
             const bs = new this.occ.BRepFill_Filling(Degree, NbPtsOnCur, NbIter, Anisotropie, Tol2d, Tol3d, TolAng, TolCurv, MaxDeg, MaxSegments);
             const edges = this.och.getEdges(inputs);
@@ -46,6 +46,11 @@ export class OCCTFace {
             edges.forEach(e => e.delete());
         }
 
+        return result;
+    }
+
+    createFaceFromWires(inputs: Inputs.OCCT.FacesFromWiresDto<TopoDS_Wire>): TopoDS_Face {
+        const result = this.och.bRepBuilderAPIMakeFaceFromWires(inputs.shapes, inputs.planar);
         return result;
     }
 
@@ -67,7 +72,7 @@ export class OCCTFace {
     }
 
     faceFromSurfaceAndWire(inputs: Inputs.OCCT.FaceFromSurfaceAndWireDto<Geom_Surface | TopoDS_Wire, undefined>) {
-        if(inputs.shapes === undefined || inputs.shapes.length < 2) {
+        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
             throw (Error(("Shapes needs to be an array of length 2")));
         }
         const face = this.och.bRepBuilderAPIMakeFaceFromSurfaceAndWire(inputs.shapes[0] as Geom_Surface, inputs.shapes[1] as TopoDS_Wire, inputs.inside) as TopoDS_Face;
@@ -104,7 +109,7 @@ export class OCCTFace {
     }
 
     subdivideToPointsControlled(inputs: Inputs.OCCT.FaceSubdivisionControlledDto<TopoDS_Face>): Base.Point3[] {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -151,7 +156,7 @@ export class OCCTFace {
     }
 
     subdivideToPoints(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point3[] {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -188,7 +193,7 @@ export class OCCTFace {
     }
 
     subdivideToNormals(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point3[] {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -226,7 +231,7 @@ export class OCCTFace {
     }
 
     subdivideToPointsOnParam(inputs: Inputs.OCCT.FaceLinearSubdivisionDto<TopoDS_Face>): Base.Point3[] {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -272,7 +277,7 @@ export class OCCTFace {
     }
 
     subdivideToUVOnParam(inputs: Inputs.OCCT.FaceLinearSubdivisionDto<TopoDS_Face>): Base.Point2[] {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -312,7 +317,7 @@ export class OCCTFace {
     }
 
     subdivideToUV(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point2[] {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -343,7 +348,7 @@ export class OCCTFace {
     }
 
     uvOnFace(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Point2 {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -354,7 +359,7 @@ export class OCCTFace {
     }
 
     pointsOnUVs(inputs: Inputs.OCCT.DataOnUVsDto<TopoDS_Face>): Base.Point3[] {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -375,7 +380,7 @@ export class OCCTFace {
     }
 
     normalsOnUVs(inputs: Inputs.OCCT.DataOnUVsDto<TopoDS_Face>): Base.Vector3[] {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -395,7 +400,7 @@ export class OCCTFace {
     }
 
     pointOnUV(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Point3 {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -413,7 +418,7 @@ export class OCCTFace {
     }
 
     normalOnUV(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Vector3 {
-        if(inputs.shape === undefined) {
+        if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
         const face = inputs.shape;
@@ -453,8 +458,14 @@ export class OCCTFace {
     }
 
     getFace(inputs: Inputs.OCCT.ShapeIndexDto<TopoDS_Shape>): TopoDS_Face {
-        if (!inputs.shape || this.och.getShapeTypeEnum(inputs.shape) < shapeTypeEnum.shell || inputs.shape.IsNull()) {
-            throw (new Error("Shape is not provided or is of incorrect type"));
+        if (!inputs.shape || inputs.shape.IsNull()) {
+            throw new Error("Shape is not provided or is null");
+        }
+        const shapeType = this.och.getShapeTypeEnum(inputs.shape);
+        if (shapeType === Inputs.OCCT.shapeTypeEnum.wire ||
+            shapeType === Inputs.OCCT.shapeTypeEnum.edge ||
+            shapeType === Inputs.OCCT.shapeTypeEnum.vertex) {
+            throw (new Error("Shape is of incorrect type"));
         }
         if (!inputs.index) { inputs.index = 0; }
         let innerFace = {}; let facesFound = 0;

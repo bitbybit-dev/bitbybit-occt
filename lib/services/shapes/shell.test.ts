@@ -1,5 +1,6 @@
 import initOpenCascade, { OpenCascadeInstance } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
-import { OccHelper, shapeTypeEnum } from "../../occ-helper";
+import { OccHelper } from "../../occ-helper";
+import * as Inputs from "../../api/inputs/inputs";
 import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
 import { OCCTFace } from "./face";
@@ -25,7 +26,7 @@ describe("OCCT shell unit tests", () => {
         const f2 = face.createSquareFace({ size: 1, center: [0, 0, 1], direction: [0, 1, 0] });
         const s = shell.sewFaces({ shapes: [f1, f2], tolerance: 1e-7 });
         const area = shell.getShellSurfaceArea({ shape: s });
-        expect(occHelper.getShapeTypeEnum(s)).toBe(shapeTypeEnum.shell);
+        expect(occHelper.getShapeTypeEnum(s)).toBe(Inputs.OCCT.shapeTypeEnum.shell);
         expect(area).toBe(2);
         f1.delete();
         f2.delete();
@@ -47,7 +48,7 @@ describe("OCCT shell unit tests", () => {
         const f2 = face.createSquareFace({ size: 1, center: [0, 0, 1.6], direction: [0, 1, 0] });
         const s = shell.sewFaces({ shapes: [f1, f2], tolerance: 1e-7 });
         const area = shell.getShellSurfaceArea({ shape: s });
-        expect(occHelper.getShapeTypeEnum(s)).toBe(shapeTypeEnum.compound);
+        expect(occHelper.getShapeTypeEnum(s)).toBe(Inputs.OCCT.shapeTypeEnum.compound);
         expect(area).toBe(2);
         f1.delete();
         f2.delete();
@@ -59,7 +60,7 @@ describe("OCCT shell unit tests", () => {
         const f2 = face.createSquareFace({ size: 1, center: [0, 0, 1 + 1e-7], direction: [0, 1, 0] });
         const s = shell.sewFaces({ shapes: [f1, f2], tolerance: 1e-7 });
         const area = shell.getShellSurfaceArea({ shape: s });
-        expect(occHelper.getShapeTypeEnum(s)).toBe(shapeTypeEnum.compound);
+        expect(occHelper.getShapeTypeEnum(s)).toBe(Inputs.OCCT.shapeTypeEnum.compound);
         expect(area).toBe(2);
         f1.delete();
         f2.delete();

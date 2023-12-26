@@ -5,3 +5,4 @@ export * from "./shapes";
 export * from "./shell";
 export * from "./solid";
 export * from "./wire";
+export * from "./shapes";

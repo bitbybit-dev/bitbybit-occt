@@ -7,12 +7,14 @@ import { ShapesHelperService } from "../../api/shapes-helper.service";
 import * as Inputs from "../../api/inputs/inputs";
 import { OCCTFace } from "./face";
 import { TopoDS_Compound } from "dist";
+import { OCCTShape } from "./shape";
 
 describe("OCCT wire unit tests", () => {
     let occt: OpenCascadeInstance;
     let wire: OCCTWire;
     let edge: OCCTEdge;
     let face: OCCTFace;
+    let shape: OCCTShape;
     let occHelper: OccHelper;
 
     beforeAll(async () => {
@@ -23,6 +25,7 @@ describe("OCCT wire unit tests", () => {
         edge = new OCCTEdge(occt, occHelper);
         wire = new OCCTWire(occt, occHelper);
         face = new OCCTFace(occt, occHelper);
+        shape = new OCCTShape(occt, occHelper);
     });
 
     it("should create a circle edge of the right radius and it will mach the length", async () => {
@@ -510,18 +513,18 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should throw error if shape is undefined", async () => {
-        expect(() => wire.getWire({ shape: undefined, index: 0 })).toThrowError("Shape is not provided or is of incorrect type");
+        expect(() => wire.getWire({ shape: undefined, index: 0 })).toThrowError("Shape is not provided or is null");
     });
 
     it("should throw error if shape is of incorrect type", async () => {
         const b = edge.createCircleEdge({ radius: 5, center: [0, 0, 0], direction: [0, 0, 1] });
-        expect(() => wire.getWire({ shape: b, index: 0 })).toThrowError("Shape is not provided or is of incorrect type");
+        expect(() => wire.getWire({ shape: b, index: 0 })).toThrowError("Shape is of incorrect type");
         b.delete();
     });
 
     it("should throw error if innerWire not found", async () => {
         const rect = wire.createRectangleWire({ width: 10, length: 10, center: [0, 0, 0], direction: [0, 1, 0] });
-        expect(() => wire.getWire({ shape: rect, index: 10 })).toThrowError("Wire not found");
+        expect(() => wire.getWire({ shape: rect, index: 10 })).toThrowError("Shape is of incorrect type");
     });
 
     it("should get start point on a wire", async () => {
@@ -1153,5 +1156,71 @@ describe("OCCT wire unit tests", () => {
         projected.forEach(p => p.delete());
         wires.forEach(w => w.delete());
     });
+
+    it("should create wire from edge", () => {
+        const e = edge.createCircleEdge({
+            radius: 1,
+            center: [0, 0, 0],
+            direction: [0, 1, 0],
+        });
+        const w = wire.createWireFromEdge({
+            shape: e
+        });
+        const type = shape.getShapeType({ shape: w });
+        expect(type).toBe(Inputs.OCCT.shapeTypeEnum.wire);
+    });
+
+    it("should get a center of mass from a circular wire", () => {
+        const w = wire.createCircleWire({
+            radius: 1,
+            center: [0, 1, 0.5],
+            direction: [0, 1, 0]
+        });
+        const center = wire.getWireCenterOfMass({
+            shape: w
+        });
+        expect(center[0]).toBeCloseTo(0);
+        expect(center[1]).toBeCloseTo(1);
+        expect(center[2]).toBeCloseTo(0.5);
+    });
+
+    it("should get a center of mass from a bspline", () => {
+        const w = wire.createBSpline({
+            points: [[0, 0, 0], [0, 0, 1], [1, 1, 0], [1, 0, 1]],
+            closed: false
+        });
+        const center = wire.getWireCenterOfMass({
+            shape: w
+        });
+        expect(center[0]).toBe(0.5927437729817302);
+        expect(center[1]).toBe(0.392179685881662);
+        expect(center[2]).toBe(0.48928161123208896);
+    });
+
+    it("should get centers of mass from two wires", () => {
+        const w1 = wire.createCircleWire({
+            radius: 1,
+            center: [0, 1, 0.5],
+            direction: [0, 1, 0]
+        });
+        const w2 = wire.createEllipseWire({
+            radiusMajor: 1,
+            radiusMinor: 0.5,
+            center: [0, 2, 1],
+            direction: [0, 1, 0]
+        });
+        const centers = wire.getWiresCentersOfMass({
+            shapes: [w1, w2]
+        });
+        expect(centers[0][0]).toBeCloseTo(0);
+        expect(centers[0][1]).toBeCloseTo(1);
+        expect(centers[0][2]).toBeCloseTo(0.5);
+
+        expect(centers[1][0]).toBeCloseTo(0);
+        expect(centers[1][1]).toBeCloseTo(2);
+        expect(centers[1][2]).toBeCloseTo(1);
+    });
+
+
 });
 

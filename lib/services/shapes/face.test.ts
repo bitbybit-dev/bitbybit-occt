@@ -795,7 +795,7 @@ describe("OCCT face unit tests", () => {
 
     it("should not get a face of a shape that does not have faces", async () => {
         const d = occHelper.lineEdge({ start: [0, 0, 0], end: [1, 1, 1] });
-        expect(() => face.getFace({ shape: d, index: 22 })).toThrowError("Shape is not provided or is of incorrect type");
+        expect(() => face.getFace({ shape: d, index: 22 })).toThrowError("Shape is of incorrect type");
         d.delete();
     });
 
@@ -856,13 +856,29 @@ describe("OCCT face unit tests", () => {
         f2.delete();
     });
 
-
     it("should get face center of mass", async () => {
         const f1 = face.createRectangleFace({ center: [0, 1, 0], width: 2, length: 1, direction: [0, 1, 0] });
         const center = face.getFaceCenterOfMass({ shape: f1 });
         expect(center).toEqual(
             [2.0816681711721685e-17, 1, -8.023096076392733e-18],
         );
+        f1.delete();
+    });
+
+    it("should create a face from wires", async () => {
+        const circle1 = wire.createCircleWire({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = wire.createCircleWire({ radius: 0.2, center: [0, 0, 0.3], direction: [0, 1, 0] });
+        const reverse2 = wire.reversedWire({ shape: circle2 });
+        const circle3 = wire.createCircleWire({ radius: 0.1, center: [0, 0, -0.15], direction: [0, 1, 0] });
+        const reverse3 = wire.reversedWire({ shape: circle3 });
+        const f1 = face.createFaceFromWires({ shapes: [circle1, reverse2, reverse3], planar: true });
+        const area = face.getFaceArea({ shape: f1 });
+        expect(area).toBe(2.984513020910302);
+        circle1.delete();
+        circle2.delete();
+        circle3.delete();
+        reverse2.delete();
+        reverse3.delete();
         f1.delete();
     });
 });

@@ -1,5 +1,6 @@
 import initOpenCascade, { OpenCascadeInstance } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
-import { OccHelper, shapeTypeEnum } from "../../occ-helper";
+import { OccHelper } from "../../occ-helper";
+import * as Inputs from "../../api/inputs/inputs";
 import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
 import { OCCTFace } from "./face";
@@ -31,7 +32,7 @@ describe("OCCT solid unit tests", () => {
         const faces = face.getFaces({ shape: box });
         const s = shell.sewFaces({ shapes: faces, tolerance: 1e-7 });
         const so = solid.fromClosedShell({ shape: s });
-        expect(occHelper.getShapeTypeEnum(so)).toBe(shapeTypeEnum.solid);
+        expect(occHelper.getShapeTypeEnum(so)).toBe(Inputs.OCCT.shapeTypeEnum.solid);
         expect(solid.getSolidVolume({ shape: so })).toBeCloseTo(8);
         box.delete();
         s.delete();
