@@ -3061,7 +3061,79 @@ export namespace OCCT {
          */
         sense = false;
     }
-
+    export class ChristmasTreeDto {
+        /**
+         * Height of the tree
+         * @default 6
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        height = 6;
+        /**
+         * Inner distance of the branches on the bottom of the tree
+         * @default 1.5
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        innerDist = 1.5;
+        /**
+         * Outer distance of the branches on the bottom of the tree
+         * @default 3
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        outerDist = 3;
+        /**
+         * Number of skirts on the tree (triangle like shapes)
+         * @default 5
+         * @minimum 1
+         * @maximum Infinity
+         * @step 1
+         */
+        nrSkirts = 5;
+        /**
+         * Trunk height
+         * @default 1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        trunkHeight = 1;
+        /**
+         * Trunk width only applies if trunk height is more than 0
+         * @default 1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        trunkWidth = 1;
+        /**
+         * Indicates wether only a half of the tree should be created
+         * @default false
+         */
+        half = false;
+        /**
+         * Rotation of the tree
+         * @default 0
+         * @minimum 0
+         * @maximum Infinity
+         * @step 15
+         */
+        rotation = 0;
+        /**
+         * Origin of the tree
+         * @default [0, 0, 0]
+         */
+        origin: Base.Point3 = [0, 0, 0];
+        /**
+         * Direction of the tree
+         * @default [0, 1, 0]
+         */
+        direction: Base.Vector3 = [0, 1, 0];
+    }
     export class StarDto {
         /**
          * Center of the circle
@@ -3097,6 +3169,14 @@ export namespace OCCT {
          * @step 0.1
          */
         innerRadius: number;
+        /**
+         * Offsets outer edge cornerners along the direction vector
+         * @default 0
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 0.1
+         */
+        offsetOuterEdges?: number;
         /**
          * Construct half of the star
          * @default false

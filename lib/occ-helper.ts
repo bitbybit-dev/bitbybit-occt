@@ -685,8 +685,73 @@ export class OccHelper {
         });
     }
 
+    createChristmasTreeWire(inputs: Inputs.OCCT.ChristmasTreeDto) {
+        const frameInner = this.createLineWire({
+            start: [inputs.innerDist, 0, 0],
+            end: [0, inputs.height, 0],
+        });
+
+        const frameOuter = this.createLineWire({
+            start: [inputs.outerDist, 0, 0],
+            end: [0, inputs.height, 0],
+        });
+
+        const pointsOnInner = this.divideWireByEqualDistanceToPoints({
+            shape: frameInner,
+            nrOfDivisions: inputs.nrSkirts,
+            removeEndPoint: false,
+            removeStartPoint: false,
+        });
+
+        const pointsOnOuter = this.divideWireByEqualDistanceToPoints({
+            shape: frameOuter,
+            nrOfDivisions: inputs.nrSkirts,
+            removeEndPoint: false,
+            removeStartPoint: false,
+        });
+        const halfShapeTreePts: Base.Point3[] = [];
+        if (inputs.trunkWidth > 0 && inputs.trunkHeight > 0) {
+            halfShapeTreePts.push([0, -inputs.trunkHeight, 0]);
+            halfShapeTreePts.push([inputs.trunkWidth / 2, -inputs.trunkHeight, 0]);
+            halfShapeTreePts.push([inputs.trunkWidth / 2, 0, 0]);
+        } else {
+            halfShapeTreePts.push([0, 0, 0]);
+        }
+
+        pointsOnInner.forEach((pt, index) => {
+            const ptOnOuter = pointsOnOuter[index];
+            if (index === 0) {
+                halfShapeTreePts.push(ptOnOuter);
+            } else if (index !== 0 && index < pointsOnOuter.length - 1) {
+                halfShapeTreePts.push([pt[0], ptOnOuter[1] + ((inputs.height / inputs.nrSkirts) * 0.1), pt[2]]);
+                halfShapeTreePts.push(ptOnOuter);
+            } else {
+                halfShapeTreePts.push(pt);
+            }
+        });
+
+        if (!inputs.half) {
+            const secondHalf = halfShapeTreePts.map(pt => [-pt[0], pt[1], pt[2]] as Base.Point3);
+            secondHalf.pop();
+            halfShapeTreePts.push(...secondHalf.reverse());
+        }
+
+        let result;
+        if (inputs.trunkHeight > 0 && inputs.trunkWidth > 0) {
+            const offsetToTrunkHeight = halfShapeTreePts.map(pt => [pt[0], pt[1] + inputs.trunkHeight, pt[2]] as Base.Point3);
+            result = this.createPolylineWire({ points: offsetToTrunkHeight });
+        } else {
+            result = this.createPolylineWire({ points: halfShapeTreePts });
+        }
+
+        const rotated = this.rotate({ shape: result, angle: inputs.rotation, axis: [0, 1, 0] });
+        const aligned = this.alignAndTranslate({ shape: rotated, direction: inputs.direction, center: inputs.origin });
+
+        return aligned;
+    }
+
     createStarWire(inputs: Inputs.OCCT.StarDto) {
-        const lines = this.shapesHelperService.starLines(inputs.innerRadius, inputs.outerRadius, inputs.numRays, inputs.half);
+        const lines = this.shapesHelperService.starLines(inputs.innerRadius, inputs.outerRadius, inputs.numRays, inputs.half, inputs.offsetOuterEdges);
         const edges: TopoDS_Edge[] = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));

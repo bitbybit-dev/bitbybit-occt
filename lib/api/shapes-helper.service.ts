@@ -2,14 +2,15 @@ import { Base } from "./inputs";
 
 export class ShapesHelperService {
 
-    starLines(innerRadius: number, outerRadius: number, numRays: number, half: boolean):Base.Line3[] {
+    starLines(innerRadius: number, outerRadius: number, numRays: number, half: boolean, offsetOuterEdges: number):Base.Line3[] {
         let lines: Base.Line3[] = [];
         const angle_step = (2 * Math.PI) / numRays;
         for (let i = 0; i < numRays; i++) {
             const angle_i = i * angle_step;
+            const offset = offsetOuterEdges ? offsetOuterEdges : 0;
             const outer_point: Base.Point3 = [
                 outerRadius * Math.cos(angle_i),
-                0,
+                offset,
                 outerRadius * Math.sin(angle_i)
             ];
             const inner_point: Base.Point3 = [
@@ -19,7 +20,7 @@ export class ShapesHelperService {
             ];
             const next_outer_point: Base.Point3 = [
                 outerRadius * Math.cos(angle_i + angle_step),
-                0,
+                offset,
                 outerRadius * Math.sin(angle_i + angle_step)
             ];
             lines.push({ start: outer_point, end: inner_point });

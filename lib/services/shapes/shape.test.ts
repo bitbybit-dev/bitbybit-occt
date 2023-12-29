@@ -43,6 +43,7 @@ describe("OCCT shape unit tests", () => {
         cube.Nullify();
         const isNull = shape.isNull({ shape: cube });
         expect(isNull).toBe(true);
+        cube.delete();
     });
 
     it("should check whether shell shape is closed", async () => {
@@ -54,6 +55,9 @@ describe("OCCT shape unit tests", () => {
         });
         const res = shape.isClosed({ shape: shell1 });
         expect(res).toBe(true);
+        cube.delete();
+        shell1.delete();
+        faces.forEach(f => f.delete());
     });
 
     it("should check whether shell shape is open", async () => {
@@ -66,18 +70,23 @@ describe("OCCT shape unit tests", () => {
         });
         const res = shape.isClosed({ shape: shell1 });
         expect(res).toBe(false);
+        cube.delete();
+        shell1.delete();
+        faces.forEach(f => f.delete());
     });
 
     it("should check whether wire shape is closed", async () => {
         const circleWire = wire.createCircleWire({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
         const res = shape.isClosed({ shape: circleWire });
         expect(res).toBe(true);
+        circleWire.delete();
     });
 
     it("should check whether wire shape is open", async () => {
         const bspline = wire.createBSpline({ points: [[0, 0, 0], [1, 0, 1], [1, 0, 0], [0, 0, 1]], closed: false });
         const res = shape.isClosed({ shape: bspline });
         expect(res).toBe(false);
+        bspline.delete();
     });
 
     it("should check whether loft shape is marked as convex", async () => {
@@ -89,6 +98,10 @@ describe("OCCT shape unit tests", () => {
         loft.Convex_2(true);
         const res = shape.isConvex({ shape: loft });
         expect(res).toBe(true);
+        circle1.delete();
+        circle2.delete();
+        circle3.delete();
+        loft.delete();
     });
 
     it("should check whether loft shape is marked as convex", async () => {
@@ -100,6 +113,10 @@ describe("OCCT shape unit tests", () => {
         loft.Convex_2(false);
         const res = shape.isConvex({ shape: loft });
         expect(res).toBe(false);
+        circle1.delete();
+        circle2.delete();
+        circle3.delete();
+        loft.delete();
     });
 
     it("should check whether shape is marked as checked", async () => {
@@ -109,6 +126,7 @@ describe("OCCT shape unit tests", () => {
         cube.Checked_2(true);
         res = shape.isChecked({ shape: cube });
         expect(res).toBe(true);
+        cube.delete();
     });
 
     it("should check whether shape is marked as free", async () => {
@@ -118,12 +136,14 @@ describe("OCCT shape unit tests", () => {
         cube.Free_2(false);
         res = shape.isFree({ shape: cube });
         expect(res).toBe(false);
+        cube.delete();
     });
 
     it("should check whether shape is infinite", async () => {
         const cube = solid.createCube({ size: 1, center: [0, 0, 0] });
         const res = shape.isInfinite({ shape: cube });
         expect(res).toBe(false);
+        cube.delete();
     });
 
     it("should check whether shape is infinite", async () => {
@@ -139,6 +159,8 @@ describe("OCCT shape unit tests", () => {
         f.Infinite_2(true);
         const res = shape.isInfinite({ shape: f });
         expect(res).toBe(true);
+        cylSurface.delete();
+        f.delete();
     });
 
     it("should check whether shape is modified", async () => {
@@ -148,6 +170,7 @@ describe("OCCT shape unit tests", () => {
         cube.Modified_2(false);
         res = shape.isModified({ shape: cube });
         expect(res).toBe(false);
+        cube.delete();
     });
 
     it("should check whether shape is locked", async () => {
@@ -157,6 +180,7 @@ describe("OCCT shape unit tests", () => {
         cube.Locked_2(true);
         res = shape.isLocked({ shape: cube });
         expect(res).toBe(true);
+        cube.delete();
     });
 
     it("should check whether shapes are equal", async () => {
@@ -164,12 +188,15 @@ describe("OCCT shape unit tests", () => {
         const cube2 = solid.createCube({ size: 1, center: [0, 0, 0] });
         const res = shape.isEqual({ shape: cube1, otherShape: cube2 });
         expect(res).toBe(false);
+        cube1.delete();
+        cube2.delete();
     });
 
     it("should check whether shapes are equal", async () => {
         const cube1 = solid.createCube({ size: 1, center: [0, 0, 0] });
         const res = shape.isEqual({ shape: cube1, otherShape: cube1 });
         expect(res).toBe(true);
+        cube1.delete();
     });
 
     it("should check whether shapes are not equal", async () => {
@@ -177,12 +204,15 @@ describe("OCCT shape unit tests", () => {
         const cube2 = solid.createCube({ size: 1, center: [0, 0, 0] });
         const res = shape.isNotEqual({ shape: cube1, otherShape: cube2 });
         expect(res).toBe(true);
+        cube1.delete();
+        cube2.delete();
     });
 
     it("should check whether shapes are not equal", async () => {
         const cube1 = solid.createCube({ size: 1, center: [0, 0, 0] });
         const res = shape.isNotEqual({ shape: cube1, otherShape: cube1 });
         expect(res).toBe(false);
+        cube1.delete();
     });
 
     it("should check whether shapes are same", async () => {
@@ -190,6 +220,8 @@ describe("OCCT shape unit tests", () => {
         const cube2 = solid.createCube({ size: 1, center: [0, 0, 0] });
         const res = shape.isSame({ shape: cube1, otherShape: cube2 });
         expect(res).toBe(false);
+        cube1.delete();
+        cube2.delete();
     });
 
 
@@ -198,12 +230,15 @@ describe("OCCT shape unit tests", () => {
         const cube2 = solid.createCube({ size: 1, center: [0, 0, 0] });
         const res = shape.isPartner({ shape: cube1, otherShape: cube2 });
         expect(res).toBe(false);
+        cube1.delete();
+        cube2.delete();
     });
 
     it("should check whether shapes are the same", async () => {
         const cube1 = solid.createCube({ size: 1, center: [0, 0, 0] });
         const res = shape.isSame({ shape: cube1, otherShape: cube1 });
         expect(res).toBe(true);
+        cube1.delete();
     });
 
     it("should get forward orientation of the shape", async () => {
@@ -212,6 +247,7 @@ describe("OCCT shape unit tests", () => {
             shape: cube
         });
         expect(orientation).toBe(Inputs.OCCT.topAbsOrientationEnum.forward);
+        cube.delete();
     });
 
     it("should get reversed orientation of the shape", async () => {
@@ -221,6 +257,8 @@ describe("OCCT shape unit tests", () => {
             shape: rev
         });
         expect(orientation).toBe(Inputs.OCCT.topAbsOrientationEnum.reversed);
+        cube.delete();
+        rev.delete();
     });
 
     it("should get reversed orientation of the shape", async () => {
@@ -235,6 +273,7 @@ describe("OCCT shape unit tests", () => {
             shape: cube
         });
         expect(orientation2).toBe(Inputs.OCCT.topAbsOrientationEnum.external);
+        cube.delete();
     });
 
     it("should get shape type", async () => {
@@ -243,6 +282,7 @@ describe("OCCT shape unit tests", () => {
             shape: cube
         });
         expect(type).toBe(Inputs.OCCT.shapeTypeEnum.solid);
+        cube.delete();
     });
 
 });
