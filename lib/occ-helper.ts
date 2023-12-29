@@ -686,7 +686,7 @@ export class OccHelper {
     }
 
     createStarWire(inputs: Inputs.OCCT.StarDto) {
-        const lines = this.shapesHelperService.starLines(inputs.innerRadius, inputs.outerRadius, inputs.numRays, inputs.half);
+        const lines = this.shapesHelperService.starLines(inputs.innerRadius, inputs.outerRadius, inputs.numRays, inputs.half, inputs.offsetOuterEdges);
         const edges: TopoDS_Edge[] = [];
         lines.forEach(line => {
             edges.push(this.lineEdge(line));

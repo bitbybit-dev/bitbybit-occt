@@ -3098,6 +3098,14 @@ export namespace OCCT {
          */
         innerRadius: number;
         /**
+         * Offsets outer edge cornerners along the direction vector
+         * @default 0
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 0.1
+         */
+        offsetOuterEdges: number;
+        /**
          * Construct half of the star
          * @default false
          */
