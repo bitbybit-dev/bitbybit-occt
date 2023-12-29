@@ -7,9 +7,10 @@ export class ShapesHelperService {
         const angle_step = (2 * Math.PI) / numRays;
         for (let i = 0; i < numRays; i++) {
             const angle_i = i * angle_step;
+            const offset = offsetOuterEdges ? offsetOuterEdges : 0;
             const outer_point: Base.Point3 = [
                 outerRadius * Math.cos(angle_i),
-                offsetOuterEdges,
+                offset,
                 outerRadius * Math.sin(angle_i)
             ];
             const inner_point: Base.Point3 = [
@@ -19,7 +20,7 @@ export class ShapesHelperService {
             ];
             const next_outer_point: Base.Point3 = [
                 outerRadius * Math.cos(angle_i + angle_step),
-                offsetOuterEdges,
+                offset,
                 outerRadius * Math.sin(angle_i + angle_step)
             ];
             lines.push({ start: outer_point, end: inner_point });

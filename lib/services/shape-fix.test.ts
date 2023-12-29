@@ -37,6 +37,13 @@ describe("OCCT shape fix unit tests", () => {
         const result = shapeFix.basicShapeRepair({ shape: wire1, precision: 0.0001, minTolerance: 0.0001, maxTolerance: 0.0001 });
         const edges = edge.getEdges({ shape: result });
         expect(edges.length).toBe(2);
+        edge1.delete();
+        edge2.delete();
+        edge3.delete();
+        wire1.delete();
+        result.delete();
+        edgesOriginal.forEach(e => e.delete());
+        edges.forEach(e => e.delete());
     });
 
     it("should fix small edge on a wire", async () => {
@@ -51,6 +58,14 @@ describe("OCCT shape fix unit tests", () => {
         const result = shapeFix.fixSmallEdgeOnWire({ shape: wire1, lockvtx: false, precsmall: 0.000000000001 });
         const edges = edge.getEdges({ shape: result });
         expect(edges.length).toBe(2);
+
+        edge1.delete();
+        edge2.delete();
+        edge3.delete();
+        wire1.delete();
+        result.delete();
+        edgesOriginal.forEach(e => e.delete());
+        edges.forEach(e => e.delete());
     });
 
     it("should fix small edge on a wire with lockvtx set to true", async () => {
@@ -65,6 +80,15 @@ describe("OCCT shape fix unit tests", () => {
         const result = shapeFix.fixSmallEdgeOnWire({ shape: wire1, lockvtx: true, precsmall: 0.000000000001 });
         const edges = edge.getEdges({ shape: result });
         expect(edges.length).toBe(2);
+
+        edge1.delete();
+        edge2.delete();
+        edge3.delete();
+        wire1.delete();
+        result.delete();
+        edgesOriginal.forEach(e => e.delete());
+        edges.forEach(e => e.delete());
+
     });
 
     it("should not fix large enough edge on a wire", async () => {
@@ -79,6 +103,14 @@ describe("OCCT shape fix unit tests", () => {
         const result = shapeFix.fixSmallEdgeOnWire({ shape: wire1, lockvtx: false, precsmall: 1e-7 });
         const edges = edge.getEdges({ shape: result });
         expect(edges.length).toBe(3);
+
+        edge1.delete();
+        edge2.delete();
+        edge3.delete();
+        wire1.delete();
+        result.delete();
+        edgesOriginal.forEach(e => e.delete());
+        edges.forEach(e => e.delete());
     });
 });
 

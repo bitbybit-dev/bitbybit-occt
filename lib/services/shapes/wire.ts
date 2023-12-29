@@ -288,6 +288,10 @@ export class OCCTWire {
     createStarWire(inputs: Inputs.OCCT.StarDto): TopoDS_Wire {
         return this.och.createStarWire(inputs);
     }
+    
+    createChristmasTreeWire(inputs: Inputs.OCCT.ChristmasTreeDto): TopoDS_Wire {
+        return this.och.createChristmasTreeWire(inputs);
+    }
 
     createParallelogramWire(inputs: Inputs.OCCT.ParallelogramDto): TopoDS_Wire {
         return this.och.createParallelogramWire(inputs);

@@ -432,11 +432,21 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should create a star wire", async () => {
-        const w = wire.createStarWire({ numRays: 9, outerRadius: 5, innerRadius: 2, center: [0, 0, 0], direction: [0, 0, 1], half: false });
+        const w = wire.createStarWire({ numRays: 9, outerRadius: 5, innerRadius: 2, center: [0, 0, 0], direction: [0, 0, 1], half: false, offsetOuterEdges: 0 });
         const length = wire.getWireLength({ shape: w });
         const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: w });
         expect(cornerPoints.length).toBe(18);
         expect(length).toBe(57.5047112618376);
+        w.delete();
+    });
+
+    it("should create a christmas tree wire with default values", async () => {
+        const options = new Inputs.OCCT.ChristmasTreeDto();
+        const w = wire.createChristmasTreeWire(options);
+        const length = wire.getWireLength({ shape: w });
+        const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: w });
+        expect(cornerPoints.length).toBe(24);
+        expect(length).toBe(32.00472491530124);
         w.delete();
     });
 
