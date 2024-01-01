@@ -1,4 +1,4 @@
-import initOpenCascade, { OpenCascadeInstance, TopoDS_Face } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import initOpenCascade, { OpenCascadeInstance, TopoDS_Face, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper } from "../../occ-helper";
 import { OCCTWire } from "./wire";
 import { VectorHelperService } from "../../api/vector-helper.service";
@@ -863,6 +863,128 @@ describe("OCCT face unit tests", () => {
             [2.0816681711721685e-17, 1, -8.023096076392733e-18],
         );
         f1.delete();
+    });
+
+    it("should filter points in and on the face", async () => {
+        const hOpt = new OCCT.Heart2DDto();
+        const heartWire = wire.createHeartWire(hOpt);
+        const heartFace = face.createFaceFromWire({ shape: heartWire, planar: true });
+        const divOpt = new OCCT.FaceSubdivisionDto<TopoDS_Face>();
+        divOpt.shape = heartFace;
+        divOpt.nrDivisionsU = 5;
+        divOpt.nrDivisionsV = 5;
+        const divideFaceToPts = face.subdivideToPoints(divOpt);
+
+        const filterOpt = new OCCT.FilterFacePointsDto<TopoDS_Face>();
+        filterOpt.shape = heartFace;
+        filterOpt.points = divideFaceToPts;
+        const filteredPoints = face.filterFacePoints(filterOpt);
+        expect(filteredPoints.length).toBe(8);
+        expect(filteredPoints).toEqual(
+            [
+                [-2.20370219144301e-16, 0, -1],
+                [-2.20370219144301e-16, 0, -0.48991902935457365],
+                [-0.5711786039363733, 0, 0.020161941290852692],
+                [-2.20370219144301e-16, 0, 0.020161941290852692],
+                [0.5711786039363729, 0, 0.020161941290852692],
+                [-0.5711786039363733, 0, 0.530242911936279],
+                [-2.20370219144301e-16, 0, 0.530242911936279],
+                [0.5711786039363729, 0, 0.530242911936279]
+            ]
+        );
+        heartWire.delete();
+        heartFace.delete();
+    });
+
+    it("should filter points outside face", async () => {
+        const hOpt = new OCCT.Heart2DDto();
+        const heartWire = wire.createHeartWire(hOpt);
+        const heartFace = face.createFaceFromWire({ shape: heartWire, planar: true });
+        const divOpt = new OCCT.FaceSubdivisionDto<TopoDS_Face>();
+        divOpt.shape = heartFace;
+        divOpt.nrDivisionsU = 5;
+        divOpt.nrDivisionsV = 5;
+        const divideFaceToPts = face.subdivideToPoints(divOpt);
+
+        const filterOpt = new OCCT.FilterFacePointsDto<TopoDS_Face>();
+        filterOpt.shape = heartFace;
+        filterOpt.points = divideFaceToPts;
+        filterOpt.keepOut = true;
+        filterOpt.keepOn = false;
+        filterOpt.keepIn = false;
+        const filteredPoints = face.filterFacePoints(filterOpt);
+        expect(filteredPoints.length).toBe(17);
+        expect(filteredPoints).toEqual(
+            [
+                [-1.1423572078727464, 0, -1],
+                [-0.5711786039363733, 0, -1],
+                [0.5711786039363729, 0, -1],
+                [1.142357207872746, 0, -1],
+                [-1.1423572078727464, 0, -0.48991902935457365],
+                [-0.5711786039363733, 0, -0.48991902935457365],
+                [0.5711786039363729, 0, -0.48991902935457365],
+                [1.142357207872746, 0, -0.48991902935457365],
+                [-1.1423572078727464, 0, 0.020161941290852692],
+                [1.142357207872746, 0, 0.020161941290852692],
+                [-1.1423572078727464, 0, 0.530242911936279],
+                [1.142357207872746, 0, 0.530242911936279],
+                [-1.1423572078727464, 0, 1.0403238825817054],
+                [-0.5711786039363733, 0, 1.0403238825817054],
+                [-2.20370219144301e-16, 0, 1.0403238825817054],
+                [0.5711786039363729, 0, 1.0403238825817054],
+                [1.142357207872746, 0, 1.0403238825817054]
+            ]
+        );
+        heartWire.delete();
+        heartFace.delete();
+    });
+
+    it("should filter points on the edge of the face", async () => {
+        const hOpt = new OCCT.Heart2DDto();
+        const heartWire = wire.createHeartWire(hOpt);
+        const heartFace = face.createFaceFromWire({ shape: heartWire, planar: true });
+        const divOpt = new OCCT.DivideDto<TopoDS_Wire>(heartWire);
+        divOpt.removeStartPoint = true;
+        const wirePoints = wire.divideWireByParamsToPoints(divOpt);
+        const filterOpt = new OCCT.FilterFacePointsDto<TopoDS_Face>();
+        filterOpt.shape = heartFace;
+        filterOpt.points = wirePoints;
+        filterOpt.keepOn = true;
+        filterOpt.keepIn = true;
+        filterOpt.tolerance = 0.001;
+        filterOpt.gapTolerance = 0.1;
+        const filteredPoints = face.filterFacePoints(filterOpt);
+        console.log(filteredPoints);
+        expect(filteredPoints.length).toBe(10);
+        expect(filteredPoints).toEqual(
+            [
+                [0.5281025079658215, 0, 0.9967856920991937],
+                [0.9713657876933374, 0, 0.5598225652870827],
+                [0.8897981326850651, 0, -0.05771921248386577],
+                [0.4446309983867859, 0, -0.552394801549345],
+                [0, 0, -1],
+                [-0.4446309983867858, 0, -0.552394801549345],
+                [-0.8897981326850652, 0, -0.05771921248386558],
+                [-0.9713657876933373, 0, 0.5598225652870836],
+                [-0.528102507965821, 0, 0.9967856920991938],
+                [0, 0, 0.7]
+            ]
+        );
+        heartWire.delete();
+        heartFace.delete();
+    });
+
+    it("should not filter if provided points are empty", async () => {
+        const hOpt = new OCCT.Heart2DDto();
+        const heartWire = wire.createHeartWire(hOpt);
+        const heartFace = face.createFaceFromWire({ shape: heartWire, planar: true });
+        const filterOpt = new OCCT.FilterFacePointsDto<TopoDS_Face>();
+        filterOpt.shape = heartFace;
+        filterOpt.points = [];
+        const filteredPoints = face.filterFacePoints(filterOpt);
+        expect(filteredPoints.length).toBe(0);
+        heartWire.delete();
+        heartFace.delete();
     });
 
     it("should create a face from wires", async () => {

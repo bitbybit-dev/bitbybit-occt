@@ -1102,6 +1102,13 @@ export declare type TopAbs_Orientation = {
   TopAbs_EXTERNAL: {};
 }
 
+export declare type TopAbs_State = {
+  TopAbs_IN: {};
+  TopAbs_OUT: {};
+  TopAbs_ON: {};
+  TopAbs_UNKNOWN: {};
+}
+
 export declare class XCAFDoc_VisMaterialPBR {
   constructor()
   IsEqual(theOther: XCAFDoc_VisMaterialPBR): Standard_Boolean;
@@ -3358,6 +3365,69 @@ export declare class BRepGProp {
   static VolumePropertiesGK_2(S: TopoDS_Shape, VProps: GProp_GProps, thePln: gp_Pln, Eps: Standard_Real, OnlyClosed: Standard_Boolean, IsUseSpan: Standard_Boolean, CGFlag: Standard_Boolean, IFlag: Standard_Boolean, SkipShared: Standard_Boolean): Standard_Real;
   delete(): void;
 }
+
+export declare class BRepClass_FaceClassifier extends BRepClass_FClassifier {
+  Perform_1(theF: TopoDS_Face, theP: gp_Pnt2d, theTol: Standard_Real, theUseBndBox: Standard_Boolean, theGapCheckTol: Standard_Real): void;
+  Perform_2(theF: TopoDS_Face, theP: gp_Pnt, theTol: Standard_Real, theUseBndBox: Standard_Boolean, theGapCheckTol: Standard_Real): void;
+  delete(): void;
+}
+
+  export declare class BRepClass_FaceClassifier_1 extends BRepClass_FaceClassifier {
+    constructor();
+  }
+
+  export declare class BRepClass_FaceClassifier_2 extends BRepClass_FaceClassifier {
+    constructor(F: BRepClass_FaceExplorer, P: gp_Pnt2d, Tol: Standard_Real);
+  }
+
+  export declare class BRepClass_FaceClassifier_3 extends BRepClass_FaceClassifier {
+    constructor(theF: TopoDS_Face, theP: gp_Pnt2d, theTol: Standard_Real, theUseBndBox: Standard_Boolean, theGapCheckTol: Standard_Real);
+  }
+
+  export declare class BRepClass_FaceClassifier_4 extends BRepClass_FaceClassifier {
+    constructor(theF: TopoDS_Face, theP: gp_Pnt, theTol: Standard_Real, theUseBndBox: Standard_Boolean, theGapCheckTol: Standard_Real);
+  }
+
+export declare class BRepClass_Edge {
+  Edge_1(): TopoDS_Edge;
+  Edge_2(): TopoDS_Edge;
+  Face_1(): TopoDS_Face;
+  Face_2(): TopoDS_Face;
+  NextEdge(): TopoDS_Edge;
+  SetNextEdge(theMapVE: TopTools_IndexedDataMapOfShapeListOfShape): void;
+  MaxTolerance(): Standard_Real;
+  SetMaxTolerance(theValue: Standard_Real): void;
+  UseBndBox(): Standard_Boolean;
+  SetUseBndBox(theValue: Standard_Boolean): void;
+  delete(): void;
+}
+
+  export declare class BRepClass_Edge_1 extends BRepClass_Edge {
+    constructor();
+  }
+
+  export declare class BRepClass_Edge_2 extends BRepClass_Edge {
+    constructor(E: TopoDS_Edge, F: TopoDS_Face);
+  }
+
+export declare class BRepClass_FClassifier {
+  Perform(F: BRepClass_FaceExplorer, P: gp_Pnt2d, Tol: Standard_Real): void;
+  State(): TopAbs_State;
+  Rejected(): Standard_Boolean;
+  NoWires(): Standard_Boolean;
+  Edge(): BRepClass_Edge;
+  EdgeParameter(): Standard_Real;
+  Position(): IntRes2d_Position;
+  delete(): void;
+}
+
+  export declare class BRepClass_FClassifier_1 extends BRepClass_FClassifier {
+    constructor();
+  }
+
+  export declare class BRepClass_FClassifier_2 extends BRepClass_FClassifier {
+    constructor(F: BRepClass_FaceExplorer, P: gp_Pnt2d, Tol: Standard_Real);
+  }
 
 export declare type Extrema_ExtFlag = {
   Extrema_ExtFlag_MIN: {};
@@ -5880,6 +5950,86 @@ export declare class Message_ProgressRange {
 
   export declare class Message_ProgressRange_2 extends Message_ProgressRange {
     constructor(theOther: Message_ProgressRange);
+  }
+
+export declare class BRepClass3d_SClassifier {
+  Perform(S: BRepClass3d_SolidExplorer, P: gp_Pnt, Tol: Standard_Real): void;
+  PerformInfinitePoint(S: BRepClass3d_SolidExplorer, Tol: Standard_Real): void;
+  Rejected(): Standard_Boolean;
+  State(): TopAbs_State;
+  IsOnAFace(): Standard_Boolean;
+  Face(): TopoDS_Face;
+  delete(): void;
+}
+
+  export declare class BRepClass3d_SClassifier_1 extends BRepClass3d_SClassifier {
+    constructor();
+  }
+
+  export declare class BRepClass3d_SClassifier_2 extends BRepClass3d_SClassifier {
+    constructor(S: BRepClass3d_SolidExplorer, P: gp_Pnt, Tol: Standard_Real);
+  }
+
+export declare class BRepClass3d_SolidClassifier extends BRepClass3d_SClassifier {
+  Load(S: TopoDS_Shape): void;
+  Perform(P: gp_Pnt, Tol: Standard_Real): void;
+  PerformInfinitePoint(Tol: Standard_Real): void;
+  Destroy(): void;
+  delete(): void;
+}
+
+  export declare class BRepClass3d_SolidClassifier_1 extends BRepClass3d_SolidClassifier {
+    constructor();
+  }
+
+  export declare class BRepClass3d_SolidClassifier_2 extends BRepClass3d_SolidClassifier {
+    constructor(S: TopoDS_Shape);
+  }
+
+  export declare class BRepClass3d_SolidClassifier_3 extends BRepClass3d_SolidClassifier {
+    constructor(S: TopoDS_Shape, P: gp_Pnt, Tol: Standard_Real);
+  }
+
+export declare class BRepClass3d_SolidExplorer {
+  InitShape(S: TopoDS_Shape): void;
+  Reject(P: gp_Pnt): Standard_Boolean;
+  static FindAPointInTheFace_1(F: TopoDS_Face, P: gp_Pnt, Param: Standard_Real): Standard_Boolean;
+  static FindAPointInTheFace_2(F: TopoDS_Face, P: gp_Pnt, u: Standard_Real, v: Standard_Real, Param: Standard_Real): Standard_Boolean;
+  static FindAPointInTheFace_3(F: TopoDS_Face, P: gp_Pnt, u: Standard_Real, v: Standard_Real, Param: Standard_Real, theVecD1U: gp_Vec, theVecD1V: gp_Vec): Standard_Boolean;
+  static FindAPointInTheFace_4(F: TopoDS_Face, P: gp_Pnt, u: Standard_Real, v: Standard_Real): Standard_Boolean;
+  static FindAPointInTheFace_5(F: TopoDS_Face, P: gp_Pnt): Standard_Boolean;
+  static FindAPointInTheFace_6(F: TopoDS_Face, u: Standard_Real, v: Standard_Real): Standard_Boolean;
+  PointInTheFace_1(F: TopoDS_Face, P: gp_Pnt, u: Standard_Real, v: Standard_Real, Param: Standard_Real, Index: Graphic3d_ZLayerId): Standard_Boolean;
+  PointInTheFace_2(F: TopoDS_Face, P: gp_Pnt, u: Standard_Real, v: Standard_Real, Param: Standard_Real, Index: Graphic3d_ZLayerId, surf: Handle_BRepAdaptor_Surface, u1: Standard_Real, v1: Standard_Real, u2: Standard_Real, v2: Standard_Real): Standard_Boolean;
+  PointInTheFace_3(F: TopoDS_Face, P: gp_Pnt, u: Standard_Real, v: Standard_Real, Param: Standard_Real, Index: Graphic3d_ZLayerId, surf: Handle_BRepAdaptor_Surface, u1: Standard_Real, v1: Standard_Real, u2: Standard_Real, v2: Standard_Real, theVecD1U: gp_Vec, theVecD1V: gp_Vec): Standard_Boolean;
+  InitShell(): void;
+  MoreShell(): Standard_Boolean;
+  NextShell(): void;
+  CurrentShell(): TopoDS_Shell;
+  RejectShell(L: gp_Lin): Standard_Boolean;
+  InitFace(): void;
+  MoreFace(): Standard_Boolean;
+  NextFace(): void;
+  CurrentFace(): TopoDS_Face;
+  RejectFace(L: gp_Lin): Standard_Boolean;
+  Segment(P: gp_Pnt, L: gp_Lin, Par: Standard_Real): Graphic3d_ZLayerId;
+  OtherSegment(P: gp_Pnt, L: gp_Lin, Par: Standard_Real): Graphic3d_ZLayerId;
+  GetFaceSegmentIndex(): Graphic3d_ZLayerId;
+  DumpSegment(P: gp_Pnt, L: gp_Lin, Par: Standard_Real, S: TopAbs_State): void;
+  Box(): Bnd_Box;
+  GetShape(): TopoDS_Shape;
+  Intersector(F: TopoDS_Face): IntCurvesFace_Intersector;
+  GetMapEV(): TopTools_IndexedMapOfShape;
+  Destroy(): void;
+  delete(): void;
+}
+
+  export declare class BRepClass3d_SolidExplorer_1 extends BRepClass3d_SolidExplorer {
+    constructor();
+  }
+
+  export declare class BRepClass3d_SolidExplorer_2 extends BRepClass3d_SolidExplorer {
+    constructor(S: TopoDS_Shape);
   }
 
 export declare class GC_MakeEllipse extends GC_Root {
@@ -9076,6 +9226,7 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   ShapeFix_Edge: typeof ShapeFix_Edge;
   TopAbs_ShapeEnum: TopAbs_ShapeEnum;
   TopAbs_Orientation: TopAbs_Orientation;
+  TopAbs_State: TopAbs_State;
   XCAFDoc_VisMaterialPBR: typeof XCAFDoc_VisMaterialPBR;
   XCAFDoc_Material: typeof XCAFDoc_Material;
   XCAFDoc_Location: typeof XCAFDoc_Location;
@@ -9283,6 +9434,17 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   BRepGProp_Face_1: typeof BRepGProp_Face_1;
   BRepGProp_Face_2: typeof BRepGProp_Face_2;
   BRepGProp: typeof BRepGProp;
+  BRepClass_FaceClassifier: typeof BRepClass_FaceClassifier;
+  BRepClass_FaceClassifier_1: typeof BRepClass_FaceClassifier_1;
+  BRepClass_FaceClassifier_2: typeof BRepClass_FaceClassifier_2;
+  BRepClass_FaceClassifier_3: typeof BRepClass_FaceClassifier_3;
+  BRepClass_FaceClassifier_4: typeof BRepClass_FaceClassifier_4;
+  BRepClass_Edge: typeof BRepClass_Edge;
+  BRepClass_Edge_1: typeof BRepClass_Edge_1;
+  BRepClass_Edge_2: typeof BRepClass_Edge_2;
+  BRepClass_FClassifier: typeof BRepClass_FClassifier;
+  BRepClass_FClassifier_1: typeof BRepClass_FClassifier_1;
+  BRepClass_FClassifier_2: typeof BRepClass_FClassifier_2;
   Extrema_ExtFlag: Extrema_ExtFlag;
   Extrema_ExtAlgo: Extrema_ExtAlgo;
   Precision: typeof Precision;
@@ -9627,6 +9789,16 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   Message_ProgressRange: typeof Message_ProgressRange;
   Message_ProgressRange_1: typeof Message_ProgressRange_1;
   Message_ProgressRange_2: typeof Message_ProgressRange_2;
+  BRepClass3d_SClassifier: typeof BRepClass3d_SClassifier;
+  BRepClass3d_SClassifier_1: typeof BRepClass3d_SClassifier_1;
+  BRepClass3d_SClassifier_2: typeof BRepClass3d_SClassifier_2;
+  BRepClass3d_SolidClassifier: typeof BRepClass3d_SolidClassifier;
+  BRepClass3d_SolidClassifier_1: typeof BRepClass3d_SolidClassifier_1;
+  BRepClass3d_SolidClassifier_2: typeof BRepClass3d_SolidClassifier_2;
+  BRepClass3d_SolidClassifier_3: typeof BRepClass3d_SolidClassifier_3;
+  BRepClass3d_SolidExplorer: typeof BRepClass3d_SolidExplorer;
+  BRepClass3d_SolidExplorer_1: typeof BRepClass3d_SolidExplorer_1;
+  BRepClass3d_SolidExplorer_2: typeof BRepClass3d_SolidExplorer_2;
   GC_MakeEllipse: typeof GC_MakeEllipse;
   GC_MakeEllipse_1: typeof GC_MakeEllipse_1;
   GC_MakeEllipse_2: typeof GC_MakeEllipse_2;

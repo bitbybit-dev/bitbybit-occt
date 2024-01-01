@@ -1,4 +1,4 @@
-import initOpenCascade, { OpenCascadeInstance } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import initOpenCascade, { OpenCascadeInstance, TopoDS_Face, TopoDS_Solid } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper } from "../../occ-helper";
 import * as Inputs from "../../api/inputs/inputs";
 import { VectorHelperService } from "../../api/vector-helper.service";
@@ -149,5 +149,84 @@ describe("OCCT solid unit tests", () => {
         cone2.delete();
         cone3.delete();
         compundShape.delete();
+    });
+
+    it("should filter points in the solid", async () => {
+        const f1 = face.createRectangleFace({ width: 2, length: 2, center: [0, 0, 0], direction: [0, 1, 0] });
+        const subdOpt = new Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>(f1);
+        subdOpt.nrDivisionsU = 5;
+        subdOpt.nrDivisionsV = 5;
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const points = face.subdivideToPoints(subdOpt);
+        expect(points.length).toBe(25);
+        const filterOptions = new Inputs.OCCT.FilterSolidPointsDto<TopoDS_Solid>(sphere, points);
+        const filteredPoints = solid.filterSolidPoints(filterOptions);
+        expect(filteredPoints.length).toBe(13);
+        expect(filteredPoints).toEqual([
+            [0, 0, 1], [-0.5, 0, 0.5],
+            [0, 0, 0.5], [0.5, 0, 0.5],
+            [-1, 0, 0], [-0.5, 0, 0],
+            [0, 0, 0], [0.5, 0, 0],
+            [1, 0, 0], [-0.5, 0, -0.5],
+            [0, 0, -0.5], [0.5, 0, -0.5],
+            [0, 0, -1]
+        ]);
+        sphere.delete();
+        f1.delete();
+    });
+
+    it("should filter points outside the solid", async () => {
+        const f1 = face.createRectangleFace({ width: 2, length: 2, center: [0, 0, 0], direction: [0, 1, 0] });
+        const subdOpt = new Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>(f1);
+        subdOpt.nrDivisionsU = 5;
+        subdOpt.nrDivisionsV = 5;
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const points = face.subdivideToPoints(subdOpt);
+        expect(points.length).toBe(25);
+        const filterOptions = new Inputs.OCCT.FilterSolidPointsDto<TopoDS_Solid>(sphere, points);
+        filterOptions.keepIn = false;
+        filterOptions.keepOn = false;
+        filterOptions.keepOut = true;
+        const filteredPoints = solid.filterSolidPoints(filterOptions);
+        expect(filteredPoints.length).toBe(12);
+        expect(filteredPoints).toEqual([
+            [-1, 0, 1], [-0.5, 0, 1],
+            [0.5, 0, 1], [1, 0, 1],
+            [-1, 0, 0.5], [1, 0, 0.5],
+            [-1, 0, -0.5], [1, 0, -0.5],
+            [-1, 0, -1], [-0.5, 0, -1],
+            [0.5, 0, -1], [1, 0, -1]
+        ]);
+        sphere.delete();
+        f1.delete();
+    });
+
+    it("should filter points on the solid", async () => {
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const sphereFace = face.getFaces({ shape: sphere })[0];
+        const subdOpt = new Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>(sphereFace);
+        subdOpt.nrDivisionsU = 5;
+        subdOpt.nrDivisionsV = 5;
+        const points = face.subdivideToPoints(subdOpt);
+        expect(points.length).toBe(25);
+        const filterOptions = new Inputs.OCCT.FilterSolidPointsDto<TopoDS_Solid>(sphere, points);
+        filterOptions.keepIn = false;
+        filterOptions.keepOn = true;
+        filterOptions.keepOut = false;
+        const filteredPoints = solid.filterSolidPoints(filterOptions);
+        expect(filteredPoints.length).toBe(25);
+        sphere.delete();
+        sphereFace.delete();
+    });
+
+    it("should not filter points if input is empty", async () => {
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const filterOptions = new Inputs.OCCT.FilterSolidPointsDto<TopoDS_Solid>(sphere, []);
+        filterOptions.keepIn = false;
+        filterOptions.keepOn = true;
+        filterOptions.keepOut = false;
+        const filteredPoints = solid.filterSolidPoints(filterOptions);
+        expect(filteredPoints.length).toBe(0);
+        sphere.delete();
     });
 });

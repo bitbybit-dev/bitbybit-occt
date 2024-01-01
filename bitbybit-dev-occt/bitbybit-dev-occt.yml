@@ -31,6 +31,12 @@
       - symbol: BRepBuilderAPI_TransitionMode
       - symbol: BRepBuilderAPI_WireError
       - symbol: BRepCheck_Analyzer
+      - symbol: BRepClass3d_SClassifier
+      - symbol: BRepClass3d_SolidClassifier
+      - symbol: BRepClass3d_SolidExplorer
+      - symbol: BRepClass_Edge
+      - symbol: BRepClass_FClassifier
+      - symbol: BRepClass_FaceClassifier
       - symbol: BRepExtrema_DistShapeShape
       - symbol: BRepExtrema_DistanceSS
       - symbol: BRepExtrema_ElementFilter
@@ -241,6 +247,7 @@
       - symbol: TNaming_NamedShape
       - symbol: TopAbs_Orientation
       - symbol: TopAbs_ShapeEnum
+      - symbol: TopAbs_State
       - symbol: TopExp_Explorer
       - symbol: TopLoc_Location
       - symbol: TopOpeBRepTool

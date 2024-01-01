@@ -1,4 +1,4 @@
-import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, ChFi3d_FilletShape } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, ChFi3d_FilletShape, TopAbs_State } from "../bitbybit-dev-occt/bitbybit-dev-occt";
 import { VectorHelperService } from "./api/vector-helper.service";
 import { Base } from "./api/inputs/base-inputs";
 import * as Inputs from "./api/inputs/inputs";
@@ -487,6 +487,66 @@ export class OccHelper {
         return inputs.shapes.map(face => this.getFaceCenterOfMass({ shape: face }));
     }
 
+    filterFacePoints(inputs: Inputs.OCCT.FilterFacePointsDto<TopoDS_Face>): Base.Point3[] {
+        const points = [];
+        if (inputs.points.length > 0) {
+            const classifier = new this.occ.BRepClass_FaceClassifier_1();
+            inputs.points.forEach(pt => {
+                const gpPnt = this.gpPnt(pt);
+                classifier.Perform_2(inputs.shape, gpPnt, inputs.tolerance, inputs.useBndBox, inputs.gapTolerance);
+                const top = classifier.State();
+                const type = this.getTopAbsStateEnum(top);
+                if (inputs.keepOn && type === Inputs.OCCT.topAbsStateEnum.on) {
+                    points.push(pt);
+                }
+                if (inputs.keepIn && type === Inputs.OCCT.topAbsStateEnum.in) {
+                    points.push(pt);
+                }
+                if (inputs.keepOut && type === Inputs.OCCT.topAbsStateEnum.out) {
+                    points.push(pt);
+                }
+                if (inputs.keepUnknown && type === Inputs.OCCT.topAbsStateEnum.unknown) {
+                    points.push(pt);
+                }
+                gpPnt.delete();
+            });
+            classifier.delete();
+            return points;
+        } else {
+            return [];
+        }
+    }
+
+    filterSolidPoints(inputs: Inputs.OCCT.FilterSolidPointsDto<TopoDS_Face>): Base.Point3[] {
+        const points = [];
+        if (inputs.points.length > 0) {
+            const classifier = new this.occ.BRepClass3d_SolidClassifier_1();
+            classifier.Load(inputs.shape);
+            inputs.points.forEach(pt => {
+                const gpPnt = this.gpPnt(pt);
+                classifier.Perform(gpPnt, inputs.tolerance);
+                const top = classifier.State();
+                const type = this.getTopAbsStateEnum(top);
+                if (inputs.keepOn && type === Inputs.OCCT.topAbsStateEnum.on) {
+                    points.push(pt);
+                }
+                if (inputs.keepIn && type === Inputs.OCCT.topAbsStateEnum.in) {
+                    points.push(pt);
+                }
+                if (inputs.keepOut && type === Inputs.OCCT.topAbsStateEnum.out) {
+                    points.push(pt);
+                }
+                if (inputs.keepUnknown && type === Inputs.OCCT.topAbsStateEnum.unknown) {
+                    points.push(pt);
+                }
+                gpPnt.delete();
+            });
+            classifier.delete();
+            return points;
+        } else {
+            return [];
+        }
+    }
     getSolidVolume(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): number {
         const gprops = new this.occ.GProp_GProps_1();
         this.occ.BRepGProp.VolumeProperties_1(inputs.shape, gprops, true, false, false);
@@ -580,6 +640,20 @@ export class OccHelper {
             result = Inputs.OCCT.shapeTypeEnum.compound;
         } else {
             result = Inputs.OCCT.shapeTypeEnum.shape;
+        }
+        return result;
+    }
+
+    getTopAbsStateEnum(state: TopAbs_State): Inputs.OCCT.topAbsStateEnum {
+        let result = Inputs.OCCT.topAbsStateEnum.unknown;
+        if (state === this.occ.TopAbs_State.TopAbs_IN) {
+            result = Inputs.OCCT.topAbsStateEnum.in;
+        } else if (state === this.occ.TopAbs_State.TopAbs_OUT) {
+            result = Inputs.OCCT.topAbsStateEnum.out;
+        } else if (state === this.occ.TopAbs_State.TopAbs_ON) {
+            result = Inputs.OCCT.topAbsStateEnum.on;
+        } else {
+            result = Inputs.OCCT.topAbsStateEnum.unknown;
         }
         return result;
     }
