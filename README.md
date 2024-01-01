@@ -35,7 +35,7 @@ npm run test-c-l
 
 # Media Channels
 Discord: https://discord.gg/GSe3VMe  
-Youtube: https://www.youtube.com/channel/UCWM0VODRsLYOjB2IAaFHBSQ  
+Youtube: https://www.youtube.com/@bitbybitdev  
 Instagram: https://www.instagram.com/bitbybit.dev  
 Twitter: https://twitter.com/bitbybit_dev  
 LinkedIn: https://lnkd.in/gQjEQA2  

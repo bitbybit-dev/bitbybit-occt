@@ -507,4 +507,8 @@ export class OCCTFace {
     getFacesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Face>): Base.Point3[] {
         return this.och.getFacesCentersOfMass(inputs);
     }
+
+    filterFacePoints(inputs: Inputs.OCCT.FilterFacePointsDto<TopoDS_Face>): Base.Point3[] {
+        return this.och.filterFacePoints(inputs);
+    }
 }

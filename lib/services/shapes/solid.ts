@@ -91,4 +91,8 @@ export class OCCTSolid {
     getSolids(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Solid[] {
         return this.och.getSolids(inputs);
     }
+
+    filterSolidPoints(inputs: Inputs.OCCT.FilterSolidPointsDto<TopoDS_Solid>): Base.Point3[] {
+        return this.och.filterSolidPoints(inputs);
+    }
 }

@@ -47,6 +47,12 @@ export namespace OCCT {
         internal = "internal",
         external = "external"
     }
+    export enum topAbsStateEnum {
+        in = "in",
+        out = "out",
+        on = "on",
+        unknown = "unknown"
+    }
     export enum shapeTypeEnum {
         unknown = "unknown",
         vertex = "vertex",
@@ -443,8 +449,16 @@ export namespace OCCT {
         /**
           * Provide options without default values
           */
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, nrDivisionsU?: number, nrDivisionsV?: number, shiftHalfStepU?: boolean, removeStartEdgeU?: boolean, removeEndEdgeU?: boolean, shiftHalfStepV?: boolean, removeStartEdgeV?: boolean, removeEndEdgeV?: boolean) {
+            this.shape ??= shape;
+            this.nrDivisionsU ??= nrDivisionsU;
+            this.nrDivisionsV ??= nrDivisionsV;
+            this.shiftHalfStepU ??= shiftHalfStepU;
+            this.removeStartEdgeU ??= removeStartEdgeU;
+            this.removeEndEdgeU ??= removeEndEdgeU;
+            this.shiftHalfStepV ??= shiftHalfStepV;
+            this.removeStartEdgeV ??= removeStartEdgeV;
+            this.removeEndEdgeV ??= removeEndEdgeV;
         }
         /**
          * Brep OpenCascade geometry
@@ -1337,10 +1351,10 @@ export namespace OCCT {
     }
     export class DivideDto<T> {
         constructor(shape: T, nrOfDivisions?: number, removeStartPoint?: boolean, removeEndPoint?: boolean) {
-            this.shape = shape;
-            this.nrOfDivisions = nrOfDivisions;
-            this.removeStartPoint = removeStartPoint;
-            this.removeEndPoint = removeEndPoint;
+            this.shape ??= shape;
+            this.nrOfDivisions ??= nrOfDivisions;
+            this.removeStartPoint ??= removeStartPoint;
+            this.removeEndPoint ??= removeEndPoint;
         }
         /**
          * Shape representing a wire
@@ -2448,7 +2462,121 @@ export namespace OCCT {
          */
         center: Base.Vector3 = [0, 0, 0];
     }
-
+    export class FilterFacePointsDto<T>{
+        constructor(shape?: T, points?: Base.Point3[], tolerance?: number, useBndBox?: boolean, gapTolerance?: number, keepIn?: boolean, keepOn?: boolean, keepOut?: boolean, keepUnknown?: boolean) {
+            this.shape ??= shape;
+            this.points ??= points;
+            this.tolerance ??= tolerance;
+            this.useBndBox ??= useBndBox;
+            this.gapTolerance ??= gapTolerance;
+            this.keepIn ??= keepIn;
+            this.keepOn ??= keepOn;
+            this.keepOut ??= keepOut;
+            this.keepUnknown ??= keepUnknown;
+        }
+        /**
+         * Face that will be used to filter points
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Points to filter
+         * @default undefined
+         */
+        points: Base.Point3[];
+        /**
+         * Tolerance used for filter
+         * @default 1.0e-4
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.000001
+         */
+        tolerance = 1.0e-4;
+        /**
+        * If true, the bounding box will be used to prefilter the points so that there are less points to check on actual face.
+        * Recommended to enable if face has more than 10 edges and geometry is mostly spline.
+        * This might be faster, but if it is known that points are withing bounding box, this may not be faster.
+        * @default false
+        */
+        useBndBox = false;
+        /**
+         * Gap tolerance
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        gapTolerance = 0.1;
+        /**
+        * Return points that are inside the face
+        * @default true
+        */
+        keepIn = true;
+        /**
+        * Return points that are on the border of the face
+        * @default true
+        */
+        keepOn = true;
+        /**
+        * Return points that are outside the borders of the face
+        * @default false
+        */
+        keepOut = false;
+        /**
+        * Return points that are classified as unknown
+        * @default false
+        */
+        keepUnknown = false;
+    }
+    export class FilterSolidPointsDto<T>{
+        constructor(shape?: T, points?: Base.Point3[], tolerance?: number, keepIn?: boolean, keepOn?: boolean, keepOut?: boolean, keepUnknown?: boolean) {
+            this.shape ??= shape;
+            this.points ??= points;
+            this.tolerance ??= tolerance;
+            this.keepIn ??= keepIn;
+            this.keepOn ??= keepOn;
+            this.keepOut ??= keepOut;
+            this.keepUnknown ??= keepUnknown;
+        }
+        /**
+         * Face that will be used to filter points
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Points to filter
+         * @default undefined
+         */
+        points: Base.Point3[];
+        /**
+         * Tolerance used for filter
+         * @default 1.0e-4
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.000001
+         */
+        tolerance = 1.0e-4;
+        /**
+        * Return points that are inside the face
+        * @default true
+        */
+        keepIn = true;
+        /**
+        * Return points that are on the border of the face
+        * @default true
+        */
+        keepOn = true;
+        /**
+        * Return points that are outside the borders of the face
+        * @default false
+        */
+        keepOut = false;
+        /**
+        * Return points that are classified as unknown
+        * @default false
+        */
+        keepUnknown = false;
+    }
     export class AlignAndTranslateShapesDto<T>{
         constructor(shapes?: T[], directions?: Base.Vector3[], centers?: Base.Vector3[]) {
             this.shapes = shapes;
