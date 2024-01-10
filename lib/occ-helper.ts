@@ -723,7 +723,7 @@ export class OccHelper {
         const pt2: Base.Point3 = [-cw, 0, cl];
         const pt3: Base.Point3 = [-cw, 0, -cl];
         const pt4: Base.Point3 = [cw, 0, -cl];
-        const points = [pt1, pt2, pt3, pt4];
+        const points = [pt1, pt2, pt3, pt4].reverse();
         const wire = this.createPolygonWire({ points });
         const alignedWire = this.alignAndTranslate({ shape: wire, direction: inputs.direction, center: inputs.center });
         wire.delete();

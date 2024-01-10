@@ -849,7 +849,7 @@ describe("OCCT face unit tests", () => {
         const f2 = face.createCircleFace({ radius: 3, center: [0, 3, 3], direction: [0, 0, 1] });
         const centers = face.getFacesCentersOfMass({ shapes: [f1, f2] });
         expect(centers).toEqual([
-            [2.0816681711721685e-17, 1, -8.023096076392733e-18],
+            [2.0816681711721685e-17, 1, 8.023096076392733e-18],
             [4.440892098500626e-16, 2.9999999999999996, 3]
         ]);
         f1.delete();
@@ -860,7 +860,7 @@ describe("OCCT face unit tests", () => {
         const f1 = face.createRectangleFace({ center: [0, 1, 0], width: 2, length: 1, direction: [0, 1, 0] });
         const center = face.getFaceCenterOfMass({ shape: f1 });
         expect(center).toEqual(
-            [2.0816681711721685e-17, 1, -8.023096076392733e-18],
+            [2.0816681711721685e-17, 1, 8.023096076392733e-18],
         );
         f1.delete();
     });
@@ -954,7 +954,6 @@ describe("OCCT face unit tests", () => {
         filterOpt.tolerance = 0.001;
         filterOpt.gapTolerance = 0.1;
         const filteredPoints = face.filterFacePoints(filterOpt);
-        console.log(filteredPoints);
         expect(filteredPoints.length).toBe(10);
         expect(filteredPoints).toEqual(
             [

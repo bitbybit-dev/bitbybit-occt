@@ -163,13 +163,13 @@ describe("OCCT solid unit tests", () => {
         const filteredPoints = solid.filterSolidPoints(filterOptions);
         expect(filteredPoints.length).toBe(13);
         expect(filteredPoints).toEqual([
-            [0, 0, 1], [-0.5, 0, 0.5],
-            [0, 0, 0.5], [0.5, 0, 0.5],
-            [-1, 0, 0], [-0.5, 0, 0],
-            [0, 0, 0], [0.5, 0, 0],
-            [1, 0, 0], [-0.5, 0, -0.5],
-            [0, 0, -0.5], [0.5, 0, -0.5],
-            [0, 0, -1]
+            [ 0, 0, -1 ],   [ -0.5, 0, -0.5 ],
+            [ 0, 0, -0.5 ], [ 0.5, 0, -0.5 ],
+            [ -1, 0, 0 ],   [ -0.5, 0, 0 ],
+            [ 0, 0, 0 ],    [ 0.5, 0, 0 ],
+            [ 1, 0, 0 ],    [ -0.5, 0, 0.5 ],
+            [ 0, 0, 0.5 ],  [ 0.5, 0, 0.5 ],
+            [ 0, 0, 1 ]
         ]);
         sphere.delete();
         f1.delete();
@@ -190,12 +190,12 @@ describe("OCCT solid unit tests", () => {
         const filteredPoints = solid.filterSolidPoints(filterOptions);
         expect(filteredPoints.length).toBe(12);
         expect(filteredPoints).toEqual([
-            [-1, 0, 1], [-0.5, 0, 1],
-            [0.5, 0, 1], [1, 0, 1],
-            [-1, 0, 0.5], [1, 0, 0.5],
-            [-1, 0, -0.5], [1, 0, -0.5],
-            [-1, 0, -1], [-0.5, 0, -1],
-            [0.5, 0, -1], [1, 0, -1]
+            [ -1, 0, -1 ],   [ -0.5, 0, -1 ],
+            [ 0.5, 0, -1 ],  [ 1, 0, -1 ],
+            [ -1, 0, -0.5 ], [ 1, 0, -0.5 ],
+            [ -1, 0, 0.5 ],  [ 1, 0, 0.5 ],
+            [ -1, 0, 1 ],    [ -0.5, 0, 1 ],
+            [ 0.5, 0, 1 ],   [ 1, 0, 1 ]
         ]);
         sphere.delete();
         f1.delete();
