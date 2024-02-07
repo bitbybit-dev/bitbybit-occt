@@ -1,4 +1,4 @@
-import initOpenCascade, { OpenCascadeInstance, TopAbs_Orientation } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import initOpenCascade, { OpenCascadeInstance, TopAbs_Orientation, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper } from "../../occ-helper";
 import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
@@ -6,6 +6,7 @@ import { OCCTShape } from "./shape";
 import { OCCTSolid } from "./solid";
 import { OCCTFace } from "./face";
 import { OCCTWire } from "./wire";
+import { OCCTEdge } from "./edge";
 import { OCCTShell } from "./shell";
 import { OCCTOperations } from "../operations";
 import { OCCTSurfaces } from "../geom/surfaces";
@@ -18,6 +19,7 @@ describe("OCCT shape unit tests", () => {
     let solid: OCCTSolid;
     let face: OCCTFace;
     let wire: OCCTWire;
+    let edge: OCCTEdge;
     let shell: OCCTShell;
     let operations: OCCTOperations;
     let surfaces: OCCTSurfaces;
@@ -32,8 +34,36 @@ describe("OCCT shape unit tests", () => {
         face = new OCCTFace(occt, occHelper);
         shell = new OCCTShell(occt, occHelper);
         wire = new OCCTWire(occt, occHelper);
+        edge = new OCCTEdge(occt, occHelper);
         operations = new OCCTOperations(occt, occHelper);
         surfaces = new OCCTSurfaces(occt, occHelper);
+    });
+
+    it("should unify same domain", () => {
+        const square1 = wire.createSquareWire({ size: 2, center: [0, 0, 0], direction: [0, 1, 0] });
+        const square2 = wire.createSquareWire({ size: 3, center: [0, 0, 0], direction: [0, 1, 0] });
+        const square3 = wire.createSquareWire({ size: 4, center: [0, 0, 0], direction: [0, 1, 0] });
+        const loftOpt = new Inputs.OCCT.LoftAdvancedDto<TopoDS_Wire>();
+        loftOpt.shapes = [square1, square2, square3];
+        loftOpt.makeSolid = false;
+        loftOpt.straight = true;
+        const loft = operations.loftAdvanced(loftOpt);
+        const unified = shape.unifySameDomain({
+            shape: loft,
+            concatBSplines: true,
+            unifyEdges: true,
+            unifyFaces: true,
+        });
+        const edges = edge.getEdges({
+            shape: unified
+        });
+
+        const faces = face.getFaces({
+            shape: unified
+        });
+        expect(edges.length).toBe(8);
+        expect(faces.length).toBe(1);
+
     });
 
     it("should check whether shape is null", async () => {

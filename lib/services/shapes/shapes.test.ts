@@ -24,6 +24,7 @@ describe("OCCT face unit tests", () => {
         expect(shapes.face).toBeDefined();
         expect(shapes.solid).toBeDefined();
         expect(shapes.shell).toBeDefined();
+        expect(shapes.shape).toBeDefined();
     });
 
 });
