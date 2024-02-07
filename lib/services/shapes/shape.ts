@@ -10,6 +10,22 @@ export class OCCTShape {
     ) {
     }
 
+    purgeInternalEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Shape {
+        const purge = new this.occ.TopOpeBRepTool_PurgeInternalEdges(inputs.shape, true);
+        purge.Perform();
+        if (purge.IsDone()) {
+            return purge.Shape();
+        } else {
+            throw new Error("Could not purge internal edges for the shape");
+        }
+    }
+
+    unifySameDomain(inputs: Inputs.OCCT.UnifySameDomainDto<TopoDS_Shape>): TopoDS_Shape {
+        const unify = new this.occ.ShapeUpgrade_UnifySameDomain_2(inputs.shape, inputs.unifyEdges, inputs.unifyFaces, inputs.concatBSplines);
+        unify.Build();
+        return unify.Shape();
+    }
+
     isClosed(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): boolean {
         return inputs.shape.Closed_1();
     }

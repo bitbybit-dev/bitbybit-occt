@@ -1,5 +1,5 @@
 import { OccHelper } from "../occ-helper";
-import { BRepFilletAPI_MakeFillet2d_2, ChFi3d_FilletShape, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { BRepFilletAPI_MakeFillet2d_2, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
 import * as Inputs from "../api/inputs/inputs";
 
 export class OCCTFillets {
@@ -164,12 +164,18 @@ export class OCCTFillets {
         if (isShapeFace) {
             result = filletMaker.Shape();
         } else {
-            const filletedWires = this.och.getWires({ shape: filletMaker.Shape() });
-            if (filletedWires.length === 1) {
-                result = filletedWires[0];
+            const isDone = filletMaker.IsDone();
+            if (isDone) {
+                const shape = filletMaker.Shape();
+                const filletedWires = this.och.getWires({ shape });
+                if (filletedWires.length === 1) {
+                    result = filletedWires[0];
+                }
             }
             else {
-                throw new Error("There was an error when computing fillet.");
+                // Previous algorithm fails if the wire is not made up of circular or straight edges. This algorithm is a failover.
+                const normal = this.och.faceNormalOnUV({ shape: face, paramU: 0.5, paramV: 0.5 });
+                result = this.fillet3DWire({ shape: inputs.shape, radius: inputs.radius, radiusList: inputs.radiusList, indexes: inputs.indexes, direction: normal });
             }
         }
         anVertexExplorer.delete();

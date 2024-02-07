@@ -91,6 +91,12 @@
       - symbol: BitByBitDev
       - symbol: Bnd_Box
       - symbol: CDM_Document
+      - symbol: ChFi2d
+      - symbol: ChFi2d_AnaFilletAlgo
+      - symbol: ChFi2d_Builder
+      - symbol: ChFi2d_ChamferAPI
+      - symbol: ChFi2d_ConstructionError
+      - symbol: ChFi2d_FilletAPI
       - symbol: ChFi2d_FilletAlgo
       - symbol: ChFi3d_FilletShape
       - symbol: ChFiDS_ChamfMode

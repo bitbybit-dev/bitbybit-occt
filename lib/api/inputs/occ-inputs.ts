@@ -1949,7 +1949,6 @@ export namespace OCCT {
          */
         shape: T;
     }
-
     export class CompareShapesDto<T> {
         constructor(shape?: T, otherShape?: T) {
             this.shape ??= shape;
@@ -2461,6 +2460,31 @@ export namespace OCCT {
          * Position to translate
          */
         center: Base.Vector3 = [0, 0, 0];
+    }
+    export class UnifySameDomainDto<T> {
+        constructor(shape?: T) {
+            this.shape = shape;
+        }
+        /**
+         * Shape on which action should be performed
+         * @default undefined
+         */
+        shape: T;
+        /**
+        * If true, unifies the edges
+        * @default true
+        */
+        unifyEdges = true;
+        /**
+        * If true, unifies the edges
+        * @default true
+        */
+        unifyFaces = true;
+        /**
+        * If true, unifies the edges
+        * @default true
+        */
+        concatBSplines = true;
     }
     export class FilterFacePointsDto<T>{
         constructor(shape?: T, points?: Base.Point3[], tolerance?: number, useBndBox?: boolean, gapTolerance?: number, keepIn?: boolean, keepOn?: boolean, keepOut?: boolean, keepUnknown?: boolean) {

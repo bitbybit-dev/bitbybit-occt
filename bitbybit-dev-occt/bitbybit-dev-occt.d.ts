@@ -5115,6 +5115,52 @@ export declare class Geom_Geometry extends Standard_Transient {
   delete(): void;
 }
 
+export declare class ChFi2d_ChamferAPI {
+  Init_1(theWire: TopoDS_Wire): void;
+  Init_2(theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge): void;
+  Perform(): Standard_Boolean;
+  Result(theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge, theLength1: Standard_Real, theLength2: Standard_Real): TopoDS_Edge;
+  delete(): void;
+}
+
+  export declare class ChFi2d_ChamferAPI_1 extends ChFi2d_ChamferAPI {
+    constructor();
+  }
+
+  export declare class ChFi2d_ChamferAPI_2 extends ChFi2d_ChamferAPI {
+    constructor(theWire: TopoDS_Wire);
+  }
+
+  export declare class ChFi2d_ChamferAPI_3 extends ChFi2d_ChamferAPI {
+    constructor(theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge);
+  }
+
+export declare class ChFi2d_FilletAPI {
+  Init_1(theWire: TopoDS_Wire, thePlane: gp_Pln): void;
+  Init_2(theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge, thePlane: gp_Pln): void;
+  Perform(theRadius: Standard_Real): Standard_Boolean;
+  NbResults(thePoint: gp_Pnt): Graphic3d_ZLayerId;
+  Result(thePoint: gp_Pnt, theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge, iSolution: Graphic3d_ZLayerId): TopoDS_Edge;
+  delete(): void;
+}
+
+  export declare class ChFi2d_FilletAPI_1 extends ChFi2d_FilletAPI {
+    constructor();
+  }
+
+  export declare class ChFi2d_FilletAPI_2 extends ChFi2d_FilletAPI {
+    constructor(theWire: TopoDS_Wire, thePlane: gp_Pln);
+  }
+
+  export declare class ChFi2d_FilletAPI_3 extends ChFi2d_FilletAPI {
+    constructor(theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge, thePlane: gp_Pln);
+  }
+
+export declare class ChFi2d {
+  constructor();
+  delete(): void;
+}
+
 export declare class ChFi2d_FilletAlgo {
   Init_1(theWire: TopoDS_Wire, thePlane: gp_Pln): void;
   Init_2(theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge, thePlane: gp_Pln): void;
@@ -5135,6 +5181,74 @@ export declare class ChFi2d_FilletAlgo {
   export declare class ChFi2d_FilletAlgo_3 extends ChFi2d_FilletAlgo {
     constructor(theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge, thePlane: gp_Pln);
   }
+
+export declare class ChFi2d_AnaFilletAlgo {
+  Init_1(theWire: TopoDS_Wire, thePlane: gp_Pln): void;
+  Init_2(theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge, thePlane: gp_Pln): void;
+  Perform(radius: Standard_Real): Standard_Boolean;
+  Result(e1: TopoDS_Edge, e2: TopoDS_Edge): TopoDS_Edge;
+  delete(): void;
+}
+
+  export declare class ChFi2d_AnaFilletAlgo_1 extends ChFi2d_AnaFilletAlgo {
+    constructor();
+  }
+
+  export declare class ChFi2d_AnaFilletAlgo_2 extends ChFi2d_AnaFilletAlgo {
+    constructor(theWire: TopoDS_Wire, thePlane: gp_Pln);
+  }
+
+  export declare class ChFi2d_AnaFilletAlgo_3 extends ChFi2d_AnaFilletAlgo {
+    constructor(theEdge1: TopoDS_Edge, theEdge2: TopoDS_Edge, thePlane: gp_Pln);
+  }
+
+export declare class ChFi2d_Builder {
+  Init_1(F: TopoDS_Face): void;
+  Init_2(RefFace: TopoDS_Face, ModFace: TopoDS_Face): void;
+  AddFillet(V: TopoDS_Vertex, Radius: Standard_Real): TopoDS_Edge;
+  ModifyFillet(Fillet: TopoDS_Edge, Radius: Standard_Real): TopoDS_Edge;
+  RemoveFillet(Fillet: TopoDS_Edge): TopoDS_Vertex;
+  AddChamfer_1(E1: TopoDS_Edge, E2: TopoDS_Edge, D1: Standard_Real, D2: Standard_Real): TopoDS_Edge;
+  AddChamfer_2(E: TopoDS_Edge, V: TopoDS_Vertex, D: Standard_Real, Ang: Standard_Real): TopoDS_Edge;
+  ModifyChamfer_1(Chamfer: TopoDS_Edge, E1: TopoDS_Edge, E2: TopoDS_Edge, D1: Standard_Real, D2: Standard_Real): TopoDS_Edge;
+  ModifyChamfer_2(Chamfer: TopoDS_Edge, E: TopoDS_Edge, D: Standard_Real, Ang: Standard_Real): TopoDS_Edge;
+  RemoveChamfer(Chamfer: TopoDS_Edge): TopoDS_Vertex;
+  Result(): TopoDS_Face;
+  IsModified(E: TopoDS_Edge): Standard_Boolean;
+  FilletEdges(): TopTools_SequenceOfShape;
+  NbFillet(): Graphic3d_ZLayerId;
+  ChamferEdges(): TopTools_SequenceOfShape;
+  NbChamfer(): Graphic3d_ZLayerId;
+  HasDescendant(E: TopoDS_Edge): Standard_Boolean;
+  DescendantEdge(E: TopoDS_Edge): TopoDS_Edge;
+  BasisEdge(E: TopoDS_Edge): TopoDS_Edge;
+  Status(): ChFi2d_ConstructionError;
+  delete(): void;
+}
+
+  export declare class ChFi2d_Builder_1 extends ChFi2d_Builder {
+    constructor();
+  }
+
+  export declare class ChFi2d_Builder_2 extends ChFi2d_Builder {
+    constructor(F: TopoDS_Face);
+  }
+
+export declare type ChFi2d_ConstructionError = {
+  ChFi2d_NotPlanar: {};
+  ChFi2d_NoFace: {};
+  ChFi2d_InitialisationError: {};
+  ChFi2d_ParametersError: {};
+  ChFi2d_Ready: {};
+  ChFi2d_IsDone: {};
+  ChFi2d_ComputationError: {};
+  ChFi2d_ConnexionError: {};
+  ChFi2d_TangencyError: {};
+  ChFi2d_FirstEdgeDegenerated: {};
+  ChFi2d_LastEdgeDegenerated: {};
+  ChFi2d_BothEdgesDegenerated: {};
+  ChFi2d_NotAuthorized: {};
+}
 
 export declare class TCollection_ExtendedString {
   AssignCat_1(other: TCollection_ExtendedString): void;
@@ -9683,10 +9797,27 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   Geom_BezierCurve_1: typeof Geom_BezierCurve_1;
   Geom_BezierCurve_2: typeof Geom_BezierCurve_2;
   Geom_Geometry: typeof Geom_Geometry;
+  ChFi2d_ChamferAPI: typeof ChFi2d_ChamferAPI;
+  ChFi2d_ChamferAPI_1: typeof ChFi2d_ChamferAPI_1;
+  ChFi2d_ChamferAPI_2: typeof ChFi2d_ChamferAPI_2;
+  ChFi2d_ChamferAPI_3: typeof ChFi2d_ChamferAPI_3;
+  ChFi2d_FilletAPI: typeof ChFi2d_FilletAPI;
+  ChFi2d_FilletAPI_1: typeof ChFi2d_FilletAPI_1;
+  ChFi2d_FilletAPI_2: typeof ChFi2d_FilletAPI_2;
+  ChFi2d_FilletAPI_3: typeof ChFi2d_FilletAPI_3;
+  ChFi2d: typeof ChFi2d;
   ChFi2d_FilletAlgo: typeof ChFi2d_FilletAlgo;
   ChFi2d_FilletAlgo_1: typeof ChFi2d_FilletAlgo_1;
   ChFi2d_FilletAlgo_2: typeof ChFi2d_FilletAlgo_2;
   ChFi2d_FilletAlgo_3: typeof ChFi2d_FilletAlgo_3;
+  ChFi2d_AnaFilletAlgo: typeof ChFi2d_AnaFilletAlgo;
+  ChFi2d_AnaFilletAlgo_1: typeof ChFi2d_AnaFilletAlgo_1;
+  ChFi2d_AnaFilletAlgo_2: typeof ChFi2d_AnaFilletAlgo_2;
+  ChFi2d_AnaFilletAlgo_3: typeof ChFi2d_AnaFilletAlgo_3;
+  ChFi2d_Builder: typeof ChFi2d_Builder;
+  ChFi2d_Builder_1: typeof ChFi2d_Builder_1;
+  ChFi2d_Builder_2: typeof ChFi2d_Builder_2;
+  ChFi2d_ConstructionError: ChFi2d_ConstructionError;
   TCollection_ExtendedString: typeof TCollection_ExtendedString;
   TCollection_ExtendedString_1: typeof TCollection_ExtendedString_1;
   TCollection_ExtendedString_2: typeof TCollection_ExtendedString_2;

@@ -418,20 +418,7 @@ export class OCCTFace {
     }
 
     normalOnUV(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Vector3 {
-        if (inputs.shape === undefined) {
-            throw (Error(("Face not defined")));
-        }
-        const face = inputs.shape;
-        const handle = this.occ.BRep_Tool.Surface_2(face);
-        const { uMin, uMax, vMin, vMax } = this.och.getUVBounds(face);
-        const u = uMin + (uMax - uMin) * inputs.paramU;
-        const v = vMin + (vMax - vMin) * inputs.paramV;
-        const gpDir = this.och.gpDir([0, 1, 0]);
-        this.occ.GeomLib.NormEstim(handle, this.och.gpPnt2d([u, v]), 1e-7, gpDir);
-        const dir: Base.Vector3 = [gpDir.X(), gpDir.Y(), gpDir.Z()];
-        gpDir.delete();
-        handle.delete();
-        return dir;
+        return this.och.faceNormalOnUV(inputs);
     }
 
     createPolygonFace(inputs: Inputs.OCCT.PolygonDto) {
