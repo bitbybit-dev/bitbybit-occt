@@ -81,6 +81,14 @@ export class OCCTEdge {
         }
     }
 
+    reversedEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): TopoDS_Edge {
+        const edge: TopoDS_Edge = inputs.shape;
+        const reversed = edge.Reversed();
+        const result = this.och.getActualTypeOfShape(reversed);
+        reversed.delete();
+        return result;
+    }
+
     pointOnEdgeAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Edge>): Inputs.Base.Point3 {
         return this.och.pointOnEdgeAtParam(inputs);
     }
