@@ -1,4 +1,4 @@
-import { Geom2d_Curve, Geom_Surface, OpenCascadeInstance, TopoDS_Edge, TopoDS_Shape } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { Geom2d_Curve, Geom_Surface, OpenCascadeInstance, TopoDS_Edge, TopoDS_Shape, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper, typeSpecificityEnum } from "../../occ-helper";
 import * as Inputs from "../../api/inputs/inputs";
 
@@ -9,7 +9,7 @@ export class OCCTEdge {
         private readonly och: OccHelper
     ) {
     }
-    
+
     makeEdgeFromGeom2dCurveAndSurface(inputs: Inputs.OCCT.CurveAndSurfaceDto<Geom2d_Curve, Geom_Surface>) {
         const curve2d = new this.occ.Handle_Geom2d_Curve_2(inputs.curve as Geom2d_Curve);
         const surface = new this.occ.Handle_Geom_Surface_2(inputs.surface as Geom_Surface);
@@ -81,6 +81,10 @@ export class OCCTEdge {
         }
     }
 
+    edgesToPoints(inputs: Inputs.OCCT.EdgesToPointsDto<TopoDS_Shape>): Inputs.Base.Point3[][] {
+        return this.och.edgesToPoints(inputs);
+    }
+
     reversedEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): TopoDS_Edge {
         const edge: TopoDS_Edge = inputs.shape;
         const reversed = edge.Reversed();
@@ -123,6 +127,10 @@ export class OCCTEdge {
 
     getEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>) {
         return this.och.getEdges(inputs);
+    }
+
+    getEdgesAlongWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>) {
+        return this.och.getEdgesAlongWire(inputs);
     }
 
     getEdgeLength(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): number {

@@ -10,6 +10,10 @@ export class OCCTShapeFix {
     ) {
     }
 
+    fixEdgeOrientationsAlongWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
+        return this.och.fixEdgeOrientationsAlongWire(inputs);
+    }
+
     basicShapeRepair(inputs: Inputs.OCCT.BasicShapeRepairDto<TopoDS_Wire>): TopoDS_Shape {
         const shapeFix = new this.occ.ShapeFix_Shape_1();
         shapeFix.Init(inputs.shape);

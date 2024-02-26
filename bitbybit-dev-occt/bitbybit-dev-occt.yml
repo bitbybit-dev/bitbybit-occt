@@ -86,6 +86,7 @@
       - symbol: BRepPrimAPI_MakeTorus
       - symbol: BRepProj_Projection
       - symbol: BRepTools
+      - symbol: BRepTools_WireExplorer
       - symbol: BRep_Builder
       - symbol: BRep_Tool
       - symbol: BitByBitDev

@@ -288,7 +288,7 @@ export class OCCTWire {
     createStarWire(inputs: Inputs.OCCT.StarDto): TopoDS_Wire {
         return this.och.createStarWire(inputs);
     }
-    
+
     createChristmasTreeWire(inputs: Inputs.OCCT.ChristmasTreeDto): TopoDS_Wire {
         return this.och.createChristmasTreeWire(inputs);
     }
@@ -402,6 +402,18 @@ export class OCCTWire {
         gpDir.delete();
         proj.delete();
         return shape;
+    }
+
+    wiresToPoints(inputs: Inputs.OCCT.WiresToPointsDto<TopoDS_Shape>): Inputs.Base.Point3[][] {
+        const wires = this.getWires({ shape: inputs.shape });
+        const allWirePoints = [];
+        wires.forEach(w => {
+            const edgePoints = this.och.edgesToPoints({ ...inputs, shape: w });
+            const flatPoints = edgePoints.flat();
+            const dupsRemoved = this.och.vecHelper.removeConsecutiveDuplicates(flatPoints, false);
+            allWirePoints.push(dupsRemoved);
+        });
+        return allWirePoints;
     }
 
     projectWires(inputs: Inputs.OCCT.ProjectWiresDto<TopoDS_Wire, TopoDS_Shape>): TopoDS_Compound[] {

@@ -1398,6 +1398,100 @@ export namespace OCCT {
          */
         direction: Base.Vector3 = [0, 1, 0];
     }
+    export class WiresToPointsDto<T> {
+        /**
+         * Shape to use for parsing edges
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * The angular deflection
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        angularDeflection = 0.1;
+        /**
+         * The curvature deflection
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.001
+         */
+        curvatureDeflection = 0.1;
+        /**
+         * Minimum of points
+         * @default 2
+         * @minimum 0
+         * @maximum Infinity
+         * @step 1
+         */
+        minimumOfPoints = 2;
+        /**
+         * U tolerance
+         * @default 1.0e-9
+         * @minimum 0
+         * @maximum Infinity
+         * @step 1.0e-9
+         */
+        uTolerance = 1.0e-9;
+        /**
+         * Minimum length
+         * @default 1.0e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 1.0e-7
+         */
+        minimumLength = 1.0e-7;
+    }
+    export class EdgesToPointsDto<T> {
+        /**
+         * Shape to use for parsing edges
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * The angular deflection
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        angularDeflection = 0.1;
+        /**
+         * The curvature deflection
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.001
+         */
+        curvatureDeflection = 0.1;
+        /**
+         * Minimum of points
+         * @default 2
+         * @minimum 0
+         * @maximum Infinity
+         * @step 1
+         */
+        minimumOfPoints = 2;
+        /**
+         * U tolerance
+         * @default 1.0e-9
+         * @minimum 0
+         * @maximum Infinity
+         * @step 1.0e-9
+         */
+        uTolerance = 1.0e-9;
+        /**
+         * Minimum length
+         * @default 1.0e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 1.0e-7
+         */
+        minimumLength = 1.0e-7;
+    }
     export class ProjectWiresDto<T, U> {
         /**
          * Wire to project
