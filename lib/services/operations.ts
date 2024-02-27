@@ -15,10 +15,7 @@ export class OCCTOperations {
     }
 
     closestPointsBetweenTwoShapes(inputs: Inputs.OCCT.ClosestPointsBetweenTwoShapesDto<TopoDS_Shape>): [Inputs.Base.Point3, Inputs.Base.Point3] {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
-        }
-        return this.och.closestPointsBetweenTwoShapes(inputs.shapes[0], inputs.shapes[1]);
+        return this.och.closestPointsBetweenTwoShapes(inputs.shape1, inputs.shape2);
     }
 
     closestPointsOnShapeFromPoints(inputs: Inputs.OCCT.ClosestPointsOnShapeFromPointsDto<TopoDS_Shape>): Inputs.Base.Point3[] {
