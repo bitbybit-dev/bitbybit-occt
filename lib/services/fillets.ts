@@ -76,11 +76,8 @@ export class OCCTFillets {
     }
 
     filletTwoEdgesInPlaneIntoAWire(inputs: Inputs.OCCT.FilletTwoEdgesInPlaneDto<TopoDS_Edge>): TopoDS_Wire {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
-        }
         const pln = this.och.gpPln(inputs.planeOrigin, inputs.planeDirection);
-        const fil = new this.occ.ChFi2d_FilletAlgo_3(inputs.shapes[0], inputs.shapes[1], pln);
+        const fil = new this.occ.ChFi2d_FilletAlgo_3(inputs.edge1, inputs.edge2, pln);
         fil.Perform(inputs.radius);
         const pt = this.och.gpPnt(inputs.planeOrigin);
         const edge1 = new this.occ.TopoDS_Edge();

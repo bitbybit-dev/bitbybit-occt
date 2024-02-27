@@ -67,12 +67,16 @@ export namespace OCCT {
     }
 
     export class DecomposedMeshDto {
+        constructor(faceList?: DecomposedFaceDto[], edgeList?: DecomposedEdgeDto[]) {
+            if (faceList !== undefined) { this.faceList = faceList; }
+            if (edgeList !== undefined) { this.edgeList = edgeList; }
+        }
         /**
-         * Face list
+         * Face list for decomposed faces
          */
         faceList: DecomposedFaceDto[];
         /**
-         * Edge list
+         * Edge list for decomposed edges
          */
         edgeList: DecomposedEdgeDto[];
     }
@@ -92,7 +96,7 @@ export namespace OCCT {
     }
     export class ShapesDto<T> {
         constructor(shapes?: T[]) {
-            this.shapes = shapes;
+            if (shapes !== undefined) { this.shapes = shapes; }
         }
         /**
          * The OCCT shapes
@@ -101,6 +105,10 @@ export namespace OCCT {
         shapes?: T[];
     }
     export class CurveAndSurfaceDto<T, U>{
+        constructor(curve?: T, surface?: U) {
+            if (curve !== undefined) { this.curve = curve; }
+            if (surface !== undefined) { this.surface = surface; }
+        }
         /**
          * Curve
          * @default undefined
@@ -112,7 +120,15 @@ export namespace OCCT {
          */
         surface: U;
     }
-    export class FilletTwoEdgesInPlaneDto<T> extends ShapesDto<T> {
+    export class FilletTwoEdgesInPlaneDto<T> {
+        constructor(edge1?: T, edge2?: T, planeOrigin?: Base.Point3, planeDirection?: Base.Vector3, radius?: number, solution?: number) {
+            if (edge1 !== undefined) { this.edge1 = edge1; }
+            if (edge2 !== undefined) { this.edge2 = edge2; }
+            if (planeOrigin !== undefined) { this.planeOrigin = planeOrigin; }
+            if (planeDirection !== undefined) { this.planeDirection = planeDirection; }
+            if (radius !== undefined) { this.radius = radius; }
+            if (solution !== undefined) { this.solution = solution; }
+        }
         /**
          * First OCCT edge to fillet
          * @default undefined
@@ -149,6 +165,10 @@ export namespace OCCT {
         solution? = -1;
     }
     export class ClosestPointsOnShapeFromPointsDto<T> {
+        constructor(shape?: T, points?: Base.Point3[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (points !== undefined) { this.points = points; }
+        }
         /**
          * The OCCT shape
          * @default undefined
@@ -161,6 +181,10 @@ export namespace OCCT {
         points: Base.Point3[];
     }
     export class SplitWireOnPointsDto<T>{
+        constructor(shape?: T, points?: Base.Point3[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (points !== undefined) { this.points = points; }
+        }
         /**
          * The OCCT wire shape
          * @default undefined
@@ -174,6 +198,10 @@ export namespace OCCT {
     }
 
     export class ClosestPointsOnShapesFromPointsDto<T> {
+        constructor(shapes?: T[], points?: Base.Point3[]) {
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (points !== undefined) { this.points = points; }
+        }
         /**
          * The OCCT shapes
          * @default undefined
@@ -185,11 +213,10 @@ export namespace OCCT {
          */
         points: Base.Point3[];
     }
-    export class ClosestPointsBetweenTwoShapesDto<T> extends ShapesDto<T> {
+    export class ClosestPointsBetweenTwoShapesDto<T> {
         constructor(shape1?: T, shape2?: T) {
-            if (shape1 && shape2) {
-                super([shape1, shape2]);
-            }
+            if (shape1 !== undefined) { this.shape1 = shape1; }
+            if (shape2 !== undefined) { this.shape2 = shape2; }
         }
         /**
          * First OCCT shape
@@ -202,7 +229,12 @@ export namespace OCCT {
         */
         shape2?: T;
     }
-    export class FaceFromSurfaceAndWireDto<T, U> extends ShapesDto<T> {
+    export class FaceFromSurfaceAndWireDto<T, U> {
+        constructor(surface?: T, wire?: U, inside?: boolean) {
+            if (surface !== undefined) { this.surface = surface; }
+            if (wire !== undefined) { this.wire = wire; }
+            if (inside !== undefined) { this.inside = inside; }
+        }
         /**
          * Surface from which to create a face
          * @default undefined
@@ -220,6 +252,10 @@ export namespace OCCT {
         inside = true;
     }
     export class WireOnFaceDto<T, U> {
+        constructor(wire?: T, face?: U) {
+            if (wire !== undefined) { this.wire = wire; }
+            if (face !== undefined) { this.face = face; }
+        }
         /**
          * Wire to place on face
          * @default undefined
@@ -235,8 +271,23 @@ export namespace OCCT {
         /**
          * Provide options without default values
          */
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, faceOpacity?: number, edgeOpacity?: number, edgeColour?: Base.Color, faceMaterial?: Base.Material, faceColour?: Base.Color, edgeWidth?: number, drawEdges?: boolean, drawFaces?: boolean, precision?: number, drawEdgeIndexes?: boolean, edgeIndexHeight?: number, edgeIndexColour?: Base.Color, drawFaceIndexes?: boolean, faceIndexHeight?: number, faceIndexColour?: Base.Color) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (faceOpacity !== undefined) { this.faceOpacity = faceOpacity; }
+            if (edgeOpacity !== undefined) { this.edgeOpacity = edgeOpacity; }
+            if (edgeColour !== undefined) { this.edgeColour = edgeColour; }
+            if (faceMaterial !== undefined) { this.faceMaterial = faceMaterial; }
+            if (faceColour !== undefined) { this.faceColour = faceColour; }
+            if (edgeWidth !== undefined) { this.edgeWidth = edgeWidth; }
+            if (drawEdges !== undefined) { this.drawEdges = drawEdges; }
+            if (drawFaces !== undefined) { this.drawFaces = drawFaces; }
+            if (precision !== undefined) { this.precision = precision; }
+            if (drawEdgeIndexes !== undefined) { this.drawEdgeIndexes = drawEdgeIndexes; }
+            if (edgeIndexHeight !== undefined) { this.edgeIndexHeight = edgeIndexHeight; }
+            if (edgeIndexColour !== undefined) { this.edgeIndexColour = edgeIndexColour; }
+            if (drawFaceIndexes !== undefined) { this.drawFaceIndexes = drawFaceIndexes; }
+            if (faceIndexHeight !== undefined) { this.faceIndexHeight = faceIndexHeight; }
+            if (faceIndexColour !== undefined) { this.faceIndexColour = faceIndexColour; }
         }
         /**
          * Brep OpenCascade geometry
@@ -339,11 +390,27 @@ export namespace OCCT {
         faceIndexColour: Base.Color = "#0000ff";
     }
     export class DrawShapesDto<T> {
+
         /**
          * Provide options without default values
          */
-        constructor(shapes?: T[]) {
-            this.shapes = shapes;
+        constructor(shapes?: T[], faceOpacity?: number, edgeOpacity?: number, edgeColour?: Base.Color, faceMaterial?: Base.Material, faceColour?: Base.Color, edgeWidth?: number, drawEdges?: boolean, drawFaces?: boolean, precision?: number, drawEdgeIndexes?: boolean, edgeIndexHeight?: number, edgeIndexColour?: Base.Color, drawFaceIndexes?: boolean, faceIndexHeight?: number, faceIndexColour?: Base.Color) {
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (faceOpacity !== undefined) { this.faceOpacity = faceOpacity; }
+            if (edgeOpacity !== undefined) { this.edgeOpacity = edgeOpacity; }
+            if (edgeColour !== undefined) { this.edgeColour = edgeColour; }
+            if (faceMaterial !== undefined) { this.faceMaterial = faceMaterial; }
+            if (faceColour !== undefined) { this.faceColour = faceColour; }
+            if (edgeWidth !== undefined) { this.edgeWidth = edgeWidth; }
+            if (drawEdges !== undefined) { this.drawEdges = drawEdges; }
+            if (drawFaces !== undefined) { this.drawFaces = drawFaces; }
+            if (precision !== undefined) { this.precision = precision; }
+            if (drawEdgeIndexes !== undefined) { this.drawEdgeIndexes = drawEdgeIndexes; }
+            if (edgeIndexHeight !== undefined) { this.edgeIndexHeight = edgeIndexHeight; }
+            if (edgeIndexColour !== undefined) { this.edgeIndexColour = edgeIndexColour; }
+            if (drawFaceIndexes !== undefined) { this.drawFaceIndexes = drawFaceIndexes; }
+            if (faceIndexHeight !== undefined) { this.faceIndexHeight = faceIndexHeight; }
+            if (faceIndexColour !== undefined) { this.faceIndexColour = faceIndexColour; }
         }
         /**
          * Brep OpenCascade geometry
@@ -450,16 +517,17 @@ export namespace OCCT {
           * Provide options without default values
           */
         constructor(shape?: T, nrDivisionsU?: number, nrDivisionsV?: number, shiftHalfStepU?: boolean, removeStartEdgeU?: boolean, removeEndEdgeU?: boolean, shiftHalfStepV?: boolean, removeStartEdgeV?: boolean, removeEndEdgeV?: boolean) {
-            this.shape ??= shape;
-            this.nrDivisionsU ??= nrDivisionsU;
-            this.nrDivisionsV ??= nrDivisionsV;
-            this.shiftHalfStepU ??= shiftHalfStepU;
-            this.removeStartEdgeU ??= removeStartEdgeU;
-            this.removeEndEdgeU ??= removeEndEdgeU;
-            this.shiftHalfStepV ??= shiftHalfStepV;
-            this.removeStartEdgeV ??= removeStartEdgeV;
-            this.removeEndEdgeV ??= removeEndEdgeV;
+            if (shape !== undefined) { this.shape = shape; }
+            if (nrDivisionsU !== undefined) { this.nrDivisionsU = nrDivisionsU; }
+            if (nrDivisionsV !== undefined) { this.nrDivisionsV = nrDivisionsV; }
+            if (shiftHalfStepU !== undefined) { this.shiftHalfStepU = shiftHalfStepU; }
+            if (removeStartEdgeU !== undefined) { this.removeStartEdgeU = removeStartEdgeU; }
+            if (removeEndEdgeU !== undefined) { this.removeEndEdgeU = removeEndEdgeU; }
+            if (shiftHalfStepV !== undefined) { this.shiftHalfStepV = shiftHalfStepV; }
+            if (removeStartEdgeV !== undefined) { this.removeStartEdgeV = removeStartEdgeV; }
+            if (removeEndEdgeV !== undefined) { this.removeEndEdgeV = removeEndEdgeV; }
         }
+
         /**
          * Brep OpenCascade geometry
          * @default undefined
@@ -516,8 +584,22 @@ export namespace OCCT {
         /**
          * Provide options without default values
          */
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, nrDivisionsU?: number, nrDivisionsV?: number, shiftHalfStepNthU?: number, shiftHalfStepUOffsetN?: number, removeStartEdgeNthU?: number, removeStartEdgeUOffsetN?: number, removeEndEdgeNthU?: number, removeEndEdgeUOffsetN?: number, shiftHalfStepNthV?: number, shiftHalfStepVOffsetN?: number, removeStartEdgeNthV?: number, removeStartEdgeVOffsetN?: number, removeEndEdgeNthV?: number, removeEndEdgeVOffsetN?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (nrDivisionsU !== undefined) { this.nrDivisionsU = nrDivisionsU; }
+            if (nrDivisionsV !== undefined) { this.nrDivisionsV = nrDivisionsV; }
+            if (shiftHalfStepNthU !== undefined) { this.shiftHalfStepNthU = shiftHalfStepNthU; }
+            if (shiftHalfStepUOffsetN !== undefined) { this.shiftHalfStepUOffsetN = shiftHalfStepUOffsetN; }
+            if (removeStartEdgeNthU !== undefined) { this.removeStartEdgeNthU = removeStartEdgeNthU; }
+            if (removeStartEdgeUOffsetN !== undefined) { this.removeStartEdgeUOffsetN = removeStartEdgeUOffsetN; }
+            if (removeEndEdgeNthU !== undefined) { this.removeEndEdgeNthU = removeEndEdgeNthU; }
+            if (removeEndEdgeUOffsetN !== undefined) { this.removeEndEdgeUOffsetN = removeEndEdgeUOffsetN; }
+            if (shiftHalfStepNthV !== undefined) { this.shiftHalfStepNthV = shiftHalfStepNthV; }
+            if (shiftHalfStepVOffsetN !== undefined) { this.shiftHalfStepVOffsetN = shiftHalfStepVOffsetN; }
+            if (removeStartEdgeNthV !== undefined) { this.removeStartEdgeNthV = removeStartEdgeNthV; }
+            if (removeStartEdgeVOffsetN !== undefined) { this.removeStartEdgeVOffsetN = removeStartEdgeVOffsetN; }
+            if (removeEndEdgeNthV !== undefined) { this.removeEndEdgeNthV = removeEndEdgeNthV; }
+            if (removeEndEdgeVOffsetN !== undefined) { this.removeEndEdgeVOffsetN = removeEndEdgeVOffsetN; }
         }
         /**
          * Brep OpenCascade geometry
@@ -641,8 +723,14 @@ export namespace OCCT {
         /**
          * Provide options without default values
          */
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, isU?: boolean, param?: number, nrPoints?: number, shiftHalfStep?: boolean, removeStartPoint?: boolean, removeEndPoint?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (isU !== undefined) { this.isU = isU; }
+            if (param !== undefined) { this.param = param; }
+            if (nrPoints !== undefined) { this.nrPoints = nrPoints; }
+            if (shiftHalfStep !== undefined) { this.shiftHalfStep = shiftHalfStep; }
+            if (removeStartPoint !== undefined) { this.removeStartPoint = removeStartPoint; }
+            if (removeEndPoint !== undefined) { this.removeEndPoint = removeEndPoint; }
         }
         /**
          * Brep OpenCascade geometry
@@ -691,8 +779,10 @@ export namespace OCCT {
         /**
          * Provide options without default values
          */
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, paramU?: number, paramV?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (paramU !== undefined) { this.paramU = paramU; }
+            if (paramV !== undefined) { this.paramV = paramV; }
         }
         /**
          * Brep OpenCascade geometry
@@ -720,8 +810,9 @@ export namespace OCCT {
         /**
          * Provide options without default values
          */
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, paramsUV?: [number, number][]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (paramsUV !== undefined) { this.paramsUV = paramsUV; }
         }
         /**
          * Brep OpenCascade geometry
@@ -736,7 +827,7 @@ export namespace OCCT {
     }
     export class PolygonDto {
         constructor(points?: Base.Point3[]) {
-            this.points = points;
+            if (points !== undefined) { this.points = points; }
         }
         /**
          * Points points
@@ -745,8 +836,9 @@ export namespace OCCT {
         points: Base.Point3[];
     }
     export class PolygonsDto {
-        constructor(polygons?: PolygonDto[]) {
-            this.polygons = polygons;
+        constructor(polygons?: PolygonDto[], returnCompound?: boolean) {
+            if (polygons !== undefined) { this.polygons = polygons; }
+            if (returnCompound !== undefined) { this.returnCompound = returnCompound; }
         }
         /**
          * Polygons
@@ -760,7 +852,7 @@ export namespace OCCT {
     }
     export class PolylineDto {
         constructor(points?: Base.Point3[]) {
-            this.points = points;
+            if (points !== undefined) { this.points = points; }
         }
         /**
          * Points points
@@ -769,8 +861,9 @@ export namespace OCCT {
         points: Base.Point3[];
     }
     export class PolylinesDto {
-        constructor(polylines?: PolylineDto[]) {
-            this.polylines = polylines;
+        constructor(polylines?: PolylineDto[], returnCompound?: boolean) {
+            if (polylines !== undefined) { this.polylines = polylines; }
+            if (returnCompound !== undefined) { this.returnCompound = returnCompound; }
         }
         /**
          * Polylines
@@ -783,6 +876,11 @@ export namespace OCCT {
         returnCompound = false;
     }
     export class SquareDto {
+        constructor(size?: number, center?: Base.Point3, direction?: Base.Vector3) {
+            if (size !== undefined) { this.size = size; }
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * size of square
          * @default 1
@@ -803,6 +901,12 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class RectangleDto {
+        constructor(width?: number, length?: number, center?: Base.Point3, direction?: Base.Vector3) {
+            if (width !== undefined) { this.width = width; }
+            if (length !== undefined) { this.length = length; }
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * width of the rectangle
          * @default 1
@@ -831,6 +935,16 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class LPolygonDto {
+        constructor(widthFirst?: number, lengthFirst?: number, widthSecond?: number, lengthSecond?: number, align?: directionEnum, rotation?: number, center?: Base.Point3, direction?: Base.Vector3) {
+            if (widthFirst !== undefined) { this.widthFirst = widthFirst; }
+            if (lengthFirst !== undefined) { this.lengthFirst = lengthFirst; }
+            if (widthSecond !== undefined) { this.widthSecond = widthSecond; }
+            if (lengthSecond !== undefined) { this.lengthSecond = lengthSecond; }
+            if (align !== undefined) { this.align = align; }
+            if (rotation !== undefined) { this.rotation = rotation; }
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * Width of the first side of L polygon
          * @default 1
@@ -889,12 +1003,10 @@ export namespace OCCT {
     }
     export class BoxDto {
         constructor(width?: number, length?: number, height?: number, center?: Base.Point3) {
-            this.width = width;
-            this.length = length;
-            this.height = height;
-            if (center) {
-                this.center = center;
-            }
+            if (width !== undefined) { this.width = width; }
+            if (length !== undefined) { this.length = length; }
+            if (height !== undefined) { this.height = height; }
+            if (center !== undefined) { this.center = center; }
         }
         /**
          * Width of the box
@@ -928,12 +1040,8 @@ export namespace OCCT {
     }
     export class CubeDto {
         constructor(size?: number, center?: Base.Point3) {
-            if (size) {
-                this.size = size;
-            }
-            if (center) {
-                this.center = center;
-            }
+            if (size !== undefined) { this.size = size; }
+            if (center !== undefined) { this.center = center; }
         }
         /**
          * Size of the cube
@@ -951,12 +1059,10 @@ export namespace OCCT {
     }
     export class BoxFromCornerDto {
         constructor(width?: number, length?: number, height?: number, corner?: Base.Point3) {
-            this.width = width;
-            this.length = length;
-            this.height = height;
-            if (corner) {
-                this.corner = corner;
-            }
+            if (width !== undefined) { this.width = width; }
+            if (length !== undefined) { this.length = length; }
+            if (height !== undefined) { this.height = height; }
+            if (corner !== undefined) { this.corner = corner; }
         }
         /**
          * Width of the box
@@ -990,10 +1096,8 @@ export namespace OCCT {
     }
     export class SphereDto {
         constructor(radius?: number, center?: Base.Point3) {
-            this.radius = radius;
-            if (center) {
-                this.center = center;
-            }
+            if (radius !== undefined) { this.radius = radius; }
+            if (center !== undefined) { this.center = center; }
         }
         /**
          * Radius of the sphere
@@ -1010,13 +1114,13 @@ export namespace OCCT {
         center: Base.Point3 = [0, 0, 0];
     }
     export class ConeDto {
-        constructor(radius1?: number, radius2?: number, height?: number, angle?: number, center?: Base.Point3, direction?: Base.Point3) {
-            this.radius1 = radius1;
-            this.radius2 = radius2;
-            this.height = height;
-            this.angle = angle;
-            this.center = center;
-            this.direction = direction;
+        constructor(radius1?: number, radius2?: number, height?: number, angle?: number, center?: Base.Point3, direction?: Base.Vector3) {
+            if (radius1 !== undefined) { this.radius1 = radius1; }
+            if (radius2 !== undefined) { this.radius2 = radius2; }
+            if (height !== undefined) { this.height = height; }
+            if (angle !== undefined) { this.angle = angle; }
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
         }
         /**
          * First radius of the cone
@@ -1063,6 +1167,10 @@ export namespace OCCT {
 
     }
     export class LineDto {
+        constructor(start?: Base.Point3, end?: Base.Point3) {
+            if (start !== undefined) { this.start = start; }
+            if (end !== undefined) { this.end = end; }
+        }
         /**
          * Start of the line
          * @default [0, 0, 0]
@@ -1075,8 +1183,9 @@ export namespace OCCT {
         end: Base.Point3 = [0, 1, 0];
     }
     export class LinesDto {
-        constructor(lines?: LineDto[]) {
-            this.lines = lines;
+        constructor(lines?: LineDto[], returnCompound?: boolean) {
+            if (lines !== undefined) { this.lines = lines; }
+            if (returnCompound !== undefined) { this.returnCompound = returnCompound; }
         }
         /**
          * Lines
@@ -1089,6 +1198,11 @@ export namespace OCCT {
         returnCompound = false;
     }
     export class ArcEdgeThreePointsDto {
+        constructor(start?: Base.Point3, middle?: Base.Point3, end?: Base.Point3) {
+            if (start !== undefined) { this.start = start; }
+            if (middle !== undefined) { this.middle = middle; }
+            if (end !== undefined) { this.end = end; }
+        }
         /**
          * Start of the arc
          * @default [0, 0, 0]
@@ -1106,6 +1220,12 @@ export namespace OCCT {
         end: Base.Point3 = [0, 0, 1];
     }
     export class CylinderDto {
+        constructor(radius?: number, height?: number, center?: Base.Point3, direction?: Base.Vector3) {
+            if (radius !== undefined) { this.radius = radius; }
+            if (height !== undefined) { this.height = height; }
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * Radius of the cylinder
          * @default 1
@@ -1134,6 +1254,10 @@ export namespace OCCT {
         direction?: Base.Vector3 = [0, 1, 0];
     }
     export class CylindersOnLinesDto {
+        constructor(radius?: number, lines?: Base.Line3[]) {
+            if (radius !== undefined) { this.radius = radius; }
+            if (lines !== undefined) { this.lines = lines; }
+        }
         /**
          * Radius of the cylinder
          * @default 1
@@ -1149,10 +1273,11 @@ export namespace OCCT {
         lines: Base.Line3[];
     }
     export class FilletDto<T> {
-        constructor(shape?: T, radius?: number, indexes?: number[]) {
-            this.shape = shape;
-            this.radius = radius;
-            this.indexes = indexes;
+        constructor(shape?: T, radius?: number, radiusList?: number[], indexes?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (radius !== undefined) { this.radius = radius; }
+            if (radiusList !== undefined) { this.radiusList = radiusList; }
+            if (indexes !== undefined) { this.indexes = indexes; }
         }
         /**
          * Shape to apply the fillets
@@ -1183,8 +1308,12 @@ export namespace OCCT {
     }
 
     export class Fillet3DWireDto<T> {
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, radius?: number, direction?: Base.Vector3, radiusList?: number[], indexes?: number[],) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (radius !== undefined) { this.radius = radius; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (radiusList !== undefined) { this.radiusList = radiusList; }
+            if (indexes !== undefined) { this.indexes = indexes; }
         }
         /**
          * Shape to apply the fillets
@@ -1219,10 +1348,11 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class ChamferDto<T> {
-        constructor(shape?: T, distance?: number, indexes?: number[]) {
-            this.shape = shape;
-            this.distance = distance;
-            this.indexes = indexes;
+        constructor(shape?: T, distance?: number, distanceList?: number[], indexes?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (distance !== undefined) { this.distance = distance; }
+            if (distanceList !== undefined) { this.distanceList = distanceList; }
+            if (indexes !== undefined) { this.indexes = indexes; }
         }
         /**
          * Shape to apply the chamfer
@@ -1253,8 +1383,8 @@ export namespace OCCT {
     }
     export class BSplineDto {
         constructor(points?: Base.Point3[], closed?: boolean) {
-            this.points = points;
-            this.closed = closed;
+            if (points !== undefined) { this.points = points; }
+            if (closed !== undefined) { this.closed = closed; }
         }
         /**
          * Points through which the BSpline will be created
@@ -1268,8 +1398,9 @@ export namespace OCCT {
         closed = false;
     }
     export class BSplinesDto {
-        constructor(bSplines?: BSplineDto[]) {
-            this.bSplines = bSplines;
+        constructor(bSplines?: BSplineDto[], returnCompound?: boolean) {
+            if (bSplines !== undefined) { this.bSplines = bSplines; }
+            if (returnCompound !== undefined) { this.returnCompound = returnCompound; }
         }
         /**
          * BSpline definitions
@@ -1282,9 +1413,10 @@ export namespace OCCT {
         returnCompound = false;
     }
     export class InterpolationDto {
-        constructor(points?: Base.Point3[], periodic?: boolean) {
-            this.points = points;
-            this.periodic = periodic;
+        constructor(points?: Base.Point3[], periodic?: boolean, tolerance?: number) {
+            if (points !== undefined) { this.points = points; }
+            if (periodic !== undefined) { this.periodic = periodic; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
         }
         /**
          * Points through which the BSpline will be created
@@ -1306,8 +1438,9 @@ export namespace OCCT {
         tolerance = 1e-7;
     }
     export class InterpolateWiresDto {
-        constructor(interpolations?: InterpolationDto[]) {
-            this.interpolations = interpolations;
+        constructor(interpolations?: InterpolationDto[], returnCompound?: boolean) {
+            if (interpolations !== undefined) { this.interpolations = interpolations; }
+            if (returnCompound !== undefined) { this.returnCompound = returnCompound; }
         }
         /**
          * Interpolation definitions
@@ -1321,8 +1454,8 @@ export namespace OCCT {
     }
     export class BezierDto {
         constructor(points?: Base.Point3[], closed?: boolean) {
-            this.points = points;
-            this.closed = closed;
+            if (points !== undefined) { this.points = points; }
+            if (closed !== undefined) { this.closed = closed; }
         }
         /**
          * Points through which the Bezier curve will be created
@@ -1336,8 +1469,9 @@ export namespace OCCT {
         closed = false;
     }
     export class BezierWiresDto {
-        constructor(bezierWires?: BezierDto[]) {
-            this.bezierWires = bezierWires;
+        constructor(bezierWires?: BezierDto[], returnCompound?: boolean) {
+            if (bezierWires !== undefined) { this.bezierWires = bezierWires; }
+            if (returnCompound !== undefined) { this.returnCompound = returnCompound; }
         }
         /**
          * Bezier wires
@@ -1351,10 +1485,10 @@ export namespace OCCT {
     }
     export class DivideDto<T> {
         constructor(shape: T, nrOfDivisions?: number, removeStartPoint?: boolean, removeEndPoint?: boolean) {
-            this.shape ??= shape;
-            this.nrOfDivisions ??= nrOfDivisions;
-            this.removeStartPoint ??= removeStartPoint;
-            this.removeEndPoint ??= removeEndPoint;
+            if (shape !== undefined) { this.shape = shape; }
+            if (nrOfDivisions !== undefined) { this.nrOfDivisions = nrOfDivisions; }
+            if (removeStartPoint !== undefined) { this.removeStartPoint = removeStartPoint; }
+            if (removeEndPoint !== undefined) { this.removeEndPoint = removeEndPoint; }
         }
         /**
          * Shape representing a wire
@@ -1382,6 +1516,11 @@ export namespace OCCT {
     }
 
     export class ProjectWireDto<T, U> {
+        constructor(wire?: T, shape?: U, direction?: Base.Vector3) {
+            if (wire !== undefined) { this.wire = wire; }
+            if (shape !== undefined) { this.shape = shape; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * Wire to project
          * @default undefined
@@ -1399,6 +1538,14 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class WiresToPointsDto<T> {
+        constructor(shape?: T, angularDeflection?: number, curvatureDeflection?: number, minimumOfPoints?: number, uTolerance?: number, minimumLength?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (angularDeflection !== undefined) { this.angularDeflection = angularDeflection; }
+            if (curvatureDeflection !== undefined) { this.curvatureDeflection = curvatureDeflection; }
+            if (minimumOfPoints !== undefined) { this.minimumOfPoints = minimumOfPoints; }
+            if (uTolerance !== undefined) { this.uTolerance = uTolerance; }
+            if (minimumLength !== undefined) { this.minimumLength = minimumLength; }
+        }
         /**
          * Shape to use for parsing edges
          * @default undefined
@@ -1446,6 +1593,14 @@ export namespace OCCT {
         minimumLength = 1.0e-7;
     }
     export class EdgesToPointsDto<T> {
+        constructor(shape?: T, angularDeflection?: number, curvatureDeflection?: number, minimumOfPoints?: number, uTolerance?: number, minimumLength?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (angularDeflection !== undefined) { this.angularDeflection = angularDeflection; }
+            if (curvatureDeflection !== undefined) { this.curvatureDeflection = curvatureDeflection; }
+            if (minimumOfPoints !== undefined) { this.minimumOfPoints = minimumOfPoints; }
+            if (uTolerance !== undefined) { this.uTolerance = uTolerance; }
+            if (minimumLength !== undefined) { this.minimumLength = minimumLength; }
+        }
         /**
          * Shape to use for parsing edges
          * @default undefined
@@ -1493,6 +1648,11 @@ export namespace OCCT {
         minimumLength = 1.0e-7;
     }
     export class ProjectWiresDto<T, U> {
+        constructor(wires?: T[], shape?: U, direction?: Base.Vector3) {
+            if (wires !== undefined) { this.wires = wires; }
+            if (shape !== undefined) { this.shape = shape; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * Wire to project
          * @default undefined
@@ -1511,10 +1671,10 @@ export namespace OCCT {
     }
     export class DivideShapesDto<T> {
         constructor(shapes: T[], nrOfDivisions?: number, removeStartPoint?: boolean, removeEndPoint?: boolean) {
-            this.shapes = shapes;
-            this.nrOfDivisions = nrOfDivisions;
-            this.removeStartPoint = removeStartPoint;
-            this.removeEndPoint = removeEndPoint;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (nrOfDivisions !== undefined) { this.nrOfDivisions = nrOfDivisions; }
+            if (removeStartPoint !== undefined) { this.removeStartPoint = removeStartPoint; }
+            if (removeEndPoint !== undefined) { this.removeEndPoint = removeEndPoint; }
         }
         /**
          * Shapes
@@ -1542,8 +1702,8 @@ export namespace OCCT {
     }
     export class DataOnGeometryAtParamDto<T> {
         constructor(shape: T, param?: number) {
-            this.shape = shape;
-            this.param = param;
+            if (shape !== undefined) { this.shape = shape; }
+            if (param !== undefined) { this.param = param; }
         }
         /**
          * Shape representing a geometry
@@ -1559,13 +1719,12 @@ export namespace OCCT {
          */
         param = 0.5;
     }
-    export class PointInFaceDto<T> extends ShapesDto<T> {
+    export class PointInFaceDto<T> {
         constructor(face: T, edge: T, tEdgeParam?: number, distance2DParam?: number) {
-            super();
-            this.face = face;
-            this.edge = edge;
-            this.tEdgeParam = tEdgeParam;
-            this.distance2DParam = distance2DParam;
+            if (face !== undefined) { this.face = face; }
+            if (edge !== undefined) { this.edge = edge; }
+            if (tEdgeParam !== undefined) { this.tEdgeParam = tEdgeParam; }
+            if (distance2DParam !== undefined) { this.distance2DParam = distance2DParam; }
         }
         /** 
          * OCCT face to be used for calculation 
@@ -1597,8 +1756,8 @@ export namespace OCCT {
 
     export class DataOnGeometryAtLengthDto<T> {
         constructor(shape: T, length?: number) {
-            this.shape = shape;
-            this.length = length;
+            if (shape !== undefined) { this.shape = shape; }
+            if (length !== undefined) { this.length = length; }
         }
         /**
          * Shape representing a wire
@@ -1616,9 +1775,9 @@ export namespace OCCT {
     }
     export class CircleDto {
         constructor(radius?: number, center?: Base.Point3, direction?: Base.Vector3) {
-            this.radius = radius;
-            this.center = center;
-            this.direction = direction;
+            if (radius !== undefined) { this.radius = radius; }
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
         }
         /**
          * Radius of the circle
@@ -1641,8 +1800,8 @@ export namespace OCCT {
     }
     export class LoftDto<T> {
         constructor(shapes?: T[], makeSolid?: boolean) {
-            this.shapes = shapes;
-            this.makeSolid = makeSolid;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (makeSolid !== undefined) { this.makeSolid = makeSolid; }
         }
         /**
          * Wires through which the loft passes
@@ -1656,10 +1815,19 @@ export namespace OCCT {
         makeSolid = false;
     }
     export class LoftAdvancedDto<T> {
-        constructor(
-            shapes?: T[],
-        ) {
-            this.shapes = shapes;
+        constructor(shapes?: T[], makeSolid?: boolean, closed?: boolean, periodic?: boolean, straight?: boolean, nrPeriodicSections?: number, useSmoothing?: boolean, maxUDegree?: number, tolerance?: number, parType?: approxParametrizationTypeEnum, startVertex?: Base.Point3, endVertex?: Base.Point3) {
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (makeSolid !== undefined) { this.makeSolid = makeSolid; }
+            if (closed !== undefined) { this.closed = closed; }
+            if (periodic !== undefined) { this.periodic = periodic; }
+            if (straight !== undefined) { this.straight = straight; }
+            if (nrPeriodicSections !== undefined) { this.nrPeriodicSections = nrPeriodicSections; }
+            if (useSmoothing !== undefined) { this.useSmoothing = useSmoothing; }
+            if (maxUDegree !== undefined) { this.maxUDegree = maxUDegree; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (parType !== undefined) { this.parType = parType; }
+            if (startVertex !== undefined) { this.startVertex = startVertex; }
+            if (endVertex !== undefined) { this.endVertex = endVertex; }
         }
         /**
          * Wires through which the loft passes
@@ -1732,11 +1900,9 @@ export namespace OCCT {
     }
     export class OffsetDto<T> {
         constructor(shape?: T, distance?: number, tolerance?: number) {
-            this.shape = shape;
-            this.distance = distance;
-            if (tolerance) {
-                this.tolerance = tolerance;
-            }
+            if (shape !== undefined) { this.shape = shape; }
+            if (distance !== undefined) { this.distance = distance; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
         }
         /**
          * Shape to offset
@@ -1761,12 +1927,12 @@ export namespace OCCT {
         tolerance = 0.1;
     }
     export class OffsetAdvancedDto<T> {
-        constructor(shape?: T, distance?: number, tolerance?: number) {
-            this.shape = shape;
-            this.distance = distance;
-            if (tolerance) {
-                this.tolerance = tolerance;
-            }
+        constructor(shape?: T, distance?: number, tolerance?: number, joinType?: joinTypeEnum, removeIntEdges?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (distance !== undefined) { this.distance = distance; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (joinType !== undefined) { this.joinType = joinType; }
+            if (removeIntEdges !== undefined) { this.removeIntEdges = removeIntEdges; }
         }
         /**
          * Shape to offset
@@ -1802,13 +1968,11 @@ export namespace OCCT {
         removeIntEdges = false;
     }
     export class RevolveDto<T> {
-        constructor(shape?: T, degrees?: number, direction?: Base.Vector3, copy?: boolean) {
-            this.shape = shape;
-            this.angle = degrees;
-            this.direction = direction;
-            if (this.copy) {
-                this.copy = copy;
-            }
+        constructor(shape?: T, angle?: number, direction?: Base.Vector3, copy?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (angle !== undefined) { this.angle = angle; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (copy !== undefined) { this.copy = copy; }
         }
         /**
          * Shape to revolve
@@ -1836,8 +2000,8 @@ export namespace OCCT {
     }
     export class ShapeShapesDto<T, U> {
         constructor(shape?: T, shapes?: U[]) {
-            this.shape = shape;
-            this.shapes = shapes;
+            if (shape !== undefined) { this.shape = shape; }
+            if (shapes !== undefined) { this.shapes = shapes; }
         }
         /**
          * The wire path
@@ -1852,8 +2016,8 @@ export namespace OCCT {
     }
     export class WiresOnFaceDto<T, U> {
         constructor(wires?: T[], face?: U) {
-            this.wires = wires;
-            this.face = face;
+            if (wires !== undefined) { this.wires = wires; }
+            if (face !== undefined) { this.face = face; }
         }
         /**
          * The wires
@@ -1867,8 +2031,9 @@ export namespace OCCT {
         face: U;
     }
     export class PipeWiresCylindricalDto<T> {
-        constructor(shapes?: T[]) {
-            this.shapes = shapes;
+        constructor(shapes?: T[], radius?: number) {
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (radius !== undefined) { this.radius = radius; }
         }
         /**
          * Wire paths to pipe
@@ -1885,8 +2050,9 @@ export namespace OCCT {
         radius = 0.1;
     }
     export class PipeWireCylindricalDto<T> {
-        constructor(shapes?: T) {
-            this.shape = shapes;
+        constructor(shape?: T, radius?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (radius !== undefined) { this.radius = radius; }
         }
         /**
          * Wire path to pipe
@@ -1903,8 +2069,10 @@ export namespace OCCT {
         radius = 0.1;
     }
     export class PipePolygonWireNGonDto<T> {
-        constructor(shapes?: T) {
-            this.shape = shapes;
+        constructor(shapes?: T, radius?: number, nrCorners?: number) {
+            if (shapes !== undefined) { this.shape = shapes; }
+            if (radius !== undefined) { this.radius = radius; }
+            if (nrCorners !== undefined) { this.nrCorners = nrCorners; }
         }
         /**
          * Wire path to pipe
@@ -1930,8 +2098,8 @@ export namespace OCCT {
     }
     export class ExtrudeDto<T> {
         constructor(shape?: T, direction?: Base.Vector3) {
-            this.shape = shape;
-            this.direction = direction;
+            if (shape !== undefined) { this.shape = shape; }
+            if (direction !== undefined) { this.direction = direction; }
         }
         /**
          * Face to extrude
@@ -1947,8 +2115,8 @@ export namespace OCCT {
 
     export class ExtrudeShapesDto<T> {
         constructor(shapes?: T[], direction?: Base.Vector3) {
-            this.shapes = shapes;
-            this.direction = direction;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (direction !== undefined) { this.direction = direction; }
         }
         /**
          * Shapes to extrude
@@ -1964,8 +2132,8 @@ export namespace OCCT {
 
     export class SplitDto<T> {
         constructor(shape?: T, shapes?: T[]) {
-            this.shape = shape;
-            this.shapes = shapes;
+            if (shape !== undefined) { this.shape = shape; }
+            if (shapes !== undefined) { this.shapes = shapes; }
         }
         /**
          * Shape to split
@@ -1980,8 +2148,8 @@ export namespace OCCT {
     }
     export class UnionDto<T> {
         constructor(shapes?: T[], keepEdges?: boolean) {
-            this.shapes = shapes;
-            this.keepEdges = keepEdges;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (keepEdges !== undefined) { this.keepEdges = keepEdges; }
         }
         /**
          * Objects to be joined together
@@ -1996,9 +2164,9 @@ export namespace OCCT {
     }
     export class DifferenceDto<T> {
         constructor(shape?: T, shapes?: T[], keepEdges?: boolean) {
-            this.shape = shape;
-            this.shapes = shapes;
-            this.keepEdges = keepEdges;
+            if (shape !== undefined) { this.shape = shape; }
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (keepEdges !== undefined) { this.keepEdges = keepEdges; }
         }
         /**
          * Object to subtract from
@@ -2019,8 +2187,8 @@ export namespace OCCT {
 
     export class IntersectionDto<T> {
         constructor(shapes?: T[], keepEdges?: boolean) {
-            this.shapes = shapes;
-            this.keepEdges = keepEdges;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (keepEdges !== undefined) { this.keepEdges = keepEdges; }
         }
         /**
          * Shapes to intersect
@@ -2035,7 +2203,7 @@ export namespace OCCT {
     }
     export class ShapeDto<T> {
         constructor(shape?: T) {
-            this.shape = shape;
+            if (shape !== undefined) { this.shape = shape; }
         }
         /**
          * Shape on which action should be performed
@@ -2045,8 +2213,8 @@ export namespace OCCT {
     }
     export class CompareShapesDto<T> {
         constructor(shape?: T, otherShape?: T) {
-            this.shape ??= shape;
-            this.otherShape ??= otherShape;
+            if (shape !== undefined) { this.shape = shape; }
+            if (otherShape !== undefined) { this.otherShape = otherShape; }
         }
         /**
          * Shape to be compared
@@ -2060,6 +2228,11 @@ export namespace OCCT {
         otherShape: T;
     }
     export class FixSmallEdgesInWireDto<T>{
+        constructor(shape?: T, lockvtx?: boolean, precsmall?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (lockvtx !== undefined) { this.lockvtx = lockvtx; }
+            if (precsmall !== undefined) { this.precsmall = precsmall; }
+        }
         /**
          * Shape on which action should be performed
          * @default undefined
@@ -2080,6 +2253,12 @@ export namespace OCCT {
         precsmall = 0.0;
     }
     export class BasicShapeRepairDto<T> {
+        constructor(shape?: T, precision?: number, maxTolerance?: number, minTolerance?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (precision !== undefined) { this.precision = precision; }
+            if (maxTolerance !== undefined) { this.maxTolerance = maxTolerance; }
+            if (minTolerance !== undefined) { this.minTolerance = minTolerance; }
+        }
         /**
          * Shape to repair
          * @default undefined
@@ -2116,6 +2295,10 @@ export namespace OCCT {
         minTolerance = 0.0001;
     }
     export class FixClosedDto<T>{
+        constructor(shape?: T, precision?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (precision !== undefined) { this.precision = precision; }
+        }
         /**
          * Shape on which action should be performed
          * @default undefined
@@ -2131,8 +2314,9 @@ export namespace OCCT {
         precision = -0.1;
     }
     export class ShapesWithToleranceDto<T> {
-        constructor(shapes?: T[]) {
-            this.shapes = shapes;
+        constructor(shapes?: T[], tolerance?: number) {
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
         }
         /**
          * The shapes
@@ -2149,8 +2333,9 @@ export namespace OCCT {
         tolerance = 1.0e-7;
     }
     export class ShapeWithToleranceDto<T> {
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, tolerance?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
         }
         /**
          * The shape
@@ -2169,8 +2354,8 @@ export namespace OCCT {
 
     export class ShapeIndexDto<T> {
         constructor(shape?: T, index?: number) {
-            this.shape = shape;
-            this.index = index;
+            if (shape !== undefined) { this.shape = shape; }
+            if (index !== undefined) { this.index = index; }
         }
         /**
          * Shape
@@ -2187,10 +2372,10 @@ export namespace OCCT {
         index = 0;
     }
     export class RotationExtrudeDto<T> {
-        constructor(shape?: T, height?: number, degrees?: number) {
-            this.shape = shape;
-            this.height = height;
-            this.angle = degrees;
+        constructor(shape?: T, height?: number, angle?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (height !== undefined) { this.height = height; }
+            if (angle !== undefined) { this.angle = angle; }
         }
         /**
          * Wire to extrude by rotating
@@ -2217,10 +2402,15 @@ export namespace OCCT {
 
     // Threading : Create Surfaces
     export class ThickSolidByJoinDto<T> {
-        constructor(shape?: T, shapes?: T[], offset?: number) {
-            this.shape = shape;
-            this.shapes = shapes;
-            this.offset = offset;
+        constructor(shape?: T, shapes?: T[], offset?: number, tolerance?: number, intersection?: boolean, selfIntersection?: boolean, joinType?: joinTypeEnum, removeIntEdges?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (offset !== undefined) { this.offset = offset; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (intersection !== undefined) { this.intersection = intersection; }
+            if (selfIntersection !== undefined) { this.selfIntersection = selfIntersection; }
+            if (joinType !== undefined) { this.joinType = joinType; }
+            if (removeIntEdges !== undefined) { this.removeIntEdges = removeIntEdges; }
         }
         /**
          * Shape to make thick
@@ -2271,12 +2461,12 @@ export namespace OCCT {
         removeIntEdges = false;
     }
     export class TransformDto<T> {
-        constructor(shape?: T, translation?: Base.Vector3, rotationAxis?: Base.Vector3, rotationDegrees?: number, scaleFactor?: number) {
-            this.shape = shape;
-            this.translation = translation;
-            this.rotationAxis = rotationAxis;
-            this.rotationAngle = rotationDegrees;
-            this.scaleFactor = scaleFactor;
+        constructor(shape?: T, translation?: Base.Vector3, rotationAxis?: Base.Vector3, rotationAngle?: number, scaleFactor?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (translation !== undefined) { this.translation = translation; }
+            if (rotationAxis !== undefined) { this.rotationAxis = rotationAxis; }
+            if (rotationAngle !== undefined) { this.rotationAngle = rotationAngle; }
+            if (scaleFactor !== undefined) { this.scaleFactor = scaleFactor; }
         }
         /**
          * Shape to transform
@@ -2312,11 +2502,11 @@ export namespace OCCT {
     }
     export class TransformShapesDto<T> {
         constructor(shapes?: T[], translation?: Base.Vector3[], rotationAxes?: Base.Vector3[], rotationDegrees?: number[], scaleFactors?: number[]) {
-            this.shapes = shapes;
-            this.translations = translation;
-            this.rotationAxes = rotationAxes;
-            this.rotationAngles = rotationDegrees;
-            this.scaleFactors = scaleFactors;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (translation !== undefined) { this.translations = translation; }
+            if (rotationAxes !== undefined) { this.rotationAxes = rotationAxes; }
+            if (rotationDegrees !== undefined) { this.rotationAngles = rotationDegrees; }
+            if (scaleFactors !== undefined) { this.scaleFactors = scaleFactors; }
         }
         /**
          * Shape to transform
@@ -2346,8 +2536,8 @@ export namespace OCCT {
     }
     export class TranslateDto<T> {
         constructor(shape?: T, translation?: Base.Vector3) {
-            this.shape = shape;
-            this.translation = translation;
+            if (shape !== undefined) { this.shape = shape; }
+            if (translation !== undefined) { this.translation = translation; }
         }
         /**
          * Shape for translation
@@ -2362,8 +2552,8 @@ export namespace OCCT {
     }
     export class TranslateShapesDto<T> {
         constructor(shapes?: T[], translations?: Base.Vector3[]) {
-            this.shapes = shapes;
-            this.translations = translations;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (translations !== undefined) { this.translations = translations; }
         }
         /**
          * Shape for translation
@@ -2379,11 +2569,11 @@ export namespace OCCT {
 
     export class AlignDto<T>{
         constructor(shape?: T, fromOrigin?: Base.Point3, fromDirection?: Base.Vector3, toOrigin?: Base.Point3, toDirection?: Base.Vector3) {
-            this.shape = shape;
-            this.fromOrigin = fromOrigin;
-            this.fromDirection = fromDirection;
-            this.toOrigin = toOrigin;
-            this.toDirection = toDirection;
+            if (shape !== undefined) { this.shape = shape; }
+            if (fromOrigin !== undefined) { this.fromOrigin = fromOrigin; }
+            if (fromDirection !== undefined) { this.fromDirection = fromDirection; }
+            if (toOrigin !== undefined) { this.toOrigin = toOrigin; }
+            if (toDirection !== undefined) { this.toDirection = toDirection; }
         }
         /**
          * Shape for translation
@@ -2413,11 +2603,11 @@ export namespace OCCT {
     }
     export class AlignShapesDto<T> {
         constructor(shapes?: T[], fromOrigins?: Base.Vector3[], fromDirections?: Base.Vector3[], toOrigins?: Base.Vector3[], toDirections?: Base.Vector3[]) {
-            this.shapes = shapes;
-            this.fromOrigins = fromOrigins;
-            this.fromDirections = fromDirections;
-            this.toOrigins = toOrigins;
-            this.toDirections = toDirections;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (fromOrigins !== undefined) { this.fromOrigins = fromOrigins; }
+            if (fromDirections !== undefined) { this.fromDirections = fromDirections; }
+            if (toOrigins !== undefined) { this.toOrigins = toOrigins; }
+            if (toDirections !== undefined) { this.toDirections = toDirections; }
         }
         /**
          * Shape for translation
@@ -2448,9 +2638,9 @@ export namespace OCCT {
 
     export class MirrorDto<T> {
         constructor(shape?: T, origin?: Base.Point3, direction?: Base.Vector3) {
-            this.shape = shape;
-            this.direction = direction;
-            this.origin = origin;
+            if (shape !== undefined) { this.shape = shape; }
+            if (origin !== undefined) { this.origin = origin; }
+            if (direction !== undefined) { this.direction = direction; }
         }
         /**
          * Shape to mirror
@@ -2470,9 +2660,9 @@ export namespace OCCT {
     }
     export class MirrorShapesDto<T> {
         constructor(shapes?: T[], origins?: Base.Point3[], directions?: Base.Vector3[]) {
-            this.shapes = shapes;
-            this.directions = directions;
-            this.origins = origins;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (origins !== undefined) { this.origins = origins; }
+            if (directions !== undefined) { this.directions = directions; }
         }
         /**
          * Shape to mirror
@@ -2492,9 +2682,9 @@ export namespace OCCT {
     }
     export class MirrorAlongNormalDto<T> {
         constructor(shape?: T, origin?: Base.Point3, normal?: Base.Vector3) {
-            this.shape = shape;
-            this.normal = normal;
-            this.origin = origin;
+            if (shape !== undefined) { this.shape = shape; }
+            if (origin !== undefined) { this.origin = origin; }
+            if (normal !== undefined) { this.normal = normal; }
         }
         /**
          * Shape to mirror
@@ -2514,9 +2704,9 @@ export namespace OCCT {
     }
     export class MirrorAlongNormalShapesDto<T> {
         constructor(shapes?: T[], origins?: Base.Point3[], normals?: Base.Vector3[]) {
-            this.shapes = shapes;
-            this.normals = normals;
-            this.origins = origins;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (origins !== undefined) { this.origins = origins; }
+            if (normals !== undefined) { this.normals = normals; }
         }
         /**
          * Shape to mirror
@@ -2536,9 +2726,9 @@ export namespace OCCT {
     }
     export class AlignAndTranslateDto<T>{
         constructor(shape?: T, direction?: Base.Vector3, center?: Base.Vector3) {
-            this.shape = shape;
-            this.direction = direction;
-            this.center = center;
+            if (shape !== undefined) { this.shape = shape; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (center !== undefined) { this.center = center; }
         }
         /**
          * Shape to align and translate
@@ -2556,8 +2746,11 @@ export namespace OCCT {
         center: Base.Vector3 = [0, 0, 0];
     }
     export class UnifySameDomainDto<T> {
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, unifyEdges?: boolean, unifyFaces?: boolean, concatBSplines?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (unifyEdges !== undefined) { this.unifyEdges = unifyEdges; }
+            if (unifyFaces !== undefined) { this.unifyFaces = unifyFaces; }
+            if (concatBSplines !== undefined) { this.concatBSplines = concatBSplines; }
         }
         /**
          * Shape on which action should be performed
@@ -2582,15 +2775,15 @@ export namespace OCCT {
     }
     export class FilterFacePointsDto<T>{
         constructor(shape?: T, points?: Base.Point3[], tolerance?: number, useBndBox?: boolean, gapTolerance?: number, keepIn?: boolean, keepOn?: boolean, keepOut?: boolean, keepUnknown?: boolean) {
-            this.shape ??= shape;
-            this.points ??= points;
-            this.tolerance ??= tolerance;
-            this.useBndBox ??= useBndBox;
-            this.gapTolerance ??= gapTolerance;
-            this.keepIn ??= keepIn;
-            this.keepOn ??= keepOn;
-            this.keepOut ??= keepOut;
-            this.keepUnknown ??= keepUnknown;
+            if (shape !== undefined) { this.shape = shape; }
+            if (points !== undefined) { this.points = points; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (useBndBox !== undefined) { this.useBndBox = useBndBox; }
+            if (gapTolerance !== undefined) { this.gapTolerance = gapTolerance; }
+            if (keepIn !== undefined) { this.keepIn = keepIn; }
+            if (keepOn !== undefined) { this.keepOn = keepOn; }
+            if (keepOut !== undefined) { this.keepOut = keepOut; }
+            if (keepUnknown !== undefined) { this.keepUnknown = keepUnknown; }
         }
         /**
          * Face that will be used to filter points
@@ -2648,13 +2841,13 @@ export namespace OCCT {
     }
     export class FilterSolidPointsDto<T>{
         constructor(shape?: T, points?: Base.Point3[], tolerance?: number, keepIn?: boolean, keepOn?: boolean, keepOut?: boolean, keepUnknown?: boolean) {
-            this.shape ??= shape;
-            this.points ??= points;
-            this.tolerance ??= tolerance;
-            this.keepIn ??= keepIn;
-            this.keepOn ??= keepOn;
-            this.keepOut ??= keepOut;
-            this.keepUnknown ??= keepUnknown;
+            if (shape !== undefined) { this.shape = shape; }
+            if (points !== undefined) { this.points = points; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (keepIn !== undefined) { this.keepIn = keepIn; }
+            if (keepOn !== undefined) { this.keepOn = keepOn; }
+            if (keepOut !== undefined) { this.keepOut = keepOut; }
+            if (keepUnknown !== undefined) { this.keepUnknown = keepUnknown; }
         }
         /**
          * Face that will be used to filter points
@@ -2697,9 +2890,9 @@ export namespace OCCT {
     }
     export class AlignAndTranslateShapesDto<T>{
         constructor(shapes?: T[], directions?: Base.Vector3[], centers?: Base.Vector3[]) {
-            this.shapes = shapes;
-            this.directions = directions;
-            this.centers = centers;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (directions !== undefined) { this.directions = directions; }
+            if (centers !== undefined) { this.centers = centers; }
         }
         /**
          * Shapes to align and translate
@@ -2717,10 +2910,10 @@ export namespace OCCT {
         centers: Base.Vector3[] = [[0, 0, 0]];
     }
     export class RotateDto<T> {
-        constructor(shape?: T, axis?: Base.Vector3, degrees?: number) {
-            this.shape = shape;
-            this.axis = axis;
-            this.angle = degrees;
+        constructor(shape?: T, axis?: Base.Vector3, angle?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (axis !== undefined) { this.axis = axis; }
+            if (angle !== undefined) { this.angle = angle; }
         }
         /**
          * Shape to rotate
@@ -2743,10 +2936,10 @@ export namespace OCCT {
     }
     export class RotateAroundCenterDto<T> {
         constructor(shape?: T, angle?: number, center?: Base.Point3, axis?: Base.Vector3) {
-            this.shape = shape;
-            this.angle = angle;
-            this.center = center;
-            this.axis = axis;
+            if (shape !== undefined) { this.shape = shape; }
+            if (angle !== undefined) { this.angle = angle; }
+            if (center !== undefined) { this.center = center; }
+            if (axis !== undefined) { this.axis = axis; }
         }
         /**
          * Shape to rotate
@@ -2771,9 +2964,9 @@ export namespace OCCT {
     }
     export class RotateShapesDto<T> {
         constructor(shapes?: T[], axes?: Base.Vector3[], angles?: number[]) {
-            this.shapes = shapes;
-            this.axes = axes;
-            this.angles = angles;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (axes !== undefined) { this.axes = axes; }
+            if (angles !== undefined) { this.angles = angles; }
         }
         /**
          * Shape to rotate
@@ -2793,10 +2986,10 @@ export namespace OCCT {
     }
     export class RotateAroundCenterShapesDto<T> {
         constructor(shapes?: T[], angles?: number[], centers?: Base.Point3[], axes?: Base.Vector3[]) {
-            this.shapes = shapes;
-            this.angles = angles;
-            this.centers = centers;
-            this.axes = axes;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (angles !== undefined) { this.angles = angles; }
+            if (centers !== undefined) { this.centers = centers; }
+            if (axes !== undefined) { this.axes = axes; }
         }
         /**
          * Shape to scale
@@ -2820,9 +3013,9 @@ export namespace OCCT {
         axes: Base.Vector3[] = [[0, 0, 1]];
     }
     export class ScaleDto<T> {
-        constructor(shape?: T, scale?: number) {
-            this.shape = shape;
-            this.factor = scale;
+        constructor(shape?: T, factor?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (factor !== undefined) { this.factor = factor; }
         }
         /**
          * Shape to scale
@@ -2840,8 +3033,8 @@ export namespace OCCT {
     }
     export class ScaleShapesDto<T> {
         constructor(shapes?: T[], factors?: number[]) {
-            this.shapes = shapes;
-            this.factors = factors;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (factors !== undefined) { this.factors = factors; }
         }
         /**
          * Shape to scale
@@ -2856,9 +3049,9 @@ export namespace OCCT {
     }
     export class Scale3DDto<T> {
         constructor(shape?: T, scale?: Base.Vector3, center?: Base.Point3) {
-            this.shape = shape;
-            this.scale = scale;
-            this.center = center;
+            if (shape !== undefined) { this.shape = shape; }
+            if (scale !== undefined) { this.scale = scale; }
+            if (center !== undefined) { this.center = center; }
         }
         /**
          * Shape to scale
@@ -2878,9 +3071,9 @@ export namespace OCCT {
     }
     export class Scale3DShapesDto<T> {
         constructor(shapes?: T[], scales?: Base.Vector3[], centers?: Base.Point3[]) {
-            this.shapes = shapes;
-            this.scales = scales;
-            this.centers = centers;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (scales !== undefined) { this.scales = scales; }
+            if (centers !== undefined) { this.centers = centers; }
         }
         /**
          * Shape to scale
@@ -2900,15 +3093,9 @@ export namespace OCCT {
     }
     export class ShapeToMeshDto<T>{
         constructor(shape?: T, precision?: number, adjustYtoZ?: boolean) {
-            if (shape) {
-                this.shape = shape;
-            }
-            if (precision) {
-                this.precision = precision;
-            }
-            if (adjustYtoZ) {
-                this.adjustYtoZ = adjustYtoZ;
-            }
+            if (shape !== undefined) { this.shape = shape; }
+            if (precision !== undefined) { this.precision = precision; }
+            if (adjustYtoZ !== undefined) { this.adjustYtoZ = adjustYtoZ; }
         }
         /**
          * Shape to save
@@ -2931,15 +3118,9 @@ export namespace OCCT {
     }
     export class ShapesToMeshesDto<T>{
         constructor(shapes?: T[], precision?: number, adjustYtoZ?: boolean) {
-            if (shapes) {
-                this.shapes = shapes;
-            }
-            if (precision) {
-                this.precision = precision;
-            }
-            if (adjustYtoZ) {
-                this.adjustYtoZ = adjustYtoZ;
-            }
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (precision !== undefined) { this.precision = precision; }
+            if (adjustYtoZ !== undefined) { this.adjustYtoZ = adjustYtoZ; }
         }
         /**
          * Shapes to transform
@@ -2962,9 +3143,9 @@ export namespace OCCT {
     }
     export class SaveStepDto<T> {
         constructor(shape?: T, fileName?: string, adjustYtoZ?: boolean) {
-            this.shape = shape;
-            this.fileName = fileName;
-            this.adjustYtoZ = adjustYtoZ;
+            if (shape !== undefined) { this.shape = shape; }
+            if (fileName !== undefined) { this.fileName = fileName; }
+            if (adjustYtoZ !== undefined) { this.adjustYtoZ = adjustYtoZ; }
         }
         /**
          * Shape to save
@@ -2984,10 +3165,10 @@ export namespace OCCT {
     }
     export class SaveStlDto<T> {
         constructor(shape?: T, fileName?: string, precision?: number, adjustYtoZ?: boolean) {
-            this.shape = shape;
-            this.fileName = fileName;
-            this.precision = precision;
-            this.adjustYtoZ = adjustYtoZ;
+            if (shape !== undefined) { this.shape = shape; }
+            if (fileName !== undefined) { this.fileName = fileName; }
+            if (precision !== undefined) { this.precision = precision; }
+            if (adjustYtoZ !== undefined) { this.adjustYtoZ = adjustYtoZ; }
         }
         /**
          * Shape to save
@@ -3012,9 +3193,9 @@ export namespace OCCT {
     }
     export class ImportStepIgesFromTextDto {
         constructor(text?: string, fileType?: fileTypeEnum, adjustZtoY?: boolean) {
-            this.text ??= text;
-            this.fileType ??= fileType;
-            this.adjustZtoY ??= adjustZtoY;
+            if (text !== undefined) { this.text = text; }
+            if (fileType !== undefined) { this.fileType = fileType; }
+            if (adjustZtoY !== undefined) { this.adjustZtoY = adjustZtoY; }
         }
         /**
          * The text that represents step or iges contents
@@ -3033,8 +3214,8 @@ export namespace OCCT {
     }
     export class ImportStepIgesDto {
         constructor(assetFile?: File, adjustZtoY?: boolean) {
-            this.assetFile = assetFile;
-            this.adjustZtoY = adjustZtoY;
+            if (assetFile !== undefined) { this.assetFile = assetFile; }
+            if (adjustZtoY !== undefined) { this.adjustZtoY = adjustZtoY; }
         }
         /**
          * The name of the asset to store in the cache.
@@ -3050,9 +3231,9 @@ export namespace OCCT {
     }
     export class LoadStepOrIgesDto {
         constructor(filetext?: string | ArrayBuffer, fileName?: string, adjustZtoY?: boolean) {
-            this.filetext = filetext;
-            this.fileName = fileName;
-            this.adjustZtoY = adjustZtoY;
+            if (filetext !== undefined) { this.filetext = filetext; }
+            if (fileName !== undefined) { this.fileName = fileName; }
+            if (adjustZtoY !== undefined) { this.adjustZtoY = adjustZtoY; }
         }
         /**
          * File text
@@ -3072,7 +3253,7 @@ export namespace OCCT {
     }
     export class CompoundShapesDto<T> {
         constructor(shapes?: T[]) {
-            this.shapes = shapes;
+            if (shapes !== undefined) { this.shapes = shapes; }
         }
         /**
          * Shapes to add to compound
@@ -3082,8 +3263,8 @@ export namespace OCCT {
     }
     export class ThisckSolidSimpleDto<T> {
         constructor(shape?: T, offset?: number) {
-            this.shape = shape;
-            this.offset = offset;
+            if (shape !== undefined) { this.shape = shape; }
+            if (offset !== undefined) { this.offset = offset; }
         }
         /**
          * Shape to make thick
@@ -3101,9 +3282,9 @@ export namespace OCCT {
     }
     export class Offset3DWireDto<T> {
         constructor(shape?: T, offset?: number, direction?: Base.Vector3) {
-            this.shape ??= shape;
-            this.offset ??= offset;
-            this.direction ??= direction;
+            if (shape !== undefined) { this.shape = shape; }
+            if (offset !== undefined) { this.offset = offset; }
+            if (direction !== undefined) { this.direction = direction; }
         }
         /**
          * Shape to make thick
@@ -3126,8 +3307,8 @@ export namespace OCCT {
     }
     export class FaceFromWireDto<T> {
         constructor(shape?: T, planar?: boolean) {
-            this.shape = shape;
-            this.planar = planar;
+            if (shape !== undefined) { this.shape = shape; }
+            if (planar !== undefined) { this.planar = planar; }
         }
         /**
          * Wire shape to convert into a face
@@ -3142,8 +3323,8 @@ export namespace OCCT {
     }
     export class FaceFromWiresDto<T> {
         constructor(shapes?: T[], planar?: boolean) {
-            this.shapes = shapes;
-            this.planar = planar;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (planar !== undefined) { this.planar = planar; }
         }
         /**
          * Wire shapes to convert into a faces
@@ -3158,8 +3339,8 @@ export namespace OCCT {
     }
     export class FacesFromWiresDto<T> {
         constructor(shapes?: T[], planar?: boolean) {
-            this.shapes = shapes;
-            this.planar = planar;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (planar !== undefined) { this.planar = planar; }
         }
         /**
          * Wire shapes to convert into a faces
@@ -3174,8 +3355,8 @@ export namespace OCCT {
     }
     export class SewDto<T> {
         constructor(shapes: T[], tolerance?: number) {
-            this.shapes = shapes;
-            this.tolerance = tolerance;
+            if (shapes !== undefined) { this.shapes = shapes; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
         }
         /**
          * Faces to construct a shell from
@@ -3193,9 +3374,10 @@ export namespace OCCT {
     }
 
     export class FaceIsoCurveAtParamDto<T> {
-        constructor(shape?: T, param?: number) {
-            this.shape = shape;
-            this.param = param;
+        constructor(shape?: T, param?: number, dir?: "u" | "v") {
+            if (shape !== undefined) { this.shape = shape; }
+            if (param !== undefined) { this.param = param; }
+            if (dir !== undefined) { this.dir = dir; }
         }
         /**
          * Face shape
@@ -3218,8 +3400,11 @@ export namespace OCCT {
     }
 
     export class DivideFaceToUVPointsDto<T> {
-        constructor(shape?: T) {
-            this.shape = shape;
+        constructor(shape?: T, nrOfPointsU?: number, nrOfPointsV?: number, flat?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (nrOfPointsU !== undefined) { this.nrOfPointsU = nrOfPointsU; }
+            if (nrOfPointsV !== undefined) { this.nrOfPointsV = nrOfPointsV; }
+            if (flat !== undefined) { this.flat = flat; }
         }
         /**
          * Face shape
@@ -3250,6 +3435,13 @@ export namespace OCCT {
     }
 
     export class Geom2dEllipseDto {
+        constructor(center?: Base.Point2, direction?: Base.Vector2, radiusMinor?: number, radiusMajor?: number, sense?: boolean) {
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (radiusMinor !== undefined) { this.radiusMinor = radiusMinor; }
+            if (radiusMajor !== undefined) { this.radiusMajor = radiusMajor; }
+            if (sense !== undefined) { this.sense = sense; }
+        }
         /**
          * Center of the ellipse
          * @default [0,0]
@@ -3283,6 +3475,12 @@ export namespace OCCT {
         sense = false;
     }
     export class Geom2dCircleDto {
+        constructor(center?: Base.Point2, direction?: Base.Vector2, radius?: number, sense?: boolean) {
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (radius !== undefined) { this.radius = radius; }
+            if (sense !== undefined) { this.sense = sense; }
+        }
         /**
          * Center of the circle
          * @default [0,0]
@@ -3308,6 +3506,18 @@ export namespace OCCT {
         sense = false;
     }
     export class ChristmasTreeDto {
+        constructor(height?: number, innerDist?: number, outerDist?: number, nrSkirts?: number, trunkHeight?: number, trunkWidth?: number, half?: boolean, rotation?: number, origin?: Base.Point3, direction?: Base.Vector3) {
+            if (height !== undefined) { this.height = height; }
+            if (innerDist !== undefined) { this.innerDist = innerDist; }
+            if (outerDist !== undefined) { this.outerDist = outerDist; }
+            if (nrSkirts !== undefined) { this.nrSkirts = nrSkirts; }
+            if (trunkHeight !== undefined) { this.trunkHeight = trunkHeight; }
+            if (trunkWidth !== undefined) { this.trunkWidth = trunkWidth; }
+            if (half !== undefined) { this.half = half; }
+            if (rotation !== undefined) { this.rotation = rotation; }
+            if (origin !== undefined) { this.origin = origin; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * Height of the tree
          * @default 6
@@ -3381,6 +3591,15 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class StarDto {
+        constructor(outerRadius?: number, innerRadius?: number, numRays?: number, center?: Base.Point3, direction?: Base.Vector3, offsetOuterEdges?: number, half?: boolean) {
+            if (outerRadius !== undefined) { this.outerRadius = outerRadius; }
+            if (innerRadius !== undefined) { this.innerRadius = innerRadius; }
+            if (numRays !== undefined) { this.numRays = numRays; }
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (offsetOuterEdges !== undefined) { this.offsetOuterEdges = offsetOuterEdges; }
+            if (half !== undefined) { this.half = half; }
+        }
         /**
          * Center of the circle
          * @default [0,0,0]
@@ -3430,6 +3649,14 @@ export namespace OCCT {
         half = false;
     }
     export class ParallelogramDto {
+        constructor(center?: Base.Point3, direction?: Base.Vector3, aroundCenter?: boolean, width?: number, height?: number, angle?: number) {
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (aroundCenter !== undefined) { this.aroundCenter = aroundCenter; }
+            if (width !== undefined) { this.width = width; }
+            if (height !== undefined) { this.height = height; }
+            if (angle !== undefined) { this.angle = angle; }
+        }
         /**
          * Center of the circle
          * @default [0, 0, 0]
@@ -3471,6 +3698,12 @@ export namespace OCCT {
         angle = 15;
     }
     export class Heart2DDto {
+        constructor(center?: Base.Point3, direction?: Base.Vector3, rotation?: number, sizeApprox?: number) {
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (rotation !== undefined) { this.rotation = rotation; }
+            if (sizeApprox !== undefined) { this.sizeApprox = sizeApprox; }
+        }
         /**
          * Center of the circle
          * @default [0, 0, 0]
@@ -3499,6 +3732,12 @@ export namespace OCCT {
         sizeApprox = 2;
     }
     export class NGonWireDto {
+        constructor(center?: Base.Point3, direction?: Base.Vector3, nrCorners?: number, radius?: number) {
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (nrCorners !== undefined) { this.nrCorners = nrCorners; }
+            if (radius !== undefined) { this.radius = radius; }
+        }
         /**
          * Center of the circle
          * @default [0, 0, 0]
@@ -3527,6 +3766,12 @@ export namespace OCCT {
         radius = 1;
     }
     export class EllipseDto {
+        constructor(center?: Base.Point3, direction?: Base.Vector3, radiusMinor?: number, radiusMajor?: number) {
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (radiusMinor !== undefined) { this.radiusMinor = radiusMinor; }
+            if (radiusMajor !== undefined) { this.radiusMajor = radiusMajor; }
+        }
         /**
          * Center of the ellipse
          * @default [0, 0, 0]
@@ -3555,6 +3800,11 @@ export namespace OCCT {
         radiusMajor = 2;
     }
     export class GeomCylindricalSurfaceDto {
+        constructor(radius?: number, center?: Base.Point3, direction?: Base.Vector3) {
+            if (radius !== undefined) { this.radius = radius; }
+            if (center !== undefined) { this.center = center; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * Radius of the cylindrical surface
          * @default 1
@@ -3575,6 +3825,13 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class Geom2dTrimmedCurveDto<T>{
+        constructor(shape?: T, u1?: number, u2?: number, sense?: boolean, adjustPeriodic?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (u1 !== undefined) { this.u1 = u1; }
+            if (u2 !== undefined) { this.u2 = u2; }
+            if (sense !== undefined) { this.sense = sense; }
+            if (adjustPeriodic !== undefined) { this.adjustPeriodic = adjustPeriodic; }
+        }
         /**
          * 2D Curve to trim
          * @default undefined
@@ -3613,6 +3870,10 @@ export namespace OCCT {
         adjustPeriodic = true;
     }
     export class Geom2dSegmentDto {
+        constructor(start?: Base.Point2, end?: Base.Point2) {
+            if (start !== undefined) { this.start = start; }
+            if (end !== undefined) { this.end = end; }
+        }
         /**
          * Start 2d point for segment
          * @default [0, 0]
@@ -3625,6 +3886,11 @@ export namespace OCCT {
         end: Base.Point2 = [1, 0];
     }
     export class SliceDto<T> {
+        constructor(shape?: T, step?: number, direction?: Base.Vector3) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (step !== undefined) { this.step = step; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * The shape to slice
          * @default undefined
@@ -3645,6 +3911,11 @@ export namespace OCCT {
         direction: Base.Vector3 = [0, 1, 0];
     }
     export class SliceInStepPatternDto<T> {
+        constructor(shape?: T, steps?: number[], direction?: Base.Vector3) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (steps !== undefined) { this.steps = steps; }
+            if (direction !== undefined) { this.direction = direction; }
+        }
         /**
          * The shape to slice
          * @default undefined

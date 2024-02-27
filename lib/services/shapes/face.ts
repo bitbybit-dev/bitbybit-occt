@@ -71,11 +71,8 @@ export class OCCTFace {
         }
     }
 
-    faceFromSurfaceAndWire(inputs: Inputs.OCCT.FaceFromSurfaceAndWireDto<Geom_Surface | TopoDS_Wire, undefined>) {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
-        }
-        const face = this.och.bRepBuilderAPIMakeFaceFromSurfaceAndWire(inputs.shapes[0] as Geom_Surface, inputs.shapes[1] as TopoDS_Wire, inputs.inside) as TopoDS_Face;
+    faceFromSurfaceAndWire(inputs: Inputs.OCCT.FaceFromSurfaceAndWireDto<Geom_Surface, TopoDS_Wire>) {
+        const face = this.och.bRepBuilderAPIMakeFaceFromSurfaceAndWire(inputs.surface, inputs.wire, inputs.inside) as TopoDS_Face;
         if (face.IsNull()) {
             face.delete();
             throw new Error("Could not construct a face from the surface. Check if surface is not infinite.");
