@@ -1506,7 +1506,7 @@ export class OccHelper {
 
     intersection(inputs: Inputs.OCCT.IntersectionDto<TopoDS_Shape>): TopoDS_Shape[] {
         if (inputs.shapes.length < 2) {
-            throw (new Error("Less than 2 shapes provided for intersection"));
+            throw (new Error("Intersection requires 2 or more shapes to be given"));
         }
 
         const intersectShape = inputs.shapes[0];
