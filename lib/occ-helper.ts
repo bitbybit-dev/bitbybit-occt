@@ -427,8 +427,8 @@ export class OccHelper {
     }
 
     getEdgesLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): number[] {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
+        if (inputs.shapes === undefined) {
+            throw (Error(("Shapes are not defined")));
         }
         return inputs.shapes.map(edge => this.getEdgeLength({ shape: edge }));
     }
@@ -444,8 +444,8 @@ export class OccHelper {
     }
 
     getShapesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): Base.Point3[] {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
+        if (inputs.shapes === undefined) {
+            throw (Error(("Shapes are not defined")));
         }
         return inputs.shapes.map(edge => this.getLinearCenterOfMass({ shape: edge }));
     }
@@ -457,8 +457,8 @@ export class OccHelper {
     }
 
     getWiresLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire>): number[] {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
+        if (inputs.shapes === undefined) {
+            throw (Error(("Shapes are not defined")));
         }
         return inputs.shapes.map(wire => this.getWireLength({ shape: wire }));
     }
@@ -488,8 +488,8 @@ export class OccHelper {
     }
 
     getFacesAreas(inputs: Inputs.OCCT.ShapesDto<TopoDS_Face>): number[] {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
+        if (inputs.shapes === undefined) {
+            throw (Error(("Shapes are not defined")));
         }
         return inputs.shapes.map(face => this.getFaceArea({ shape: face }));
     }
@@ -505,8 +505,8 @@ export class OccHelper {
     }
 
     getFacesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Face>): Base.Point3[] {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
+        if (inputs.shapes === undefined) {
+            throw (Error(("Shapes are not defined")));
         }
         return inputs.shapes.map(face => this.getFaceCenterOfMass({ shape: face }));
     }
@@ -592,8 +592,8 @@ export class OccHelper {
     }
 
     getSolidsVolumes(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): number[] {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
+        if (inputs.shapes === undefined) {
+            throw (Error(("Shapes are not defined")));
         }
         return inputs.shapes.map(s => this.getSolidVolume({ shape: s }));
     }
@@ -609,8 +609,8 @@ export class OccHelper {
     }
 
     getSolidsCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): Base.Point3[] {
-        if (inputs.shapes === undefined || inputs.shapes.length < 2) {
-            throw (Error(("Shapes needs to be an array of length 2")));
+        if (inputs.shapes === undefined) {
+            throw (Error(("Shapes are not defined")));
         }
         return inputs.shapes.map(s => this.getSolidCenterOfMass({ shape: s }));
     }
