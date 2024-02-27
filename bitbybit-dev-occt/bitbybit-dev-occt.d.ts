@@ -8892,6 +8892,31 @@ export declare class BRepTools {
   delete(): void;
 }
 
+export declare class BRepTools_WireExplorer {
+  Init_1(W: TopoDS_Wire): void;
+  Init_2(W: TopoDS_Wire, F: TopoDS_Face): void;
+  Init_3(W: TopoDS_Wire, F: TopoDS_Face, UMin: Standard_Real, UMax: Standard_Real, VMin: Standard_Real, VMax: Standard_Real): void;
+  More(): Standard_Boolean;
+  Next(): void;
+  Current(): TopoDS_Edge;
+  Orientation(): TopAbs_Orientation;
+  CurrentVertex(): TopoDS_Vertex;
+  Clear(): void;
+  delete(): void;
+}
+
+  export declare class BRepTools_WireExplorer_1 extends BRepTools_WireExplorer {
+    constructor();
+  }
+
+  export declare class BRepTools_WireExplorer_2 extends BRepTools_WireExplorer {
+    constructor(W: TopoDS_Wire);
+  }
+
+  export declare class BRepTools_WireExplorer_3 extends BRepTools_WireExplorer {
+    constructor(W: TopoDS_Wire, F: TopoDS_Face);
+  }
+
 export declare class BRepAdaptor_CompCurve extends Adaptor3d_Curve {
   static get_type_name(): Standard_Character;
   static get_type_descriptor(): Handle_Standard_Type;
@@ -10231,6 +10256,10 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   GeomPlate_BuildPlateSurface_2: typeof GeomPlate_BuildPlateSurface_2;
   GeomPlate_BuildPlateSurface_3: typeof GeomPlate_BuildPlateSurface_3;
   BRepTools: typeof BRepTools;
+  BRepTools_WireExplorer: typeof BRepTools_WireExplorer;
+  BRepTools_WireExplorer_1: typeof BRepTools_WireExplorer_1;
+  BRepTools_WireExplorer_2: typeof BRepTools_WireExplorer_2;
+  BRepTools_WireExplorer_3: typeof BRepTools_WireExplorer_3;
   BRepAdaptor_CompCurve: typeof BRepAdaptor_CompCurve;
   BRepAdaptor_CompCurve_1: typeof BRepAdaptor_CompCurve_1;
   BRepAdaptor_CompCurve_2: typeof BRepAdaptor_CompCurve_2;

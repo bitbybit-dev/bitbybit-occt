@@ -357,6 +357,7 @@ async function start() {
         "BRepBuilderAPI_MakeShell",
         "BRepBuilderAPI_WireError",
         "BRepTools",
+        "BRepTools_WireExplorer",
         "GCPnts_TangentialDeflection",
         "GC_MakeCircle",
         "GC_MakeEllipse",

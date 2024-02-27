@@ -375,6 +375,30 @@ export class OccHelper {
         return edges;
     }
 
+    getEdgesAlongWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Edge[] {
+        if (inputs.shape && this.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.edge) {
+            return [inputs.shape];
+        }
+        if (!inputs.shape || (this.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.vertex) || inputs.shape.IsNull()) {
+            throw (new Error("Shape is not provided or is of incorrect type"));
+        }
+        const edges: TopoDS_Edge[] = [];
+        const wireWithFixedEdges = this.fixEdgeOrientationsAlongWire(inputs);
+        this.forEachEdgeAlongWire(wireWithFixedEdges, (i, edge) => {
+            edges.push(edge);
+        });
+        return edges;
+    }
+
+    fixEdgeOrientationsAlongWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
+        const edges = [];
+        this.forEachEdgeAlongWire(inputs.shape, (i, edge) => {
+            edges.push(edge);
+        });
+        // rebuilding wire from edges along wire fixes edge directions
+        return this.combineEdgesAndWiresIntoAWire({ shapes: edges });
+    }
+
     lineEdge(inputs: Inputs.OCCT.LineDto) {
         const gpPnt1 = this.gpPnt(inputs.start);
         const gpPnt2 = this.gpPnt(inputs.end);
@@ -1304,6 +1328,63 @@ export class OccHelper {
         anExplorer.delete();
     }
 
+    edgesToPoints(inputs: Inputs.OCCT.EdgesToPointsDto<TopoDS_Shape>): Inputs.Base.Point3[][] {
+        const shapeType = this.getShapeTypeEnum(inputs.shape);
+        let edges = [];
+        if (shapeType === Inputs.OCCT.shapeTypeEnum.edge) {
+            edges = [inputs.shape];
+        } else if (shapeType === Inputs.OCCT.shapeTypeEnum.wire) {
+            edges = this.getEdgesAlongWire({ shape: inputs.shape });
+        } else {
+            edges = this.getEdges({ shape: inputs.shape });
+        }
+        const allEdgePoints: Base.Point3[][] = [];
+        // collect original start points to adjust edge directions later
+        const edgeStartPoints = edges.map(e => {
+            return this.startPointOnEdge({ shape: e });
+        });
+        // this messes up directions as curve that is being built picks up some default direction
+        edges.forEach((myEdge) => {
+            const edgePoints: Base.Point3[] = [];
+            const aLocation = new this.occ.TopLoc_Location_1();
+            const adaptorCurve = new this.occ.BRepAdaptor_Curve_2(myEdge);
+            const tangDef = new this.occ.GCPnts_TangentialDeflection_2(
+                adaptorCurve,
+                inputs.angularDeflection,
+                inputs.curvatureDeflection,
+                inputs.minimumOfPoints,
+                inputs.uTolerance,
+                inputs.minimumLength
+            );
+            const nrPoints = tangDef.NbPoints();
+            const tangDefValues = [];
+            for (let j = 0; j < nrPoints; j++) {
+                const tangDefVal = tangDef.Value(j + 1);
+
+                edgePoints.push([
+                    tangDefVal.X(),
+                    tangDefVal.Y(),
+                    tangDefVal.Z()
+                ] as Base.Point3);
+                tangDefValues.push(tangDefVal);
+            }
+            allEdgePoints.push(edgePoints);
+            tangDefValues.forEach(v => v.delete());
+            aLocation.delete();
+            adaptorCurve.delete();
+            tangDef.delete();
+        });
+        // this fixes the directions of the point arrays based on original start points
+        allEdgePoints.forEach((ep, index) => {
+            const distBetweenStarts = this.vecHelper.distanceBetweenPoints(ep[0], edgeStartPoints[index]);
+            const distBetweenStartAndEnd = this.vecHelper.distanceBetweenPoints(edgeStartPoints[index], ep[ep.length - 1]);
+            if (distBetweenStartAndEnd < distBetweenStarts) {
+                ep.reverse();
+            }
+        });
+        return allEdgePoints;
+    }
+
     forEachEdge(shape: TopoDS_Shape, callback: (index: number, edge: TopoDS_Edge) => void) {
         const edgeHashes = {};
         let edgeIndex = 0;
@@ -1312,6 +1393,26 @@ export class OccHelper {
         );
         for (anExplorer.Init(shape, (this.occ.TopAbs_ShapeEnum.TopAbs_EDGE as TopAbs_ShapeEnum),
             (this.occ.TopAbs_ShapeEnum.TopAbs_SHAPE as TopAbs_ShapeEnum));
+            anExplorer.More();
+            anExplorer.Next()
+        ) {
+            const edge = this.occ.TopoDS.Edge_1(anExplorer.Current());
+            const edgeHash = edge.HashCode(100000000);
+            if (!Object.prototype.hasOwnProperty.call(edgeHashes, edgeHash)) {
+                edgeHashes[edgeHash] = edgeIndex;
+                edgeIndex++;
+                callback(edgeIndex, edge);
+            }
+        }
+        anExplorer.delete();
+        return edgeHashes;
+    }
+
+    forEachEdgeAlongWire(shape: TopoDS_Wire, callback: (index: number, edge: TopoDS_Edge) => void) {
+        const edgeHashes = {};
+        let edgeIndex = 0;
+        const anExplorer = new this.occ.BRepTools_WireExplorer_1();
+        for (anExplorer.Init_1(shape);
             anExplorer.More();
             anExplorer.Next()
         ) {

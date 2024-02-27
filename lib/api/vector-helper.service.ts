@@ -61,4 +61,11 @@ export class VectorHelperService {
         const res = Math.abs(num1 - num2) < tolerance;
         return res;
     }
+
+    distanceBetweenPoints(point1: [number, number, number], point2: [number, number, number]): number {
+        const x = point2[0] - point1[0];
+        const y = point2[1] - point1[1];
+        const z = point2[2] - point1[2];
+        return Math.sqrt(x * x + y * y + z * z);
+    }
 }
