@@ -87,7 +87,7 @@ describe("OCCT face unit tests", () => {
         const f1 = face.createCircleFace({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const srf = geom.surfaces.surfaceFromFace({ shape: f1 });
         const w = wire.createCircleWire({ radius: 2, center: [0, 0, 1], direction: [0, 0, 1] });
-        const f = face.faceFromSurfaceAndWire({ shapes: [srf, w], inside: true });
+        const f = face.faceFromSurfaceAndWire({ surface:srf, wire: w, inside: true });
         const area = face.getFaceArea({ shape: f });
         expect(area).toBeCloseTo(12.566370614359167);
         f1.delete();
