@@ -1700,8 +1700,6 @@ export class OccHelper {
                     }
                 }
             });
-
-            console.log(adjustedIndexes);
         }
 
         const filletShape = this.filletEdges({ shape: extrusion, radius: inputs.radius, indexes: adjustedIndexes, radiusList: inputs.radiusList }) as TopoDS_Shape;
