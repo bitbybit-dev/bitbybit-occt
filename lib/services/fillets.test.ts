@@ -135,7 +135,6 @@ describe("OCCT fillets unit tests", () => {
         const result = fillets.fillet2d(filletOptions);
         const edges = occHelper.getEdgesAlongWire({ shape: result });
         const edgeLengths = edges.map(e => occHelper.getEdgeLength({ shape: e }));
-        console.log(edgeLengths);
         expect(edgeLengths).toEqual([
             5.280505264812232, 5.280505264812232,
             5.280505264812232, 4.574603909466177,
