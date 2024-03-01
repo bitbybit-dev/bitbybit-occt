@@ -27,7 +27,7 @@ describe("OCCT operations unit tests", () => {
     it("should get two closest points between two shapes", async () => {
         const sph1 = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
         const sph2 = occHelper.bRepPrimAPIMakeSphere([3, 3, 3], [0, 1, 0], 1);
-        const res = operations.closestPointsBetweenTwoShapes({ shapes: [sph1, sph2] });
+        const res = operations.closestPointsBetweenTwoShapes({ shape1: sph1, shape2: sph2});
         expect(res.length).toBe(2);
         expect(res).toEqual([
             [0.5773398570788231, 0.577340634175626, 0.5773703157921182],
@@ -439,9 +439,9 @@ describe("OCCT operations unit tests", () => {
         const wireLength1 = wire.getWireLength({ shape: offsetWireDir1 });
         const wireLength2 = wire.getWireLength({ shape: offsetWireDir2 });
 
-        expect(wireLength1).toBeCloseTo(160.25576209902422);
+        expect(wireLength1).toBeCloseTo(168.790359306275);
         expect(filletLength).toBeCloseTo(164.11239253261422);
-        expect(wireLength2).toBeCloseTo(168.79035930627498);
+        expect(wireLength2).toBeCloseTo(160.25576209902425);
 
     });
 

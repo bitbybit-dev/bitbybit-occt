@@ -1639,16 +1639,87 @@ export class OccHelper {
     }
 
     fillet3DWire(inputs: Inputs.OCCT.Fillet3DWireDto<TopoDS_Wire>) {
-        const extrusion = this.extrude({ shape: inputs.shape, direction: inputs.direction });
-        const filletShape = this.filletEdges({ shape: extrusion, radius: inputs.radius, indexes: inputs.indexes, radiusList: inputs.radiusList }) as TopoDS_Shape;
+        let useRadiusList = false;
+        if (inputs.radiusList && inputs.radiusList.length > 0 && inputs.indexes && inputs.indexes.length > 0) {
+            if (inputs.radiusList.length !== inputs.indexes.length) {
+                throw new Error("Radius list and indexes are not the same length");
+            } else {
+                useRadiusList = true;
+            }
+        }
+
+        // the goal is to make this fillet the same corner indices as fillet 2d command does with the same radius list.
+        // This makes this algorithm quite complex when counting which actual edge indices need to be rounded as it is based on
+        // extrusion, which creates specific index definitions.
+
+        // let adjustedRadiusList = [...inputs.radiusList];
+        // radius list does not need to be adjusted
+
+        // Closed shapes start corners differently on the connection of the first corner, so we need to readjust the edges
+        let wireTouse = this.fixEdgeOrientationsAlongWire({ shape: inputs.shape });
+        if (useRadiusList && inputs.shape.Closed_1()) {
+            const edgesOfWire = this.getEdgesAlongWire({ shape: inputs.shape });
+            const firstEdge = edgesOfWire.shift();
+            const adjustEdges = [...edgesOfWire, firstEdge];
+            wireTouse = this.combineEdgesAndWiresIntoAWire({ shapes: adjustEdges });
+        } else {
+            wireTouse = this.getActualTypeOfShape(inputs.shape.Reversed());
+        }
+        const extrusion = this.extrude({ shape: wireTouse, direction: inputs.direction });
+
+        let adjustedIndexes = inputs.indexes;
+        if (useRadiusList) {
+            // So original indexes are based on the number of corners between edges. These corner indexes are used as an input, but extrusion creates 3D edges
+            // with different indexes, so we need to adjust the indexes to match the 3D edges.
+
+            // the original indexes are [3, 4, 5, 6, 7, 8, 9, 10, 11, ...]
+            // the order is [5, 8, 11, 14, 17, 20, 23, 26, 29, ...]
+            // this is needed because of the way edge indexes are made on such shapes
+            const filteredEnd = inputs.indexes.filter(i => i > 2);
+            const maxNr = Math.max(...filteredEnd);
+
+            const adjacentList = [5];
+            let lastNr = 5;
+            for (let i = 0; i < maxNr; i++) {
+                lastNr += 3;
+                adjacentList.push(lastNr);
+            }
+
+            adjustedIndexes = inputs.indexes.map((index) => {
+                if (inputs.shape.Closed_1()) {
+                    if (index <= 2) {
+                        return index;
+                    } else {
+                        return adjacentList[index - 3];
+                    }
+                } else {
+                    if (index === 1) {
+                        return 2;
+                    } else {
+                        return adjacentList[index - 2];
+                    }
+                }
+            });
+
+            console.log(adjustedIndexes);
+        }
+
+        const filletShape = this.filletEdges({ shape: extrusion, radius: inputs.radius, indexes: adjustedIndexes, radiusList: inputs.radiusList }) as TopoDS_Shape;
+
         const faceEdges: TopoDS_Edge[] = [];
-        this.getFaces({ shape: filletShape }).forEach(f => {
-            const firstEdge = this.getEdges({ shape: f })[0];
-            faceEdges.push(firstEdge);
+        const faces = this.getFaces({ shape: filletShape });
+        faces.forEach((f, i) => {
+            // due to reversal of wire in the beginning this is stable index now
+            // also we need to translate these edges back along direction
+            const edgeToAdd = this.getEdges({ shape: f })[3];
+            faceEdges.push(edgeToAdd);
         });
-        const result = this.combineEdgesAndWiresIntoAWire({ shapes: faceEdges });
+
+        const res = this.combineEdgesAndWiresIntoAWire({ shapes: faceEdges });
+        const result = this.translate({ shape: res, translation: inputs.direction.map(s => -s) as Base.Vector3 });
         extrusion.delete();
         filletShape.delete();
+        faces.forEach(f => f.delete());
         faceEdges.forEach(e => e.delete());
         return result;
     }

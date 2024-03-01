@@ -1231,6 +1231,5 @@ describe("OCCT wire unit tests", () => {
         expect(centers[1][2]).toBeCloseTo(1);
     });
 
-
 });
 
