@@ -11,18 +11,7 @@ export class OCCTShell {
     }
 
     sewFaces(inputs: Inputs.OCCT.SewDto<TopoDS_Face>): TopoDS_Shell {
-        const sew = new this.occ.BRepBuilderAPI_Sewing(inputs.tolerance, true, true, true, false);
-        inputs.shapes.forEach(face => {
-            sew.Add(face);
-        });
-        const messageProgress = new this.occ.Message_ProgressRange_1();
-        sew.Perform(messageProgress);
-        const res = sew.SewedShape();
-        const result = this.och.getActualTypeOfShape(res);
-        sew.delete();
-        messageProgress.delete();
-        res.delete();
-        return result;
+        return this.och.sewFaces(inputs);
     }
 
     isClosed(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shell>): boolean {

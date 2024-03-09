@@ -10,8 +10,28 @@ export class OCCTFillets {
     ) {
     }
 
-    filletEdges(inputs: Inputs.OCCT.FilletDto<TopoDS_Shape>) {
+    filletEdges(inputs: Inputs.OCCT.FilletDto<TopoDS_Shape>): TopoDS_Shape {
         return this.och.filletEdges(inputs);
+    }
+
+    filletEdgesList(inputs: Inputs.OCCT.FilletEdgesListDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
+        return this.och.filletEdgesList(inputs);
+    }
+
+    filletEdgesListOneRadius(inputs: Inputs.OCCT.FilletEdgesListOneRadiusDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
+        return this.och.filletEdgesListOneRadius(inputs);
+    }
+
+    filletEdgeVariableRadius(inputs: Inputs.OCCT.FilletEdgeVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
+        return this.och.filletEdgeVariableRadius(inputs);
+    }
+
+    filletEdgesVariableRadius(inputs: Inputs.OCCT.FilletEdgesVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
+        return this.och.filletEdgesVariableRadius(inputs);
+    }
+
+    filletEdgesSameVariableRadius(inputs: Inputs.OCCT.FilletEdgesSameVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
+        return this.och.filletEdgesSameVariableRadius(inputs);
     }
 
     chamferEdges(inputs: Inputs.OCCT.ChamferDto<TopoDS_Shape>) {

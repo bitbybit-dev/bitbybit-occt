@@ -1306,7 +1306,139 @@ export namespace OCCT {
          */
         indexes?: number[];
     }
+    export class FilletEdgesListDto<T, U> {
+        constructor(shape?: T, edges?: U[], radiusList?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edges !== undefined) { this.edges = edges; }
+            if (radiusList !== undefined) { this.radiusList = radiusList; }
+        }
+        /**
+         * Shape to apply the fillet
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edges to use for the fillet
+         * @default undefined
+         */
+        edges: U[];
+        /**
+         * Radius list for the fillets. The length of this array must match the length of the edges array. Each index corresponds to fillet on the edge at the same index.
+         * @default undefined
+         */
+        radiusList: number[];
+    }
+    export class FilletEdgesListOneRadiusDto<T, U> {
+        constructor(shape?: T, edges?: U[], radius?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edges !== undefined) { this.edges = edges; }
+            if (radius !== undefined) { this.radius = radius; }
+        }
+        /**
+         * Shape to apply the fillet
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edges to use for the fillet
+         * @default undefined
+         */
+        edges: U[];
+        /**
+         * Radius of the fillets
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         * @optional true
+         */
+        radius = 0.1;
+    }
+    export class FilletEdgeVariableRadiusDto<T, U> {
+        constructor(shape?: T, edge?: U, radiusList?: number[], paramsU?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edge !== undefined) { this.edge = edge; }
+            if (radiusList !== undefined) { this.radiusList = radiusList; }
+            if (paramsU !== undefined) { this.paramsU = paramsU; }
+        }
+        /**
+         * Shape to apply the fillet
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edge to use for the fillet
+         * @default undefined
+         */
+        edge: U;
+        /**
+         * Radius list for the fillets that has to match the paramsU list
+         * @default undefined
+         */
+        radiusList: number[];
+        /**
+         * List of parameters on the edge to which apply the fillet. Each param must be between 0 and 1.
+         * @default undefined
+         */
+        paramsU: number[];
+    }
+    export class FilletEdgesVariableRadiusDto<T, U> {
+        constructor(shape?: T, edges?: U[], radiusLists?: number[][], paramsULists?: number[][]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edges !== undefined) { this.edges = edges; }
+            if (radiusLists !== undefined) { this.radiusLists = radiusLists; }
+            if (paramsULists !== undefined) { this.paramsULists = paramsULists; }
+        }
+        /**
+         * Shape to apply the fillet
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edges to use for the fillet
+         * @default undefined
+         */
+        edges: U[];
+        /**
+         * Lists of radius lists for the fillets. Top level array length needs to match the nr of edges used and each second level array needs to match paramsU length array at the same index.
+         * @default undefined
+         */
+        radiusLists: number[][];
+        /**
+         * Lists of parameter lists on the edges to which apply the fillet. Each param must be between 0 and 1. Top level array length needs to match the nr of edges used and each second level array needs to match radius length array at the same index.
+         * @default undefined
+         */
+        paramsULists: number[][];
+    }
+    export class FilletEdgesSameVariableRadiusDto<T, U> {
+        constructor(shape?: T, edges?: U[], radiusList?: number[], paramsU?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edges !== undefined) { this.edges = edges; }
+            if (radiusList !== undefined) { this.radiusList = radiusList; }
+            if (paramsU !== undefined) { this.paramsU = paramsU; }
+        }
+        /**
+         * Shape to apply the fillet
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edges to use for the fillet
+         * @default undefined
+         */
+        edges: U[];
 
+        /**
+         * Radius list for the fillets that has to match the paramsU list
+         * @default undefined
+         */
+        radiusList: number[];
+        /**
+         * List of parameters on the edges to which apply the fillet. Each param must be between 0 and 1.
+         * @default undefined
+         */
+        paramsU: number[];
+    }
     export class Fillet3DWireDto<T> {
         constructor(shape?: T, radius?: number, direction?: Base.Vector3, radiusList?: number[], indexes?: number[],) {
             if (shape !== undefined) { this.shape = shape; }
@@ -2370,6 +2502,25 @@ export namespace OCCT {
          * @step 1
          */
         index = 0;
+    }
+    export class EdgeIndexDto<T> {
+        constructor(shape?: T, index?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (index !== undefined) { this.index = index; }
+        }
+        /**
+         * Shape
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Index of the entity
+         * @default 1
+         * @minimum 1
+         * @maximum Infinity
+         * @step 1
+         */
+        index = 1;
     }
     export class RotationExtrudeDto<T> {
         constructor(shape?: T, height?: number, angle?: number) {

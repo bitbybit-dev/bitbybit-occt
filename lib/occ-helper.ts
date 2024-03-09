@@ -1,4 +1,4 @@
-import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, ChFi3d_FilletShape, TopAbs_State } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, ChFi3d_FilletShape, TopAbs_State, BRepFilletAPI_MakeFillet } from "../bitbybit-dev-occt/bitbybit-dev-occt";
 import { VectorHelperService } from "./api/vector-helper.service";
 import { Base } from "./api/inputs/base-inputs";
 import * as Inputs from "./api/inputs/inputs";
@@ -583,6 +583,21 @@ export class OccHelper {
         const faces = this.getFaces(inputs);
         const faceAreas = this.getFacesAreas({ shapes: faces });
         return faceAreas.reduce((p, c) => p + c, 0);
+    }
+
+    sewFaces(inputs: Inputs.OCCT.SewDto<TopoDS_Face>): TopoDS_Shell {
+        const sew = new this.occ.BRepBuilderAPI_Sewing(inputs.tolerance, true, true, true, false);
+        inputs.shapes.forEach(face => {
+            sew.Add(face);
+        });
+        const messageProgress = new this.occ.Message_ProgressRange_1();
+        sew.Perform(messageProgress);
+        const res = sew.SewedShape();
+        const result = this.getActualTypeOfShape(res);
+        sew.delete();
+        messageProgress.delete();
+        res.delete();
+        return result;
     }
 
     getSolidSurfaceArea(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): number {
@@ -1638,6 +1653,108 @@ export class OccHelper {
         return undefined;
     }
 
+    filletEdgesListOneRadius(inputs: Inputs.OCCT.FilletEdgesListOneRadiusDto<TopoDS_Shape, TopoDS_Edge>) {
+        if (inputs.edges && inputs.edges.length > 0) {
+            const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
+                inputs.shape, (this.occ.ChFi3d_FilletShape.ChFi3d_Rational as ChFi3d_FilletShape)
+            );
+            inputs.edges.forEach((edge) => {
+                mkFillet.Add_2(inputs.radius, edge);
+            });
+            const curFillet = mkFillet.Shape();
+            mkFillet.delete();
+            const result = this.getActualTypeOfShape(curFillet);
+            curFillet.delete();
+            return result;
+        }
+        return undefined;
+    }
+
+    filletEdgesList(inputs: Inputs.OCCT.FilletEdgesListDto<TopoDS_Shape, TopoDS_Edge>) {
+        if (inputs.edges && inputs.edges.length > 0 && inputs.radiusList && inputs.radiusList.length > 0 && inputs.edges.length === inputs.radiusList.length) {
+            const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
+                inputs.shape, (this.occ.ChFi3d_FilletShape.ChFi3d_Rational as ChFi3d_FilletShape)
+            );
+            inputs.edges.forEach((edge, index) => {
+                mkFillet.Add_2(inputs.radiusList[index], edge);
+            });
+            const curFillet = mkFillet.Shape();
+            mkFillet.delete();
+            const result = this.getActualTypeOfShape(curFillet);
+            curFillet.delete();
+            return result;
+        }
+        return undefined;
+    }
+
+    filletEdgeVariableRadius(inputs: Inputs.OCCT.FilletEdgeVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>) {
+        if (inputs.paramsU && inputs.paramsU.length > 0 && inputs.radiusList && inputs.radiusList.length > 0 && inputs.paramsU.length === inputs.radiusList.length) {
+            const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
+                inputs.shape, (this.occ.ChFi3d_FilletShape.ChFi3d_Rational as ChFi3d_FilletShape)
+            );
+            this.assignVariableFilletToEdge(inputs, mkFillet);
+            const curFillet = mkFillet.Shape();
+            mkFillet.delete();
+            const result = this.getActualTypeOfShape(curFillet);
+            curFillet.delete();
+            return result;
+        }
+        return undefined;
+    }
+
+    filletEdgesSameVariableRadius(inputs: Inputs.OCCT.FilletEdgesSameVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>) {
+        if (inputs.edges && inputs.edges.length > 0 &&
+            inputs.radiusList && inputs.radiusList.length > 0 &&
+            inputs.paramsU.length === inputs.radiusList.length) {
+            const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
+                inputs.shape, (this.occ.ChFi3d_FilletShape.ChFi3d_Rational as ChFi3d_FilletShape)
+            );
+            inputs.edges.forEach((edge) => {
+                this.assignVariableFilletToEdge({
+                    edge, paramsU: inputs.paramsU, radiusList: inputs.radiusList, shape: inputs.shape,
+                }, mkFillet);
+            });
+            const curFillet = mkFillet.Shape();
+            mkFillet.delete();
+            const result = this.getActualTypeOfShape(curFillet);
+            curFillet.delete();
+            return result;
+        }
+        return undefined;
+    }
+    
+    filletEdgesVariableRadius(inputs: Inputs.OCCT.FilletEdgesVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>) {
+        if (inputs.edges && inputs.edges.length > 0 &&
+            inputs.radiusLists && inputs.radiusLists.length > 0 &&
+            inputs.paramsULists.length === inputs.radiusLists.length &&
+            inputs.paramsULists.length === inputs.edges.length &&
+            inputs.radiusLists.length === inputs.edges.length) {
+            const mkFillet = new this.occ.BRepFilletAPI_MakeFillet(
+                inputs.shape, (this.occ.ChFi3d_FilletShape.ChFi3d_Rational as ChFi3d_FilletShape)
+            );
+            inputs.edges.forEach((edge, index) => {
+                this.assignVariableFilletToEdge({
+                    edge, paramsU: inputs.paramsULists[index], radiusList: inputs.radiusLists[index], shape: inputs.shape,
+                }, mkFillet);
+            });
+            const curFillet = mkFillet.Shape();
+            mkFillet.delete();
+            const result = this.getActualTypeOfShape(curFillet);
+            curFillet.delete();
+            return result;
+        }
+        return undefined;
+    }
+
+    private assignVariableFilletToEdge(inputs: Inputs.OCCT.FilletEdgeVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>, mkFillet: BRepFilletAPI_MakeFillet) {
+        const array = new this.occ.TColgp_Array1OfPnt2d_2(1, inputs.paramsU.length);
+        inputs.paramsU.forEach((param, index) => {
+            array.SetValue(index + 1, this.gpPnt2d([param, inputs.radiusList[index]]));
+        });
+        mkFillet.Add_5(array, inputs.edge);
+    }
+
+
     fillet3DWire(inputs: Inputs.OCCT.Fillet3DWireDto<TopoDS_Wire>) {
         let useRadiusList = false;
         if (inputs.radiusList && inputs.radiusList.length > 0 && inputs.indexes && inputs.indexes.length > 0) {
@@ -2024,14 +2141,19 @@ export class OccHelper {
         const maker = new this.occ.BRepOffsetAPI_MakeThickSolid();
         maker.MakeThickSolidBySimple(inputs.shape, inputs.offset);
         maker.Build(new this.occ.Message_ProgressRange_1());
-        let makerShape = maker.Shape();
-        if (inputs.offset > 0) {
-            makerShape = makerShape.Reversed();
-        }
+        const makerShape = maker.Shape();
+
         const result = this.getActualTypeOfShape(makerShape);
+        let res2 = result;
+        if (inputs.offset > 0) {
+            const faces = this.getFaces({ shape: result });
+            const revFaces = faces.map(face => face.Reversed());
+            res2 = this.sewFaces({ shapes: revFaces, tolerance: 1e-7 });
+            result.delete();
+        }
         maker.delete();
         makerShape.delete();
-        return result;
+        return res2;
     }
 
 }
