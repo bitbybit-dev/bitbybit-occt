@@ -4,12 +4,13 @@ import { VectorHelperService } from "../api/vector-helper.service";
 import { ShapesHelperService } from "../api/shapes-helper.service";
 import { Inputs } from "../api";
 import { OCCTFillets } from "./fillets";
-import { OCCTWire } from "./shapes";
+import { OCCTSolid, OCCTWire } from "./shapes";
 
 describe("OCCT fillets unit tests", () => {
     let occt: OpenCascadeInstance;
     let wire: OCCTWire;
     let fillets: OCCTFillets;
+    let solid: OCCTSolid;
     let occHelper: OccHelper;
 
     beforeAll(async () => {
@@ -18,6 +19,7 @@ describe("OCCT fillets unit tests", () => {
         const s = new ShapesHelperService();
 
         occHelper = new OccHelper(vec, s, occt);
+        solid = new OCCTSolid(occt, occHelper);
         wire = new OCCTWire(occt, occHelper);
         fillets = new OCCTFillets(occt, occHelper);
     });
@@ -188,6 +190,143 @@ describe("OCCT fillets unit tests", () => {
         expect(edgeLengths[7]).toBeLessThan(1);
         expect(edgeLengths[9]).toBeLessThan(1);
     });
+
+    it("should fillet a single edge on the solid", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const filRes = fillets.filletEdges({ shape: cube, indexes: [1], radius: 0.5 });
+        const faces = occHelper.getFaces({ shape: filRes });
+        const volume = solid.getSolidVolume({ shape: filRes });
+        expect(volume).toBeCloseTo(7.892699081698724);
+        expect(faces.length).toBe(7);
+    });
+
+    it("should fillet specific edges on the solid by index", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const filRes = fillets.filletEdges({ shape: cube, indexes: [1, 4, 6], radiusList: [0.3, 0.2, 0.1] });
+        const faces = occHelper.getFaces({ shape: filRes });
+        const volume = solid.getSolidVolume({ shape: filRes });
+        expect(volume).toBeCloseTo(7.9412869655174045);
+        expect(faces.length).toBe(9);
+    });
+
+    it("should not fillet specific edges on the solid by index if radius list does not have the same nr of elements as indexes", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        expect(() => fillets.filletEdges({ shape: cube, indexes: [1, 4, 6], radiusList: [0.3, 0.2] })).toThrowError("Radius not defined, or radiusList not correct length");
+    });
+
+    it("should fillet all edges on the solid", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const filRes = fillets.filletEdges({ shape: cube, radius: 0.5 });
+        const faces = occHelper.getFaces({ shape: filRes });
+        const volume = solid.getSolidVolume({ shape: filRes });
+        expect(volume).toBeCloseTo(6.879793265790643);
+        expect(faces.length).toBe(26);
+    });
+
+    it("should fillet edge with variable radius", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const edge = occHelper.getEdges({ shape: cube })[0];
+        const filRes = fillets.filletEdgeVariableRadius({ shape: cube, edge, radiusList: [0.1, 0.3, 0.3, 1], paramsU: [0, 0.2, 0.8, 1] });
+        const faces = occHelper.getFaces({ shape: filRes });
+        const volume = solid.getSolidVolume({ shape: filRes });
+        expect(volume).toBeCloseTo(7.945527218508813);
+        expect(faces.length).toBe(7);
+    });
+
+    it("should not fillet edge with variable radius if params u does not have the same nr of eleemnts as radius list", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const edge = occHelper.getEdges({ shape: cube })[0];
+        const filRes = fillets.filletEdgeVariableRadius({ shape: cube, edge, radiusList: [0.1, 0.3, 0.3, 1], paramsU: [0, 0.2, 0.8] });
+        expect(filRes).toBeUndefined();
+    });
+
+    it("should fillet edges with variable radius", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const filRes = fillets.filletEdgesVariableRadius({
+            shape: cube,
+            edges,
+            radiusLists: [
+                [0.1, 0.3, 0.3, 0.1],
+                [0.2, 0.1, 0.1, 0.2],
+                [0.1, 0.1]
+            ],
+            paramsULists: [
+                [0, 0.2, 0.8, 1],
+                [0, 0.3, 0.4, 1],
+                [0.3, 0.4]
+            ]
+        });
+        const faces = occHelper.getFaces({ shape: filRes });
+        const volume = solid.getSolidVolume({ shape: filRes });
+        expect(volume).toBeCloseTo(7.9378791553310855);
+        expect(faces.length).toBe(9);
+    });
+
+    it("should not fillet edges with variable radius if radius list contains different nr of elements than params u list", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const filRes = fillets.filletEdgesVariableRadius({
+            shape: cube,
+            edges,
+            radiusLists: [
+                [0.1, 0.3, 0.3, 0.1],
+                [0.2, 0.1, 0.1, 0.2],
+            ],
+            paramsULists: [
+                [0, 0.2, 0.8, 1],
+                [0, 0.3, 0.4, 1],
+                [0.3, 0.4]
+            ]
+        });
+        expect(filRes).toBeUndefined();
+    });
+
+    it("should fillet edges list", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const filRes = fillets.filletEdgesList({
+            shape: cube,
+            edges,
+            radiusList: [0.1, 0.3, 0.4],
+        });
+        const faces = occHelper.getFaces({ shape: filRes });
+        const volume = solid.getSolidVolume({ shape: filRes });
+        expect(volume).toBeCloseTo(7.892769171674582);
+        expect(faces.length).toBe(9);
+    });
+
+    it("should fillet edges with single radius", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const filRes = fillets.filletEdgesListOneRadius({
+            shape: cube,
+            edges,
+            radius: 0.4,
+        });
+        const faces = occHelper.getFaces({ shape: filRes });
+        const volume = solid.getSolidVolume({ shape: filRes });
+        expect(volume).toBeCloseTo(7.8062536532871505);
+        expect(faces.length).toBe(9);
+    });
+
+    it("should fillet edges with same variable radius", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const filRes = fillets.filletEdgesSameVariableRadius({
+            shape: cube,
+            edges,
+            radiusList: [0.1, 0.3, 0.3, 0.1],
+            paramsU: [0, 0.2, 0.8, 1],
+        });
+        const faces = occHelper.getFaces({ shape: filRes });
+        const volume = solid.getSolidVolume({ shape: filRes });
+        expect(volume).toBeCloseTo(7.853043576889979);
+        expect(faces.length).toBe(9);
+    });
 });
-
-
