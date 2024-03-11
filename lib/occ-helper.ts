@@ -1722,7 +1722,7 @@ export class OccHelper {
         }
         return undefined;
     }
-    
+
     filletEdgesVariableRadius(inputs: Inputs.OCCT.FilletEdgesVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>) {
         if (inputs.edges && inputs.edges.length > 0 &&
             inputs.radiusLists && inputs.radiusLists.length > 0 &&
@@ -1754,6 +1754,180 @@ export class OccHelper {
         mkFillet.Add_5(array, inputs.edge);
     }
 
+    chamferEdges(inputs: Inputs.OCCT.ChamferDto<TopoDS_Shape>) {
+        if (!inputs.indexes || (inputs.indexes.length && inputs.indexes.length === 0)) {
+            if (inputs.distance === undefined) {
+                throw (Error("Distance is undefined"));
+            }
+            const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
+                inputs.shape
+            );
+            const anEdgeExplorer = new this.occ.TopExp_Explorer_2(
+                inputs.shape, (this.occ.TopAbs_ShapeEnum.TopAbs_EDGE as TopAbs_ShapeEnum),
+                (this.occ.TopAbs_ShapeEnum.TopAbs_SHAPE as TopAbs_ShapeEnum)
+            );
+            const edges: TopoDS_Edge[] = [];
+            while (anEdgeExplorer.More()) {
+                const anEdge = this.occ.TopoDS.Edge_1(anEdgeExplorer.Current());
+                edges.push(anEdge);
+                mkChamfer.Add_2(inputs.distance, anEdge);
+                anEdgeExplorer.Next();
+            }
+            const result = mkChamfer.Shape();
+            mkChamfer.delete();
+            anEdgeExplorer.delete();
+            edges.forEach(e => e.delete());
+            return result;
+        } else if (inputs.indexes && inputs.indexes.length > 0) {
+            const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
+                inputs.shape
+            );
+            let foundEdges = 0;
+            let curChamfer: TopoDS_Shape;
+            let distanceIndex = 0;
+            const inputIndexes = inputs.indexes;
+            this.forEachEdge(inputs.shape, (index, edge) => {
+                if (inputIndexes.includes(index)) {
+                    let distance = inputs.distance;
+                    if (inputs.distanceList) {
+                        distance = inputs.distanceList[distanceIndex];
+                        distanceIndex++;
+                    }
+                    if (distance === undefined) {
+                        throw (Error("Distance not defined and/or distance list incorrect length"));
+                    }
+                    mkChamfer.Add_2(distance, edge);
+                    foundEdges++;
+                }
+            });
+            if (foundEdges === 0) {
+                console.error("Chamfer Edges Not Found!  Make sure you are looking at the object _before_ the Fillet is applied!");
+                curChamfer = inputs.shape;
+            }
+            else {
+                curChamfer = mkChamfer.Shape();
+            }
+            mkChamfer.delete();
+            const result = this.getActualTypeOfShape(curChamfer);
+            curChamfer.delete();
+            return result;
+        }
+        return undefined;
+    }
+
+    chamferEdgesList(inputs: Inputs.OCCT.ChamferEdgesListDto<TopoDS_Shape, TopoDS_Edge>) {
+        if (inputs.edges && inputs.edges.length > 0 && inputs.distanceList && inputs.distanceList.length > 0 && inputs.edges.length === inputs.distanceList.length) {
+            const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
+                inputs.shape
+            );
+            inputs.edges.forEach((edge, index) => {
+                const distance = inputs.distanceList[index];
+                if (distance === undefined) {
+                    throw (Error("Distance is not defined"));
+                }
+                mkChamfer.Add_2(distance, edge);
+            });
+            const curChamfer = mkChamfer.Shape();
+            mkChamfer.delete();
+            const result = this.getActualTypeOfShape(curChamfer);
+            curChamfer.delete();
+            return result;
+        }
+        return undefined;
+    }
+
+    chamferEdgeTwoDistances(inputs: Inputs.OCCT.ChamferEdgeTwoDistancesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+        const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
+            inputs.shape
+        );
+        mkChamfer.Add_3(inputs.distance1, inputs.distance2, inputs.edge, inputs.face);
+        const curChamfer = mkChamfer.Shape();
+        mkChamfer.delete();
+        const result = this.getActualTypeOfShape(curChamfer);
+        curChamfer.delete();
+        return result;
+    }
+
+    chamferEdgesTwoDistances(inputs: Inputs.OCCT.ChamferEdgesTwoDistancesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+        if (inputs.edges && inputs.edges.length > 0 &&
+            inputs.edges.length === inputs.faces.length) {
+            const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
+                inputs.shape
+            );
+            inputs.edges.forEach((edge, index) => {
+                mkChamfer.Add_3(inputs.distance1, inputs.distance2, edge, inputs.faces[index]);
+            });
+            const curChamfer = mkChamfer.Shape();
+            mkChamfer.delete();
+            const result = this.getActualTypeOfShape(curChamfer);
+            curChamfer.delete();
+            return result;
+        } else {
+            return undefined;
+        }
+    }
+
+    chamferEdgesTwoDistancesLists(inputs: Inputs.OCCT.ChamferEdgesTwoDistancesListsDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+        if (inputs.edges && inputs.edges.length > 0 &&
+            inputs.faces && inputs.faces.length > 0 &&
+            inputs.distances1 && inputs.distances1.length > 0 &&
+            inputs.distances2 && inputs.distances2.length > 0 &&
+            inputs.edges.length === inputs.faces.length &&
+            inputs.edges.length === inputs.distances1.length &&
+            inputs.edges.length === inputs.distances2.length) {
+            const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
+                inputs.shape
+            );
+            inputs.edges.forEach((edge, index) => {
+                mkChamfer.Add_3(inputs.distances1[index], inputs.distances2[index], edge, inputs.faces[index]);
+            });
+            const curChamfer = mkChamfer.Shape();
+            mkChamfer.delete();
+            const result = this.getActualTypeOfShape(curChamfer);
+            curChamfer.delete();
+            return result;
+        } else {
+            return undefined;
+        }
+    }
+
+    chamferEdgeAngle(inputs: Inputs.OCCT.ChamferEdgeAngleDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+        const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
+            inputs.shape
+        );
+        const radians = this.vecHelper.degToRad(inputs.angle);
+        mkChamfer.AddDA(inputs.distance, radians, inputs.edge, inputs.face);
+        const curChamfer = mkChamfer.Shape();
+        mkChamfer.delete();
+        const result = this.getActualTypeOfShape(curChamfer);
+        curChamfer.delete();
+        return result;
+    }
+
+    chamferEdgesAngles(inputs: Inputs.OCCT.ChamferEdgesAnglesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+        if (inputs.edges && inputs.edges.length > 0 &&
+            inputs.faces && inputs.faces.length > 0 &&
+            inputs.distances && inputs.distances.length > 0 &&
+            inputs.angles && inputs.angles.length > 0 &&
+            inputs.edges.length === inputs.distances.length &&
+            inputs.edges.length === inputs.faces.length &&
+            inputs.edges.length === inputs.angles.length) {
+            const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
+                inputs.shape
+            );
+            inputs.edges.forEach((edge, index) => {
+                const radians = this.vecHelper.degToRad(inputs.angles[index]);
+                mkChamfer.AddDA(inputs.distances[index], radians, edge, inputs.faces[index]);
+            });
+            const curChamfer = mkChamfer.Shape();
+            mkChamfer.delete();
+            const result = this.getActualTypeOfShape(curChamfer);
+            curChamfer.delete();
+            return result;
+        } else {
+            return undefined;
+        }
+    }
 
     fillet3DWire(inputs: Inputs.OCCT.Fillet3DWireDto<TopoDS_Wire>) {
         let useRadiusList = false;

@@ -1513,6 +1513,217 @@ export namespace OCCT {
          */
         indexes?: number[];
     }
+    export class ChamferEdgesListDto<T, U> {
+        constructor(shape?: T, edges?: U[], distanceList?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edges !== undefined) { this.edges = edges; }
+            if (distanceList !== undefined) { this.distanceList = distanceList; }
+        }
+        /**
+         * Shape to apply the chamfer
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edges to apply the chamfer to
+         * @default undefined
+         */
+        edges: U[];
+        /**
+         * Distance for the chamfer
+         * @default undefined
+         */
+        distanceList: number[];
+    }
+    export class ChamferEdgeAngleDto<T, U, F> {
+        constructor(shape?: T, edge?: U, face?: F, distance?: number, angle?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edge !== undefined) { this.edge = edge; }
+            if (face !== undefined) { this.face = face; }
+            if (distance !== undefined) { this.distance = distance; }
+            if (angle !== undefined) { this.angle = angle; }
+        }
+        /**
+         * Shape to apply the chamfer
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edge to apply the chamfer to
+         * @default undefined
+         */
+        edge: U;
+        /**
+         * Face from which to apply the angle
+         * @default undefined
+         */
+        face: F;
+        /**
+         * Distance for the chamfer
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        distance = 0.1;
+        /**
+         * Angle for the chamfer
+         * @default 45
+         * @minimum 0
+         * @maximum Infinity
+         * @step 1
+         */
+        angle = 45;
+    }
+
+    export class ChamferEdgeTwoDistancesDto<T, U, F> {
+        constructor(shape?: T, edge?: U, face?: F, distance1?: number, distance2?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edge !== undefined) { this.edge = edge; }
+            if (face !== undefined) { this.face = face; }
+            if (distance1 !== undefined) { this.distance1 = distance1; }
+            if (distance2 !== undefined) { this.distance2 = distance2; }
+        }
+        /**
+         * Shape to apply the chamfer
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edge to apply the chamfer to
+         * @default undefined
+         */
+        edge: U;
+        /**
+         * Face from which to apply the first distance
+         * @default undefined
+         */
+        face: F;
+        /**
+         * First distance from the face for the chamfer
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        distance1 = 0.1;
+        /**
+         * Second distance for the chamfer
+         * @default 0.2
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        distance2 = 0.2;
+    }
+    export class ChamferEdgesTwoDistancesListsDto<T, U, F> {
+        constructor(shape?: T, edges?: U[], faces?: F[], distances1?: number[], distances2?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edges !== undefined) { this.edges = edges; }
+            if (faces !== undefined) { this.faces = faces; }
+            if (distances1 !== undefined) { this.distances1 = distances1; }
+            if (distances2 !== undefined) { this.distances2 = distances2; }
+        }
+        /**
+         * Shape to apply the chamfer
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edges to apply the chamfers to
+         * @default undefined
+         */
+        edges: U[];
+        /**
+         * Faces from which to apply the angle of the chamfers
+         * @default undefined
+         */
+        faces: F[];
+        /**
+         * Distance 1 list for the chamfers
+         * @default undefined
+         */
+        distances1: number[];
+        /**
+         * Distance 2 list for the chamfers
+         * @default undefined
+         */
+        distances2: number[];
+    }
+    export class ChamferEdgesTwoDistancesDto<T, U, F> {
+        constructor(shape?: T, edges?: U[], faces?: F[], distance1?: number, distance2?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edges !== undefined) { this.edges = edges; }
+            if (faces !== undefined) { this.faces = faces; }
+            if (distance1 !== undefined) { this.distance1 = distance1; }
+            if (distance2 !== undefined) { this.distance2 = distance2; }
+        }
+        /**
+         * Shape to apply the chamfer
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edges to apply the chamfers to
+         * @default undefined
+         */
+        edges: U[];
+        /**
+         * Faces from which to apply the angle of the chamfers
+         * @default undefined
+         */
+        faces: F[];
+        /**
+         * First distance from the face for the chamfer
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        distance1 = 0.1;
+        /**
+         * Second distance for the chamfer
+         * @default 0.2
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        distance2 = 0.2;
+    }
+    export class ChamferEdgesAnglesDto<T, U, F> {
+        constructor(shape?: T, edges?: U[], faces?: F[], distances?: number[], angles?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edges !== undefined) { this.edges = edges; }
+            if (faces !== undefined) { this.faces = faces; }
+            if (distances !== undefined) { this.distances = distances; }
+            if (angles !== undefined) { this.angles = angles; }
+        }
+        /**
+         * Shape to apply the chamfer
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edges to apply the chamfers to
+         * @default undefined
+         */
+        edges: U[];
+        /**
+         * Faces from which to apply the angle of the chamfers
+         * @default undefined
+         */
+        faces: F[];
+        /**
+         * Distance list for the chamfers
+         * @default undefined
+         */
+        distances: number[];
+        /**
+         * Angles for the chamfers
+         * @default undefined
+         */
+        angles: number[];
+    }
     export class BSplineDto {
         constructor(points?: Base.Point3[], closed?: boolean) {
             if (points !== undefined) { this.points = points; }
