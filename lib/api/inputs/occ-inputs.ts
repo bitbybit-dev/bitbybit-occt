@@ -1535,7 +1535,7 @@ export namespace OCCT {
          */
         distanceList: number[];
     }
-    export class ChamferEdgeAngleDto<T, U, F> {
+    export class ChamferEdgeDistAngleDto<T, U, F> {
         constructor(shape?: T, edge?: U, face?: F, distance?: number, angle?: number) {
             if (shape !== undefined) { this.shape = shape; }
             if (edge !== undefined) { this.edge = edge; }
@@ -1690,7 +1690,7 @@ export namespace OCCT {
          */
         distance2 = 0.2;
     }
-    export class ChamferEdgesAnglesDto<T, U, F> {
+    export class ChamferEdgesDistsAnglesDto<T, U, F> {
         constructor(shape?: T, edges?: U[], faces?: F[], distances?: number[], angles?: number[]) {
             if (shape !== undefined) { this.shape = shape; }
             if (edges !== undefined) { this.edges = edges; }
@@ -1723,6 +1723,47 @@ export namespace OCCT {
          * @default undefined
          */
         angles: number[];
+    }
+
+    export class ChamferEdgesDistAngleDto<T, U, F> {
+        constructor(shape?: T, edges?: U[], faces?: F[], distance?: number, angle?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (edges !== undefined) { this.edges = edges; }
+            if (faces !== undefined) { this.faces = faces; }
+            if (distance !== undefined) { this.distance = distance; }
+            if (angle !== undefined) { this.angle = angle; }
+        }
+        /**
+         * Shape to apply the chamfer
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Edges to apply the chamfers to
+         * @default undefined
+         */
+        edges: U[];
+        /**
+         * Faces from which to apply the angle of the chamfers
+         * @default undefined
+         */
+        faces: F[];
+        /**
+         * Distance from the face
+         * @default 0.1
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        distance = 0.1;
+        /**
+         * Angle for the chamfers
+         * @default 45
+         * @minimum 0
+         * @maximum Infinity
+         * @step 1
+         */
+        angle = 45;
     }
     export class BSplineDto {
         constructor(points?: Base.Point3[], closed?: boolean) {

@@ -1891,7 +1891,7 @@ export class OccHelper {
         }
     }
 
-    chamferEdgeAngle(inputs: Inputs.OCCT.ChamferEdgeAngleDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+    chamferEdgeDistAngle(inputs: Inputs.OCCT.ChamferEdgeDistAngleDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
         const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
             inputs.shape
         );
@@ -1904,7 +1904,7 @@ export class OccHelper {
         return result;
     }
 
-    chamferEdgesAngles(inputs: Inputs.OCCT.ChamferEdgesAnglesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+    chamferEdgesDistsAngles(inputs: Inputs.OCCT.ChamferEdgesDistsAnglesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
         if (inputs.edges && inputs.edges.length > 0 &&
             inputs.faces && inputs.faces.length > 0 &&
             inputs.distances && inputs.distances.length > 0 &&
@@ -1918,6 +1918,28 @@ export class OccHelper {
             inputs.edges.forEach((edge, index) => {
                 const radians = this.vecHelper.degToRad(inputs.angles[index]);
                 mkChamfer.AddDA(inputs.distances[index], radians, edge, inputs.faces[index]);
+            });
+            const curChamfer = mkChamfer.Shape();
+            mkChamfer.delete();
+            const result = this.getActualTypeOfShape(curChamfer);
+            curChamfer.delete();
+            return result;
+        } else {
+            return undefined;
+        }
+    }
+
+    chamferEdgesDistAngle(inputs: Inputs.OCCT.ChamferEdgesDistAngleDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+        if (inputs.edges && inputs.edges.length > 0 &&
+            inputs.faces && inputs.faces.length > 0 &&
+            inputs.edges.length === inputs.faces.length
+        ) {
+            const mkChamfer = new this.occ.BRepFilletAPI_MakeChamfer(
+                inputs.shape
+            );
+            const radians = this.vecHelper.degToRad(inputs.angle);
+            inputs.edges.forEach((edge, index) => {
+                mkChamfer.AddDA(inputs.distance, radians, edge, inputs.faces[index]);
             });
             const curChamfer = mkChamfer.Shape();
             mkChamfer.delete();

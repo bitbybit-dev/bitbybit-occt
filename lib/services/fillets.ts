@@ -42,12 +42,16 @@ export class OCCTFillets {
         return this.och.chamferEdgesList(inputs);
     }
 
-    chamferEdgeAngle(inputs: Inputs.OCCT.ChamferEdgeAngleDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
-        return this.och.chamferEdgeAngle(inputs);
+    chamferEdgeDistAngle(inputs: Inputs.OCCT.ChamferEdgeDistAngleDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+        return this.och.chamferEdgeDistAngle(inputs);
     }
 
-    chamferEdgesAngles(inputs: Inputs.OCCT.ChamferEdgesAnglesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
-        return this.och.chamferEdgesAngles(inputs);
+    chamferEdgesDistAngle(inputs: Inputs.OCCT.ChamferEdgesDistAngleDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+        return this.och.chamferEdgesDistAngle(inputs);
+    }
+
+    chamferEdgesDistsAngles(inputs: Inputs.OCCT.ChamferEdgesDistsAnglesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
+        return this.och.chamferEdgesDistsAngles(inputs);
     }
 
     chamferEdgeTwoDistances(inputs: Inputs.OCCT.ChamferEdgeTwoDistancesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
