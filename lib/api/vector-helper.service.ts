@@ -2,6 +2,11 @@ export class VectorHelperService {
 
     private readonly tolerance = 0.00001;
 
+
+    degToRad(degrees: number) {
+        return degrees * (Math.PI / 180);
+    }
+
     // Algorithm works with arbitrary length numeric vectors. This algorithm is more costly for longer arrays of vectors
     removeAllDuplicateVectors(vectors: number[][], tolerance = 1e-7): number[][] {
         const cleanVectors: number[][] = [];

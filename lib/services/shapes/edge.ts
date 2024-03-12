@@ -60,7 +60,7 @@ export class OCCTEdge {
         return shape;
     }
 
-    getEdge(inputs: Inputs.OCCT.ShapeIndexDto<TopoDS_Shape>): TopoDS_Edge {
+    getEdge(inputs: Inputs.OCCT.EdgeIndexDto<TopoDS_Shape>): TopoDS_Edge {
         if (!inputs.shape || (inputs.shape.ShapeType && inputs.shape.ShapeType() > this.occ.TopAbs_ShapeEnum.TopAbs_WIRE) || inputs.shape.IsNull()) {
             throw (new Error("Edge can not be found for shape that is not provided or is of incorrect type"));
         }
