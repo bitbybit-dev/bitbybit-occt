@@ -396,6 +396,21 @@ describe("OCCT fillets unit tests", () => {
         faces.forEach(f => f.delete());
     });
 
+    it("should chamfer all edges with one distance by providing edge list", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const edges = occHelper.getEdges({ shape: cube });
+        const distanceList = edges.map(_ => 0.1);
+        const filRes = fillets.chamferEdgesList({ shape: cube, edges, distanceList });
+        const faces = occHelper.getFaces({ shape: filRes });
+        const volume = solid.getSolidVolume({ shape: filRes });
+        expect(volume).toBeCloseTo(7.88533333333333);
+        expect(faces.length).toBe(26);
+
+        cube.delete();
+        filRes.delete();
+        faces.forEach(f => f.delete());
+    });
+
     it("should chamfer specific edges selected by indexes with one distance", () => {
         const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
         const chamferRes = fillets.chamferEdges({ shape: cube, distance: 0.1, indexes: [1, 2, 6] });
@@ -494,21 +509,94 @@ describe("OCCT fillets unit tests", () => {
         faces.forEach(f => f.delete());
     });
 
-    // it("should chamfer specific edges with a single distance and an angle", () => {
-    //     const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
-    //     const allEdges = occHelper.getEdges({ shape: cube });
-    //     const allFaces = occHelper.getFaces({ shape: cube });
-    //     const edges = [allEdges[0], allEdges[1], allEdges[2]];
-    //     const face = allFaces[0];
-    //     const chamferRes = fillets.chamferEdgesDistsAngles({ shape: cube, edges, faces, distance: 0.2, angle: 45 });
-    //     const faces = occHelper.getFaces({ shape: chamferRes });
-    //     const volume = solid.getSolidVolume({ shape: chamferRes });
-    //     expect(volume).toBeCloseTo(7.959999999999999);
-    //     expect(faces.length).toBe(7);
-    //     cube.delete();
-    //     chamferRes.delete();
-    //     allFaces.forEach(f => f.delete());
-    //     allEdges.forEach(e => e.delete());
-    //     faces.forEach(f => f.delete());
-    // });
+    it("should chamfer specific edges with a single distance and 45 deg angle", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const allFaces = occHelper.getFaces({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const faces = [allFaces[0], allFaces[0], allFaces[0]];
+        const chamferRes = fillets.chamferEdgesDistAngle({ shape: cube, edges, faces, distance: 0.2, angle: 45 });
+        const facesRes = occHelper.getFaces({ shape: chamferRes });
+        const volume = solid.getSolidVolume({ shape: chamferRes });
+        expect(volume).toBeCloseTo(7.885333333333332);
+        expect(facesRes.length).toBe(9);
+        cube.delete();
+        chamferRes.delete();
+        allFaces.forEach(f => f.delete());
+        allEdges.forEach(e => e.delete());
+        facesRes.forEach(f => f.delete());
+    });
+
+    it("should chamfer specific edges with a single distance and 70 deg angle", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const allFaces = occHelper.getFaces({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const faces = [allFaces[0], allFaces[0], allFaces[0]];
+        const chamferRes = fillets.chamferEdgesDistAngle({ shape: cube, edges, faces, distance: 0.2, angle: 70 });
+        const facesRes = occHelper.getFaces({ shape: chamferRes });
+        const volume = solid.getSolidVolume({ shape: chamferRes });
+        expect(volume).toBeCloseTo(7.684955922569202);
+        expect(facesRes.length).toBe(9);
+        cube.delete();
+        chamferRes.delete();
+        allFaces.forEach(f => f.delete());
+        allEdges.forEach(e => e.delete());
+        facesRes.forEach(f => f.delete());
+    });
+
+    it("should chamfer specific edges with specific distances and angles", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const allFaces = occHelper.getFaces({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const faces = [allFaces[0], allFaces[0], allFaces[0]];
+        const chamferRes = fillets.chamferEdgesDistsAngles({ shape: cube, edges, faces, distances: [0.2, 0.1, 0.5], angles: [70, 45, 30] });
+        const facesRes = occHelper.getFaces({ shape: chamferRes });
+        const volume = solid.getSolidVolume({ shape: chamferRes });
+        expect(volume).toBeCloseTo(7.738913999084103);
+        expect(facesRes.length).toBe(9);
+        cube.delete();
+        chamferRes.delete();
+        allFaces.forEach(f => f.delete());
+        allEdges.forEach(e => e.delete());
+        facesRes.forEach(f => f.delete());
+    });
+
+    it("should chamfer specific edges with two distances", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const allFaces = occHelper.getFaces({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const faces = [allFaces[0], allFaces[0], allFaces[0]];
+        const chamferRes = fillets.chamferEdgesTwoDistances({ shape: cube, edges, faces, distance1: 0.2, distance2: 0.5 });
+        const facesRes = occHelper.getFaces({ shape: chamferRes });
+        const volume = solid.getSolidVolume({ shape: chamferRes });
+        expect(volume).toBeCloseTo(7.713333333333332);
+        expect(facesRes.length).toBe(9);
+        cube.delete();
+        chamferRes.delete();
+        allFaces.forEach(f => f.delete());
+        allEdges.forEach(e => e.delete());
+        facesRes.forEach(f => f.delete());
+    });
+
+    it("should chamfer specific edges with specific two distances", () => {
+        const cube = solid.createCube({ size: 2, center: [0, 0, 0] });
+        const allEdges = occHelper.getEdges({ shape: cube });
+        const allFaces = occHelper.getFaces({ shape: cube });
+        const edges = [allEdges[0], allEdges[1], allEdges[2]];
+        const faces = [allFaces[0], allFaces[0], allFaces[0]];
+        const chamferRes = fillets.chamferEdgesTwoDistancesLists({ shape: cube, edges, faces, distances1: [0.2, 0.3, 0.4], distances2: [0.5, 0.3, 0.6] });
+        const facesRes = occHelper.getFaces({ shape: chamferRes });
+        const volume = solid.getSolidVolume({ shape: chamferRes });
+        expect(volume).toBeCloseTo(7.5922);
+        expect(facesRes.length).toBe(9);
+        cube.delete();
+        chamferRes.delete();
+        allFaces.forEach(f => f.delete());
+        allEdges.forEach(e => e.delete());
+        facesRes.forEach(f => f.delete());
+    });
+
 });
