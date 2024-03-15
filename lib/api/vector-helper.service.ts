@@ -67,6 +67,29 @@ export class VectorHelperService {
         return res;
     }
 
+    averageVector(vectors: number[][]): number[] {
+        const average = vectors.reduce((acc, val) => {
+            return acc.map((a, i) => a + val[i]);
+        }, [0, 0, 0]);
+        return average.map(a => a / vectors.length);
+    }
+
+    magnitude(vector: number[]): number {
+        return Math.sqrt(vector.reduce((acc, val) => acc + val * val, 0));
+    }
+
+    normalize(vector: number[]): number[] {
+        const magnitude = this.magnitude(vector);
+        return vector.map(v => v / magnitude);
+    }
+
+    translatePoint(point: [number, number, number], vector: [number, number, number], distance: number): [number, number, number] {
+        const x = point[0] + vector[0] * distance;
+        const y = point[1] + vector[1] * distance;
+        const z = point[2] + vector[2] * distance;
+        return [x, y, z];
+    }
+
     distanceBetweenPoints(point1: [number, number, number], point2: [number, number, number]): number {
         const x = point2[0] - point1[0];
         const y = point2[1] - point1[1];
