@@ -7,6 +7,10 @@ export class VectorHelperService {
         return degrees * (Math.PI / 180);
     }
 
+    remap(value: number, from1: number, to1: number, from2: number, to2: number): number {
+        return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+    }
+
     // Algorithm works with arbitrary length numeric vectors. This algorithm is more costly for longer arrays of vectors
     removeAllDuplicateVectors(vectors: number[][], tolerance = 1e-7): number[][] {
         const cleanVectors: number[][] = [];
