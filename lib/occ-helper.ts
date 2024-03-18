@@ -1500,6 +1500,9 @@ export class OccHelper {
         const v = vMin + (vMax - vMin) * inputs.paramV;
         const gpDir = this.gpDir([0, 1, 0]);
         this.occ.GeomLib.NormEstim(handle, this.gpPnt2d([u, v]), 1e-7, gpDir);
+        if(face.Orientation_1() === this.occ.TopAbs_Orientation.TopAbs_REVERSED) {
+            gpDir.Reverse();
+        }
         const dir: Base.Vector3 = [gpDir.X(), gpDir.Y(), gpDir.Z()];
         gpDir.delete();
         handle.delete();

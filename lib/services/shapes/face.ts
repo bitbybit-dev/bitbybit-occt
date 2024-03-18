@@ -217,6 +217,10 @@ export class OCCTFace {
                 const gpDir = this.och.gpDir([0, 1, 0]);
                 const gpUv = this.och.gpPnt2d([u, v]);
                 this.occ.GeomLib.NormEstim(handle, gpUv, 1e-7, gpDir);
+                // Sometimes face gets reversed and its original surface is not reversed, thus we need to adjust for such situation.
+                if (face.Orientation_1() === this.occ.TopAbs_Orientation.TopAbs_REVERSED) {
+                    gpDir.Reverse();
+                }
                 const pt: Base.Point3 = [gpDir.X(), gpDir.Y(), gpDir.Z()];
                 points.push(pt);
                 gpDir.delete();

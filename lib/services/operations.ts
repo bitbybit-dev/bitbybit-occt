@@ -34,6 +34,14 @@ export class OCCTOperations {
         return result;
     }
 
+    distancesToShapeFromPoints(inputs: Inputs.OCCT.ClosestPointsOnShapeFromPointsDto<TopoDS_Shape>): number[] {
+        const vertexes = inputs.points.map(p => this.och.makeVertex(p));
+        const pointsOnShape = vertexes.map(v => this.och.closestPointsBetweenTwoShapes(v, inputs.shape));
+        return pointsOnShape.map(p => {
+            return this.och.vecHelper.distanceBetweenPoints(p[0], p[1]);
+        });
+    }
+
     loft(inputs: Inputs.OCCT.LoftDto<TopoDS_Wire | TopoDS_Edge>) {
         const pipe = new this.occ.BRepOffsetAPI_ThruSections(inputs.makeSolid, false, 1.0e-06);
         inputs.shapes.forEach((wire) => {

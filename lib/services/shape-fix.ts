@@ -1,5 +1,5 @@
 import { OccHelper } from "../occ-helper";
-import { OpenCascadeInstance, TopoDS_Shape, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OpenCascadeInstance, TopoDS_Shape, TopoDS_Shell, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
 import * as Inputs from "../api/inputs/inputs";
 
 export class OCCTShapeFix {

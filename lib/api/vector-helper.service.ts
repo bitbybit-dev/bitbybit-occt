@@ -7,6 +7,10 @@ export class VectorHelperService {
         return degrees * (Math.PI / 180);
     }
 
+    remap(value: number, from1: number, to1: number, from2: number, to2: number): number {
+        return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
+    }
+
     // Algorithm works with arbitrary length numeric vectors. This algorithm is more costly for longer arrays of vectors
     removeAllDuplicateVectors(vectors: number[][], tolerance = 1e-7): number[][] {
         const cleanVectors: number[][] = [];
@@ -65,6 +69,29 @@ export class VectorHelperService {
     approxEq(num1: number, num2: number, tolerance: number): boolean {
         const res = Math.abs(num1 - num2) < tolerance;
         return res;
+    }
+
+    averageVector(vectors: number[][]): number[] {
+        const average = vectors.reduce((acc, val) => {
+            return acc.map((a, i) => a + val[i]);
+        }, [0, 0, 0]);
+        return average.map(a => a / vectors.length);
+    }
+
+    magnitude(vector: number[]): number {
+        return Math.sqrt(vector.reduce((acc, val) => acc + val * val, 0));
+    }
+
+    normalize(vector: number[]): number[] {
+        const magnitude = this.magnitude(vector);
+        return vector.map(v => v / magnitude);
+    }
+
+    translatePoint(point: [number, number, number], vector: [number, number, number], distance: number): [number, number, number] {
+        const x = point[0] + vector[0] * distance;
+        const y = point[1] + vector[1] * distance;
+        const z = point[2] + vector[2] * distance;
+        return [x, y, z];
     }
 
     distanceBetweenPoints(point1: [number, number, number], point2: [number, number, number]): number {
