@@ -1,5 +1,5 @@
 import { OccHelper } from "../occ-helper";
-import { OpenCascadeInstance, TopoDS_Shape, TopoDS_Shell, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import { OpenCascadeInstance, TopoDS_Shape, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
 import * as Inputs from "../api/inputs/inputs";
 
 export class OCCTShapeFix {
@@ -14,7 +14,7 @@ export class OCCTShapeFix {
         return this.och.fixEdgeOrientationsAlongWire(inputs);
     }
 
-    basicShapeRepair(inputs: Inputs.OCCT.BasicShapeRepairDto<TopoDS_Wire>): TopoDS_Shape {
+    basicShapeRepair(inputs: Inputs.OCCT.BasicShapeRepairDto<TopoDS_Shape>): TopoDS_Shape {
         const shapeFix = new this.occ.ShapeFix_Shape_1();
         shapeFix.Init(inputs.shape);
         shapeFix.SetPrecision(inputs.precision);
