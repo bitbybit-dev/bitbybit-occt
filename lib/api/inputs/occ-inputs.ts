@@ -534,7 +534,7 @@ export namespace OCCT {
          */
         shape?: T;
         /**
-         * Number of subdivisions on U direction
+         * Number of points that will be added on U direction
          * @default 10
          * @minimum 1
          * @maximum Infinity
@@ -542,7 +542,7 @@ export namespace OCCT {
          */
         nrDivisionsU = 10;
         /**
-         * Number of subdivisions on V direction
+         * Number  of points that will be added on V direction
          * @default 10
          * @minimum 1
          * @maximum Infinity
