@@ -44,6 +44,71 @@ export class OCCTEdge {
         return shape;
     }
 
+    arcThroughTwoPointsAndTangent(inputs: Inputs.OCCT.ArcEdgeTwoPointsTangentDto) {
+        const gpPnt1 = this.och.gpPnt(inputs.start);
+        const gpVec = this.och.gpVec(inputs.tangentVec);
+        const gpPnt2 = this.och.gpPnt(inputs.end);
+        const segment = new this.occ.GC_MakeArcOfCircle_5(gpPnt1, gpVec, gpPnt2);
+        const hcurve = new this.occ.Handle_Geom_Curve_2(segment.Value().get());
+        const makeEdge = new this.occ.BRepBuilderAPI_MakeEdge_24(hcurve);
+        const shape = makeEdge.Edge();
+        gpPnt1.delete();
+        gpVec.delete();
+        gpPnt2.delete();
+        segment.delete();
+        hcurve.delete();
+        makeEdge.delete();
+        return shape;
+    }
+
+    arcFromCircleAndTwoPoints(inputs: Inputs.OCCT.ArcEdgeCircleTwoPointsDto<TopoDS_Edge>) {
+        const circle = this.och.getGpCircleFromEdge({ shape: inputs.circle });
+        const gpPnt1 = this.och.gpPnt(inputs.start);
+        const gpPnt2 = this.och.gpPnt(inputs.end);
+        const arc = new this.occ.GC_MakeArcOfCircle_3(circle, gpPnt1, gpPnt2, inputs.sense);
+        const hcurve = new this.occ.Handle_Geom_Curve_2(arc.Value().get());
+        const makeEdge = new this.occ.BRepBuilderAPI_MakeEdge_24(hcurve);
+        const shape = makeEdge.Edge();
+        circle.delete();
+        gpPnt1.delete();
+        gpPnt2.delete();
+        arc.delete();
+        hcurve.delete();
+        makeEdge.delete();
+        return shape;
+    }
+
+    arcFromCircleAndTwoAngles(inputs: Inputs.OCCT.ArcEdgeCircleTwoAnglesDto<TopoDS_Edge>) {
+        const circle = this.och.getGpCircleFromEdge({ shape: inputs.circle });
+        const radAlpha1 = this.och.vecHelper.degToRad(inputs.alphaAngle1);
+        const radAlpha2 = this.och.vecHelper.degToRad(inputs.alphaAngle2);
+        const arc = new this.occ.GC_MakeArcOfCircle_1(circle, radAlpha1, radAlpha2, inputs.sense);
+        const hcurve = new this.occ.Handle_Geom_Curve_2(arc.Value().get());
+        const makeEdge = new this.occ.BRepBuilderAPI_MakeEdge_24(hcurve);
+        const shape = makeEdge.Edge();
+        circle.delete();
+        arc.delete();
+        hcurve.delete();
+        makeEdge.delete();
+        return shape;
+    }
+
+    arcFromCirclePointAndAngle(inputs: Inputs.OCCT.ArcEdgeCirclePointAngleDto<TopoDS_Edge>) {
+        const circle = this.och.getGpCircleFromEdge({ shape: inputs.circle });
+        const radAlpha = this.och.vecHelper.degToRad(inputs.alphaAngle);
+        const point = this.och.gpPnt(inputs.point);
+        const arc = new this.occ.GC_MakeArcOfCircle_2(circle, point, radAlpha, inputs.sense);
+        const hcurve = new this.occ.Handle_Geom_Curve_2(arc.Value().get());
+        const makeEdge = new this.occ.BRepBuilderAPI_MakeEdge_24(hcurve);
+        const shape = makeEdge.Edge();
+        circle.delete();
+        arc.delete();
+        point.delete();
+        hcurve.delete();
+        makeEdge.delete();
+        return shape;
+    }
+
     createCircleEdge(inputs: Inputs.OCCT.CircleDto) {
         return this.och.createCircle(inputs.radius, inputs.center, inputs.direction, typeSpecificityEnum.edge) as TopoDS_Edge;
     }
@@ -152,5 +217,17 @@ export class OCCTEdge {
     getCornerPointsOfEdgesForShape(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Inputs.Base.Point3[] {
         const points = this.och.getCornerPointsOfEdgesForShape(inputs);
         return points;
+    }
+
+    getCircularEdgeCenterPoint(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Inputs.Base.Point3 {
+        return this.och.getCircularEdgeCenterPoint(inputs);
+    }
+
+    getCircularEdgeRadius(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): number {
+        return this.och.getCircularEdgeRadius(inputs);
+    }
+
+    getCircularEdgePlaneDirection(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Inputs.Base.Vector3 {
+        return this.och.getCircularEdgePlaneDirection(inputs);
     }
 }

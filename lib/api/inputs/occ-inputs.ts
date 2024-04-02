@@ -1197,6 +1197,120 @@ export namespace OCCT {
          */
         returnCompound = false;
     }
+    export class ArcEdgeTwoPointsTangentDto {
+        constructor(start?: Base.Point3, tangentVec?: Base.Vector3, end?: Base.Point3) {
+            if (start !== undefined) { this.start = start; }
+            if (tangentVec !== undefined) { this.tangentVec = tangentVec; }
+            if (end !== undefined) { this.end = end; }
+        }
+        /**
+         * Start of the arc
+         * @default [0, 0, 0]
+         */
+        start: Base.Point3 = [0, 0, 0];
+        /**
+        * Tangent vector on first point of the edge
+        * @default [0, 1, 0]
+        */
+        tangentVec: Base.Vector3 = [0, 1, 0];
+        /**
+         * End of the arc
+         * @default [0, 0, 1]
+         */
+        end: Base.Point3 = [0, 0, 1];
+    }
+    export class ArcEdgeCircleTwoPointsDto<T> {
+        constructor(circle?: T, start?: Base.Point3, end?: Base.Point3, sense?: boolean) {
+            if (circle !== undefined) { this.circle = circle; }
+            if (start !== undefined) { this.start = start; }
+            if (end !== undefined) { this.end = end; }
+            if (sense !== undefined) { this.sense = sense; }
+        }
+        /**
+         * Circular edge
+         * @default undefined
+         */
+        circle: T;
+        /**
+         * Start of the arc on the circle
+         * @default [0, 0, 0]
+         */
+        start: Base.Point3 = [0, 0, 0];
+        /**
+         * End of the arc on the circle
+         * @default [0, 0, 1]
+         */
+        end: Base.Point3 = [0, 0, 1];
+        /**
+         * If true will sense the direction
+         * @default true
+         */
+        sense = true;
+    }
+    export class ArcEdgeCircleTwoAnglesDto<T> {
+        constructor(circle?: T, alphaAngle1?: number, alphaAngle2?: number, sense?: boolean) {
+            if (circle !== undefined) { this.circle = circle; }
+            if (alphaAngle1 !== undefined) { this.alphaAngle1 = alphaAngle1; }
+            if (alphaAngle2 !== undefined) { this.alphaAngle2 = alphaAngle2; }
+            if (sense !== undefined) { this.sense = sense; }
+        }
+        /**
+         * Circular edge
+         * @default undefined
+         */
+        circle: T;
+        /**
+         * First angle
+         * @default 0
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 1
+         */
+        alphaAngle1 = 0;
+        /**
+         * End angle
+         * @default 90
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 1
+         */
+        alphaAngle2 = 90;
+        /**
+         * If true will sense the direction
+         * @default true
+         */
+        sense = true;
+    }
+    export class ArcEdgeCirclePointAngleDto<T> {
+        constructor(circle?: T, alphaAngle?: number, alphaAngle2?: number, sense?: boolean) {
+            if (circle !== undefined) { this.circle = circle; }
+            if (alphaAngle !== undefined) { this.alphaAngle = alphaAngle; }
+            if (sense !== undefined) { this.sense = sense; }
+        }
+        /**
+         * Circular edge
+         * @default undefined
+         */
+        circle: T;
+        /**
+         * Point on the circle from where to start the arc
+         * @default undefined
+         */
+        point: Base.Point3;
+        /**
+         * Angle from point
+         * @default 90
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 1
+         */
+        alphaAngle = 90;
+        /**
+         * If true will sense the direction
+         * @default true
+         */
+        sense = true;
+    }
     export class ArcEdgeThreePointsDto {
         constructor(start?: Base.Point3, middle?: Base.Point3, end?: Base.Point3) {
             if (start !== undefined) { this.start = start; }
@@ -1795,6 +1909,37 @@ export namespace OCCT {
          * Indicates whether the shapes should be returned as a compound
          */
         returnCompound = false;
+    }
+    export class ZigZagBetweenTwoWiresDto<T> {
+        constructor(wire1?: T, wire2?: T, nrZigZags?: number, inverse?: boolean) {
+            if (wire1 !== undefined) { this.wire1 = wire1; }
+            if (wire2 !== undefined) { this.wire2 = wire2; }
+            if (nrZigZags !== undefined) { this.nrZigZags = nrZigZags; }
+            if (inverse !== undefined) { this.inverse = inverse; }
+        }
+        /**
+         * The first wire for zig zag
+         * @default undefined
+         */
+        wire1: T;
+        /**
+         * The second wire for zig zag
+         * @default undefined
+         */
+        wire2: T;
+        /**
+         * How many zig zags to create between the two wires. One zig zag means two edges forming a corner.
+         * @default 20
+         * @minimum 1
+         * @maximum Infinity
+         * @step 1
+         */
+        nrZigZags = 20;
+        /**
+         * Inverse the the zig zag to go from wire2 to wire1
+         * @default false
+         */
+        inverse: boolean;
     }
     export class InterpolationDto {
         constructor(points?: Base.Point3[], periodic?: boolean, tolerance?: number) {

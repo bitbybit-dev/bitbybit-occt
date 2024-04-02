@@ -1271,6 +1271,78 @@ export class OccHelper {
 
     }
 
+    createZigZagBetweenTwoWires(inputs: Inputs.OCCT.ZigZagBetweenTwoWiresDto<TopoDS_Wire>) {
+        const wire1 = inputs.wire1;
+        const wire2 = inputs.wire2;
+        const edges1 = this.getEdgesAlongWire({ shape: wire1 });
+        const edges2 = this.getEdgesAlongWire({ shape: wire2 });
+
+        const ptsEdges1 = edges1.map(e => this.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false }));
+        const ptsEdges2 = edges2.map(e => this.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false }));
+
+        const wires = ptsEdges1.map((pts1, index) => {
+            const pts2 = ptsEdges2[index];
+
+            const ptsInZigZagOrder = [];
+            for (let i = 0; i < pts1.length; i++) {
+                if (i % 2 === 0) {
+                    if (inputs.inverse) {
+                        ptsInZigZagOrder.push(pts2[i]);
+                    } else {
+                        ptsInZigZagOrder.push(pts1[i]);
+                    }
+                } else {
+                    if (inputs.inverse) {
+                        ptsInZigZagOrder.push(pts1[i]);
+                    } else {
+                        ptsInZigZagOrder.push(pts2[i]);
+                    }
+                }
+            }
+            return this.createPolylineWire({ points: ptsInZigZagOrder });
+        });
+        return this.combineEdgesAndWiresIntoAWire({ shapes: wires });
+    }
+
+    getCircularEdgeCenterPoint(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Inputs.Base.Point3 {
+        const circle = this.getGpCircleFromEdge(inputs);
+        const location = circle.Location();
+        const result = [location.X(), location.Y(), location.Z()] as Inputs.Base.Point3;
+        location.delete();
+        circle.delete();
+        return result;
+    }
+
+    getCircularEdgeRadius(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): number {
+        const circle = this.getGpCircleFromEdge(inputs);
+        const radius = circle.Radius();
+        circle.delete();
+        return radius;
+    }
+
+    getCircularEdgePlaneDirection(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): Inputs.Base.Vector3 {
+        const circle = this.getGpCircleFromEdge(inputs);
+        const axis = circle.Position();
+        const dir = axis.Direction();
+        const result = [dir.X(), dir.Y(), dir.Z()] as Inputs.Base.Vector3;
+        dir.delete();
+        axis.delete();
+        circle.delete();
+        return result;
+    }
+
+    getGpCircleFromEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>) {
+        const geomCircle = new this.occ.BRepAdaptor_Curve_2(inputs.shape);
+        try {
+            const circle = geomCircle.Circle();
+            geomCircle.delete();
+            return circle;
+        } catch (ex) {
+            geomCircle.delete();
+            throw new Error("Edge is not a circular edge.");
+        }
+    }
+
     getNumSolidsInCompound(shape: TopoDS_Shape): number {
         if (!shape ||
             this.getShapeTypeEnum(shape) !== Inputs.OCCT.shapeTypeEnum.compound ||
@@ -1500,7 +1572,7 @@ export class OccHelper {
         const v = vMin + (vMax - vMin) * inputs.paramV;
         const gpDir = this.gpDir([0, 1, 0]);
         this.occ.GeomLib.NormEstim(handle, this.gpPnt2d([u, v]), 1e-7, gpDir);
-        if(face.Orientation_1() === this.occ.TopAbs_Orientation.TopAbs_REVERSED) {
+        if (face.Orientation_1() === this.occ.TopAbs_Orientation.TopAbs_REVERSED) {
             gpDir.Reverse();
         }
         const dir: Base.Vector3 = [gpDir.X(), gpDir.Y(), gpDir.Z()];
