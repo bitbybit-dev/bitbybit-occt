@@ -116,6 +116,28 @@
       - symbol: GC_MakeSegment
       - symbol: GC_Root
       - symbol: GProp_GProps
+      - symbol: GccAna_Circ2d2TanOn
+      - symbol: GccAna_Circ2d2TanRad
+      - symbol: GccAna_Circ2d3Tan
+      - symbol: GccAna_Circ2dBisec
+      - symbol: GccAna_Circ2dTanCen
+      - symbol: GccAna_Circ2dTanOnRad
+      - symbol: GccAna_CircLin2dBisec
+      - symbol: GccAna_CircPnt2dBisec
+      - symbol: GccAna_Lin2d2Tan
+      - symbol: GccAna_Lin2dBisec
+      - symbol: GccAna_Lin2dTanObl
+      - symbol: GccAna_Lin2dTanPar
+      - symbol: GccAna_Lin2dTanPer
+      - symbol: GccAna_LinPnt2dBisec
+      - symbol: GccAna_NoSolution
+      - symbol: GccAna_Pnt2dBisec
+      - symbol: GccEnt
+      - symbol: GccEnt_Array1OfPosition
+      - symbol: GccEnt_BadQualifier
+      - symbol: GccEnt_Position
+      - symbol: GccEnt_QualifiedCirc
+      - symbol: GccEnt_QualifiedLin
       - symbol: Geom2dAPI_ExtremaCurveCurve
       - symbol: Geom2dAPI_InterCurveCurve
       - symbol: Geom2dAPI_Interpolate
@@ -293,6 +315,7 @@
       - symbol: gp_Ax2d
       - symbol: gp_Ax3
       - symbol: gp_Circ
+      - symbol: gp_Circ2d
       - symbol: gp_Cylinder
       - symbol: gp_Dir
       - symbol: gp_Dir2d
@@ -300,6 +323,8 @@
       - symbol: gp_Elips2d
       - symbol: gp_GTrsf
       - symbol: gp_GTrsf2d
+      - symbol: gp_Lin
+      - symbol: gp_Lin2d
       - symbol: gp_Mat
       - symbol: gp_Pln
       - symbol: gp_Pnt

@@ -1,4 +1,4 @@
-import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, ChFi3d_FilletShape, TopAbs_State, BRepFilletAPI_MakeFillet } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, ChFi3d_FilletShape, TopAbs_State, BRepFilletAPI_MakeFillet, GccEnt_Position } from "../bitbybit-dev-occt/bitbybit-dev-occt";
 import { VectorHelperService } from "./api/vector-helper.service";
 import { Base } from "./api/inputs/base-inputs";
 import * as Inputs from "./api/inputs/inputs";
@@ -361,11 +361,46 @@ export class OccHelper {
         return box;
     }
 
+    getVerticesAsPoints(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Inputs.Base.Point3[] {
+        const vertices = this.getVertices(inputs);
+        return this.verticesToPoints({ shapes: vertices });
+    }
+
+    verticesToPoints(inputs: Inputs.OCCT.ShapesDto<TopoDS_Vertex>): Inputs.Base.Point3[] {
+        return inputs.shapes.map(v => {
+            const pt = this.occ.BRep_Tool.Pnt(v);
+            const res = [pt.X(), pt.Y(), pt.Z()] as Inputs.Base.Point3;
+            pt.delete();
+            return res;
+        });
+    }
+
+    vertexToPoint(inputs: Inputs.OCCT.ShapeDto<TopoDS_Vertex>): Inputs.Base.Point3 {
+        const pt = this.occ.BRep_Tool.Pnt(inputs.shape);
+        const res = [pt.X(), pt.Y(), pt.Z()] as Inputs.Base.Point3;
+        pt.delete();
+        return res;
+    }
+
+    getVertices(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Vertex[] {
+        if (inputs.shape && this.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.vertex) {
+            return [inputs.shape];
+        }
+        if (!inputs.shape || inputs.shape.IsNull()) {
+            throw (new Error("Shape is not provided or is of incorrect type"));
+        }
+        const vertices: TopoDS_Vertex[] = [];
+        this.forEachVertex(inputs.shape, (i, vertex) => {
+            vertices.push(vertex);
+        });
+        return vertices;
+    }
+
     getEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Edge[] {
         if (inputs.shape && this.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.edge) {
             return [inputs.shape];
         }
-        if (!inputs.shape || (this.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.vertex) || inputs.shape.IsNull()) {
+        if (!inputs.shape || inputs.shape.IsNull()) {
             throw (new Error("Shape is not provided or is of incorrect type"));
         }
         const edges: TopoDS_Edge[] = [];
@@ -375,11 +410,19 @@ export class OccHelper {
         return edges;
     }
 
+    getCircularEdgesAlongWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Edge[] {
+        return this.getEdgesAlongWire(inputs).filter(edge => this.isEdgeCircular({ shape: edge }));
+    }
+
+    getLinearEdgesAlongWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Edge[] {
+        return this.getEdgesAlongWire(inputs).filter(edge => this.isEdgeLinear({ shape: edge }));
+    }
+
     getEdgesAlongWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Edge[] {
         if (inputs.shape && this.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.edge) {
             return [inputs.shape];
         }
-        if (!inputs.shape || (this.getShapeTypeEnum(inputs.shape) === Inputs.OCCT.shapeTypeEnum.vertex) || inputs.shape.IsNull()) {
+        if (!inputs.shape || inputs.shape.IsNull()) {
             throw (new Error("Shape is not provided or is of incorrect type"));
         }
         const edges: TopoDS_Edge[] = [];
@@ -681,6 +724,24 @@ export class OccHelper {
             result = Inputs.OCCT.shapeTypeEnum.shape;
         }
         return result;
+    }
+
+    getGccEntPositionFromEnum(position: Inputs.OCCT.gccEntPositionEnum): GccEnt_Position {
+        let result = this.occ.GccEnt_Position.GccEnt_noqualifier;
+        if (position === Inputs.OCCT.gccEntPositionEnum.unqualified) {
+            result = this.occ.GccEnt_Position.GccEnt_unqualified;
+        } else if (position === Inputs.OCCT.gccEntPositionEnum.enclosed) {
+            result = this.occ.GccEnt_Position.GccEnt_enclosed;
+        } else if (position === Inputs.OCCT.gccEntPositionEnum.enclosing) {
+            result = this.occ.GccEnt_Position.GccEnt_enclosing;
+        } else if (position === Inputs.OCCT.gccEntPositionEnum.outside) {
+            result = this.occ.GccEnt_Position.GccEnt_outside;
+        } else if (position === Inputs.OCCT.gccEntPositionEnum.noqualifier) {
+            result = this.occ.GccEnt_Position.GccEnt_noqualifier;
+        } else {
+            result = this.occ.GccEnt_Position.GccEnt_noqualifier;
+        }
+        return result as GccEnt_Position;
     }
 
     getTopAbsStateEnum(state: TopAbs_State): Inputs.OCCT.topAbsStateEnum {
@@ -1331,14 +1392,57 @@ export class OccHelper {
         return result;
     }
 
-    getGpCircleFromEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>) {
-        const geomCircle = new this.occ.BRepAdaptor_Curve_2(inputs.shape);
+    isEdgeCircular(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>) {
+        const curve = new this.occ.BRepAdaptor_Curve_2(inputs.shape);
         try {
-            const circle = geomCircle.Circle();
-            geomCircle.delete();
+            curve.Circle();
+            curve.delete();
+            return true;
+        } catch (ex) {
+            return false;
+        }
+    }
+
+    isEdgeLinear(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>) {
+        const curve = new this.occ.BRepAdaptor_Curve_2(inputs.shape);
+        try {
+            curve.Line();
+            curve.delete();
+            return true;
+        } catch (ex) {
+            return false;
+        }
+    }
+
+    getGpCircleFromEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>) {
+        const curve = new this.occ.BRepAdaptor_Curve_2(inputs.shape);
+        try {
+            const circle = curve.Circle();
+            curve.delete();
             return circle;
         } catch (ex) {
-            geomCircle.delete();
+            curve.delete();
+            throw new Error("Edge is not a circular edge.");
+        }
+    }
+
+    getGpCircle2dFromEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>) {
+        const curve = new this.occ.BRepAdaptor_Curve_2(inputs.shape);
+        try {
+            const circle = curve.Circle();
+            const ax = circle.Position();
+            const location = circle.Location();
+            const ax2d = this.gpAx2d([location.X(), location.Y()], [1, 0]);
+            const radius = circle.Radius();
+            const circle2d = new this.occ.gp_Circ2d_2(ax2d, radius, true);
+            curve.delete();
+            circle.delete();
+            ax.delete();
+            location.delete();
+            ax2d.delete();
+            return circle2d;
+        } catch (ex) {
+            curve.delete();
             throw new Error("Edge is not a circular edge.");
         }
     }

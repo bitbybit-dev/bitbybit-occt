@@ -65,7 +65,30 @@ export namespace OCCT {
         compound = "compound",
         shape = "shape",
     }
-
+    export enum gccEntPositionEnum {
+        unqualified = "unqualified",
+        enclosing = "enclosing",
+        enclosed = "enclosed",
+        outside = "outside",
+        noqualifier = "noqualifier",
+    }
+    export enum positionResultEnum {
+        keepSide1 = "keepSide1",
+        keepSide2 = "keepSide2",
+        all = "all",
+    }
+    export enum circleInclusionEnum {
+        none = "none",
+        keepSide1 = "keepSide1",
+        keepSide2 = "keepSide2",
+    }
+    export enum twoCircleInclusionEnum {
+        none = "none",
+        outside = "outside",
+        inside = "inside",
+        outsideInside = "outsideInside",
+        insideOutside = "insideOutside",
+    }
     export class DecomposedMeshDto {
         constructor(faceList?: DecomposedFaceDto[], edgeList?: DecomposedEdgeDto[]) {
             if (faceList !== undefined) { this.faceList = faceList; }
@@ -79,6 +102,10 @@ export namespace OCCT {
          * Edge list for decomposed edges
          */
         edgeList: DecomposedEdgeDto[];
+        /**
+         * The points list in a shape that includes vertex shapes
+         */
+        pointsList: Base.Point3[];
     }
 
     export class DecomposedFaceDto {
@@ -103,6 +130,138 @@ export namespace OCCT {
          * @default undefined
          */
         shapes?: T[];
+    }
+    export class PointDto {
+        constructor(point?: Base.Point3) {
+            if (point !== undefined) { this.point = point; }
+        }
+        /**
+         * The point
+         * @default [0, 0, 0]
+         */
+        point?: Base.Point3 = [0, 0, 0];
+    }
+    export class PointsDto {
+        constructor(points?: Base.Point3[]) {
+            if (points !== undefined) { this.points = points; }
+        }
+        /**
+         * The point
+         * @default undefined
+         */
+        points?: Base.Point3[];
+    }
+    export class ConstraintTanLinesFromPtToCircleDto<T> {
+        constructor(circle?: T, point?: Base.Point3) {
+            if (circle !== undefined) { this.circle = circle; }
+            if (point !== undefined) { this.point = point; }
+        }
+        /**
+         * The circle for tangent points
+         * @default undefined
+         */
+        circle?: T;
+        /**
+         * The point from which to find the lines
+         * @default undefined
+         */
+        point: Base.Point3;
+        /**
+         * tolerance
+         * @default 1e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.00001
+         */
+        tolerance = 1e-7;
+        /**
+         * Filters resulting lines by position
+         * @default all
+         */
+        positionResult: positionResultEnum = positionResultEnum.all;
+        /**
+         * Splits provided circle on tangent points and adds it to the solutions
+         * This only works when number of solutions contains 2 lines, when solution involves more than 4 lines, this option will be ignored.
+         * @default none
+         */
+        circleRemainder: circleInclusionEnum = circleInclusionEnum.none;
+    }
+    export class ConstraintTanLinesFromTwoPtsToCircleDto<T> {
+        constructor(circle?: T, point1?: Base.Point3, point2?: Base.Point3) {
+            if (circle !== undefined) { this.circle = circle; }
+            if (point1 !== undefined) { this.point1 = point1; }
+            if (point2 !== undefined) { this.point1 = point2; }
+
+        }
+        /**
+         * The circle for tangent points
+         * @default undefined
+         */
+        circle?: T;
+        /**
+         * The point from which to find the lines
+         * @default undefined
+         */
+        point1: Base.Point3;
+        /**
+         * The point from which to find the lines
+         * @default undefined
+         */
+        point2: Base.Point3;
+        /**
+         * tolerance
+         * @default 1e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.00001
+         */
+        tolerance = 1e-7;
+        /**
+         * Filters resulting lines by position
+         * @default all
+         */
+        positionResult: positionResultEnum = positionResultEnum.all;
+        /**
+         * Splits provided circle on tangent points and adds it to the solutions
+         * This only works when number of solutions contains 2 lines, when solution involves more than 4 lines, this option will be ignored.
+         * @default none
+         */
+        circleRemainder: circleInclusionEnum = circleInclusionEnum.none;
+    }
+    export class ConstraintTanLinesOnTwoCirclesDto<T> {
+        constructor(circle1?: T, circle2?: T) {
+            if (circle1 !== undefined) { this.circle1 = circle1; }
+            if (circle2 !== undefined) { this.circle2 = circle2; }
+        }
+        /**
+         * The first circle for tangential lines
+         * @default undefined
+         */
+        circle1?: T;
+        /**
+         * The second circle for tangential lines
+         * @default undefined
+         */
+        circle2?: T;
+        /**
+         * tolerance
+         * @default 1e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.00001
+         */
+        tolerance = 1e-7;
+        /**
+         * Filters resulting lines by position relative to circles
+         * @default all
+         */
+        positionResult: positionResultEnum = positionResultEnum.all;
+        /**
+         * Splits provided circles on tangent points and returns those as part of the solutions
+         * This only works when number of solutions is limited to 2 lines, when solution involves more than 4 lines, this option will be ignored.
+         * @default none
+         */
+        circleRemainders: twoCircleInclusionEnum = twoCircleInclusionEnum.none;
     }
     export class CurveAndSurfaceDto<T, U>{
         constructor(curve?: T, surface?: U) {
@@ -271,16 +430,19 @@ export namespace OCCT {
         /**
          * Provide options without default values
          */
-        constructor(shape?: T, faceOpacity?: number, edgeOpacity?: number, edgeColour?: Base.Color, faceMaterial?: Base.Material, faceColour?: Base.Color, edgeWidth?: number, drawEdges?: boolean, drawFaces?: boolean, precision?: number, drawEdgeIndexes?: boolean, edgeIndexHeight?: number, edgeIndexColour?: Base.Color, drawFaceIndexes?: boolean, faceIndexHeight?: number, faceIndexColour?: Base.Color) {
+        constructor(shape?: T, faceOpacity?: number, edgeOpacity?: number, edgeColour?: Base.Color, faceMaterial?: Base.Material, faceColour?: Base.Color, edgeWidth?: number, drawEdges?: boolean, drawFaces?: boolean, drawVertices?: boolean, vertexColour?: Base.Color, vertexSize?: number, precision?: number, drawEdgeIndexes?: boolean, edgeIndexHeight?: number, edgeIndexColour?: Base.Color, drawFaceIndexes?: boolean, faceIndexHeight?: number, faceIndexColour?: Base.Color) {
             if (shape !== undefined) { this.shape = shape; }
             if (faceOpacity !== undefined) { this.faceOpacity = faceOpacity; }
             if (edgeOpacity !== undefined) { this.edgeOpacity = edgeOpacity; }
             if (edgeColour !== undefined) { this.edgeColour = edgeColour; }
             if (faceMaterial !== undefined) { this.faceMaterial = faceMaterial; }
             if (faceColour !== undefined) { this.faceColour = faceColour; }
+            if (vertexColour !== undefined) { this.vertexColour = vertexColour; }
+            if (vertexSize !== undefined) { this.vertexSize = vertexSize; }
             if (edgeWidth !== undefined) { this.edgeWidth = edgeWidth; }
             if (drawEdges !== undefined) { this.drawEdges = drawEdges; }
             if (drawFaces !== undefined) { this.drawFaces = drawFaces; }
+            if (drawVertices !== undefined) { this.drawVertices = drawVertices; }
             if (precision !== undefined) { this.precision = precision; }
             if (drawEdgeIndexes !== undefined) { this.drawEdgeIndexes = drawEdgeIndexes; }
             if (edgeIndexHeight !== undefined) { this.edgeIndexHeight = edgeIndexHeight; }
@@ -345,6 +507,24 @@ export namespace OCCT {
          */
         drawFaces = true;
         /**
+         * You can turn off drawing of vertexes via this property
+         * @default false
+         */
+        drawVertices = false;
+        /**
+         * Color of the vertices that will be drawn
+         * @default #ff00ff
+         */
+        vertexColour = "#ffaaff";
+        /**
+         * The size of a vertices that will be drawn
+         * @default 0.03
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        vertexSize = 0.03;
+        /**
          * Precision of the mesh that will be generated for the shape, lower number will mean more triangles
          * @default 0.01
          * @minimum 0
@@ -394,16 +574,19 @@ export namespace OCCT {
         /**
          * Provide options without default values
          */
-        constructor(shapes?: T[], faceOpacity?: number, edgeOpacity?: number, edgeColour?: Base.Color, faceMaterial?: Base.Material, faceColour?: Base.Color, edgeWidth?: number, drawEdges?: boolean, drawFaces?: boolean, precision?: number, drawEdgeIndexes?: boolean, edgeIndexHeight?: number, edgeIndexColour?: Base.Color, drawFaceIndexes?: boolean, faceIndexHeight?: number, faceIndexColour?: Base.Color) {
+        constructor(shapes?: T[], faceOpacity?: number, edgeOpacity?: number, edgeColour?: Base.Color, faceMaterial?: Base.Material, faceColour?: Base.Color, edgeWidth?: number, drawEdges?: boolean, drawFaces?: boolean, drawVertices?: boolean, vertexColour?: Base.Color, vertexSize?: number, precision?: number, drawEdgeIndexes?: boolean, edgeIndexHeight?: number, edgeIndexColour?: Base.Color, drawFaceIndexes?: boolean, faceIndexHeight?: number, faceIndexColour?: Base.Color) {
             if (shapes !== undefined) { this.shapes = shapes; }
             if (faceOpacity !== undefined) { this.faceOpacity = faceOpacity; }
             if (edgeOpacity !== undefined) { this.edgeOpacity = edgeOpacity; }
             if (edgeColour !== undefined) { this.edgeColour = edgeColour; }
             if (faceMaterial !== undefined) { this.faceMaterial = faceMaterial; }
             if (faceColour !== undefined) { this.faceColour = faceColour; }
+            if (vertexColour !== undefined) { this.vertexColour = vertexColour; }
+            if (vertexSize !== undefined) { this.vertexSize = vertexSize; }
             if (edgeWidth !== undefined) { this.edgeWidth = edgeWidth; }
             if (drawEdges !== undefined) { this.drawEdges = drawEdges; }
             if (drawFaces !== undefined) { this.drawFaces = drawFaces; }
+            if (drawVertices !== undefined) { this.drawVertices = drawVertices; }
             if (precision !== undefined) { this.precision = precision; }
             if (drawEdgeIndexes !== undefined) { this.drawEdgeIndexes = drawEdgeIndexes; }
             if (edgeIndexHeight !== undefined) { this.edgeIndexHeight = edgeIndexHeight; }
@@ -467,6 +650,24 @@ export namespace OCCT {
          * @default true
          */
         drawFaces = true;
+        /**
+         * You can turn off drawing of vertexes via this property
+         * @default false
+         */
+        drawVertices = false;
+        /**
+         * Color of the vertices that will be drawn
+         * @default #ff00ff
+         */
+        vertexColour = "#ffaaff";
+        /**
+         * The size of a vertices that will be drawn
+         * @default 0.03
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.01
+         */
+        vertexSize = 0.03;
         /**
          * Precision of the mesh that will be generated for the shape, lower number will mean more triangles
          * @default 0.01
