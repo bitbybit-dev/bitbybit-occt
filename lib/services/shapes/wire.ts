@@ -188,6 +188,10 @@ export class OCCTWire {
         return this.och.makeCompoundIfNeeded(wires, inputs.returnCompound);
     }
 
+    createZigZagBetweenTwoWires(inputs: Inputs.OCCT.ZigZagBetweenTwoWiresDto<TopoDS_Wire>): TopoDS_Wire {
+        return this.och.createZigZagBetweenTwoWires(inputs);
+    }
+
     divideWireByParamsToPoints(inputs: Inputs.OCCT.DivideDto<TopoDS_Wire>): Inputs.Base.Point3[] {
         return this.och.divideWireByParamsToPoints(inputs);
     }

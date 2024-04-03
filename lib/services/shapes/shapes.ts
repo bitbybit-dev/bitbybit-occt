@@ -1,6 +1,7 @@
 import { OpenCascadeInstance } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper } from "../../occ-helper";
 import { OCCTCompound } from "./compound";
+import { OCCTVertex } from "./vertex";
 import { OCCTEdge } from "./edge";
 import { OCCTFace } from "./face";
 import { OCCTShape } from "./shape";
@@ -9,6 +10,7 @@ import { OCCTSolid } from "./solid";
 import { OCCTWire } from "./wire";
 
 export class OCCTShapes {
+    public readonly vertex: OCCTVertex;
     public readonly edge: OCCTEdge;
     public readonly wire: OCCTWire;
     public readonly face: OCCTFace;
@@ -21,6 +23,7 @@ export class OCCTShapes {
         occ: OpenCascadeInstance,
         och: OccHelper,
     ) {
+        this.vertex = new OCCTVertex(occ, och);
         this.edge = new OCCTEdge(occ, och);
         this.wire = new OCCTWire(occ, och);
         this.face = new OCCTFace(occ, och);

@@ -1496,6 +1496,119 @@ export declare class XCAFDoc_ColorTool extends TDataStd_GenericEmpty {
   delete(): void;
 }
 
+export declare class GccEnt_BadQualifier extends Standard_DomainError {
+  static Raise_1(theMessage: Standard_CString): void;
+  static Raise_2(theMessage: Standard_SStream): void;
+  static NewInstance_1(theMessage: Standard_CString): Handle_GccEnt_BadQualifier;
+  static NewInstance_2(theMessage: Standard_CString, theStackTrace: Standard_CString): Handle_GccEnt_BadQualifier;
+  static get_type_name(): Standard_Character;
+  static get_type_descriptor(): Handle_Standard_Type;
+  DynamicType(): Handle_Standard_Type;
+  delete(): void;
+}
+
+  export declare class GccEnt_BadQualifier_1 extends GccEnt_BadQualifier {
+    constructor();
+  }
+
+  export declare class GccEnt_BadQualifier_2 extends GccEnt_BadQualifier {
+    constructor(theMessage: Standard_CString);
+  }
+
+  export declare class GccEnt_BadQualifier_3 extends GccEnt_BadQualifier {
+    constructor(theMessage: Standard_CString, theStackTrace: Standard_CString);
+  }
+
+export declare type GccEnt_Position = {
+  GccEnt_unqualified: {};
+  GccEnt_enclosing: {};
+  GccEnt_enclosed: {};
+  GccEnt_outside: {};
+  GccEnt_noqualifier: {};
+}
+
+export declare class GccEnt_QualifiedCirc {
+  constructor(Qualified: gp_Circ2d, Qualifier: GccEnt_Position)
+  Qualified(): gp_Circ2d;
+  Qualifier(): GccEnt_Position;
+  IsUnqualified(): Standard_Boolean;
+  IsEnclosing(): Standard_Boolean;
+  IsEnclosed(): Standard_Boolean;
+  IsOutside(): Standard_Boolean;
+  delete(): void;
+}
+
+export declare class GccEnt_Array1OfPosition {
+  begin(): any;
+  end(): any;
+  cbegin(): any;
+  cend(): any;
+  Init(theValue: GccEnt_Position): void;
+  Size(): Standard_Integer;
+  Length(): Standard_Integer;
+  IsEmpty(): Standard_Boolean;
+  Lower(): Standard_Integer;
+  Upper(): Standard_Integer;
+  IsDeletable(): Standard_Boolean;
+  IsAllocated(): Standard_Boolean;
+  Assign(theOther: GccEnt_Array1OfPosition): GccEnt_Array1OfPosition;
+  Move(theOther: GccEnt_Array1OfPosition): GccEnt_Array1OfPosition;
+  First(): GccEnt_Position;
+  ChangeFirst(): GccEnt_Position;
+  Last(): GccEnt_Position;
+  ChangeLast(): GccEnt_Position;
+  Value(theIndex: Standard_Integer): GccEnt_Position;
+  ChangeValue(theIndex: Standard_Integer): GccEnt_Position;
+  SetValue(theIndex: Standard_Integer, theItem: GccEnt_Position): void;
+  Resize(theLower: Standard_Integer, theUpper: Standard_Integer, theToCopyData: Standard_Boolean): void;
+  delete(): void;
+}
+
+  export declare class GccEnt_Array1OfPosition_1 extends GccEnt_Array1OfPosition {
+    constructor();
+  }
+
+  export declare class GccEnt_Array1OfPosition_2 extends GccEnt_Array1OfPosition {
+    constructor(theLower: Standard_Integer, theUpper: Standard_Integer);
+  }
+
+  export declare class GccEnt_Array1OfPosition_3 extends GccEnt_Array1OfPosition {
+    constructor(theOther: GccEnt_Array1OfPosition);
+  }
+
+  export declare class GccEnt_Array1OfPosition_4 extends GccEnt_Array1OfPosition {
+    constructor(theOther: GccEnt_Array1OfPosition);
+  }
+
+  export declare class GccEnt_Array1OfPosition_5 extends GccEnt_Array1OfPosition {
+    constructor(theBegin: GccEnt_Position, theLower: Standard_Integer, theUpper: Standard_Integer);
+  }
+
+export declare class GccEnt {
+  constructor();
+  static PositionToString(thePosition: GccEnt_Position): Standard_CString;
+  static PositionFromString_1(thePositionString: Standard_CString): GccEnt_Position;
+  static PositionFromString_2(thePositionString: Standard_CString, thePosition: GccEnt_Position): Standard_Boolean;
+  static Unqualified_1(Obj: gp_Lin2d): GccEnt_QualifiedLin;
+  static Unqualified_2(Obj: gp_Circ2d): GccEnt_QualifiedCirc;
+  static Enclosing(Obj: gp_Circ2d): GccEnt_QualifiedCirc;
+  static Enclosed_1(Obj: gp_Lin2d): GccEnt_QualifiedLin;
+  static Enclosed_2(Obj: gp_Circ2d): GccEnt_QualifiedCirc;
+  static Outside_1(Obj: gp_Lin2d): GccEnt_QualifiedLin;
+  static Outside_2(Obj: gp_Circ2d): GccEnt_QualifiedCirc;
+  delete(): void;
+}
+
+export declare class GccEnt_QualifiedLin {
+  constructor(Qualified: gp_Lin2d, Qualifier: GccEnt_Position)
+  Qualified(): gp_Lin2d;
+  Qualifier(): GccEnt_Position;
+  IsUnqualified(): Standard_Boolean;
+  IsEnclosed(): Standard_Boolean;
+  IsOutside(): Standard_Boolean;
+  delete(): void;
+}
+
 export declare class BRepOffsetAPI_MakePipeShell extends BRepPrimAPI_MakeSweep {
   constructor(Spine: TopoDS_Wire)
   SetMode_1(IsFrenet: Standard_Boolean): void;
@@ -2500,6 +2613,56 @@ export declare class gp_Elips {
     constructor(theA2: gp_Ax2, theMajorRadius: Standard_Real, theMinorRadius: Standard_Real);
   }
 
+export declare class gp_Circ2d {
+  SetLocation(theP: gp_Pnt2d): void;
+  SetXAxis(theA: gp_Ax2d): void;
+  SetAxis(theA: gp_Ax22d): void;
+  SetYAxis(theA: gp_Ax2d): void;
+  SetRadius(theRadius: Standard_Real): void;
+  Area(): Standard_Real;
+  Coefficients(theA: Standard_Real, theB: Standard_Real, theC: Standard_Real, theD: Standard_Real, theE: Standard_Real, theF: Standard_Real): void;
+  Contains(theP: gp_Pnt2d, theLinearTolerance: Standard_Real): Standard_Boolean;
+  Distance(theP: gp_Pnt2d): Standard_Real;
+  SquareDistance(theP: gp_Pnt2d): Standard_Real;
+  Length(): Standard_Real;
+  Location(): gp_Pnt2d;
+  Radius(): Standard_Real;
+  Axis(): gp_Ax22d;
+  Position(): gp_Ax22d;
+  XAxis(): gp_Ax2d;
+  YAxis(): gp_Ax2d;
+  Reverse(): void;
+  Reversed(): gp_Circ2d;
+  IsDirect(): Standard_Boolean;
+  Mirror_1(theP: gp_Pnt2d): void;
+  Mirrored_1(theP: gp_Pnt2d): gp_Circ2d;
+  Mirror_2(theA: gp_Ax2d): void;
+  Mirrored_2(theA: gp_Ax2d): gp_Circ2d;
+  Rotate(theP: gp_Pnt2d, theAng: Standard_Real): void;
+  Rotated(theP: gp_Pnt2d, theAng: Standard_Real): gp_Circ2d;
+  Scale(theP: gp_Pnt2d, theS: Standard_Real): void;
+  Scaled(theP: gp_Pnt2d, theS: Standard_Real): gp_Circ2d;
+  Transform(theT: gp_Trsf2d): void;
+  Transformed(theT: gp_Trsf2d): gp_Circ2d;
+  Translate_1(theV: gp_Vec2d): void;
+  Translated_1(theV: gp_Vec2d): gp_Circ2d;
+  Translate_2(theP1: gp_Pnt2d, theP2: gp_Pnt2d): void;
+  Translated_2(theP1: gp_Pnt2d, theP2: gp_Pnt2d): gp_Circ2d;
+  delete(): void;
+}
+
+  export declare class gp_Circ2d_1 extends gp_Circ2d {
+    constructor();
+  }
+
+  export declare class gp_Circ2d_2 extends gp_Circ2d {
+    constructor(theXAxis: gp_Ax2d, theRadius: Standard_Real, theIsSense: Standard_Boolean);
+  }
+
+  export declare class gp_Circ2d_3 extends gp_Circ2d {
+    constructor(theAxis: gp_Ax22d, theRadius: Standard_Real);
+  }
+
 export declare class gp_Circ {
   SetAxis(theA1: gp_Ax1): void;
   SetLocation(theP: gp_Pnt): void;
@@ -2804,6 +2967,53 @@ export declare class gp_Ax1 {
   }
 
   export declare class gp_Ax1_2 extends gp_Ax1 {
+    constructor(theP: gp_Pnt, theV: gp_Dir);
+  }
+
+export declare class gp_Lin {
+  Reverse(): void;
+  Reversed(): gp_Lin;
+  SetDirection(theV: gp_Dir): void;
+  SetLocation(theP: gp_Pnt): void;
+  SetPosition(theA1: gp_Ax1): void;
+  Direction(): gp_Dir;
+  Location(): gp_Pnt;
+  Position(): gp_Ax1;
+  Angle(theOther: gp_Lin): Standard_Real;
+  Contains(theP: gp_Pnt, theLinearTolerance: Standard_Real): Standard_Boolean;
+  Distance_1(theP: gp_Pnt): Standard_Real;
+  Distance_2(theOther: gp_Lin): Standard_Real;
+  SquareDistance_1(theP: gp_Pnt): Standard_Real;
+  SquareDistance_2(theOther: gp_Lin): Standard_Real;
+  Normal(theP: gp_Pnt): gp_Lin;
+  Mirror_1(theP: gp_Pnt): void;
+  Mirrored_1(theP: gp_Pnt): gp_Lin;
+  Mirror_2(theA1: gp_Ax1): void;
+  Mirrored_2(theA1: gp_Ax1): gp_Lin;
+  Mirror_3(theA2: gp_Ax2): void;
+  Mirrored_3(theA2: gp_Ax2): gp_Lin;
+  Rotate(theA1: gp_Ax1, theAng: Standard_Real): void;
+  Rotated(theA1: gp_Ax1, theAng: Standard_Real): gp_Lin;
+  Scale(theP: gp_Pnt, theS: Standard_Real): void;
+  Scaled(theP: gp_Pnt, theS: Standard_Real): gp_Lin;
+  Transform(theT: gp_Trsf): void;
+  Transformed(theT: gp_Trsf): gp_Lin;
+  Translate_1(theV: gp_Vec): void;
+  Translated_1(theV: gp_Vec): gp_Lin;
+  Translate_2(theP1: gp_Pnt, theP2: gp_Pnt): void;
+  Translated_2(theP1: gp_Pnt, theP2: gp_Pnt): gp_Lin;
+  delete(): void;
+}
+
+  export declare class gp_Lin_1 extends gp_Lin {
+    constructor();
+  }
+
+  export declare class gp_Lin_2 extends gp_Lin {
+    constructor(theA1: gp_Ax1);
+  }
+
+  export declare class gp_Lin_3 extends gp_Lin {
     constructor(theP: gp_Pnt, theV: gp_Dir);
   }
 
@@ -3181,6 +3391,56 @@ export declare class gp_Pln {
 
   export declare class gp_Pln_4 extends gp_Pln {
     constructor(theA: Standard_Real, theB: Standard_Real, theC: Standard_Real, theD: Standard_Real);
+  }
+
+export declare class gp_Lin2d {
+  Reverse(): void;
+  Reversed(): gp_Lin2d;
+  SetDirection(theV: gp_Dir2d): void;
+  SetLocation(theP: gp_Pnt2d): void;
+  SetPosition(theA: gp_Ax2d): void;
+  Coefficients(theA: Standard_Real, theB: Standard_Real, theC: Standard_Real): void;
+  Direction(): gp_Dir2d;
+  Location(): gp_Pnt2d;
+  Position(): gp_Ax2d;
+  Angle(theOther: gp_Lin2d): Standard_Real;
+  Contains(theP: gp_Pnt2d, theLinearTolerance: Standard_Real): Standard_Boolean;
+  Distance_1(theP: gp_Pnt2d): Standard_Real;
+  Distance_2(theOther: gp_Lin2d): Standard_Real;
+  SquareDistance_1(theP: gp_Pnt2d): Standard_Real;
+  SquareDistance_2(theOther: gp_Lin2d): Standard_Real;
+  Normal(theP: gp_Pnt2d): gp_Lin2d;
+  Mirror_1(theP: gp_Pnt2d): void;
+  Mirrored_1(theP: gp_Pnt2d): gp_Lin2d;
+  Mirror_2(theA: gp_Ax2d): void;
+  Mirrored_2(theA: gp_Ax2d): gp_Lin2d;
+  Rotate(theP: gp_Pnt2d, theAng: Standard_Real): void;
+  Rotated(theP: gp_Pnt2d, theAng: Standard_Real): gp_Lin2d;
+  Scale(theP: gp_Pnt2d, theS: Standard_Real): void;
+  Scaled(theP: gp_Pnt2d, theS: Standard_Real): gp_Lin2d;
+  Transform(theT: gp_Trsf2d): void;
+  Transformed(theT: gp_Trsf2d): gp_Lin2d;
+  Translate_1(theV: gp_Vec2d): void;
+  Translated_1(theV: gp_Vec2d): gp_Lin2d;
+  Translate_2(theP1: gp_Pnt2d, theP2: gp_Pnt2d): void;
+  Translated_2(theP1: gp_Pnt2d, theP2: gp_Pnt2d): gp_Lin2d;
+  delete(): void;
+}
+
+  export declare class gp_Lin2d_1 extends gp_Lin2d {
+    constructor();
+  }
+
+  export declare class gp_Lin2d_2 extends gp_Lin2d {
+    constructor(theA: gp_Ax2d);
+  }
+
+  export declare class gp_Lin2d_3 extends gp_Lin2d {
+    constructor(theP: gp_Pnt2d, theV: gp_Dir2d);
+  }
+
+  export declare class gp_Lin2d_4 extends gp_Lin2d {
+    constructor(theA: Standard_Real, theB: Standard_Real, theC: Standard_Real);
   }
 
 export declare class gp_GTrsf {
@@ -8917,6 +9177,376 @@ export declare class BRepTools_WireExplorer {
     constructor(W: TopoDS_Wire, F: TopoDS_Face);
   }
 
+export declare class GccAna_CircLin2dBisec {
+  constructor(Circle: gp_Circ2d, Line: gp_Lin2d)
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): Handle_GccInt_Bisec;
+  delete(): void;
+}
+
+export declare class GccAna_NoSolution extends Standard_Failure {
+  static Raise_1(theMessage: Standard_CString): void;
+  static Raise_2(theMessage: Standard_SStream): void;
+  static NewInstance_1(theMessage: Standard_CString): Handle_GccAna_NoSolution;
+  static NewInstance_2(theMessage: Standard_CString, theStackTrace: Standard_CString): Handle_GccAna_NoSolution;
+  static get_type_name(): Standard_Character;
+  static get_type_descriptor(): Handle_Standard_Type;
+  DynamicType(): Handle_Standard_Type;
+  delete(): void;
+}
+
+  export declare class GccAna_NoSolution_1 extends GccAna_NoSolution {
+    constructor();
+  }
+
+  export declare class GccAna_NoSolution_2 extends GccAna_NoSolution {
+    constructor(theMessage: Standard_CString);
+  }
+
+  export declare class GccAna_NoSolution_3 extends GccAna_NoSolution {
+    constructor(theMessage: Standard_CString, theStackTrace: Standard_CString);
+  }
+
+export declare class GccAna_Lin2d2Tan {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Lin2d;
+  WhichQualifier(Index: Graphic3d_ZLayerId, Qualif1: GccEnt_Position, Qualif2: GccEnt_Position): void;
+  Tangency1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  Tangency2(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  delete(): void;
+}
+
+  export declare class GccAna_Lin2d2Tan_1 extends GccAna_Lin2d2Tan {
+    constructor(ThePoint1: gp_Pnt2d, ThePoint2: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Lin2d2Tan_2 extends GccAna_Lin2d2Tan {
+    constructor(Qualified1: GccEnt_QualifiedCirc, ThePoint: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Lin2d2Tan_3 extends GccAna_Lin2d2Tan {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedCirc, Tolerance: Standard_Real);
+  }
+
+export declare class GccAna_Pnt2dBisec {
+  constructor(Point1: gp_Pnt2d, Point2: gp_Pnt2d)
+  IsDone(): Standard_Boolean;
+  HasSolution(): Standard_Boolean;
+  ThisSolution(): gp_Lin2d;
+  delete(): void;
+}
+
+export declare class GccAna_Circ2dBisec {
+  constructor(Circ1: gp_Circ2d, Circ2: gp_Circ2d)
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): Handle_GccInt_Bisec;
+  delete(): void;
+}
+
+export declare class GccAna_Lin2dTanObl {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Lin2d;
+  WhichQualifier(Index: Graphic3d_ZLayerId, Qualif1: GccEnt_Position): void;
+  Tangency1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  Intersection2(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  delete(): void;
+}
+
+  export declare class GccAna_Lin2dTanObl_1 extends GccAna_Lin2dTanObl {
+    constructor(ThePoint: gp_Pnt2d, TheLine: gp_Lin2d, TheAngle: Standard_Real);
+  }
+
+  export declare class GccAna_Lin2dTanObl_2 extends GccAna_Lin2dTanObl {
+    constructor(Qualified1: GccEnt_QualifiedCirc, TheLine: gp_Lin2d, TheAngle: Standard_Real);
+  }
+
+export declare class GccAna_Lin2dTanPer {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  WhichQualifier(Index: Graphic3d_ZLayerId, Qualif1: GccEnt_Position): void;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Lin2d;
+  Tangency1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, Pnt: gp_Pnt2d): void;
+  Intersection2(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  delete(): void;
+}
+
+  export declare class GccAna_Lin2dTanPer_1 extends GccAna_Lin2dTanPer {
+    constructor(ThePnt: gp_Pnt2d, TheLin: gp_Lin2d);
+  }
+
+  export declare class GccAna_Lin2dTanPer_2 extends GccAna_Lin2dTanPer {
+    constructor(ThePnt: gp_Pnt2d, TheCircle: gp_Circ2d);
+  }
+
+  export declare class GccAna_Lin2dTanPer_3 extends GccAna_Lin2dTanPer {
+    constructor(Qualified1: GccEnt_QualifiedCirc, TheLin: gp_Lin2d);
+  }
+
+  export declare class GccAna_Lin2dTanPer_4 extends GccAna_Lin2dTanPer {
+    constructor(Qualified1: GccEnt_QualifiedCirc, TheCircle: gp_Circ2d);
+  }
+
+export declare class GccAna_Circ2d3Tan {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Circ2d;
+  WhichQualifier(Index: Graphic3d_ZLayerId, Qualif1: GccEnt_Position, Qualif2: GccEnt_Position, Qualif3: GccEnt_Position): void;
+  Tangency1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  Tangency2(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  Tangency3(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  IsTheSame1(Index: Graphic3d_ZLayerId): Standard_Boolean;
+  IsTheSame2(Index: Graphic3d_ZLayerId): Standard_Boolean;
+  IsTheSame3(Index: Graphic3d_ZLayerId): Standard_Boolean;
+  delete(): void;
+}
+
+  export declare class GccAna_Circ2d3Tan_1 extends GccAna_Circ2d3Tan {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedCirc, Qualified3: GccEnt_QualifiedCirc, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d3Tan_2 extends GccAna_Circ2d3Tan {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedCirc, Qualified3: GccEnt_QualifiedLin, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d3Tan_3 extends GccAna_Circ2d3Tan {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedLin, Qualified3: GccEnt_QualifiedLin, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d3Tan_4 extends GccAna_Circ2d3Tan {
+    constructor(Qualified1: GccEnt_QualifiedLin, Qualified2: GccEnt_QualifiedLin, Qualified3: GccEnt_QualifiedLin, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d3Tan_5 extends GccAna_Circ2d3Tan {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedCirc, Point3: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d3Tan_6 extends GccAna_Circ2d3Tan {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedLin, Point3: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d3Tan_7 extends GccAna_Circ2d3Tan {
+    constructor(Qualified1: GccEnt_QualifiedLin, Qualified2: GccEnt_QualifiedLin, Point3: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d3Tan_8 extends GccAna_Circ2d3Tan {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Point2: gp_Pnt2d, Point3: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d3Tan_9 extends GccAna_Circ2d3Tan {
+    constructor(Qualified1: GccEnt_QualifiedLin, Point2: gp_Pnt2d, Point3: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d3Tan_10 extends GccAna_Circ2d3Tan {
+    constructor(Point1: gp_Pnt2d, Point2: gp_Pnt2d, Point3: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+export declare class GccAna_Circ2d2TanRad {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Circ2d;
+  WhichQualifier(Index: Graphic3d_ZLayerId, Qualif1: GccEnt_Position, Qualif2: GccEnt_Position): void;
+  Tangency1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  Tangency2(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  IsTheSame1(Index: Graphic3d_ZLayerId): Standard_Boolean;
+  IsTheSame2(Index: Graphic3d_ZLayerId): Standard_Boolean;
+  delete(): void;
+}
+
+  export declare class GccAna_Circ2d2TanRad_1 extends GccAna_Circ2d2TanRad {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedCirc, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanRad_2 extends GccAna_Circ2d2TanRad {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedLin, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanRad_3 extends GccAna_Circ2d2TanRad {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Point2: gp_Pnt2d, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanRad_4 extends GccAna_Circ2d2TanRad {
+    constructor(Qualified1: GccEnt_QualifiedLin, Point2: gp_Pnt2d, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanRad_5 extends GccAna_Circ2d2TanRad {
+    constructor(Qualified1: GccEnt_QualifiedLin, Qualified2: GccEnt_QualifiedLin, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanRad_6 extends GccAna_Circ2d2TanRad {
+    constructor(Point1: gp_Pnt2d, Point2: gp_Pnt2d, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+export declare class GccAna_Circ2dTanOnRad {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Circ2d;
+  WhichQualifier(Index: Graphic3d_ZLayerId, Qualif1: GccEnt_Position): void;
+  Tangency1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  CenterOn3(Index: Graphic3d_ZLayerId, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  IsTheSame1(Index: Graphic3d_ZLayerId): Standard_Boolean;
+  delete(): void;
+}
+
+  export declare class GccAna_Circ2dTanOnRad_1 extends GccAna_Circ2dTanOnRad {
+    constructor(Qualified1: GccEnt_QualifiedCirc, OnLine: gp_Lin2d, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2dTanOnRad_2 extends GccAna_Circ2dTanOnRad {
+    constructor(Qualified1: GccEnt_QualifiedLin, OnLine: gp_Lin2d, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2dTanOnRad_3 extends GccAna_Circ2dTanOnRad {
+    constructor(Point1: gp_Pnt2d, OnLine: gp_Lin2d, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2dTanOnRad_4 extends GccAna_Circ2dTanOnRad {
+    constructor(Qualified1: GccEnt_QualifiedCirc, OnCirc: gp_Circ2d, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2dTanOnRad_5 extends GccAna_Circ2dTanOnRad {
+    constructor(Qualified1: GccEnt_QualifiedLin, OnCirc: gp_Circ2d, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2dTanOnRad_6 extends GccAna_Circ2dTanOnRad {
+    constructor(Point1: gp_Pnt2d, OnCirc: gp_Circ2d, Radius: Standard_Real, Tolerance: Standard_Real);
+  }
+
+export declare class GccAna_Lin2dTanPar {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Lin2d;
+  WhichQualifier(Index: Graphic3d_ZLayerId, Qualif1: GccEnt_Position): void;
+  Tangency1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, Pnt: gp_Pnt2d): void;
+  delete(): void;
+}
+
+  export declare class GccAna_Lin2dTanPar_1 extends GccAna_Lin2dTanPar {
+    constructor(ThePoint: gp_Pnt2d, Lin1: gp_Lin2d);
+  }
+
+  export declare class GccAna_Lin2dTanPar_2 extends GccAna_Lin2dTanPar {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Lin1: gp_Lin2d);
+  }
+
+export declare class GccAna_Lin2dBisec {
+  constructor(Lin1: gp_Lin2d, Lin2: gp_Lin2d)
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Lin2d;
+  Intersection1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  Intersection2(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  delete(): void;
+}
+
+export declare class GccAna_CircPnt2dBisec {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): Handle_GccInt_Bisec;
+  delete(): void;
+}
+
+  export declare class GccAna_CircPnt2dBisec_1 extends GccAna_CircPnt2dBisec {
+    constructor(Circle1: gp_Circ2d, Point2: gp_Pnt2d);
+  }
+
+  export declare class GccAna_CircPnt2dBisec_2 extends GccAna_CircPnt2dBisec {
+    constructor(Circle1: gp_Circ2d, Point2: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+export declare class GccAna_Circ2d2TanOn {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Circ2d;
+  WhichQualifier(Index: Graphic3d_ZLayerId, Qualif1: GccEnt_Position, Qualif2: GccEnt_Position): void;
+  Tangency1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  Tangency2(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  CenterOn3(Index: Graphic3d_ZLayerId, ParArg: Standard_Real, PntArg: gp_Pnt2d): void;
+  IsTheSame1(Index: Graphic3d_ZLayerId): Standard_Boolean;
+  IsTheSame2(Index: Graphic3d_ZLayerId): Standard_Boolean;
+  delete(): void;
+}
+
+  export declare class GccAna_Circ2d2TanOn_1 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedCirc, OnLine: gp_Lin2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_2 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedLin, OnLine: gp_Lin2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_3 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedLin, Qualified2: GccEnt_QualifiedLin, OnLine: gp_Lin2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_4 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Point2: gp_Pnt2d, OnLine: gp_Lin2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_5 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedLin, Point2: gp_Pnt2d, OnLine: gp_Lin2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_6 extends GccAna_Circ2d2TanOn {
+    constructor(Point1: gp_Pnt2d, Point2: gp_Pnt2d, OnLine: gp_Lin2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_7 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedCirc, OnCirc: gp_Circ2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_8 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Qualified2: GccEnt_QualifiedLin, OnCirc: gp_Circ2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_9 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Point2: gp_Pnt2d, OnCirc: gp_Circ2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_10 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedLin, Qualified2: GccEnt_QualifiedLin, OnCirc: gp_Circ2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_11 extends GccAna_Circ2d2TanOn {
+    constructor(Qualified1: GccEnt_QualifiedLin, Point2: gp_Pnt2d, OnCirc: gp_Circ2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2d2TanOn_12 extends GccAna_Circ2d2TanOn {
+    constructor(Point1: gp_Pnt2d, Point2: gp_Pnt2d, OnCirc: gp_Circ2d, Tolerance: Standard_Real);
+  }
+
+export declare class GccAna_LinPnt2dBisec {
+  constructor(Line1: gp_Lin2d, Point2: gp_Pnt2d)
+  IsDone(): Standard_Boolean;
+  ThisSolution(): Handle_GccInt_Bisec;
+  delete(): void;
+}
+
+export declare class GccAna_Circ2dTanCen {
+  IsDone(): Standard_Boolean;
+  NbSolutions(): Graphic3d_ZLayerId;
+  ThisSolution(Index: Graphic3d_ZLayerId): gp_Circ2d;
+  WhichQualifier(Index: Graphic3d_ZLayerId, Qualif1: GccEnt_Position): void;
+  Tangency1(Index: Graphic3d_ZLayerId, ParSol: Standard_Real, ParArg: Standard_Real, PntSol: gp_Pnt2d): void;
+  IsTheSame1(Index: Graphic3d_ZLayerId): Standard_Boolean;
+  delete(): void;
+}
+
+  export declare class GccAna_Circ2dTanCen_1 extends GccAna_Circ2dTanCen {
+    constructor(Qualified1: GccEnt_QualifiedCirc, Pcenter: gp_Pnt2d, Tolerance: Standard_Real);
+  }
+
+  export declare class GccAna_Circ2dTanCen_2 extends GccAna_Circ2dTanCen {
+    constructor(Linetan: gp_Lin2d, Pcenter: gp_Pnt2d);
+  }
+
+  export declare class GccAna_Circ2dTanCen_3 extends GccAna_Circ2dTanCen {
+    constructor(Point1: gp_Pnt2d, Pcenter: gp_Pnt2d);
+  }
+
 export declare class BRepAdaptor_CompCurve extends Adaptor3d_Curve {
   static get_type_name(): Standard_Character;
   static get_type_descriptor(): Handle_Standard_Type;
@@ -9394,6 +10024,20 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   Handle_XCAFDoc_DocumentTool_3: typeof Handle_XCAFDoc_DocumentTool_3;
   Handle_XCAFDoc_DocumentTool_4: typeof Handle_XCAFDoc_DocumentTool_4;
   XCAFDoc_ColorTool: typeof XCAFDoc_ColorTool;
+  GccEnt_BadQualifier: typeof GccEnt_BadQualifier;
+  GccEnt_BadQualifier_1: typeof GccEnt_BadQualifier_1;
+  GccEnt_BadQualifier_2: typeof GccEnt_BadQualifier_2;
+  GccEnt_BadQualifier_3: typeof GccEnt_BadQualifier_3;
+  GccEnt_Position: GccEnt_Position;
+  GccEnt_QualifiedCirc: typeof GccEnt_QualifiedCirc;
+  GccEnt_Array1OfPosition: typeof GccEnt_Array1OfPosition;
+  GccEnt_Array1OfPosition_1: typeof GccEnt_Array1OfPosition_1;
+  GccEnt_Array1OfPosition_2: typeof GccEnt_Array1OfPosition_2;
+  GccEnt_Array1OfPosition_3: typeof GccEnt_Array1OfPosition_3;
+  GccEnt_Array1OfPosition_4: typeof GccEnt_Array1OfPosition_4;
+  GccEnt_Array1OfPosition_5: typeof GccEnt_Array1OfPosition_5;
+  GccEnt: typeof GccEnt;
+  GccEnt_QualifiedLin: typeof GccEnt_QualifiedLin;
   BRepOffsetAPI_MakePipeShell: typeof BRepOffsetAPI_MakePipeShell;
   BRepOffsetAPI_ThruSections: typeof BRepOffsetAPI_ThruSections;
   BRepOffsetAPI_MakeThickSolid: typeof BRepOffsetAPI_MakeThickSolid;
@@ -9503,6 +10147,10 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   gp_Elips: typeof gp_Elips;
   gp_Elips_1: typeof gp_Elips_1;
   gp_Elips_2: typeof gp_Elips_2;
+  gp_Circ2d: typeof gp_Circ2d;
+  gp_Circ2d_1: typeof gp_Circ2d_1;
+  gp_Circ2d_2: typeof gp_Circ2d_2;
+  gp_Circ2d_3: typeof gp_Circ2d_3;
   gp_Circ: typeof gp_Circ;
   gp_Circ_1: typeof gp_Circ_1;
   gp_Circ_2: typeof gp_Circ_2;
@@ -9528,6 +10176,10 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   gp_Ax1: typeof gp_Ax1;
   gp_Ax1_1: typeof gp_Ax1_1;
   gp_Ax1_2: typeof gp_Ax1_2;
+  gp_Lin: typeof gp_Lin;
+  gp_Lin_1: typeof gp_Lin_1;
+  gp_Lin_2: typeof gp_Lin_2;
+  gp_Lin_3: typeof gp_Lin_3;
   gp_Pnt2d: typeof gp_Pnt2d;
   gp_Pnt2d_1: typeof gp_Pnt2d_1;
   gp_Pnt2d_2: typeof gp_Pnt2d_2;
@@ -9556,6 +10208,11 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   gp_Pln_2: typeof gp_Pln_2;
   gp_Pln_3: typeof gp_Pln_3;
   gp_Pln_4: typeof gp_Pln_4;
+  gp_Lin2d: typeof gp_Lin2d;
+  gp_Lin2d_1: typeof gp_Lin2d_1;
+  gp_Lin2d_2: typeof gp_Lin2d_2;
+  gp_Lin2d_3: typeof gp_Lin2d_3;
+  gp_Lin2d_4: typeof gp_Lin2d_4;
   gp_GTrsf: typeof gp_GTrsf;
   gp_GTrsf_1: typeof gp_GTrsf_1;
   gp_GTrsf_2: typeof gp_GTrsf_2;
@@ -10260,6 +10917,75 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   BRepTools_WireExplorer_1: typeof BRepTools_WireExplorer_1;
   BRepTools_WireExplorer_2: typeof BRepTools_WireExplorer_2;
   BRepTools_WireExplorer_3: typeof BRepTools_WireExplorer_3;
+  GccAna_CircLin2dBisec: typeof GccAna_CircLin2dBisec;
+  GccAna_NoSolution: typeof GccAna_NoSolution;
+  GccAna_NoSolution_1: typeof GccAna_NoSolution_1;
+  GccAna_NoSolution_2: typeof GccAna_NoSolution_2;
+  GccAna_NoSolution_3: typeof GccAna_NoSolution_3;
+  GccAna_Lin2d2Tan: typeof GccAna_Lin2d2Tan;
+  GccAna_Lin2d2Tan_1: typeof GccAna_Lin2d2Tan_1;
+  GccAna_Lin2d2Tan_2: typeof GccAna_Lin2d2Tan_2;
+  GccAna_Lin2d2Tan_3: typeof GccAna_Lin2d2Tan_3;
+  GccAna_Pnt2dBisec: typeof GccAna_Pnt2dBisec;
+  GccAna_Circ2dBisec: typeof GccAna_Circ2dBisec;
+  GccAna_Lin2dTanObl: typeof GccAna_Lin2dTanObl;
+  GccAna_Lin2dTanObl_1: typeof GccAna_Lin2dTanObl_1;
+  GccAna_Lin2dTanObl_2: typeof GccAna_Lin2dTanObl_2;
+  GccAna_Lin2dTanPer: typeof GccAna_Lin2dTanPer;
+  GccAna_Lin2dTanPer_1: typeof GccAna_Lin2dTanPer_1;
+  GccAna_Lin2dTanPer_2: typeof GccAna_Lin2dTanPer_2;
+  GccAna_Lin2dTanPer_3: typeof GccAna_Lin2dTanPer_3;
+  GccAna_Lin2dTanPer_4: typeof GccAna_Lin2dTanPer_4;
+  GccAna_Circ2d3Tan: typeof GccAna_Circ2d3Tan;
+  GccAna_Circ2d3Tan_1: typeof GccAna_Circ2d3Tan_1;
+  GccAna_Circ2d3Tan_2: typeof GccAna_Circ2d3Tan_2;
+  GccAna_Circ2d3Tan_3: typeof GccAna_Circ2d3Tan_3;
+  GccAna_Circ2d3Tan_4: typeof GccAna_Circ2d3Tan_4;
+  GccAna_Circ2d3Tan_5: typeof GccAna_Circ2d3Tan_5;
+  GccAna_Circ2d3Tan_6: typeof GccAna_Circ2d3Tan_6;
+  GccAna_Circ2d3Tan_7: typeof GccAna_Circ2d3Tan_7;
+  GccAna_Circ2d3Tan_8: typeof GccAna_Circ2d3Tan_8;
+  GccAna_Circ2d3Tan_9: typeof GccAna_Circ2d3Tan_9;
+  GccAna_Circ2d3Tan_10: typeof GccAna_Circ2d3Tan_10;
+  GccAna_Circ2d2TanRad: typeof GccAna_Circ2d2TanRad;
+  GccAna_Circ2d2TanRad_1: typeof GccAna_Circ2d2TanRad_1;
+  GccAna_Circ2d2TanRad_2: typeof GccAna_Circ2d2TanRad_2;
+  GccAna_Circ2d2TanRad_3: typeof GccAna_Circ2d2TanRad_3;
+  GccAna_Circ2d2TanRad_4: typeof GccAna_Circ2d2TanRad_4;
+  GccAna_Circ2d2TanRad_5: typeof GccAna_Circ2d2TanRad_5;
+  GccAna_Circ2d2TanRad_6: typeof GccAna_Circ2d2TanRad_6;
+  GccAna_Circ2dTanOnRad: typeof GccAna_Circ2dTanOnRad;
+  GccAna_Circ2dTanOnRad_1: typeof GccAna_Circ2dTanOnRad_1;
+  GccAna_Circ2dTanOnRad_2: typeof GccAna_Circ2dTanOnRad_2;
+  GccAna_Circ2dTanOnRad_3: typeof GccAna_Circ2dTanOnRad_3;
+  GccAna_Circ2dTanOnRad_4: typeof GccAna_Circ2dTanOnRad_4;
+  GccAna_Circ2dTanOnRad_5: typeof GccAna_Circ2dTanOnRad_5;
+  GccAna_Circ2dTanOnRad_6: typeof GccAna_Circ2dTanOnRad_6;
+  GccAna_Lin2dTanPar: typeof GccAna_Lin2dTanPar;
+  GccAna_Lin2dTanPar_1: typeof GccAna_Lin2dTanPar_1;
+  GccAna_Lin2dTanPar_2: typeof GccAna_Lin2dTanPar_2;
+  GccAna_Lin2dBisec: typeof GccAna_Lin2dBisec;
+  GccAna_CircPnt2dBisec: typeof GccAna_CircPnt2dBisec;
+  GccAna_CircPnt2dBisec_1: typeof GccAna_CircPnt2dBisec_1;
+  GccAna_CircPnt2dBisec_2: typeof GccAna_CircPnt2dBisec_2;
+  GccAna_Circ2d2TanOn: typeof GccAna_Circ2d2TanOn;
+  GccAna_Circ2d2TanOn_1: typeof GccAna_Circ2d2TanOn_1;
+  GccAna_Circ2d2TanOn_2: typeof GccAna_Circ2d2TanOn_2;
+  GccAna_Circ2d2TanOn_3: typeof GccAna_Circ2d2TanOn_3;
+  GccAna_Circ2d2TanOn_4: typeof GccAna_Circ2d2TanOn_4;
+  GccAna_Circ2d2TanOn_5: typeof GccAna_Circ2d2TanOn_5;
+  GccAna_Circ2d2TanOn_6: typeof GccAna_Circ2d2TanOn_6;
+  GccAna_Circ2d2TanOn_7: typeof GccAna_Circ2d2TanOn_7;
+  GccAna_Circ2d2TanOn_8: typeof GccAna_Circ2d2TanOn_8;
+  GccAna_Circ2d2TanOn_9: typeof GccAna_Circ2d2TanOn_9;
+  GccAna_Circ2d2TanOn_10: typeof GccAna_Circ2d2TanOn_10;
+  GccAna_Circ2d2TanOn_11: typeof GccAna_Circ2d2TanOn_11;
+  GccAna_Circ2d2TanOn_12: typeof GccAna_Circ2d2TanOn_12;
+  GccAna_LinPnt2dBisec: typeof GccAna_LinPnt2dBisec;
+  GccAna_Circ2dTanCen: typeof GccAna_Circ2dTanCen;
+  GccAna_Circ2dTanCen_1: typeof GccAna_Circ2dTanCen_1;
+  GccAna_Circ2dTanCen_2: typeof GccAna_Circ2dTanCen_2;
+  GccAna_Circ2dTanCen_3: typeof GccAna_Circ2dTanCen_3;
   BRepAdaptor_CompCurve: typeof BRepAdaptor_CompCurve;
   BRepAdaptor_CompCurve_1: typeof BRepAdaptor_CompCurve_1;
   BRepAdaptor_CompCurve_2: typeof BRepAdaptor_CompCurve_2;

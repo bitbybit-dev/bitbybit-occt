@@ -46,9 +46,10 @@ export class OCCTService {
 
         const faceList: Inputs.OCCT.DecomposedFaceDto[] = [];
         const edgeList: Inputs.OCCT.DecomposedEdgeDto[] = [];
+        const pointsList: Inputs.Base.Point3[] = [];
 
         let shapeToUse = shape as TopoDS_Shape;
-        if (shapeToUse.IsNull()) return { faceList, edgeList };
+        if (shapeToUse.IsNull()) return { faceList, edgeList, pointsList: [] };
 
         // This could be made optional...
         // Clean cached triangulation data for the shape.
@@ -190,11 +191,20 @@ export class OCCTService {
             this.occ.BRepTools.Clean(myEdge, true);
         });
 
+        const vertices = this.och.getVertices({ shape: shapeToUse });
+        if (vertices.length > 0) {
+            vertices.forEach(v => {
+                const pt = this.occ.BRep_Tool.Pnt(v);
+                pointsList.push([pt.X(), pt.Y(), pt.Z()]);
+                pt.delete();
+            });
+        }
+
         if (incrementalMeshBuilder) {
             incrementalMeshBuilder.Delete();
         }
         this.occ.BRepTools.Clean(shapeToUse, true);
-        return { faceList, edgeList };
+        return { faceList, edgeList, pointsList };
     }
 
 
