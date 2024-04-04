@@ -1332,6 +1332,185 @@ export class OccHelper {
 
     }
 
+    createWireFromTwoCirclesTan(inputs: Inputs.OCCT.WireFromTwoCirclesTanDto<TopoDS_Wire>) {
+        const circleEdge1 = this.getEdges({ shape: inputs.circle1 });
+        const circleEdge2 = this.getEdges({ shape: inputs.circle2 });
+        if (circleEdge1.length === 1 && circleEdge2.length === 1) {
+            const circularEdge1 = circleEdge1[0];
+            const circularEdge2 = circleEdge2[0];
+            const result = this.constraintTanLinesOnTwoCircles({
+                circle1: circularEdge1,
+                circle2: circularEdge2,
+                positionResult: inputs.keepLines === Inputs.OCCT.twoSidesStrictEnum.outside ? Inputs.OCCT.positionResultEnum.keepSide2 : Inputs.OCCT.positionResultEnum.keepSide1,
+                circleRemainders: this.convertFourSidesStrictEnumToTwoCircleInclusionEnum(inputs.circleRemainders),
+                tolerance: inputs.tolerance,
+            });
+            const wire = this.combineEdgesAndWiresIntoAWire({ shapes: result });
+            result.forEach(e => e.delete());
+            circularEdge1.delete();
+            circularEdge2.delete();
+            return wire;
+        } else {
+            throw new Error("Could not find the edges of the provided circle wires.");
+        }
+    }
+
+    createFaceFromMultipleCircleTanWires(inputs: Inputs.OCCT.FaceFromMultipleCircleTanWiresDto<TopoDS_Wire>): TopoDS_Shape {
+        const circleWires = inputs.circles;
+        const faces: TopoDS_Face[] = [];
+        if (inputs.combination === Inputs.OCCT.combinationCirclesForFaceEnum.allWithAll) {
+            for (let i = 0; i < circleWires.length; i++) {
+                for (let j = i + 1; j < circleWires.length; j++) {
+                    const wire = this.createWireFromTwoCirclesTan({
+                        circle1: circleWires[i],
+                        circle2: circleWires[j],
+                        keepLines: Inputs.OCCT.twoSidesStrictEnum.outside,
+                        circleRemainders: Inputs.OCCT.fourSidesStrictEnum.outside,
+                        tolerance: inputs.tolerance,
+                    });
+                    const face = this.bRepBuilderAPIMakeFaceFromWire(wire, true);
+                    faces.push(face);
+                }
+            }
+        } else if (inputs.combination === Inputs.OCCT.combinationCirclesForFaceEnum.inOrder) {
+            for (let i = 0; i < circleWires.length - 1; i++) {
+                const wire = this.createWireFromTwoCirclesTan({
+                    circle1: circleWires[i],
+                    circle2: circleWires[i + 1],
+                    keepLines: Inputs.OCCT.twoSidesStrictEnum.outside,
+                    circleRemainders: Inputs.OCCT.fourSidesStrictEnum.outside,
+                    tolerance: inputs.tolerance,
+                });
+                const face = this.bRepBuilderAPIMakeFaceFromWire(wire, true);
+                faces.push(face);
+            }
+        } else if (inputs.combination === Inputs.OCCT.combinationCirclesForFaceEnum.inOrderClosed) {
+            for (let i = 0; i < circleWires.length; i++) {
+                const wire = this.createWireFromTwoCirclesTan({
+                    circle1: circleWires[i],
+                    circle2: circleWires[(i + 1) % circleWires.length],
+                    keepLines: Inputs.OCCT.twoSidesStrictEnum.outside,
+                    circleRemainders: Inputs.OCCT.fourSidesStrictEnum.outside,
+                    tolerance: inputs.tolerance,
+                });
+                const face = this.bRepBuilderAPIMakeFaceFromWire(wire, true);
+                faces.push(face);
+            }
+        }
+        let result;
+        if (inputs.unify) {
+            result = this.union({ shapes: faces, keepEdges: false });
+        } else {
+            result = this.makeCompound({ shapes: faces });
+        }
+        return result;
+    }
+
+    createFaceFromMultipleCircleTanWireCollections(inputs: Inputs.OCCT.FaceFromMultipleCircleTanWireCollectionsDto<TopoDS_Wire>): TopoDS_Shape {
+        const listsOfCircles = inputs.listsOfCircles;
+
+        const faces: TopoDS_Face[] = [];
+        if (inputs.combination === Inputs.OCCT.combinationCirclesForFaceEnum.allWithAll) {
+            for (let i = 0; i < listsOfCircles.length; i++) {
+                // lists of circles is a 2D array of circular wires
+                const currentCirclesList = listsOfCircles[i];
+                const nextCirclesList = listsOfCircles[(i + 1)];
+                if (nextCirclesList) {
+                    for (let j = 0; j < currentCirclesList.length; j++) {
+                        for (let k = 0; k < nextCirclesList.length; k++) {
+                            const circle1 = currentCirclesList[j];
+                            const circle2 = nextCirclesList[k];
+                            const wire = this.createWireFromTwoCirclesTan({
+                                circle1,
+                                circle2,
+                                keepLines: Inputs.OCCT.twoSidesStrictEnum.outside,
+                                circleRemainders: Inputs.OCCT.fourSidesStrictEnum.outside,
+                                tolerance: inputs.tolerance,
+                            });
+                            const face = this.bRepBuilderAPIMakeFaceFromWire(wire, true);
+                            faces.push(face);
+                        }
+                    }
+                } else {
+                    break;
+                }
+            }
+        } else if (inputs.combination === Inputs.OCCT.combinationCirclesForFaceEnum.inOrder) {
+            for (let i = 0; i < listsOfCircles.length; i++) {
+                if (listsOfCircles[i].length !== listsOfCircles[0].length) {
+                    throw new Error("All lists of circles must have the same length in order to use inOrder strategy.");
+                }
+            }
+            for (let i = 0; i < listsOfCircles.length - 1; i++) {
+                for (let j = 0; j < listsOfCircles[i].length; j++) {
+                    const wire = this.createWireFromTwoCirclesTan({
+                        circle1: listsOfCircles[i][j],
+                        circle2: listsOfCircles[i + 1][j],
+                        keepLines: Inputs.OCCT.twoSidesStrictEnum.outside,
+                        circleRemainders: Inputs.OCCT.fourSidesStrictEnum.outside,
+                        tolerance: inputs.tolerance,
+                    });
+                    const face = this.bRepBuilderAPIMakeFaceFromWire(wire, true);
+                    faces.push(face);
+                }
+            }
+        } else if (inputs.combination === Inputs.OCCT.combinationCirclesForFaceEnum.inOrderClosed) {
+            // check if all lists are of the same length
+            for (let i = 0; i < listsOfCircles.length; i++) {
+                if (listsOfCircles[i].length !== listsOfCircles[0].length) {
+                    throw new Error("All lists of circles must have the same length in order to use inOrderClosed strategy.");
+                }
+            }
+            for (let i = 0; i < listsOfCircles.length - 1; i++) {
+                for (let j = 0; j < listsOfCircles[i].length; j++) {
+                    const wire = this.createWireFromTwoCirclesTan({
+                        circle1: listsOfCircles[i][j],
+                        circle2: listsOfCircles[i + 1][j],
+                        keepLines: Inputs.OCCT.twoSidesStrictEnum.outside,
+                        circleRemainders: Inputs.OCCT.fourSidesStrictEnum.outside,
+                        tolerance: inputs.tolerance,
+                    });
+                    const face = this.bRepBuilderAPIMakeFaceFromWire(wire, true);
+                    faces.push(face);
+                }
+            }
+            for (let i = 0; i < listsOfCircles.length; i++) {
+                for (let j = 0; j < listsOfCircles[i].length; j++) {
+                    const wire = this.createWireFromTwoCirclesTan({
+                        circle1: listsOfCircles[i][j],
+                        circle2: listsOfCircles[i][(j + 1) % listsOfCircles[i].length],
+                        keepLines: Inputs.OCCT.twoSidesStrictEnum.outside,
+                        circleRemainders: Inputs.OCCT.fourSidesStrictEnum.outside,
+                        tolerance: inputs.tolerance,
+                    });
+                    const face = this.bRepBuilderAPIMakeFaceFromWire(wire, true);
+                    faces.push(face);
+                }
+            }
+        }
+        let result;
+        if (inputs.unify) {
+            result = this.union({ shapes: faces, keepEdges: false });
+        } else {
+            result = this.makeCompound({ shapes: faces });
+        }
+        return result;
+    }
+
+    convertFourSidesStrictEnumToTwoCircleInclusionEnum(value: Inputs.OCCT.fourSidesStrictEnum) {
+        if (value === Inputs.OCCT.fourSidesStrictEnum.inside) {
+            return Inputs.OCCT.twoCircleInclusionEnum.inside;
+        } else if (value === Inputs.OCCT.fourSidesStrictEnum.outside) {
+            return Inputs.OCCT.twoCircleInclusionEnum.outside;
+        } else if (value === Inputs.OCCT.fourSidesStrictEnum.insideOutside) {
+            return Inputs.OCCT.twoCircleInclusionEnum.insideOutside;
+        } else if (value === Inputs.OCCT.fourSidesStrictEnum.outsideInside) {
+            return Inputs.OCCT.twoCircleInclusionEnum.outsideInside;
+        } else {
+            return Inputs.OCCT.twoCircleInclusionEnum.none;
+        }
+    }
+
     createZigZagBetweenTwoWires(inputs: Inputs.OCCT.ZigZagBetweenTwoWiresDto<TopoDS_Wire>) {
         const wire1 = inputs.wire1;
         const wire2 = inputs.wire2;
@@ -2290,6 +2469,173 @@ export class OccHelper {
         return wire;
     }
 
+    constraintTanLinesOnTwoCircles(inputs: Inputs.OCCT.ConstraintTanLinesOnTwoCirclesDto<TopoDS_Edge>): TopoDS_Shape[] {
+        const cirDir = this.getCircularEdgePlaneDirection({ shape: inputs.circle1 });
+        const cirPos = this.getCircularEdgeCenterPoint({ shape: inputs.circle1 });
+
+        const alignOpt = new Inputs.OCCT.AlignDto<TopoDS_Shape>();
+        alignOpt.fromDirection = cirDir;
+        alignOpt.toDirection = [0, 0, 1];
+        alignOpt.fromOrigin = cirPos;
+        alignOpt.toOrigin = [0, 0, 0];
+        alignOpt.shape = inputs.circle1;
+        const circle1Aligned = this.align(alignOpt);
+        alignOpt.shape = inputs.circle2;
+        const circle2Aligned = this.align(alignOpt);
+
+        const circle1 = this.getGpCircle2dFromEdge({ shape: circle1Aligned });
+        const circle2 = this.getGpCircle2dFromEdge({ shape: circle2Aligned });
+
+        circle1Aligned.delete();
+        circle2Aligned.delete();
+
+        const qCircle1 = new this.occ.GccEnt_QualifiedCirc(circle1, this.getGccEntPositionFromEnum(Inputs.OCCT.gccEntPositionEnum.unqualified));
+        const qCircle2 = new this.occ.GccEnt_QualifiedCirc(circle2, this.getGccEntPositionFromEnum(Inputs.OCCT.gccEntPositionEnum.unqualified));
+
+        circle1.delete();
+        circle2.delete();
+
+        const lin1 = new this.occ.GccAna_Lin2d2Tan_3(qCircle1, qCircle2, inputs.tolerance);
+        const lin2 = new this.occ.GccAna_Lin2d2Tan_3(qCircle2, qCircle1, inputs.tolerance);
+
+        qCircle1.delete();
+        qCircle2.delete();
+
+        const lin1Sols = [];
+        for (let i = 1; i <= lin1.NbSolutions(); i++) {
+            const sol = lin1.ThisSolution(i);
+            lin1Sols.push(sol);
+        }
+        lin1.delete();
+
+        const lin2Sols = [];
+        for (let i = 1; i <= lin2.NbSolutions(); i++) {
+            const sol = lin2.ThisSolution(i);
+            lin2Sols.push(sol);
+        }
+        lin2.delete();
+
+        let adjustLin2Sol;
+        if (lin2Sols.length === 4) {
+            adjustLin2Sol = [lin2Sols[2], lin2Sols[1], lin2Sols[0], lin2Sols[3]];
+        } else if (lin2Sols.length === 2) {
+            adjustLin2Sol = [lin2Sols[1], lin2Sols[0]];
+        }
+        const solutions = [];
+        for (let i = 0; i < lin1Sols.length; i++) {
+            const sol1 = lin1Sols[i];
+            const sol2 = adjustLin2Sol[i];
+            const locationStart = sol1.Location();
+            const startPoint = [locationStart.X(), locationStart.Y(), 0] as Inputs.Base.Point3;
+            const locationEnd = sol2.Location();
+            const endPoint = [locationEnd.X(), locationEnd.Y(), 0] as Inputs.Base.Point3;
+            const edgeLine = this.lineEdge({ start: startPoint, end: endPoint });
+            alignOpt.fromDirection = [0, 0, 1];
+            alignOpt.toDirection = cirDir;
+            alignOpt.fromOrigin = [0, 0, 0];
+            alignOpt.toOrigin = cirPos;
+            alignOpt.shape = edgeLine;
+            const aligned = this.align(alignOpt);
+            solutions.push(aligned);
+            edgeLine.delete();
+            sol1.delete();
+            sol2.delete();
+            locationStart.delete();
+            locationEnd.delete();
+        }
+
+        let resultingSol = [];
+
+        if (inputs.positionResult === Inputs.OCCT.positionResultEnum.all) {
+            resultingSol = [...solutions];
+        } else if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide1 && solutions.length === 4) {
+            resultingSol = [solutions[1], solutions[3]];
+        } else if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide2 && solutions.length === 4) {
+            resultingSol = [solutions[0], solutions[2]];
+        } else if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide1 && solutions.length === 2) {
+            resultingSol = [];
+        } else if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide2 && solutions.length === 2) {
+            resultingSol = [solutions[0], solutions[1]];
+        } else {
+            resultingSol = [...solutions];
+        }
+
+        if (resultingSol.length === 2 && inputs.circleRemainders !== Inputs.OCCT.twoCircleInclusionEnum.none) {
+            let startPoint1;
+            let startPoint2;
+            let endPoint1;
+            let endPoint2;
+            if (inputs.circleRemainders === Inputs.OCCT.twoCircleInclusionEnum.outside) {
+                if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide2 || inputs.positionResult === Inputs.OCCT.positionResultEnum.all) {
+                    startPoint1 = this.startPointOnEdge({ shape: resultingSol[1] });
+                    startPoint2 = this.startPointOnEdge({ shape: resultingSol[0] });
+                } else if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide1) {
+                    startPoint1 = this.startPointOnEdge({ shape: resultingSol[0] });
+                    startPoint2 = this.startPointOnEdge({ shape: resultingSol[1] });
+                }
+                endPoint1 = this.endPointOnEdge({ shape: resultingSol[0] });
+                endPoint2 = this.endPointOnEdge({ shape: resultingSol[1] });
+            } else if (inputs.circleRemainders === Inputs.OCCT.twoCircleInclusionEnum.inside) {
+                if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide2 || inputs.positionResult === Inputs.OCCT.positionResultEnum.all) {
+                    startPoint1 = this.startPointOnEdge({ shape: resultingSol[0] });
+                    startPoint2 = this.startPointOnEdge({ shape: resultingSol[1] });
+                } else if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide1) {
+                    startPoint1 = this.startPointOnEdge({ shape: resultingSol[1] });
+                    startPoint2 = this.startPointOnEdge({ shape: resultingSol[0] });
+                }
+                endPoint1 = this.endPointOnEdge({ shape: resultingSol[1] });
+                endPoint2 = this.endPointOnEdge({ shape: resultingSol[0] });
+            } else if (inputs.circleRemainders === Inputs.OCCT.twoCircleInclusionEnum.insideOutside) {
+
+                if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide2 || inputs.positionResult === Inputs.OCCT.positionResultEnum.all) {
+                    startPoint1 = this.startPointOnEdge({ shape: resultingSol[0] });
+                    startPoint2 = this.startPointOnEdge({ shape: resultingSol[1] });
+                } else if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide1) {
+                    startPoint1 = this.startPointOnEdge({ shape: resultingSol[1] });
+                    startPoint2 = this.startPointOnEdge({ shape: resultingSol[0] });
+                }
+                endPoint1 = this.endPointOnEdge({ shape: resultingSol[0] });
+                endPoint2 = this.endPointOnEdge({ shape: resultingSol[1] });
+            } else if (inputs.circleRemainders === Inputs.OCCT.twoCircleInclusionEnum.outsideInside) {
+
+                if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide2 || inputs.positionResult === Inputs.OCCT.positionResultEnum.all) {
+                    startPoint1 = this.startPointOnEdge({ shape: resultingSol[1] });
+                    startPoint2 = this.startPointOnEdge({ shape: resultingSol[0] });
+                } else if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide1) {
+                    startPoint1 = this.startPointOnEdge({ shape: resultingSol[0] });
+                    startPoint2 = this.startPointOnEdge({ shape: resultingSol[1] });
+                }
+                endPoint1 = this.endPointOnEdge({ shape: resultingSol[1] });
+                endPoint2 = this.endPointOnEdge({ shape: resultingSol[0] });
+            }
+
+            const edge1 = this.arcFromCircleAndTwoPoints({ circle: inputs.circle1, start: startPoint1, end: startPoint2, sense: true });
+            const edge2 = this.arcFromCircleAndTwoPoints({ circle: inputs.circle2, start: endPoint1, end: endPoint2, sense: true });
+
+            resultingSol.unshift(edge1);
+            resultingSol.push(edge2);
+        }
+
+        return resultingSol;
+    }
+
+    arcFromCircleAndTwoPoints(inputs: Inputs.OCCT.ArcEdgeCircleTwoPointsDto<TopoDS_Edge>) {
+        const circle = this.getGpCircleFromEdge({ shape: inputs.circle });
+        const gpPnt1 = this.gpPnt(inputs.start);
+        const gpPnt2 = this.gpPnt(inputs.end);
+        const arc = new this.occ.GC_MakeArcOfCircle_3(circle, gpPnt1, gpPnt2, inputs.sense);
+        const hcurve = new this.occ.Handle_Geom_Curve_2(arc.Value().get());
+        const makeEdge = new this.occ.BRepBuilderAPI_MakeEdge_24(hcurve);
+        const shape = makeEdge.Edge();
+        circle.delete();
+        gpPnt1.delete();
+        gpPnt2.delete();
+        arc.delete();
+        hcurve.delete();
+        makeEdge.delete();
+        return shape;
+    }
+
     align(inputs: Inputs.OCCT.AlignDto<TopoDS_Shape>) {
         const transformation = new this.occ.gp_Trsf_1();
 
@@ -2529,6 +2875,29 @@ export class OccHelper {
         maker.delete();
         makerShape.delete();
         return res2;
+    }
+
+    union(inputs: Inputs.OCCT.UnionDto<TopoDS_Shape>): TopoDS_Shape {
+        let combined = inputs.shapes[0];
+        for (let i = 0; i < inputs.shapes.length; i++) {
+            const messageProgress1 = new this.occ.Message_ProgressRange_1();
+            const combinedFuse = new this.occ.BRepAlgoAPI_Fuse_3(combined, inputs.shapes[i], messageProgress1);
+            const messageProgress2 = new this.occ.Message_ProgressRange_1();
+            combinedFuse.Build(messageProgress2);
+            combined = combinedFuse.Shape();
+            messageProgress1.delete();
+            messageProgress2.delete();
+            combinedFuse.delete();
+        }
+
+        if (!inputs.keepEdges) {
+            const fusor = new this.occ.ShapeUpgrade_UnifySameDomain_2(combined, true, true, false);
+            fusor.Build();
+            combined = fusor.Shape();
+            fusor.delete();
+        }
+
+        return combined;
     }
 
 }

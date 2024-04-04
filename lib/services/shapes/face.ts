@@ -445,6 +445,14 @@ export class OCCTFace {
         return this.och.createRectangleFace(inputs);
     }
 
+    createFaceFromMultipleCircleTanWireCollections(inputs: Inputs.OCCT.FaceFromMultipleCircleTanWireCollectionsDto<TopoDS_Wire>): TopoDS_Shape {
+        return this.och.createFaceFromMultipleCircleTanWireCollections(inputs);
+    }
+
+    createFaceFromMultipleCircleTanWires(inputs: Inputs.OCCT.FaceFromMultipleCircleTanWiresDto<TopoDS_Wire>): TopoDS_Shape {
+        return this.och.createFaceFromMultipleCircleTanWires(inputs);
+    }
+
     getFace(inputs: Inputs.OCCT.ShapeIndexDto<TopoDS_Shape>): TopoDS_Face {
         if (!inputs.shape || inputs.shape.IsNull()) {
             throw new Error("Shape is not provided or is null");
