@@ -446,4 +446,8 @@ export class OCCTWire {
 
         return shapes;
     }
+
+    createWireFromTwoCirclesTan(inputs: Inputs.OCCT.WireFromTwoCirclesTanDto<TopoDS_Wire>): TopoDS_Wire {
+        return this.och.createWireFromTwoCirclesTan(inputs);
+    }
 }

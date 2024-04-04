@@ -89,6 +89,21 @@ export namespace OCCT {
         outsideInside = "outsideInside",
         insideOutside = "insideOutside",
     }
+    export enum fourSidesStrictEnum {
+        outside = "outside",
+        inside = "inside",
+        outsideInside = "outsideInside",
+        insideOutside = "insideOutside",
+    }
+    export enum twoSidesStrictEnum {
+        outside = "outside",
+        inside = "inside",
+    }
+    export enum combinationCirclesForFaceEnum {
+        allWithAll = "allWithAll",
+        inOrder = "inOrder",
+        inOrderClosed = "inOrderClosed",
+    }
     export class DecomposedMeshDto {
         constructor(faceList?: DecomposedFaceDto[], edgeList?: DecomposedEdgeDto[]) {
             if (faceList !== undefined) { this.faceList = faceList; }
@@ -2110,6 +2125,105 @@ export namespace OCCT {
          * Indicates whether the shapes should be returned as a compound
          */
         returnCompound = false;
+    }
+    export class WireFromTwoCirclesTanDto<T> {
+        constructor(circle1?: T, circle2?: T, keepLines?: twoSidesStrictEnum, circleRemainders?: fourSidesStrictEnum, tolerance?: number) {
+            if (circle1 !== undefined) { this.circle1 = circle1; }
+            if (circle2 !== undefined) { this.circle2 = circle2; }
+            if (keepLines !== undefined) { this.keepLines = keepLines; }
+            if (circleRemainders !== undefined) { this.circleRemainders = circleRemainders; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+        }
+        /**
+         * The first circle to be encloed with tangential lines
+         * @default undefined
+         */
+        circle1: T;
+        /**
+         * The second circle to be encloed with tangential lines
+         * @default undefined
+         */
+        circle2: T;
+        /**
+         * Choose which side to keep for the wire. Outside gives non-intersecting solution.
+         * @default outside
+         */
+        keepLines: twoSidesStrictEnum = twoSidesStrictEnum.outside;
+        /**
+         * Choose which side to keep for the wire. Outside gives non-intersecting solution.
+         * @default outside
+         */
+        circleRemainders: fourSidesStrictEnum = fourSidesStrictEnum.outside;
+        /**
+         * tolerance
+         * @default 1e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.00001
+         */
+        tolerance = 1e-7;
+    }
+    export class FaceFromMultipleCircleTanWiresDto<T> {
+        constructor(circles?: T[], combination?: combinationCirclesForFaceEnum, unify?: boolean, tolerance?: number) {
+            if (circles !== undefined) { this.circles = circles; }
+            if (combination !== undefined) { this.combination = combination; }
+            if (unify !== undefined) { this.unify = unify; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+        }
+        /**
+         * The circles that will all be joined into a single face through tangential lines
+         * @default undefined
+         */
+        circles: T[];
+        /**
+         * Indicates how circles should be joined together. Users can choose to join all circles with each other. Alternatively it is possible to respect the order of circles and only join consecutive circles. It is also possible to respect order and close the shape with first circle in the list.
+         * @default allWithAll
+         */
+        combination: combinationCirclesForFaceEnum = combinationCirclesForFaceEnum.allWithAll;
+        /**
+         * Choose whether you want faces to be unifided into a single face or not. Sometimes if you want to get faster result you can set this to false, but in this case faces will be returned as compound.
+         * @default true
+         */
+        unify = true;
+        /**
+         * tolerance
+         * @default 1e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.00001
+         */
+        tolerance = 1e-7;
+    }
+    export class FaceFromMultipleCircleTanWireCollectionsDto<T> {
+        constructor(listsOfCircles?: T[][], combination?: combinationCirclesForFaceEnum, unify?: boolean, tolerance?: number) {
+            if (listsOfCircles !== undefined) { this.listsOfCircles = listsOfCircles; }
+            if (combination !== undefined) { this.combination = combination; }
+            if (unify !== undefined) { this.unify = unify; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+        }
+        /**
+         * The two dimensional circle array that can host multiple circle collections.
+         * @default undefined
+         */
+        listsOfCircles: T[][];
+        /**
+         * Indicates how circles should be joined together. Users can choose to join all circles with each other. Alternatively it is possible to respect the order of circles and only join consecutive circles. It is also possible to respect order and close the shape with first circle in the list.
+         * @default allWithAll
+         */
+        combination: combinationCirclesForFaceEnum = combinationCirclesForFaceEnum.allWithAll;
+        /**
+         * Choose whether you want faces to be unifided into a single face or not. Sometimes if you want to get faster result you can set this to false, but in this case faces will be returned as compound.
+         * @default true
+         */
+        unify = true;
+        /**
+         * tolerance
+         * @default 1e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.00001
+         */
+        tolerance = 1e-7;
     }
     export class ZigZagBetweenTwoWiresDto<T> {
         constructor(wire1?: T, wire2?: T, nrZigZags?: number, inverse?: boolean) {
