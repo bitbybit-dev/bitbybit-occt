@@ -412,4 +412,12 @@ export class OCCTEdge {
     constraintTanLinesOnTwoCircles(inputs: Inputs.OCCT.ConstraintTanLinesOnTwoCirclesDto<TopoDS_Edge>): TopoDS_Shape[] {
         return this.och.constraintTanLinesOnTwoCircles(inputs);
     }
+
+    constraintTanCirclesOnTwoCircles(inputs: Inputs.OCCT.ConstraintTanCirclesOnTwoCirclesDto<TopoDS_Edge>): TopoDS_Shape[] {
+        return this.och.constraintTanCirclesOnTwoCircles(inputs);
+    }
+
+    constraintTanCirclesOnCircleAndPnt(inputs: Inputs.OCCT.ConstraintTanCirclesOnCircleAndPntDto<TopoDS_Edge>): TopoDS_Shape[] {
+        return this.och.constraintTanCirclesOnCircleAndPnt(inputs);
+    }
 }
