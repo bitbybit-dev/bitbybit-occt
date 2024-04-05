@@ -2666,6 +2666,7 @@ export class OccHelper {
         const shp = this.getActualTypeOfShape(s);
         s.delete();
         transformation.delete();
+        transf.delete();
         gpVec.delete();
         return shp;
     }
@@ -2706,20 +2707,22 @@ export class OccHelper {
             rotated = inputs.shape;
         } else {
             const transformation = new this.occ.gp_Trsf_1();
-            const pt1 = new this.occ.gp_Pnt_3(0, 0, 0);
             const gpVec = new this.occ.gp_Vec_4(inputs.axis[0], inputs.axis[1], inputs.axis[2]);
-            const dir = new this.occ.gp_Dir_2(gpVec);
+            const dir = new this.occ.gp_Dir_4(inputs.axis[0], inputs.axis[1], inputs.axis[2]);
+            const pt1 = new this.occ.gp_Pnt_3(0, 0, 0);
             const ax = new this.occ.gp_Ax1_2(pt1, dir);
-            transformation.SetRotation_1(ax, inputs.angle * 0.0174533);
-            const rotation = new this.occ.TopLoc_Location_2(transformation);
-            rotated = (inputs.shape as TopoDS_Shape).Moved(rotation, false);
-
-            transformation.delete();
-            pt1.delete();
+            transformation.SetRotation_1(ax , this.vecHelper.degToRad(inputs.angle));
+            const transf = new this.occ.BRepBuilderAPI_Transform_2(inputs.shape, transformation, true);
+            const s = transf.Shape();
+            const shp = this.getActualTypeOfShape(s);
+            s.delete();
             gpVec.delete();
             dir.delete();
+            pt1.delete();
             ax.delete();
-            rotation.delete();
+            transf.delete();
+            transformation.delete();
+            return shp;
         }
         const actualShape = this.getActualTypeOfShape(rotated);
         if (inputs.angle !== 0) {
