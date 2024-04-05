@@ -144,7 +144,7 @@ export namespace OCCT {
          * The OCCT shapes
          * @default undefined
          */
-        shapes?: T[];
+        shapes: T[];
     }
     export class PointDto {
         constructor(point?: Base.Point3) {
@@ -154,7 +154,7 @@ export namespace OCCT {
          * The point
          * @default [0, 0, 0]
          */
-        point?: Base.Point3 = [0, 0, 0];
+        point: Base.Point3 = [0, 0, 0];
     }
     export class PointsDto {
         constructor(points?: Base.Point3[]) {
@@ -164,7 +164,7 @@ export namespace OCCT {
          * The point
          * @default undefined
          */
-        points?: Base.Point3[];
+        points: Base.Point3[];
     }
     export class ConstraintTanLinesFromPtToCircleDto<T> {
         constructor(circle?: T, point?: Base.Point3) {
@@ -175,7 +175,7 @@ export namespace OCCT {
          * The circle for tangent points
          * @default undefined
          */
-        circle?: T;
+        circle: T;
         /**
          * The point from which to find the lines
          * @default undefined
@@ -212,7 +212,7 @@ export namespace OCCT {
          * The circle for tangent points
          * @default undefined
          */
-        circle?: T;
+        circle: T;
         /**
          * The point from which to find the lines
          * @default undefined
@@ -252,12 +252,12 @@ export namespace OCCT {
          * The first circle for tangential lines
          * @default undefined
          */
-        circle1?: T;
+        circle1: T;
         /**
          * The second circle for tangential lines
          * @default undefined
          */
-        circle2?: T;
+        circle2: T;
         /**
          * tolerance
          * @default 1e-7
@@ -396,12 +396,12 @@ export namespace OCCT {
          * First OCCT shape
          * @default undefined
          */
-        shape1?: T;
+        shape1: T;
         /**
         * Second OCCT shape
         * @default undefined
         */
-        shape2?: T;
+        shape2: T;
     }
     export class FaceFromSurfaceAndWireDto<T, U> {
         constructor(surface?: T, wire?: U, inside?: boolean) {
@@ -413,12 +413,12 @@ export namespace OCCT {
          * Surface from which to create a face
          * @default undefined
          */
-        surface?: T;
+        surface: T;
         /**
          * Wire that represents a boundary on the surface to delimit the face
          * @default undefined
          */
-        wire?: U;
+        wire: U;
         /**
          * Indicates wether face should be created inside or outside the wire
          * @default true
@@ -614,7 +614,7 @@ export namespace OCCT {
          * Brep OpenCascade geometry
          * @default undefined
          */
-        shapes?: T[];
+        shapes: T[];
         /**
          * Face opacity value between 0 and 1
          * @default 1
@@ -748,7 +748,7 @@ export namespace OCCT {
          * Brep OpenCascade geometry
          * @default undefined
          */
-        shape?: T;
+        shape: T;
         /**
          * Number of points that will be added on U direction
          * @default 10
@@ -821,7 +821,7 @@ export namespace OCCT {
          * Brep OpenCascade geometry
          * @default undefined
          */
-        shape?: T;
+        shape: T;
         /**
          * Number of subdivisions on U direction
          * @default 10
@@ -952,7 +952,7 @@ export namespace OCCT {
          * Brep OpenCascade geometry
          * @default undefined
          */
-        shape?: T;
+        shape: T;
         /**
          * Linear subdivision direction true - U, false - V
          * @default true
@@ -1004,7 +1004,7 @@ export namespace OCCT {
          * Brep OpenCascade geometry
          * @default undefined
          */
-        shape?: T;
+        shape: T;
         /**
          * Param on U direction 0 to 1
          * @default 0.5
@@ -1034,7 +1034,7 @@ export namespace OCCT {
          * Brep OpenCascade geometry
          * @default undefined
          */
-        shape?: T;
+        shape: T;
         /**
          * Params uv
          * @default [[0.5, 0.5]]
