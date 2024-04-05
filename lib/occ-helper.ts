@@ -1,4 +1,4 @@
-import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, ChFi3d_FilletShape, TopAbs_State, BRepFilletAPI_MakeFillet, GccEnt_Position } from "../bitbybit-dev-occt/bitbybit-dev-occt";
+import { Extrema_ExtAlgo, Extrema_ExtFlag, Adaptor3d_Curve, BRepAdaptor_CompCurve_2, Geom2d_Curve, TopoDS_Shell, TopoDS_Solid, GeomAbs_Shape, Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3, gp_Pnt, gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2, Handle_Geom_Curve, OpenCascadeInstance, TopAbs_ShapeEnum, TopoDS_Compound, TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, ChFi3d_FilletShape, TopAbs_State, BRepFilletAPI_MakeFillet, GccEnt_Position, gp_Circ2d } from "../bitbybit-dev-occt/bitbybit-dev-occt";
 import { VectorHelperService } from "./api/vector-helper.service";
 import { Base } from "./api/inputs/base-inputs";
 import * as Inputs from "./api/inputs/inputs";
@@ -2619,6 +2619,118 @@ export class OccHelper {
         return resultingSol;
     }
 
+    constraintTanCirclesOnCircleAndPnt(inputs: Inputs.OCCT.ConstraintTanCirclesOnCircleAndPntDto<TopoDS_Edge>): TopoDS_Shape[] {
+        const cirDir = this.getCircularEdgePlaneDirection({ shape: inputs.circle });
+        const cirPos = this.getCircularEdgeCenterPoint({ shape: inputs.circle });
+
+        const { alignOpt, circle1Aligned: circleAligned } = this.alignCircle(cirDir, cirPos, inputs.circle);
+
+        const ptVertex = this.makeVertex(inputs.point);
+        alignOpt.shape = ptVertex;
+        const ptVertexAligned = this.align(alignOpt);
+        ptVertex.delete();
+        const ptAligned = this.vertexToPoint({ shape: ptVertexAligned });
+        ptVertexAligned.delete();
+        const pt2d = this.gpPnt2d([ptAligned[0], ptAligned[1]]);
+
+        const circle = this.getGpCircle2dFromEdge({ shape: circleAligned });
+
+        circleAligned.delete();
+
+        const qCircle = new this.occ.GccEnt_QualifiedCirc(circle, this.getGccEntPositionFromEnum(Inputs.OCCT.gccEntPositionEnum.unqualified));
+
+        circle.delete();
+
+        const lin1 = new this.occ.GccAna_Circ2d2TanRad_3(qCircle, pt2d, inputs.radius, inputs.tolerance);
+
+        qCircle.delete();
+
+        const lin1Sols: gp_Circ2d[] = [];
+        for (let i = 1; i <= lin1.NbSolutions(); i++) {
+            const sol = lin1.ThisSolution(i);
+            lin1Sols.push(sol);
+        }
+        lin1.delete();
+
+        const solutions = [];
+        for (let i = 0; i < lin1Sols.length; i++) {
+            const sol = lin1Sols[i];
+            const res = this.reconstructCircleAndAlignBack(lin1Sols, sol, alignOpt, cirDir, cirPos);
+            solutions.push(res);
+        }
+
+        return solutions;
+    }
+
+    private alignCircle(cirDir: Base.Vector3, cirPos: Base.Point3, circle: TopoDS_Edge) {
+        const alignOpt = new Inputs.OCCT.AlignDto<TopoDS_Shape>();
+        alignOpt.fromDirection = cirDir;
+        alignOpt.toDirection = [0, 0, 1];
+        alignOpt.fromOrigin = cirPos;
+        alignOpt.toOrigin = [0, 0, 0];
+        alignOpt.shape = circle;
+        const circle1Aligned = this.align(alignOpt);
+        return { alignOpt, circle1Aligned };
+    }
+
+    constraintTanCirclesOnTwoCircles(inputs: Inputs.OCCT.ConstraintTanCirclesOnTwoCirclesDto<TopoDS_Edge>): TopoDS_Shape[] {
+        const cirDir = this.getCircularEdgePlaneDirection({ shape: inputs.circle1 });
+        const cirPos = this.getCircularEdgeCenterPoint({ shape: inputs.circle1 });
+
+        const { alignOpt, circle1Aligned } = this.alignCircle(cirDir, cirPos, inputs.circle1);
+        alignOpt.shape = inputs.circle2;
+        const circle2Aligned = this.align(alignOpt);
+
+        const circle1 = this.getGpCircle2dFromEdge({ shape: circle1Aligned });
+        const circle2 = this.getGpCircle2dFromEdge({ shape: circle2Aligned });
+
+        circle1Aligned.delete();
+        circle2Aligned.delete();
+
+        const qCircle1 = new this.occ.GccEnt_QualifiedCirc(circle1, this.getGccEntPositionFromEnum(Inputs.OCCT.gccEntPositionEnum.unqualified));
+        const qCircle2 = new this.occ.GccEnt_QualifiedCirc(circle2, this.getGccEntPositionFromEnum(Inputs.OCCT.gccEntPositionEnum.unqualified));
+
+        circle1.delete();
+        circle2.delete();
+
+        const lin1 = new this.occ.GccAna_Circ2d2TanRad_1(qCircle1, qCircle2, inputs.radius, inputs.tolerance);
+
+        qCircle1.delete();
+        qCircle2.delete();
+
+        const lin1Sols: gp_Circ2d[] = [];
+        for (let i = 1; i <= lin1.NbSolutions(); i++) {
+            const sol = lin1.ThisSolution(i);
+            lin1Sols.push(sol);
+        }
+        lin1.delete();
+
+        const solutions = [];
+        for (let i = 0; i < lin1Sols.length; i++) {
+            const sol = lin1Sols[i];
+            const res = this.reconstructCircleAndAlignBack(lin1Sols, sol, alignOpt, cirDir, cirPos);
+            solutions.push(res);
+        }
+
+        return solutions;
+    }
+
+    private reconstructCircleAndAlignBack(lin1Sols: gp_Circ2d[], sol: gp_Circ2d, alignOpt: Inputs.OCCT.AlignDto<TopoDS_Shape>, dir: Base.Vector3, pos: Base.Point3) {
+        const locationStart = sol.Location();
+        const startPoint = [locationStart.X(), locationStart.Y(), 0] as Inputs.Base.Point3;
+        const circle = this.createCircle(sol.Radius(), startPoint, [0, 0, 1], typeSpecificityEnum.edge) as TopoDS_Edge;
+        alignOpt.fromDirection = [0, 0, 1];
+        alignOpt.toDirection = dir;
+        alignOpt.fromOrigin = [0, 0, 0];
+        alignOpt.toOrigin = pos;
+        alignOpt.shape = circle;
+        const aligned = this.align(alignOpt);
+        circle.delete();
+        sol.delete();
+        locationStart.delete();
+        return aligned;
+    }
+
     arcFromCircleAndTwoPoints(inputs: Inputs.OCCT.ArcEdgeCircleTwoPointsDto<TopoDS_Edge>) {
         const circle = this.getGpCircleFromEdge({ shape: inputs.circle });
         const gpPnt1 = this.gpPnt(inputs.start);
@@ -2711,7 +2823,7 @@ export class OccHelper {
             const dir = new this.occ.gp_Dir_4(inputs.axis[0], inputs.axis[1], inputs.axis[2]);
             const pt1 = new this.occ.gp_Pnt_3(0, 0, 0);
             const ax = new this.occ.gp_Ax1_2(pt1, dir);
-            transformation.SetRotation_1(ax , this.vecHelper.degToRad(inputs.angle));
+            transformation.SetRotation_1(ax, this.vecHelper.degToRad(inputs.angle));
             const transf = new this.occ.BRepBuilderAPI_Transform_2(inputs.shape, transformation, true);
             const s = transf.Shape();
             const shp = this.getActualTypeOfShape(s);

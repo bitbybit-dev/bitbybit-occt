@@ -167,9 +167,12 @@ export namespace OCCT {
         points: Base.Point3[];
     }
     export class ConstraintTanLinesFromPtToCircleDto<T> {
-        constructor(circle?: T, point?: Base.Point3) {
+        constructor(circle?: T, point?: Base.Point3, tolerance?: number, positionResult?: positionResultEnum, circleRemainder?: circleInclusionEnum) {
             if (circle !== undefined) { this.circle = circle; }
             if (point !== undefined) { this.point = point; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (positionResult !== undefined) { this.positionResult = positionResult; }
+            if (circleRemainder !== undefined) { this.circleRemainder = circleRemainder; }
         }
         /**
          * The circle for tangent points
@@ -202,11 +205,13 @@ export namespace OCCT {
         circleRemainder: circleInclusionEnum = circleInclusionEnum.none;
     }
     export class ConstraintTanLinesFromTwoPtsToCircleDto<T> {
-        constructor(circle?: T, point1?: Base.Point3, point2?: Base.Point3) {
+        constructor(circle?: T, point1?: Base.Point3, point2?: Base.Point3, tolerance?: number, positionResult?: positionResultEnum, circleRemainder?: circleInclusionEnum) {
             if (circle !== undefined) { this.circle = circle; }
             if (point1 !== undefined) { this.point1 = point1; }
             if (point2 !== undefined) { this.point1 = point2; }
-
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (positionResult !== undefined) { this.positionResult = positionResult; }
+            if (circleRemainder !== undefined) { this.circleRemainder = circleRemainder; }
         }
         /**
          * The circle for tangent points
@@ -244,9 +249,12 @@ export namespace OCCT {
         circleRemainder: circleInclusionEnum = circleInclusionEnum.none;
     }
     export class ConstraintTanLinesOnTwoCirclesDto<T> {
-        constructor(circle1?: T, circle2?: T) {
+        constructor(circle1?: T, circle2?: T, tolerance?: number, positionResult?: positionResultEnum, circleRemainders?: twoCircleInclusionEnum) {
             if (circle1 !== undefined) { this.circle1 = circle1; }
             if (circle2 !== undefined) { this.circle2 = circle2; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (positionResult !== undefined) { this.positionResult = positionResult; }
+            if (circleRemainders !== undefined) { this.circleRemainders = circleRemainders; }
         }
         /**
          * The first circle for tangential lines
@@ -277,6 +285,75 @@ export namespace OCCT {
          * @default none
          */
         circleRemainders: twoCircleInclusionEnum = twoCircleInclusionEnum.none;
+    }
+
+    export class ConstraintTanCirclesOnTwoCirclesDto<T> {
+        constructor(circle1?: T, circle2?: T, tolerance?: number, radius?: number) {
+            if (circle1 !== undefined) { this.circle1 = circle1; }
+            if (circle2 !== undefined) { this.circle2 = circle2; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (radius !== undefined) { this.radius = radius; }
+        }
+        /**
+         * The first circle for tangential lines
+         * @default undefined
+         */
+        circle1: T;
+        /**
+         * The second circle for tangential lines
+         * @default undefined
+         */
+        circle2: T;
+        /**
+         * tolerance
+         * @default 1e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.00001
+         */
+        tolerance = 1e-7;
+        /**
+         * Radius of the circles being constructed
+         * @default 0.3
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        radius = 0.3;
+    }
+    export class ConstraintTanCirclesOnCircleAndPntDto<T> {
+        constructor(circle?: T, point?: Base.Point3, tolerance?: number, radius?: number) {
+            if (circle !== undefined) { this.circle = circle; }
+            if (point !== undefined) { this.point = point; }
+            if (tolerance !== undefined) { this.tolerance = tolerance; }
+            if (radius !== undefined) { this.radius = radius; }
+        }
+        /**
+         * The first circle for tangential lines
+         * @default undefined
+         */
+        circle: T;
+        /**
+         * The second circle for tangential lines
+         * @default undefined
+         */
+        point: Base.Point3;
+        /**
+         * tolerance
+         * @default 1e-7
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.00001
+         */
+        tolerance = 1e-7;
+        /**
+         * Radius of the circles being constructed
+         * @default 0.3
+         * @minimum 0
+         * @maximum Infinity
+         * @step 0.1
+         */
+        radius = 0.3;
     }
     export class CurveAndSurfaceDto<T, U>{
         constructor(curve?: T, surface?: U) {
