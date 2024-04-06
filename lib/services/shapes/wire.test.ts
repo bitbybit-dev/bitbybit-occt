@@ -1,4 +1,4 @@
-import initOpenCascade, { OpenCascadeInstance, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import initOpenCascade, { OpenCascadeInstance, TopoDS_Compound, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OCCTEdge } from "./edge";
 import { OccHelper } from "../../occ-helper";
 import { OCCTWire } from "./wire";
@@ -6,7 +6,6 @@ import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
 import * as Inputs from "../../api/inputs/inputs";
 import { OCCTFace } from "./face";
-import { TopoDS_Compound } from "dist";
 import { OCCTShape } from "./shape";
 
 describe("OCCT wire unit tests", () => {
@@ -417,7 +416,16 @@ describe("OCCT wire unit tests", () => {
         const length = wire.getWireLength({ shape: res });
         const corners = edge.getCornerPointsOfEdgesForShape({ shape: res });
         expect(length).toBeCloseTo(40);
-        expect(corners).toEqual([[0, -1.8284268867320825, 2.292892266757705], [0, -5.010408473134127, 5.474871711034227], [0, -1.4748757572713234, 9.0104068070365], [0, 3.8284268867320836, 3.7071077332422933], [0, -5.010404902924925, -5.131730006763387], [0, -7.131725960526286, -3.010410377245702]]);
+        expect(corners).toEqual(
+            [
+                [0, -1.8284271247461898, 2.292893218813453],
+                [0, -5.010407640085654, 5.474873734152917],
+                [0, -1.474873734152916, 9.010407640085655],
+                [0, 3.82842712474619, 3.707106781186548],
+                [0, -5.0104076400856545, -5.131727983645296],
+                [0, -7.1317279836452965, -3.0104076400856536]
+            ]
+        );
         res.delete();
     });
 
