@@ -257,7 +257,7 @@ export class OCCTWire {
         const der2 = this.och.gpVec([0, 0, 0]);
         const der3 = this.och.gpVec([0, 0, 0]);
 
-        const param = this.och.remap(inputs.param, 0, 1, curve.FirstParameter(), curve.LastParameter());
+        const param = this.och.vecHelper.remap(inputs.param, 0, 1, curve.FirstParameter(), curve.LastParameter());
 
         curve.D3(param, gpPnt, der1, der2, der3);
         const der: [Inputs.Base.Vector3, Inputs.Base.Vector3, Inputs.Base.Vector3] = [[der1.X(), der1.Y(), der1.Z()], [der2.X(), der2.Y(), der2.Z()], [der3.X(), der3.Y(), der3.Z()]];

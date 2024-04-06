@@ -1118,7 +1118,7 @@ export class OccHelper {
         const { uMin, uMax } = this.getEdgeBounds(edge);
         const curve = this.getGeomCurveFromEdge(edge, uMin, uMax);
         const gpPnt = this.gpPnt([0, 0, 0]);
-        const param = this.remap(inputs.param, 0, 1, uMin, uMax);
+        const param = this.vecHelper.remap(inputs.param, 0, 1, uMin, uMax);
         curve.D0(param, gpPnt);
         const pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
         gpPnt.delete();
@@ -1129,7 +1129,7 @@ export class OccHelper {
         const edge = inputs.shape;
         const { uMin, uMax } = this.getEdgeBounds(edge);
         const curve = this.getGeomCurveFromEdge(edge, uMin, uMax);
-        const param = this.remap(inputs.param, 0, 1, uMin, uMax);
+        const param = this.vecHelper.remap(inputs.param, 0, 1, uMin, uMax);
         const vec = curve.DN(param, 1);
         const vector: Base.Vector3 = [vec.X(), vec.Y(), vec.Z()];
         vec.delete();
@@ -1218,7 +1218,7 @@ export class OccHelper {
     pointOnCurveAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<Geom_Curve | BRepAdaptor_CompCurve_2>): Base.Point3 {
         const curve = inputs.shape;
         const gpPnt = this.gpPnt([0, 0, 0]);
-        const param = this.remap(inputs.param, 0, 1, curve.FirstParameter(), curve.LastParameter());
+        const param = this.vecHelper.remap(inputs.param, 0, 1, curve.FirstParameter(), curve.LastParameter());
         curve.D0(param, gpPnt);
         const pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
         gpPnt.delete();
@@ -1227,7 +1227,7 @@ export class OccHelper {
 
     tangentOnCurveAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<Geom_Curve | BRepAdaptor_CompCurve_2>): Base.Point3 {
         const curve = inputs.shape;
-        const param = this.remap(inputs.param, 0, 1, curve.FirstParameter(), curve.LastParameter());
+        const param = this.vecHelper.remap(inputs.param, 0, 1, curve.FirstParameter(), curve.LastParameter());
         const vec = curve.DN(param, 1);
         const pt: Base.Point3 = [vec.X(), vec.Y(), vec.Z()];
         vec.delete();
@@ -1274,7 +1274,7 @@ export class OccHelper {
         const ranges: number[] = [];
         for (let i = 0; i <= inputs.nrOfDivisions; i++) {
             const param = (i / inputs.nrOfDivisions);
-            const paramMapped = this.remap(param, 0, 1, uMin, uMax);
+            const paramMapped = this.vecHelper.remap(param, 0, 1, uMin, uMax);
             ranges.push(paramMapped);
         }
 
@@ -2967,10 +2967,6 @@ export class OccHelper {
         const vMax = { current: 0 };
         this.occRefReturns.BRepTools_UVBounds_1(face, uMin, uMax, vMin, vMax);
         return { uMin: uMin.current, uMax: uMax.current, vMin: vMin.current, vMax: vMax.current };
-    }
-
-    remap(value: number, from1: number, to1: number, from2: number, to2: number): number {
-        return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
     }
 
     makeThickSolidSimple(inputs: Inputs.OCCT.ThisckSolidSimpleDto<TopoDS_Shape>) {

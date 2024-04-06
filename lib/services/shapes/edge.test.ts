@@ -4,9 +4,18 @@ import { OccHelper } from "../../occ-helper";
 import { OCCTGeom } from "../geom/geom";
 import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
+import { Inputs } from "../../api";
+import { OCCTFace } from "./face";
+import { OCCTBooleans } from "../booleans";
+import { OCCTWire } from "./wire";
+import { OCCTFillets } from "../fillets";
 
 describe("OCCT edge unit tests", () => {
     let edge: OCCTEdge;
+    let wire: OCCTWire;
+    let face: OCCTFace;
+    let booleans: OCCTBooleans;
+    let fillets: OCCTFillets;
     let geom: OCCTGeom;
     let occHelper: OccHelper;
     let occt: OpenCascadeInstance;
@@ -22,6 +31,10 @@ describe("OCCT edge unit tests", () => {
         occHelper = new OccHelper(vec, s, occt);
         geom = new OCCTGeom(occt, occHelper);
         edge = new OCCTEdge(occt, occHelper);
+        face = new OCCTFace(occt, occHelper);
+        wire = new OCCTWire(occt, occHelper);
+        fillets = new OCCTFillets(occt, occHelper);
+        booleans = new OCCTBooleans(occt, occHelper);
     });
 
     it("should create a circle edge of the right radius and it will mach the length", async () => {
@@ -74,7 +87,7 @@ describe("OCCT edge unit tests", () => {
         const cylinderSrf = geom.surfaces.cylindricalSurface({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
 
         const e = edge.makeEdgeFromGeom2dCurveAndSurface({
-            curve: elipse2d, 
+            curve: elipse2d,
             surface: cylinderSrf
         });
         const length = edge.getEdgeLength({ shape: e });
@@ -416,5 +429,288 @@ describe("OCCT edge unit tests", () => {
         ]);
         box.delete();
     });
-});
 
+    it("should create edge from two points and a tangent vector", () => {
+        const e = edge.arcThroughTwoPointsAndTangent({
+            start: [0, 0, 0],
+            end: [1, 1, 1],
+            tangentVec: [1, 0, 0]
+        });
+        const length = edge.getEdgeLength({ shape: e });
+        expect(length).toBe(2.02653257656812);
+        e.delete();
+    });
+
+    it("should create an arc from circle and two points", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const ptOnCircle1 = edge.pointOnEdgeAtParam({ shape: circle, param: 0.3 });
+        const ptOnCircle2 = edge.pointOnEdgeAtParam({ shape: circle, param: 0.6 });
+        const e = edge.arcFromCircleAndTwoPoints({
+            start: ptOnCircle1,
+            end: ptOnCircle2,
+            circle,
+            sense: true
+        });
+        const length = edge.getEdgeLength({ shape: e });
+        expect(length).toBe(1.8849555921538759);
+        e.delete();
+        circle.delete();
+    });
+
+    it("should create an arc from circle and two alpha angles", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const e = edge.arcFromCircleAndTwoAngles({
+            alphaAngle1: -30,
+            alphaAngle2: 55,
+            circle,
+            sense: true
+        });
+        const length = edge.getEdgeLength({ shape: e });
+        expect(length).toBe(1.4835298641951802);
+        e.delete();
+        circle.delete();
+    });
+
+    it("should create an arc from circle between the point and an angle", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const ptOnCircle = edge.pointOnEdgeAtParam({ shape: circle, param: 0.3 });
+        const e = edge.arcFromCirclePointAndAngle({
+            point: ptOnCircle,
+            alphaAngle: -30,
+            circle,
+            sense: true
+        });
+        const length = edge.getEdgeLength({ shape: e });
+        expect(length).toBe(3.874630939427411);
+        e.delete();
+        circle.delete();
+    });
+
+    it("should convert edges to points with default options", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const opt = new Inputs.OCCT.EdgesToPointsDto(circle);
+        const points = edge.edgesToPoints(opt);
+        expect(points.length).toBe(1);
+        expect(points[0].length).toBe(64);
+        const firstPt = points[0][0];
+        expect(firstPt[0]).toBeCloseTo(1);
+        expect(firstPt[1]).toBeCloseTo(0);
+        expect(firstPt[2]).toBeCloseTo(0);
+        const secondTestPt = points[0][23];
+        expect(secondTestPt[0]).toBeCloseTo(-0.6616858375968588);
+        expect(secondTestPt[1]).toBeCloseTo(0.7497812029677347);
+        expect(secondTestPt[2]).toBeCloseTo(0);
+        circle.delete();
+    });
+
+    it("should return fewer points if angular deflection is higher", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const opt = new Inputs.OCCT.EdgesToPointsDto(circle);
+        opt.angularDeflection = 0.2;
+        const points = edge.edgesToPoints(opt);
+        expect(points.length).toBe(1);
+        expect(points[0].length).toBe(33);
+        circle.delete();
+    });
+
+    it("should return more points if angular deflection is lower", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const opt = new Inputs.OCCT.EdgesToPointsDto(circle);
+        opt.angularDeflection = 0.05;
+        const points = edge.edgesToPoints(opt);
+        expect(points.length).toBe(1);
+        expect(points[0].length).toBe(127);
+        circle.delete();
+    });
+
+    it("should return same amount of points if curvature deflection is higher for circular edge", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const opt = new Inputs.OCCT.EdgesToPointsDto(circle);
+        opt.curvatureDeflection = 0.2;
+        const points = edge.edgesToPoints(opt);
+        expect(points.length).toBe(1);
+        expect(points[0].length).toBe(64);
+        circle.delete();
+    });
+
+    it("should return fewer points if minimum length is higher", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const opt = new Inputs.OCCT.EdgesToPointsDto(circle);
+        opt.minimumLength = 0.2;
+        const points = edge.edgesToPoints(opt);
+        expect(points.length).toBe(1);
+        expect(points[0].length).toBe(33);
+        circle.delete();
+    });
+
+    it("should return 100 points if even if deflectors would produce fewer points", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const opt = new Inputs.OCCT.EdgesToPointsDto(circle);
+        opt.minimumOfPoints = 100;
+        const points = edge.edgesToPoints(opt);
+        expect(points.length).toBe(1);
+        expect(points[0].length).toBe(100);
+        circle.delete();
+    });
+
+    it("should create reversed edge", () => {
+        const line = edge.line({ start: [0, 0, 0], end: [0, 0, 1] });
+        const reversed = edge.reversedEdge({ shape: line });
+        const length = edge.getEdgeLength({ shape: reversed });
+        expect(length).toBe(1);
+        const startPoint = edge.startPointOnEdge({ shape: reversed });
+        expect(startPoint).toEqual([0, 0, 1]);
+        const endPoint = edge.endPointOnEdge({ shape: reversed });
+        expect(endPoint).toEqual([0, 0, 0]);
+        line.delete();
+        reversed.delete();
+    });
+
+    it("should get edges along wire", () => {
+        const squareFace = face.createRectangleFace({ width: 10, length: 20, center: [0, 0, 0], direction: [0, 1, 0] });
+        const edges = edge.getEdges({ shape: squareFace });
+        const points = edges.map(e => [edge.pointOnEdgeAtParam({ shape: e, param: 0.3 }), edge.pointOnEdgeAtParam({ shape: e, param: 0.6 })]).flat();
+        const circleFaces = points.map(p => face.createCircleFace({ radius: 1, center: p, direction: [0, 1, 0] }));
+        const diff = booleans.difference({ shape: squareFace, shapes: circleFaces.reverse(), keepEdges: true });
+        const w = wire.getWire({ shape: diff, index: 0 });
+        const edgesNotAlongWire = edge.getEdges({ shape: w });
+        const edgesAlongWire = edge.getEdgesAlongWire({ shape: w });
+        const startPointsNotAlong = edgesNotAlongWire.map(e => edge.startPointOnEdge({ shape: e }));
+        const startPointsAlong = edgesAlongWire.map(e => edge.startPointOnEdge({ shape: e }));
+        expect(edgesNotAlongWire.length).toBe(22);
+        expect(edgesAlongWire.length).toBe(22);
+        expect(startPointsAlong).not.toEqual(startPointsNotAlong);
+        expect(startPointsNotAlong).toEqual(
+            [
+                [5, 0, -1],
+                [5, 0, 3],
+                [5, 0, 5],
+                [5, 0, 10],
+                [2, 0, 10],
+                [0, 0, 10.000000000000004],
+                [-1, 0, 10],
+                [-3, 0, 10.000000000000004],
+                [-5, 0, 10],
+                [-5, 0, 3],
+                [-5, 0, 1],
+                [-5, 0, -3],
+                [-5, 0, -5],
+                [-5, 0, -10],
+                [-2, 0, -10],
+                [-1.0000000000000002, 0, -9],
+                [0, 0, -9.999999999999996],
+                [1, 0, -10],
+                [1.9999999999999998, 0, -9],
+                [3, 0, -9.999999999999996],
+                [5, 0, -10],
+                [5, 0, -3]
+            ]);
+        expect(startPointsAlong).toEqual(
+            [
+                [5, 0, -1],
+                [5, 0, -3],
+                [5, 0, -10],
+                [3, 0, -9.999999999999996],
+                [1.9999999999999998, 0, -9],
+                [1, 0, -10],
+                [0, 0, -9.999999999999996],
+                [-1.0000000000000002, 0, -9],
+                [-2, 0, -10],
+                [-5, 0, -10],
+                [-5, 0, -5],
+                [-5, 0, -3],
+                [-5, 0, 1],
+                [-5, 0, 3],
+                [-5, 0, 10],
+                [-3, 0, 10.000000000000004],
+                [-1, 0, 10],
+                [0, 0, 10.000000000000004],
+                [2, 0, 10],
+                [5, 0, 10],
+                [5, 0, 5],
+                [5, 0, 3]
+            ]);
+        squareFace.delete();
+        edges.forEach(e => e.delete());
+        circleFaces.forEach(f => f.delete());
+        diff.delete();
+        w.delete();
+        edgesNotAlongWire.forEach(e => e.delete());
+        edgesAlongWire.forEach(e => e.delete());
+    });
+
+    it("should get circular edges along wire", () => {
+        const star = wire.createStarWire({ outerRadius: 10, innerRadius: 5, numRays: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
+        const filletWire = fillets.fillet2d({ shape: star, radius: 0.1 });
+        const circEdges = edge.getCircularEdgesAlongWire({ shape: filletWire });
+        expect(circEdges.length).toBe(10);
+        const centerPointsOfCircEdges = circEdges.map(e => edge.pointOnEdgeAtParam({ shape: e, param: 0.5 }));
+        expect(centerPointsOfCircEdges).toEqual(
+            [
+                [4.055584049054565, 0, 2.9465542875383197],
+                [3.0512476630476084, 0, 9.390774700406086],
+                [-1.5490952625069239, 0, 4.767624986933736],
+                [-7.988270089952323, 0, 5.8038179455435746],
+                [-5.012977573095285, 0, -1.352518115073085e-15],
+                [-7.988270089952325, 0, -5.803817945543571],
+                [-1.5490952625069248, 0, -4.767624986933734],
+                [3.0512476630476053, 0, -9.390774700406087],
+                [4.055584049054564, 0, -2.946554287538323],
+                [9.874044853809437, 0, -1.45074205086341e-15]
+            ]
+        );
+        star.delete();
+        filletWire.delete();
+        circEdges.forEach(e => e.delete());
+    });
+
+    it("should get linear edges along wire", () => {
+        const star = wire.createStarWire({ outerRadius: 10, innerRadius: 5, numRays: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
+        const filletWire = fillets.fillet2d({ shape: star, radius: 0.1 });
+        const linearEdges = edge.getLinearEdgesAlongWire({ shape: filletWire });
+        expect(linearEdges.length).toBe(10);
+        const centerPointsOfLinEdges = linearEdges.map(e => edge.pointOnEdgeAtParam({ shape: e, param: 0.5 }));
+        expect(centerPointsOfLinEdges).toEqual(
+            [
+                [6.9552653011507495, 0, 1.5026664063837831],
+                [3.5784158560510866, 0, 6.150500930772069],
+                [0.7201745008328477, 0, 7.07919984366991],
+                [-4.743682676229625, 0, 5.3038850294387885],
+                [-6.510172981805056, 0, 2.8725197101571633],
+                [-6.510172981805057, 0, -2.8725197101571625],
+                [-4.743682676229623, 0, -5.303885029438787],
+                [0.7201745008328464, 0, -7.07919984366991],
+                [3.578415856051085, 0, -6.150500930772071],
+                [6.955265301150748, 0, -1.5026664063837851]
+            ]
+        );
+        star.delete();
+        filletWire.delete();
+        linearEdges.forEach(e => e.delete());
+    });
+
+    it("should get circular edge center points", () => {
+        const star = wire.createStarWire({ outerRadius: 10, innerRadius: 5, numRays: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
+        const filletWire = fillets.fillet2d({ shape: star, radius: 0.2 });
+        const circularEdges = edge.getCircularEdgesAlongWire({ shape: filletWire });
+        expect(circularEdges.length).toBe(10);
+        const centersOfCircles = circularEdges.map(e => edge.getCircularEdgeCenterPoint({ shape: e }));
+        expect(centersOfCircles).toEqual(
+            [
+                [4.227886525109383, 0, 3.0717393640727706],
+                [2.950521983470752, 0, 9.080772934601606],
+                [-1.6149089520140991, 0, 4.9701786956507314],
+                [-7.724566837280184, 0, 5.6122263177039216],
+                [-5.225955146190568, 0, 5.622660297988197e-16],
+                [-7.724566837280185, 0, -5.612226317703919],
+                [-1.614908952014098, 0, -4.970178695650731],
+                [2.95052198347075, 0, -9.080772934601608],
+                [4.227886525109382, 0, -3.0717393640727724],
+                [9.548089707618868, 0, -1.4446188168676734e-15]
+            ]
+        );
+        star.delete();
+        filletWire.delete();
+        circularEdges.forEach(e => e.delete());
+    });
+});
