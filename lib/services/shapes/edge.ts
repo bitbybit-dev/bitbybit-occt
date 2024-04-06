@@ -314,7 +314,7 @@ export class OCCTEdge {
         if (resultingSol.length === 2 && inputs.circleRemainder !== Inputs.OCCT.circleInclusionEnum.none) {
             let startPoint;
             let endPoint;
-            if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide2 || inputs.positionResult === Inputs.OCCT.positionResultEnum.all) {
+            if (inputs.positionResult === Inputs.OCCT.positionResultEnum.keepSide2) {
                 if (inputs.circleRemainder === Inputs.OCCT.circleInclusionEnum.keepSide1) {
                     startPoint = this.startPointOnEdge({ shape: resultingSol[1] });
                     endPoint = this.startPointOnEdge({ shape: resultingSol[0] });

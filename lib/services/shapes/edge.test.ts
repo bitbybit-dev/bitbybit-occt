@@ -713,4 +713,267 @@ describe("OCCT edge unit tests", () => {
         filletWire.delete();
         circularEdges.forEach(e => e.delete());
     });
+
+    it("should get circular edge radius", () => {
+        const star = wire.createStarWire({ outerRadius: 10, innerRadius: 5, numRays: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
+        const filletWire = fillets.fillet2d({ shape: star, radius: 0.2 });
+        const circularEdges = edge.getCircularEdgesAlongWire({ shape: filletWire });
+        expect(circularEdges.length).toBe(10);
+        const radiusList = circularEdges.map(e => edge.getCircularEdgeRadius({ shape: e }));
+        expect(radiusList).toEqual(
+            [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+        );
+        star.delete();
+        filletWire.delete();
+        circularEdges.forEach(e => e.delete());
+    });
+
+    it("should get circular edge plane direction", () => {
+        const star = wire.createStarWire({ outerRadius: 10, innerRadius: 5, numRays: 5, center: [0, 0, 0], direction: [0, 1, 0], half: false });
+        const filletWire = fillets.fillet2d({ shape: star, radius: 0.2 });
+        const circularEdges = edge.getCircularEdgesAlongWire({ shape: filletWire });
+        expect(circularEdges.length).toBe(10);
+        const radiusList = circularEdges.map(e => edge.getCircularEdgePlaneDirection({ shape: e }));
+        expect(radiusList).toEqual(
+            [[0, -1, 0], [0, -1, 0], [0, -1, 0], [0, -1, 0], [0, -1, 0], [0, -1, 0], [0, -1, 0], [0, -1, 0], [0, -1, 0], [0, -1, 0]]
+        );
+        star.delete();
+        filletWire.delete();
+        circularEdges.forEach(e => e.delete());
+    });
+
+    it("should create tan lines from two points to a circle and keep sides 1", () => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const pt1 = [3, 0, 0] as Inputs.Base.Point3;
+        const pt2 = [0, 2, 0] as Inputs.Base.Point3;
+        const edges = edge.constraintTanLinesFromTwoPtsToCircle({
+            point1: pt1,
+            point2: pt2,
+            circle,
+            positionResult: Inputs.OCCT.positionResultEnum.keepSide1,
+            circleRemainder: Inputs.OCCT.circleInclusionEnum.keepSide1,
+            tolerance: 1e-7
+        });
+        expect(edges.length).toBe(3);
+        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
+        expect(lengths).toEqual([2.82842712474619, 5.575824665437111, 1.732050807568877]);
+        circle.delete();
+        edges.forEach(e => e.delete());
+    });
+
+    it("should create tan lines from two points to a circle and keep sides 2", () => {
+        checkConstraintTanLinesFromTwoPtsToCircle(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.circleInclusionEnum.keepSide2,
+            3,
+            [2.82842712474619, 3.8489532953322696, 1.732050807568877]
+        );
+    });
+
+    it("should create tan lines from two points to a circle and keep side 1 for position of lines and keep side 2 for circle", () => {
+        checkConstraintTanLinesFromTwoPtsToCircle(
+            Inputs.OCCT.positionResultEnum.keepSide1,
+            Inputs.OCCT.circleInclusionEnum.keepSide2,
+            3,
+            [2.82842712474619, 0.7073606417424754, 1.732050807568877]
+        );
+    });
+
+    it("should create tan lines from two points to a circle and keep side 2 for position of lines and keep side 1 for circle", () => {
+        checkConstraintTanLinesFromTwoPtsToCircle(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.circleInclusionEnum.keepSide1,
+            3,
+            [2.82842712474619, 2.4342320118473175, 1.732050807568877]
+        );
+    });
+
+    it("should create tan lines from two points to a circle and keep all sides for position of lines and keep none for circle", () => {
+        checkConstraintTanLinesFromTwoPtsToCircle(
+            Inputs.OCCT.positionResultEnum.all,
+            Inputs.OCCT.circleInclusionEnum.keepSide1,
+            4,
+            [2.82842712474619, 2.82842712474619, 1.732050807568877, 1.732050807568877]
+        );
+    });
+
+    it("should create tan lines from two points to a circle and keep all side 1 for position of lines and keep none for circle", () => {
+        checkConstraintTanLinesFromTwoPtsToCircle(
+            Inputs.OCCT.positionResultEnum.keepSide1,
+            Inputs.OCCT.circleInclusionEnum.none,
+            2,
+            [2.82842712474619, 1.732050807568877]
+        );
+    });
+
+    const checkConstraintTanLinesFromTwoPtsToCircle = (pos: Inputs.OCCT.positionResultEnum, cirRem: Inputs.OCCT.circleInclusionEnum, lengthExp: number, lengthsExp: number[]) => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
+        const pt1 = [3, 0, 0] as Inputs.Base.Point3;
+        const pt2 = [0, 2, 0] as Inputs.Base.Point3;
+        const edges = edge.constraintTanLinesFromTwoPtsToCircle({
+            point1: pt1,
+            point2: pt2,
+            circle,
+            positionResult: pos,
+            circleRemainder: cirRem,
+            tolerance: 1e-7
+        });
+        expect(edges.length).toBe(lengthExp);
+        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
+        expect(lengths).toEqual(lengthsExp);
+        circle.delete();
+        edges.forEach(e => e.delete());
+    };
+
+    it("should create tan lines from one point to a circle and keep side 1 lines", () => {
+        checkConstraintTanLinesFromPtToCircle(
+            Inputs.OCCT.positionResultEnum.keepSide1,
+            Inputs.OCCT.circleInclusionEnum.none,
+            1,
+            [4.737087712930804]
+        );
+    });
+
+    it("should create tan lines from one point to a circle and keep side 2 lines", () => {
+        checkConstraintTanLinesFromPtToCircle(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.circleInclusionEnum.none,
+            1,
+            [4.737087712930805]
+        );
+    });
+
+    it("should create tan lines from one point to a circle and keep all sides", () => {
+        checkConstraintTanLinesFromPtToCircle(
+            Inputs.OCCT.positionResultEnum.all,
+            Inputs.OCCT.circleInclusionEnum.none,
+            2,
+            [4.737087712930804, 4.737087712930805]
+        );
+    });
+
+    it("should create tan lines from one point to a circle and keep all sides and a circle 1 side", () => {
+        checkConstraintTanLinesFromPtToCircle(
+            Inputs.OCCT.positionResultEnum.all,
+            Inputs.OCCT.circleInclusionEnum.keepSide1,
+            3,
+            [4.737087712930804, 6.068882605086487, 4.737087712930805]
+        );
+    });
+
+    it("should create tan lines from one point to a circle and keep all sides and a circle 2 side", () => {
+        checkConstraintTanLinesFromPtToCircle(
+            Inputs.OCCT.positionResultEnum.all,
+            Inputs.OCCT.circleInclusionEnum.keepSide2,
+            3,
+            [4.737087712930804, 3.9842138864008527, 4.737087712930805]
+        );
+    });
+
+    const checkConstraintTanLinesFromPtToCircle = (pos: Inputs.OCCT.positionResultEnum, cirRem: Inputs.OCCT.circleInclusionEnum, lengthExp: number, lengthsExp: number[]) => {
+        const circle = edge.createCircleEdge({ radius: 1.6, center: [0, 0, 0], direction: [0, 0, 1] });
+        const pt1 = [3, 4, 0] as Inputs.Base.Point3;
+        const edges = edge.constraintTanLinesFromPtToCircle({
+            point: pt1,
+            circle,
+            positionResult: pos,
+            circleRemainder: cirRem,
+            tolerance: 1e-7
+        });
+        expect(edges.length).toBe(lengthExp);
+        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
+        expect(lengths).toEqual(lengthsExp);
+        circle.delete();
+        edges.forEach(e => e.delete());
+    };
+
+    it("should create tan lines from one circle to another overlaping circle and keep side 2 and outsides of circles", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.twoCircleInclusionEnum.outside,
+            4,
+            [7.085751793882179, 0.7999999999999999, 0.7999999999999999, 1.8545904360032244]
+        );
+    });
+
+    it("should create tan lines from one circle to another overlaping circle and return no solutions for keep side 1", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide1,
+            Inputs.OCCT.twoCircleInclusionEnum.outside,
+            0,
+            []
+        );
+    });
+
+    it("should create tan lines from one circle to another overlaping circle and keep side 2 and insides of circles", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.twoCircleInclusionEnum.inside,
+            4,
+            [2.9673446976051596, 0.7999999999999999, 0.7999999999999999, 4.428594871176361]
+        );
+    });
+
+    it("should create tan lines from one circle to another overlaping circle and keep side 2 and inside and outside of circles", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.twoCircleInclusionEnum.insideOutside,
+            4,
+            [2.9673446976051596, 0.7999999999999999, 0.7999999999999999, 1.8545904360032244]
+        );
+    });
+
+    it("should create tan lines from one circle to another overlaping circle and keep side 2 and outside and inside of circles", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.twoCircleInclusionEnum.outsideInside,
+            4,
+            [7.085751793882179, 0.7999999999999999, 0.7999999999999999, 4.428594871176361]
+        );
+    });
+
+    const checkConstraintTanLinesOnTwoOverlapingCircles = (pos: Inputs.OCCT.positionResultEnum, cirsRem: Inputs.OCCT.twoCircleInclusionEnum, lengthExp: number, lengthsExp: number[]) => {
+        const circle1 = edge.createCircleEdge({ radius: 1.6, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = edge.createCircleEdge({ radius: 1, center: [1, 0, 0], direction: [0, 1, 0] });
+        const edges = edge.constraintTanLinesOnTwoCircles({
+            circle1,
+            circle2,
+            positionResult: pos,
+            circleRemainders: cirsRem,
+            tolerance: 1e-7
+        });
+        expect(edges.length).toBe(lengthExp);
+        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
+        expect(lengths).toEqual(lengthsExp);
+        circle1.delete();
+        circle2.delete();
+        edges.forEach(e => e.delete());
+    };
+
+    it("should create tan lines from one circle to another non overlaping circle and return solutions for keep side 1 and outsides of circles", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide1,
+            Inputs.OCCT.twoCircleInclusionEnum.outside,
+            4,
+            [3.738775402861678, 9.746794344808963, 9.746794344808961, 7.477550805723359,]
+        );
+    });
+
+    const checkConstraintTanLinesOnTwoNotOverlapingCircles = (pos: Inputs.OCCT.positionResultEnum, cirsRem: Inputs.OCCT.twoCircleInclusionEnum, lengthExp: number, lengthsExp: number[]) => {
+        const circle1 = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = edge.createCircleEdge({ radius: 2, center: [2, 0, 10], direction: [0, 1, 0] });
+        const edges = edge.constraintTanLinesOnTwoCircles({
+            circle1,
+            circle2,
+            positionResult: pos,
+            circleRemainders: cirsRem,
+            tolerance: 1e-7
+        });
+        expect(edges.length).toBe(lengthExp);
+        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
+        expect(lengths).toEqual(lengthsExp);
+        circle1.delete();
+        circle2.delete();
+        edges.forEach(e => e.delete());
+    };
 });
