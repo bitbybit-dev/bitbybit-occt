@@ -1221,6 +1221,18 @@ describe("OCCT edge unit tests", () => {
         );
     });
 
+    it("should create tan circles from one circle and a point outside it and return 2 solutions for mid range radius", () => {
+        checkConstraintTanCirclesOnCircleAndPnt(
+            2,
+            2,
+            [12.566370614359172, 12.566370614359172],
+            [
+                [1.007607323780357, 0, -2.8257260095529766],
+                [2.8257260095529766, 0, -1.007607323780357],
+            ]
+        );
+    });
+
     it("should not create tan circles from one circle and a point outside it if radius too small", () => {
         checkConstraintTanCirclesOnCircleAndPnt(
             0.5,
@@ -1229,6 +1241,7 @@ describe("OCCT edge unit tests", () => {
             []
         );
     });
+
     const checkConstraintTanCirclesOnCircleAndPnt = (radius: number, lengthExp: number, lengthsExp: number[], centersExp: Inputs.Base.Point3[]) => {
         const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
         const point = [3, 0, -3] as Inputs.Base.Point3;
