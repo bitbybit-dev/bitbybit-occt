@@ -743,22 +743,12 @@ describe("OCCT edge unit tests", () => {
     });
 
     it("should create tan lines from two points to a circle and keep sides 1", () => {
-        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 0, 1] });
-        const pt1 = [3, 0, 0] as Inputs.Base.Point3;
-        const pt2 = [0, 2, 0] as Inputs.Base.Point3;
-        const edges = edge.constraintTanLinesFromTwoPtsToCircle({
-            point1: pt1,
-            point2: pt2,
-            circle,
-            positionResult: Inputs.OCCT.positionResultEnum.keepSide1,
-            circleRemainder: Inputs.OCCT.circleInclusionEnum.keepSide1,
-            tolerance: 1e-7
-        });
-        expect(edges.length).toBe(3);
-        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
-        expect(lengths).toEqual([2.82842712474619, 5.575824665437111, 1.732050807568877]);
-        circle.delete();
-        edges.forEach(e => e.delete());
+        checkConstraintTanLinesFromTwoPtsToCircle(
+            Inputs.OCCT.positionResultEnum.keepSide1,
+            Inputs.OCCT.circleInclusionEnum.keepSide1,
+            3,
+            [2.82842712474619, 5.575824665437111, 1.732050807568877]
+        );
     });
 
     it("should create tan lines from two points to a circle and keep sides 2", () => {
@@ -803,6 +793,15 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.circleInclusionEnum.none,
             2,
             [2.82842712474619, 1.732050807568877]
+        );
+    });
+
+    it("should create tan lines from two points to a circle and return all solutions for unrecognized enum value", () => {
+        checkConstraintTanLinesFromTwoPtsToCircle(
+            "whatever" as any,
+            Inputs.OCCT.circleInclusionEnum.none,
+            4,
+            [2.82842712474619, 2.82842712474619, 1.732050807568877, 1.732050807568877]
         );
     });
 
@@ -864,6 +863,15 @@ describe("OCCT edge unit tests", () => {
     it("should create tan lines from one point to a circle and keep all sides and a circle 2 side", () => {
         checkConstraintTanLinesFromPtToCircle(
             Inputs.OCCT.positionResultEnum.all,
+            Inputs.OCCT.circleInclusionEnum.keepSide2,
+            3,
+            [4.737087712930804, 3.9842138864008527, 4.737087712930805]
+        );
+    });
+
+    it("should create tan lines from one point to a circle and keep all sides for unrecognized position enum", () => {
+        checkConstraintTanLinesFromPtToCircle(
+            "whatever" as any,
             Inputs.OCCT.circleInclusionEnum.keepSide2,
             3,
             [4.737087712930804, 3.9842138864008527, 4.737087712930805]
@@ -950,12 +958,94 @@ describe("OCCT edge unit tests", () => {
         edges.forEach(e => e.delete());
     };
 
+    it("should create tan lines from one circle to another non overlaping circle and return all solutions for lines and none of circles", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.all,
+            Inputs.OCCT.twoCircleInclusionEnum.none,
+            4,
+            [10.148891565092217, 9.746794344808963, 10.14889156509222, 9.746794344808961]
+        );
+    });
+
+    it("should create tan lines from one circle to another non overlaping circle and return all solutions for lines if unrecognized enum", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            "whatever" as any,
+            Inputs.OCCT.twoCircleInclusionEnum.none,
+            4,
+            [10.148891565092217, 9.746794344808963, 10.14889156509222, 9.746794344808961]
+        );
+    });
+
     it("should create tan lines from one circle to another non overlaping circle and return solutions for keep side 1 and outsides of circles", () => {
         checkConstraintTanLinesOnTwoNotOverlapingCircles(
             Inputs.OCCT.positionResultEnum.keepSide1,
             Inputs.OCCT.twoCircleInclusionEnum.outside,
             4,
             [3.738775402861678, 9.746794344808963, 9.746794344808961, 7.477550805723359,]
+        );
+    });
+
+    it("should create tan lines from one circle to another non overlaping circle and return solutions for keep side 2 and outsides of circles", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.twoCircleInclusionEnum.outside,
+            4,
+            [2.9451608620359457, 10.148891565092217, 10.14889156509222, 6.676048890287282]
+        );
+    });
+
+    it("should create tan lines from one circle to another non overlaping circle and return solutions for keep side 2 and insides of circles", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.twoCircleInclusionEnum.inside,
+            4,
+            [3.338024445143641, 10.148891565092217, 10.14889156509222, 5.8903217240718915]
+        );
+    });
+
+    it("should create tan lines from one circle to another non overlaping circle and return solutions for keep side 2 and inside and outside of circles", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.twoCircleInclusionEnum.insideOutside,
+            4,
+            [3.338024445143641, 10.148891565092217, 10.14889156509222, 6.676048890287282]
+        );
+    });
+
+    it("should create tan lines from one circle to another non overlaping circle and return solutions for keep side 2 and outside and inside of circles", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide2,
+            Inputs.OCCT.twoCircleInclusionEnum.insideOutside,
+            4,
+            [3.338024445143641, 10.148891565092217, 10.14889156509222, 6.676048890287282]
+        );
+    });
+
+
+    it("should create tan lines from one circle to another non overlaping circle and return solutions for keep side 1 and insides of circles", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide1,
+            Inputs.OCCT.twoCircleInclusionEnum.inside,
+            4,
+            [2.5444099043179085, 9.746794344808963, 9.746794344808961, 5.088819808635814]
+        );
+    });
+
+    it("should create tan lines from one circle to another non overlaping circle and return solutions for keep side 1 and inside and outside of circles", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide1,
+            Inputs.OCCT.twoCircleInclusionEnum.insideOutside,
+            4,
+            [2.5444099043179085, 9.746794344808963, 9.746794344808961, 7.477550805723359]
+        );
+    });
+
+    it("should create tan lines from one circle to another non overlaping circle and return solutions for keep side 1 and outside and inside of circles", () => {
+        checkConstraintTanLinesOnTwoNotOverlapingCircles(
+            Inputs.OCCT.positionResultEnum.keepSide1,
+            Inputs.OCCT.twoCircleInclusionEnum.outsideInside,
+            4,
+            [3.738775402861678, 9.746794344808963, 9.746794344808961, 5.088819808635814]
         );
     });
 
@@ -972,6 +1062,146 @@ describe("OCCT edge unit tests", () => {
         expect(edges.length).toBe(lengthExp);
         const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
         expect(lengths).toEqual(lengthsExp);
+        circle1.delete();
+        circle2.delete();
+        edges.forEach(e => e.delete());
+    };
+
+    it("should create tan circles from one circle to another non overlaping circle and return 2 solutions in case radius only reaches enough", () => {
+        checkConstraintTanCirclesOnTwoNotOverlapingCircles(
+            4,
+            2,
+            [25.132741228718345, 25.132741228718345],
+            [
+                [2.9060073031642, 0, 4.068798539367161],
+                [-1.1175457647026619, 0, 4.8735091529405326]
+            ]
+        );
+    });
+
+    it("should create tan circles from one circle to another non overlaping circle and return 4 solutions in case radius reaches enough", () => {
+        checkConstraintTanCirclesOnTwoNotOverlapingCircles(
+            5,
+            4,
+            [31.41592653589793, 31.41592653589793, 31.41592653589793, 31.41592653589793],
+            [
+                [2.614762624750974, 0, 3.0270474750498058],
+                [-1.2493780093663585, 0, 3.799875601873272],
+                [4.808797098908968, 0, 3.5882405802182076],
+                [-3.0587970989089683, 0, 5.161759419781794],
+            ]
+        );
+    });
+
+    const checkConstraintTanCirclesOnTwoNotOverlapingCircles = (radius: number, lengthExp: number, lengthsExp: number[], centersExp: Inputs.Base.Point3[]) => {
+        const circle1 = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = edge.createCircleEdge({ radius: 2, center: [2, 0, 10], direction: [0, 1, 0] });
+        const edges = edge.constraintTanCirclesOnTwoCircles({
+            circle1,
+            circle2,
+            radius,
+            tolerance: 1e-7
+        });
+        expect(edges.length).toBe(lengthExp);
+        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
+        const centers = edges.map(e => edge.getCircularEdgeCenterPoint({ shape: e }));
+        expect(lengths).toEqual(lengthsExp);
+        expect(centers).toEqual(centersExp);
+        circle1.delete();
+        circle2.delete();
+        edges.forEach(e => e.delete());
+    };
+
+    it("should create tan circles from one circle to another overlaping circle and return 8 solutions in case radius is small enough", () => {
+        checkConstraintTanCirclesOnTwoOverlapingCircles(
+            0.05,
+            8,
+            [0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937],
+            [
+                [0.8280264491643186, 0, 0.4656953934540581],
+                [0.1719735508356814, 0, 0.9343046065459418],
+                [0.8804390224883223, 0, 0.3568292696511984],
+                [0.051993409944110114, 0, 0.9485761357542071],
+                [0.9480065900558897, 0, 0.4514238642457931],
+                [0.11956097751167805, 0, 1.0431707303488016],
+                [0.9899324277732429, 0, 0.35004826587625504],
+                [0.010067572226757193, 0, 1.049951734123745],
+            ]
+        );
+    });
+
+    it("should create tan circles from one circle to another overlaping circle and return 6 solutions in case radius is larger", () => {
+        checkConstraintTanCirclesOnTwoOverlapingCircles(
+            0.2,
+            6,
+            [1.2566370614359175, 1.2566370614359175, 1.2566370614359175, 1.2566370614359175, 1.2566370614359175, 1.2566370614359175],
+            [
+                [0.7684191974430021, 0, 0.22255771611214142],
+                [-0.03868946771327236, 0, 0.7990639055094804],
+                [1.0386894677132723, 0, 0.6009360944905199],
+                [0.2315808025569982, 0, 1.1774422838878587],
+                [1.1808182676114922, 0, 0.21370123742036295],
+                [-0.180818267611492, 0, 1.1862987625796375]
+            ]
+        );
+    });
+
+    it("should create tan circles from one circle to another overlaping circle and return 4 solutions in case radius is very large", () => {
+        checkConstraintTanCirclesOnTwoOverlapingCircles(
+            3,
+            4,
+            [18.849555921538762, 18.849555921538762, 18.849555921538762, 18.849555921538762],
+            [
+                [1.969234034675432, 0, -0.349452881911023],
+                [-0.969234034675432, 0, 1.7494528819110229],
+                [3.678772498087051, 0, -1.5705517843478938],
+                [-2.678772498087051, 0, 2.970551784347894],
+            ]
+        );
+    });
+
+    const checkConstraintTanCirclesOnTwoOverlapingCircles = (radius: number, lengthExp: number, lengthsExp: number[], centersExp: Inputs.Base.Point3[]) => {
+        const circle1 = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = edge.createCircleEdge({ radius: 1, center: [1, 0, 1.4], direction: [0, 1, 0] });
+        const edges = edge.constraintTanCirclesOnTwoCircles({
+            circle1,
+            circle2,
+            radius,
+            tolerance: 1e-7
+        });
+        expect(edges.length).toBe(lengthExp);
+        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
+        const centers = edges.map(e => edge.getCircularEdgeCenterPoint({ shape: e }));
+        expect(lengths).toEqual(lengthsExp);
+        expect(centers).toEqual(centersExp);
+        circle1.delete();
+        circle2.delete();
+        edges.forEach(e => e.delete());
+    };
+
+
+    it("should create tan circles from one circle to another non overlaping inside circle and return no solutions", () => {
+        checkConstraintTanCirclesOnTwoNonOverlapingCirclesInsideEachOther(
+            0.3,
+            0,
+            [],
+            []
+        );
+    });
+    const checkConstraintTanCirclesOnTwoNonOverlapingCirclesInsideEachOther = (radius: number, lengthExp: number, lengthsExp: number[], centersExp: Inputs.Base.Point3[]) => {
+        const circle1 = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = edge.createCircleEdge({ radius: 0.5, center: [0, 0, 0], direction: [0, 1, 0] });
+        const edges = edge.constraintTanCirclesOnTwoCircles({
+            circle1,
+            circle2,
+            radius,
+            tolerance: 1e-7
+        });
+        expect(edges.length).toBe(lengthExp);
+        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
+        const centers = edges.map(e => edge.getCircularEdgeCenterPoint({ shape: e }));
+        expect(lengths).toEqual(lengthsExp);
+        expect(centers).toEqual(centersExp);
         circle1.delete();
         circle2.delete();
         edges.forEach(e => e.delete());
