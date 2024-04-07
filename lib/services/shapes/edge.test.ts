@@ -1179,7 +1179,6 @@ describe("OCCT edge unit tests", () => {
         edges.forEach(e => e.delete());
     };
 
-
     it("should create tan circles from one circle to another non overlaping inside circle and return no solutions", () => {
         checkConstraintTanCirclesOnTwoNonOverlapingCirclesInsideEachOther(
             0.3,
@@ -1188,6 +1187,7 @@ describe("OCCT edge unit tests", () => {
             []
         );
     });
+
     const checkConstraintTanCirclesOnTwoNonOverlapingCirclesInsideEachOther = (radius: number, lengthExp: number, lengthsExp: number[], centersExp: Inputs.Base.Point3[]) => {
         const circle1 = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
         const circle2 = edge.createCircleEdge({ radius: 0.5, center: [0, 0, 0], direction: [0, 1, 0] });
@@ -1204,6 +1204,46 @@ describe("OCCT edge unit tests", () => {
         expect(centers).toEqual(centersExp);
         circle1.delete();
         circle2.delete();
+        edges.forEach(e => e.delete());
+    };
+
+    it("should create tan circles from one circle and a point outside it and return solutions", () => {
+        checkConstraintTanCirclesOnCircleAndPnt(
+            4,
+            4,
+            [25.132741228718345, 25.132741228718345, 25.132741228718345, 25.132741228718345],
+            [
+                [-0.9963733805414999, 0, -2.8297067138748333],
+                [2.8297067138748333, 0, 0.9963733805414999],
+                [-0.47717802865892844, 0, -4.97717802865893],
+                [4.97717802865893, 0, 0.47717802865892844]
+            ]
+        );
+    });
+
+    it("should not create tan circles from one circle and a point outside it if radius too small", () => {
+        checkConstraintTanCirclesOnCircleAndPnt(
+            0.5,
+            0,
+            [],
+            []
+        );
+    });
+    const checkConstraintTanCirclesOnCircleAndPnt = (radius: number, lengthExp: number, lengthsExp: number[], centersExp: Inputs.Base.Point3[]) => {
+        const circle = edge.createCircleEdge({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+        const point = [3, 0, -3] as Inputs.Base.Point3;
+        const edges = edge.constraintTanCirclesOnCircleAndPnt({
+            circle,
+            point,
+            radius,
+            tolerance: 1e-7
+        });
+        expect(edges.length).toBe(lengthExp);
+        const lengths = edges.map(e => edge.getEdgeLength({ shape: e }));
+        const centers = edges.map(e => edge.getCircularEdgeCenterPoint({ shape: e }));
+        expect(lengths).toEqual(lengthsExp);
+        expect(centers).toEqual(centersExp);
+        circle.delete();
         edges.forEach(e => e.delete());
     };
 });
