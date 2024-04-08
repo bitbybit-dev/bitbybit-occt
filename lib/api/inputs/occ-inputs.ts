@@ -2320,7 +2320,7 @@ export namespace OCCT {
          */
         wire2: T;
         /**
-         * How many zig zags to create between the two wires. One zig zag means two edges forming a corner.
+         * How many zig zags to create between the two wires on each edge. The number of edges should match. Edges will be joined by zigzags in order. One zig zag means two edges forming a corner.
          * @default 20
          * @minimum 1
          * @maximum Infinity

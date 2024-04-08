@@ -1,4 +1,4 @@
-import initOpenCascade, { OpenCascadeInstance, TopoDS_Compound, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import initOpenCascade, { OpenCascadeInstance, TopoDS_Compound, TopoDS_Shape, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OCCTEdge } from "./edge";
 import { OccHelper } from "../../occ-helper";
 import { OCCTWire } from "./wire";
@@ -7,12 +7,14 @@ import { ShapesHelperService } from "../../api/shapes-helper.service";
 import * as Inputs from "../../api/inputs/inputs";
 import { OCCTFace } from "./face";
 import { OCCTShape } from "./shape";
+import { OCCTBooleans } from "../booleans";
 
 describe("OCCT wire unit tests", () => {
     let occt: OpenCascadeInstance;
     let wire: OCCTWire;
     let edge: OCCTEdge;
     let face: OCCTFace;
+    let booleans: OCCTBooleans;
     let shape: OCCTShape;
     let occHelper: OccHelper;
 
@@ -25,6 +27,7 @@ describe("OCCT wire unit tests", () => {
         wire = new OCCTWire(occt, occHelper);
         face = new OCCTFace(occt, occHelper);
         shape = new OCCTShape(occt, occHelper);
+        booleans = new OCCTBooleans(occt, occHelper);
     });
 
     it("should create a circle edge of the right radius and it will mach the length", async () => {
@@ -1239,5 +1242,69 @@ describe("OCCT wire unit tests", () => {
         expect(centers[1][2]).toBeCloseTo(1);
     });
 
-});
+    it("should create zig zag wire between two wires", () => {
+        const w1 = wire.createCircleWire({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
+        const w2 = wire.createCircleWire({ radius: 3, center: [0, 4, 0], direction: [0, 0, 1] });
 
+        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: false });
+        const length = wire.getWireLength({ shape: zigZagWire });
+        expect(length).toBeCloseTo(50.260581938510676);
+        const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: zigZagWire });
+        expect(cornerPoints.length).toBe(10);
+        w1.delete();
+        w2.delete();
+        zigZagWire.delete();
+    });
+
+    it("should create inverse zig zag wire between two wires", () => {
+        const w1 = wire.createCircleWire({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
+        const w2 = wire.createCircleWire({ radius: 3, center: [0, 4, 0], direction: [0, 0, 1] });
+
+        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: true });
+        const length = wire.getWireLength({ shape: zigZagWire });
+        expect(length).toBeCloseTo(50.72841254233739);
+        const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: zigZagWire });
+        expect(cornerPoints.length).toBe(10);
+        w1.delete();
+        w2.delete();
+        zigZagWire.delete();
+    });
+
+    it("should create inverse zig zag wire between two wires", () => {
+        const w1 = wire.createSquareWire({ size: 2, center: [0, 0, 0], direction: [0, 1, 0] });
+        const w2 = wire.createSquareWire({ size: 3, center: [0, 4, 0], direction: [0, 0, 1] });
+
+        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: true });
+        const length = wire.getWireLength({ shape: zigZagWire });
+        expect(length).toBeCloseTo(174.35848368606852);
+        const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: zigZagWire });
+        expect(cornerPoints.length).toBe(40);
+        w1.delete();
+        w2.delete();
+        zigZagWire.delete();
+    });
+
+    it("should trnasform wires to points", () => {
+        const squareFace = face.createRectangleFace({ width: 10, length: 20, center: [0, 0, 0], direction: [0, 1, 0] });
+        const edges = edge.getEdges({ shape: squareFace });
+        const points = edges.map(e => [edge.pointOnEdgeAtParam({ shape: e, param: 0.3 }), edge.pointOnEdgeAtParam({ shape: e, param: 0.6 })]).flat();
+        const circleFaces = points.map(p => face.createCircleFace({ radius: 1, center: p, direction: [0, 1, 0] }));
+        const diff = booleans.difference({ shape: squareFace, shapes: circleFaces.reverse(), keepEdges: true });
+        const w = wire.getWire({ shape: diff, index: 0 });
+        const opt = new Inputs.OCCT.WiresToPointsDto<TopoDS_Shape>();
+        opt.shape = w;
+        const pts = wire.wiresToPoints(opt);
+        expect(pts.length).toBe(1);
+        expect(pts[0].length).toBe(269);
+        expect(pts[0][0]).toEqual([5, 0, -1]);
+        expect(pts[0][33]).toEqual([5, 0, -10]);
+        expect(pts[0][123]).toEqual([-4.168530387697455, 0, -3.444429766980398]);
+        expect(pts[0][200]).toEqual([-1, 0, 10]);
+        expect(pts[0][268]).toEqual([5, 0, -1]);
+        squareFace.delete();
+        edges.forEach(e => e.delete());
+        circleFaces.forEach(f => f.delete());
+        diff.delete();
+        w.delete();
+    });
+});
