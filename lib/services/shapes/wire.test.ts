@@ -1307,4 +1307,39 @@ describe("OCCT wire unit tests", () => {
         diff.delete();
         w.delete();
     });
+
+    it("should create reversed wire from reversed edges", () => {
+        const squareFace = face.createRectangleFace({ width: 10, length: 20, center: [0, 0, 0], direction: [0, 1, 0] });
+        const edges = edge.getEdges({ shape: squareFace });
+        const points = edges.map(e => [edge.pointOnEdgeAtParam({ shape: e, param: 0.3 }), edge.pointOnEdgeAtParam({ shape: e, param: 0.6 })]).flat();
+        const circleFaces = points.map(p => face.createCircleFace({ radius: 1, center: p, direction: [0, 1, 0] }));
+        const diff = booleans.difference({ shape: squareFace, shapes: circleFaces.reverse(), keepEdges: true });
+        const w = wire.getWire({ shape: diff, index: 0 });
+        const opt = new Inputs.OCCT.ShapeDto<TopoDS_Shape>();
+        opt.shape = w;
+
+        const wireReversed = wire.reversedWireFromReversedEdges(opt);
+
+        const lastEdgeOnWire = edge.getEdgesAlongWire({ shape: w }).pop();
+        const firstEdgeOnReversedWire = edge.getEdgesAlongWire({ shape: wireReversed }).shift();
+
+        const startPointOnEdge = edge.startPointOnEdge({ shape: lastEdgeOnWire });
+        const startPointOnReversedEdge = edge.startPointOnEdge({ shape: firstEdgeOnReversedWire });
+        const endPointOnEdge = edge.endPointOnEdge({ shape: lastEdgeOnWire });
+        const endPointOnReversedEdge = edge.endPointOnEdge({ shape: firstEdgeOnReversedWire });
+
+        expect(startPointOnEdge).toEqual(endPointOnReversedEdge);
+        expect(endPointOnEdge).toEqual(startPointOnReversedEdge);
+
+        lastEdgeOnWire.delete();
+        firstEdgeOnReversedWire.delete();
+        wireReversed.delete();
+        squareFace.delete();
+        edges.forEach(e => e.delete());
+        circleFaces.forEach(f => f.delete());
+        diff.delete();
+        w.delete();
+    });
+
+    
 });
