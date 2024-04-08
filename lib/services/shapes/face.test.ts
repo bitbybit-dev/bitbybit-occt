@@ -1004,7 +1004,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should create face from multiple circle tan wire collections by using strategy in order (to form separate faces)", () => {
-        
+
         const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(4);
 
         const f = face.createFaceFromMultipleCircleTanWireCollections({
@@ -1019,12 +1019,7 @@ describe("OCCT face unit tests", () => {
         const area = face.getFaceArea({ shape: f });
         expect(area).toBe(172.58436431800175);
 
-        circle1.delete();
-        circle2.delete();
-        circle3.delete();
-        circlesOnPts1.forEach((c) => c.delete());
-        circlesOnPts2.forEach((c) => c.delete());
-        circlesOnPts3.forEach((c) => c.delete());
+        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
         f.delete();
         faces.forEach((f) => f.delete());
     });
@@ -1041,12 +1036,7 @@ describe("OCCT face unit tests", () => {
             });
         }).toThrowError("All lists of circles must have the same length in order to use inOrder strategy.");
 
-        circle1.delete();
-        circle2.delete();
-        circle3.delete();
-        circlesOnPts1.forEach((c) => c.delete());
-        circlesOnPts2.forEach((c) => c.delete());
-        circlesOnPts3.forEach((c) => c.delete());
+        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
     });
 
     it("should create face from multiple circle tan wire collections by using strategy all witj all (to form a single face)", () => {
@@ -1064,12 +1054,7 @@ describe("OCCT face unit tests", () => {
         const area = face.getFaceArea({ shape: f });
         expect(area).toBe(767.6148455097346);
 
-        circle1.delete();
-        circle2.delete();
-        circle3.delete();
-        circlesOnPts1.forEach((c) => c.delete());
-        circlesOnPts2.forEach((c) => c.delete());
-        circlesOnPts3.forEach((c) => c.delete());
+        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
         f.delete();
         faces.forEach((f) => f.delete());
     });
@@ -1089,12 +1074,36 @@ describe("OCCT face unit tests", () => {
         const area = face.getFaceArea({ shape: f });
         expect(area).toBe(693.4583936058482);
 
-        circle1.delete();
-        circle2.delete();
-        circle3.delete();
-        circlesOnPts1.forEach((c) => c.delete());
-        circlesOnPts2.forEach((c) => c.delete());
-        circlesOnPts3.forEach((c) => c.delete());
+        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+        f.delete();
+        faces.forEach((f) => f.delete());
+    });
+
+    it("should create face from multiple circle tan wire collections by using strategy in order closed (to form a grid) and not unify the faces into one", () => {
+        const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
+
+        const f = face.createFaceFromMultipleCircleTanWireCollections({
+            listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+            combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+            unify: false,
+            tolerance: 1e-7
+        });
+
+        const faces = face.getFaces({ shape: f });
+        expect(faces.length).toBe(15);
+        const areas = face.getFacesAreas({ shapes: faces });
+        expect(areas).toEqual([
+            23.741592653589795, 22.84844425398502,
+            22.848444253985033, 23.141592653589793,
+            23.14159265358979, 23.141592653589775,
+            37.78260880496733, 37.782608804967325,
+            37.78260880496735, 72.42362495634481,
+            72.42362495634487, 72.42362495634481,
+            107.06464110772245, 107.06464110772241,
+            107.0646411077224
+        ]);
+
+        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
         f.delete();
         faces.forEach((f) => f.delete());
     });
@@ -1111,12 +1120,7 @@ describe("OCCT face unit tests", () => {
             });
         }).toThrowError("All lists of circles must have the same length in order to use inOrderClosed strategy.");
 
-        circle1.delete();
-        circle2.delete();
-        circle3.delete();
-        circlesOnPts1.forEach((c) => c.delete());
-        circlesOnPts2.forEach((c) => c.delete());
-        circlesOnPts3.forEach((c) => c.delete());
+        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
     });
 
     const createCirclesForFaceConstruction = (nrOfDivisions: number) => {
@@ -1150,5 +1154,14 @@ describe("OCCT face unit tests", () => {
         return { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 };
     };
 
+
+    const deleteCircleShapes = (circle1: TopoDS_Wire, circle2: TopoDS_Wire, circle3: TopoDS_Wire, circlesOnPts1: TopoDS_Wire[], circlesOnPts2: TopoDS_Wire[], circlesOnPts3: TopoDS_Wire[]) => {
+        circle1.delete();
+        circle2.delete();
+        circle3.delete();
+        circlesOnPts1.forEach((c) => c.delete());
+        circlesOnPts2.forEach((c) => c.delete());
+        circlesOnPts3.forEach((c) => c.delete());
+    };
 
 });
