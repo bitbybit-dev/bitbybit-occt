@@ -1341,5 +1341,107 @@ describe("OCCT wire unit tests", () => {
         w.delete();
     });
 
-    
+    it("should create tan wire from one circle to another overlaping circle and keep outside lines and outside circles", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.outside,
+            Inputs.OCCT.fourSidesStrictEnum.outside,
+            10.540342229885404,
+        );
+    });
+
+    it("should create tan wire from one circle to another overlaping circle and keep outside lines and inside circles", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.outside,
+            Inputs.OCCT.fourSidesStrictEnum.inside,
+            8.99593956878152,
+        );
+    });
+
+    it("should create tan wire from one circle to another overlaping circle and keep outside lines and inside of one circle and outside of other", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.outside,
+            Inputs.OCCT.fourSidesStrictEnum.insideOutside,
+            6.421935133608384,
+        );
+    });
+
+    it("should create tan wire from one circle to another overlaping circle and keep outside lines and outside of one circle and inside of other", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.outside,
+            Inputs.OCCT.fourSidesStrictEnum.outsideInside,
+            13.114346665058541,
+        );
+    });
+
+    it("should not create tan wire from one circle to another overlaping circle and keep inside lines and outside circles", () => {
+        expect(() => {
+            checkConstraintTanLinesOnTwoOverlapingCircles(
+                Inputs.OCCT.twoSidesStrictEnum.inside,
+                Inputs.OCCT.fourSidesStrictEnum.outside,
+                10.540342229885404,
+            );
+        }).toThrow();
+    });
+
+    const checkConstraintTanLinesOnTwoOverlapingCircles = (pos: Inputs.OCCT.twoSidesStrictEnum, cirsRem: Inputs.OCCT.fourSidesStrictEnum, lengthExp: number) => {
+        const circle1 = wire.createCircleWire({ radius: 1.6, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = wire.createCircleWire({ radius: 1, center: [1, 0, 0], direction: [0, 1, 0] });
+        const w = wire.createWireFromTwoCirclesTan({
+            circle1,
+            circle2,
+            keepLines: pos,
+            circleRemainders: cirsRem,
+            tolerance: 1e-7
+        });
+        const length = wire.getWireLength({ shape: w });
+        expect(length).toEqual(lengthExp);
+        w.delete();
+    };
+
+    it("should create tan wire from one circle to another non overlaping circle and keep inside lines and insides of circles", () => {
+        checkConstraintTanLinesOnTwoNonOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.inside,
+            Inputs.OCCT.fourSidesStrictEnum.inside,
+            10.56817548978988,
+        );
+    });
+
+    it("should create tan wire from one circle to another non overlaping circle and keep inside lines and outsides of circles", () => {
+        checkConstraintTanLinesOnTwoNonOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.inside,
+            Inputs.OCCT.fourSidesStrictEnum.outside,
+            17.927053631733575,
+        );
+    });
+
+    it("should create tan wire from one circle to another non overlaping circle and keep inside lines and outside of one circle and inside of other", () => {
+        checkConstraintTanLinesOnTwoNonOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.inside,
+            Inputs.OCCT.fourSidesStrictEnum.outsideInside,
+            15.096715884832154,
+        );
+    });
+
+    it("should create tan wire from one circle to another non overlaping circle and keep inside lines and inside of one circle and outside of other", () => {
+        checkConstraintTanLinesOnTwoNonOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.inside,
+            Inputs.OCCT.fourSidesStrictEnum.insideOutside,
+            13.3985132366913,
+        );
+    });
+
+    const checkConstraintTanLinesOnTwoNonOverlapingCircles = (pos: Inputs.OCCT.twoSidesStrictEnum, cirsRem: Inputs.OCCT.fourSidesStrictEnum, lengthExp: number) => {
+        const circle1 = wire.createCircleWire({ radius: 1.6, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = wire.createCircleWire({ radius: 1, center: [4, 0, 0], direction: [0, 1, 0] });
+        const w = wire.createWireFromTwoCirclesTan({
+            circle1,
+            circle2,
+            keepLines: pos,
+            circleRemainders: cirsRem,
+            tolerance: 1e-7
+        });
+        const length = wire.getWireLength({ shape: w });
+        expect(length).toEqual(lengthExp);
+        w.delete();
+    };
 });
