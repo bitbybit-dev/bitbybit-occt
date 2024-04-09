@@ -1003,165 +1003,295 @@ describe("OCCT face unit tests", () => {
         f1.delete();
     });
 
-    it("should create face from multiple circle tan wire collections by using strategy in order (to form separate faces)", () => {
+    describe("Face from multiple circle tan wires", () => {
+        it("should create face from two circle tan wires by using all with all strategy", () => {
+            const circle1 = wire.createCircleWire({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 0.2, center: [0, 0, 2], direction: [0, 1, 0] });
 
-        const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(4);
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles: [circle1, circle2],
+                combination: OCCT.combinationCirclesForFaceEnum.allWithAll,
+                unify: true,
+                tolerance: 1e-7
+            });
 
-        const f = face.createFaceFromMultipleCircleTanWireCollections({
-            listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
-            combination: OCCT.combinationCirclesForFaceEnum.inOrder,
-            unify: true,
-            tolerance: 1e-7
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(4.228320685670285);
+
+            circle1.delete();
+            circle2.delete();
+            f.delete();
+            faces.forEach((f) => f.delete());
         });
 
-        const faces = face.getFaces({ shape: f });
-        expect(faces.length).toBe(4);
-        const area = face.getFaceArea({ shape: f });
-        expect(area).toBe(172.58436431800175);
+        it("should create face from four circle tan wires by using allWithAll strategy", () => {
+            const circles = create4CirclesForFaceConstruction();
 
-        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
-        f.delete();
-        faces.forEach((f) => f.delete());
-    });
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles,
+                combination: OCCT.combinationCirclesForFaceEnum.allWithAll,
+                unify: true,
+                tolerance: 1e-7
+            });
 
-    it("should not create face from multiple circle tan wire collections by using strategy in order if circle lists are not of equal length", () => {
-        const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createNonEqualCircles(4);
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(27.584215142769313);
 
-        expect(() => {
-            face.createFaceFromMultipleCircleTanWireCollections({
+            circles.forEach((c) => c.delete());
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should create face from four circle tan wires by using inOrder strategy", () => {
+            const circles = create4CirclesForFaceConstruction();
+
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles,
+                combination: OCCT.combinationCirclesForFaceEnum.inOrder,
+                unify: true,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(21.828359362876572);
+
+            circles.forEach((c) => c.delete());
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should create face from four circle tan wires by using inOrderClosed strategy", () => {
+            const circles = create4CirclesForFaceConstruction();
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles,
+                combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+                unify: true,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(24.764075269346932);
+
+            circles.forEach((c) => c.delete());
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+
+        it("should create face from four circle tan wires by using inOrderClosed strategy and return non-unified result of compounded shapes", () => {
+            const circles = create4CirclesForFaceConstruction();
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles,
+                combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+                unify: false,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(4);
+            const areas = faces.map(f => face.getFaceArea({ shape: f }));
+            expect(areas).toEqual([4.228320685670285, 8.94581601121022, 18.478357180330566, 9.320341329624728]);
+
+            circles.forEach((c) => c.delete());
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        const create4CirclesForFaceConstruction = () => {
+            const circle1 = wire.createCircleWire({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 0.2, center: [0, 0, 2], direction: [0, 1, 0] });
+            const circle3 = wire.createCircleWire({ radius: 1.3, center: [4, 0, 2], direction: [0, 1, 0] });
+            const circle4 = wire.createCircleWire({ radius: 0.6, center: [-4, 0, 2], direction: [0, 1, 0] });
+            return [circle1, circle2, circle3, circle4];
+        };
+
+        it("should not create face from two circle tan wires by using all with all strategy if circles are inside each other", () => {
+            const circle1 = wire.createCircleWire({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 0.2, center: [0, 0, 0], direction: [0, 1, 0] });
+
+            expect(() => {
+                face.createFaceFromMultipleCircleTanWires({
+                    circles: [circle1, circle2],
+                    combination: OCCT.combinationCirclesForFaceEnum.allWithAll,
+                    unify: true,
+                    tolerance: 1e-7
+                });
+            }).toThrow();
+
+            circle1.delete();
+            circle2.delete();
+        });
+
+        it("should create face from multiple circle tan wire collections by using strategy in order (to form separate faces)", () => {
+
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(4);
+
+            const f = face.createFaceFromMultipleCircleTanWireCollections({
                 listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
                 combination: OCCT.combinationCirclesForFaceEnum.inOrder,
                 unify: true,
                 tolerance: 1e-7
             });
-        }).toThrowError("All lists of circles must have the same length in order to use inOrder strategy.");
 
-        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
-    });
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(4);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(172.58436431800175);
 
-    it("should create face from multiple circle tan wire collections by using strategy all witj all (to form a single face)", () => {
-        const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
-
-        const f = face.createFaceFromMultipleCircleTanWireCollections({
-            listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
-            combination: OCCT.combinationCirclesForFaceEnum.allWithAll,
-            unify: true,
-            tolerance: 1e-7
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+            f.delete();
+            faces.forEach((f) => f.delete());
         });
 
-        const faces = face.getFaces({ shape: f });
-        expect(faces.length).toBe(1);
-        const area = face.getFaceArea({ shape: f });
-        expect(area).toBe(767.6148455097346);
+        it("should not create face from multiple circle tan wire collections by using strategy in order if circle lists are not of equal length", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createNonEqualCircles(4);
 
-        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
-        f.delete();
-        faces.forEach((f) => f.delete());
-    });
+            expect(() => {
+                face.createFaceFromMultipleCircleTanWireCollections({
+                    listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                    combination: OCCT.combinationCirclesForFaceEnum.inOrder,
+                    unify: true,
+                    tolerance: 1e-7
+                });
+            }).toThrowError("All lists of circles must have the same length in order to use inOrder strategy.");
 
-    it("should create face from multiple circle tan wire collections by using strategy in order closed (to form a grid)", () => {
-        const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
-
-        const f = face.createFaceFromMultipleCircleTanWireCollections({
-            listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
-            combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
-            unify: true,
-            tolerance: 1e-7
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
         });
 
-        const faces = face.getFaces({ shape: f });
-        expect(faces.length).toBe(1);
-        const area = face.getFaceArea({ shape: f });
-        expect(area).toBe(693.4583936058482);
+        it("should create face from multiple circle tan wire collections by using strategy all witj all (to form a single face)", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
 
-        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
-        f.delete();
-        faces.forEach((f) => f.delete());
-    });
+            const f = face.createFaceFromMultipleCircleTanWireCollections({
+                listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                combination: OCCT.combinationCirclesForFaceEnum.allWithAll,
+                unify: true,
+                tolerance: 1e-7
+            });
 
-    it("should create face from multiple circle tan wire collections by using strategy in order closed (to form a grid) and not unify the faces into one", () => {
-        const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(767.6148455097346);
 
-        const f = face.createFaceFromMultipleCircleTanWireCollections({
-            listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
-            combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
-            unify: false,
-            tolerance: 1e-7
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+            f.delete();
+            faces.forEach((f) => f.delete());
         });
 
-        const faces = face.getFaces({ shape: f });
-        expect(faces.length).toBe(15);
-        const areas = face.getFacesAreas({ shapes: faces });
-        expect(areas).toEqual([
-            23.741592653589795, 22.84844425398502,
-            22.848444253985033, 23.141592653589793,
-            23.14159265358979, 23.141592653589775,
-            37.78260880496733, 37.782608804967325,
-            37.78260880496735, 72.42362495634481,
-            72.42362495634487, 72.42362495634481,
-            107.06464110772245, 107.06464110772241,
-            107.0646411077224
-        ]);
+        it("should create face from multiple circle tan wire collections by using strategy in order closed (to form a grid)", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
 
-        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
-        f.delete();
-        faces.forEach((f) => f.delete());
-    });
-
-    it("should not create face from multiple circle tan wire collections by using strategy in order closed if circle lists are not of equal length", () => {
-        const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createNonEqualCircles(4);
-
-        expect(() => {
-            face.createFaceFromMultipleCircleTanWireCollections({
+            const f = face.createFaceFromMultipleCircleTanWireCollections({
                 listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
                 combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
                 unify: true,
                 tolerance: 1e-7
             });
-        }).toThrowError("All lists of circles must have the same length in order to use inOrderClosed strategy.");
 
-        deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(693.4583936058482);
+
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should create face from multiple circle tan wire collections by using strategy in order closed (to form a grid) and not unify the faces into one", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
+
+            const f = face.createFaceFromMultipleCircleTanWireCollections({
+                listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+                unify: false,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(15);
+            const areas = face.getFacesAreas({ shapes: faces });
+            expect(areas).toEqual([
+                23.741592653589795, 22.84844425398502,
+                22.848444253985033, 23.141592653589793,
+                23.14159265358979, 23.141592653589775,
+                37.78260880496733, 37.782608804967325,
+                37.78260880496735, 72.42362495634481,
+                72.42362495634487, 72.42362495634481,
+                107.06464110772245, 107.06464110772241,
+                107.0646411077224
+            ]);
+
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should not create face from multiple circle tan wire collections by using strategy in order closed if circle lists are not of equal length", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createNonEqualCircles(4);
+
+            expect(() => {
+                face.createFaceFromMultipleCircleTanWireCollections({
+                    listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                    combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+                    unify: true,
+                    tolerance: 1e-7
+                });
+            }).toThrowError("All lists of circles must have the same length in order to use inOrderClosed strategy.");
+
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+        });
+
+        const createCirclesForFaceConstruction = (nrOfDivisions: number) => {
+            const circle1 = wire.createCircleWire({ radius: 10, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 20, center: [0, 0, 0.3], direction: [0, 1, 0] });
+            const circle3 = wire.createCircleWire({ radius: 30, center: [0, 0, 0.3], direction: [0, 1, 0] });
+
+            const ptsOnCircle1 = wire.divideWireByParamsToPoints({ shape: circle1, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+            const ptsOnCircle2 = wire.divideWireByParamsToPoints({ shape: circle2, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+            const ptsOnCircle3 = wire.divideWireByParamsToPoints({ shape: circle3, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+
+            const circlesOnPts1 = ptsOnCircle1.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            const circlesOnPts2 = ptsOnCircle2.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            const circlesOnPts3 = ptsOnCircle3.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            return { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 };
+        };
+
+        const createNonEqualCircles = (nrOfDivisions: number) => {
+            const circle1 = wire.createCircleWire({ radius: 10, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 20, center: [0, 0, 0.3], direction: [0, 1, 0] });
+            const circle3 = wire.createCircleWire({ radius: 30, center: [0, 0, 0.3], direction: [0, 1, 0] });
+
+            const ptsOnCircle1 = wire.divideWireByParamsToPoints({ shape: circle1, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+            const ptsOnCircle2 = wire.divideWireByParamsToPoints({ shape: circle2, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+            ptsOnCircle2.pop();
+            const ptsOnCircle3 = wire.divideWireByParamsToPoints({ shape: circle3, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+
+            const circlesOnPts1 = ptsOnCircle1.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            const circlesOnPts2 = ptsOnCircle2.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            const circlesOnPts3 = ptsOnCircle3.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            return { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 };
+        };
+
+
+        const deleteCircleShapes = (circle1: TopoDS_Wire, circle2: TopoDS_Wire, circle3: TopoDS_Wire, circlesOnPts1: TopoDS_Wire[], circlesOnPts2: TopoDS_Wire[], circlesOnPts3: TopoDS_Wire[]) => {
+            circle1.delete();
+            circle2.delete();
+            circle3.delete();
+            circlesOnPts1.forEach((c) => c.delete());
+            circlesOnPts2.forEach((c) => c.delete());
+            circlesOnPts3.forEach((c) => c.delete());
+        };
     });
 
-    const createCirclesForFaceConstruction = (nrOfDivisions: number) => {
-        const circle1 = wire.createCircleWire({ radius: 10, center: [0, 0, 0], direction: [0, 1, 0] });
-        const circle2 = wire.createCircleWire({ radius: 20, center: [0, 0, 0.3], direction: [0, 1, 0] });
-        const circle3 = wire.createCircleWire({ radius: 30, center: [0, 0, 0.3], direction: [0, 1, 0] });
 
-        const ptsOnCircle1 = wire.divideWireByParamsToPoints({ shape: circle1, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
-        const ptsOnCircle2 = wire.divideWireByParamsToPoints({ shape: circle2, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
-        const ptsOnCircle3 = wire.divideWireByParamsToPoints({ shape: circle3, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
-
-        const circlesOnPts1 = ptsOnCircle1.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
-        const circlesOnPts2 = ptsOnCircle2.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
-        const circlesOnPts3 = ptsOnCircle3.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
-        return { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 };
-    };
-
-    const createNonEqualCircles = (nrOfDivisions: number) => {
-        const circle1 = wire.createCircleWire({ radius: 10, center: [0, 0, 0], direction: [0, 1, 0] });
-        const circle2 = wire.createCircleWire({ radius: 20, center: [0, 0, 0.3], direction: [0, 1, 0] });
-        const circle3 = wire.createCircleWire({ radius: 30, center: [0, 0, 0.3], direction: [0, 1, 0] });
-
-        const ptsOnCircle1 = wire.divideWireByParamsToPoints({ shape: circle1, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
-        const ptsOnCircle2 = wire.divideWireByParamsToPoints({ shape: circle2, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
-        ptsOnCircle2.pop();
-        const ptsOnCircle3 = wire.divideWireByParamsToPoints({ shape: circle3, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
-
-        const circlesOnPts1 = ptsOnCircle1.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
-        const circlesOnPts2 = ptsOnCircle2.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
-        const circlesOnPts3 = ptsOnCircle3.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
-        return { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 };
-    };
-
-
-    const deleteCircleShapes = (circle1: TopoDS_Wire, circle2: TopoDS_Wire, circle3: TopoDS_Wire, circlesOnPts1: TopoDS_Wire[], circlesOnPts2: TopoDS_Wire[], circlesOnPts3: TopoDS_Wire[]) => {
-        circle1.delete();
-        circle2.delete();
-        circle3.delete();
-        circlesOnPts1.forEach((c) => c.delete());
-        circlesOnPts2.forEach((c) => c.delete());
-        circlesOnPts3.forEach((c) => c.delete());
-    };
 
 });
