@@ -2,10 +2,10 @@ import initOpenCascade, { OpenCascadeInstance } from "../../bitbybit-dev-occt/bi
 import { OccHelper } from "../occ-helper";
 import { VectorHelperService } from "../api/vector-helper.service";
 import { ShapesHelperService } from "../api/shapes-helper.service";
-import { OCCTSolid, OCCTWire } from "./shapes";
+import { OCCTSolid } from "./shapes";
 import { OCCTIO } from "./io";
 
-describe("OCCT fillets unit tests", () => {
+describe("OCCT io unit tests", () => {
     let occt: OpenCascadeInstance;
     let io: OCCTIO;
     let solid: OCCTSolid;
