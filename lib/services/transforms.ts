@@ -189,7 +189,7 @@ export class OCCTTransforms {
         }));
     }
 
-    checkIfListsEqualLength<T>(lists: T[][]) {
+    private checkIfListsEqualLength<T>(lists: T[][]) {
         const firstLength = lists[0].length;
         const notSameLength = lists.some(s => s.length !== firstLength);
         if (notSameLength) {

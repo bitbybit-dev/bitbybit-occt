@@ -1,18 +1,21 @@
 import { Inputs } from "../api";
-import initOpenCascade, { OpenCascadeInstance, TopoDS_Face, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
+import initOpenCascade, { OpenCascadeInstance, TopoDS_Face, TopoDS_Shape, TopoDS_Wire } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { Base } from "../api/inputs/base-inputs";
 import { ShapesHelperService } from "../api/shapes-helper.service";
 import { VectorHelperService } from "../api/vector-helper.service";
 import { OccHelper } from "../occ-helper";
 import { OCCTOperations } from "./operations";
-import { OCCTFace, OCCTWire } from "./shapes";
+import { OCCTEdge, OCCTFace, OCCTShell, OCCTSolid, OCCTWire } from "./shapes";
 
 describe("OCCT operations unit tests", () => {
     let occt: OpenCascadeInstance;
     let operations: OCCTOperations;
     let occHelper: OccHelper;
     let wire: OCCTWire;
+    let edge: OCCTEdge;
     let face: OCCTFace;
+    let solid: OCCTSolid;
+    let shell: OCCTShell;
 
     beforeAll(async () => {
         occt = await initOpenCascade();
@@ -21,13 +24,16 @@ describe("OCCT operations unit tests", () => {
         occHelper = new OccHelper(vec, s, occt);
         wire = new OCCTWire(occt, occHelper);
         face = new OCCTFace(occt, occHelper);
+        edge = new OCCTEdge(occt, occHelper);
         operations = new OCCTOperations(occt, occHelper);
+        solid = new OCCTSolid(occt, occHelper);
+        shell = new OCCTShell(occt, occHelper);
     });
 
     it("should get two closest points between two shapes", async () => {
         const sph1 = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
         const sph2 = occHelper.bRepPrimAPIMakeSphere([3, 3, 3], [0, 1, 0], 1);
-        const res = operations.closestPointsBetweenTwoShapes({ shape1: sph1, shape2: sph2});
+        const res = operations.closestPointsBetweenTwoShapes({ shape1: sph1, shape2: sph2 });
         expect(res.length).toBe(2);
         expect(res).toEqual([
             [0.5773398570788231, 0.577340634175626, 0.5773703157921182],
@@ -503,7 +509,7 @@ describe("OCCT operations unit tests", () => {
             start: [2, 0, 2],
             end: [5, 0, 0],
         });
-    
+
         const combinedWire = wire.combineEdgesAndWiresIntoAWire({
             shapes: [polylineWire, lineWire]
         });
@@ -530,5 +536,326 @@ describe("OCCT operations unit tests", () => {
         expect(wireLength2).toBeCloseTo(8.592691735283145);
 
     });
+
+    it("should measure distances from points to a shape", () => {
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const points = [
+            [6, 0, 0],
+            [0, 3, 0],
+            [0, 7, 3],
+            [0, 0, -3],
+            [0, -3, 0],
+            [0, 0, 5],
+        ] as Inputs.Base.Point3[];
+
+        const distances = operations.distancesToShapeFromPoints({ shape: sphere, points });
+        expect(distances).toEqual([5, 2, 6.615773105863909, 2, 2, 4]);
+    });
+
+    it("should offset a square to negative direction", () => {
+        const squareWire = wire.createSquareWire({ center: [0, 0, 0], size: 1, direction: [0, 0, 1] });
+        const offsetRes = operations.offset({ shape: squareWire, distance: -0.1, tolerance: 1e-7 });
+        const wires = wire.getWires({ shape: offsetRes });
+        const wireLength = wire.getWireLength({ shape: offsetRes });
+        expect(wireLength).toEqual(3.2);
+        squareWire.delete();
+        offsetRes.delete();
+        wires.forEach(w => w.delete());
+    });
+
+    it("should offset a square to positive direction", () => {
+        const squareWire = wire.createSquareWire({ center: [0, 0, 0], size: 1, direction: [0, 0, 1] });
+        const offsetRes = operations.offset({ shape: squareWire, distance: 0.1, tolerance: 1e-7 });
+        const wires = wire.getWires({ shape: offsetRes });
+        const wireLength = wire.getWireLength({ shape: offsetRes });
+        expect(wireLength).toEqual(4.628318530717959);
+        squareWire.delete();
+        offsetRes.delete();
+        wires.forEach(w => w.delete());
+    });
+
+    it("should offset a circle by using a face to negative direction", () => {
+        const circleWire = wire.createCircleWire({ center: [0, 0, 0], radius: 1, direction: [0, 0, 1] });
+        const f = occHelper.createSquareFace({ size: 10, direction: [0, 0, 1], center: [0, 0, 0] });
+        const fRev = face.reversedFace({ shape: f });
+        const offsetRes = operations.offset({ shape: circleWire, distance: -0.1, tolerance: 1e-7, face: fRev });
+        const wires = wire.getWires({ shape: offsetRes });
+        const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
+        expect(wireLengths).toEqual([39.2, 6.911503837897546]);
+        circleWire.delete();
+        f.delete();
+        fRev.delete();
+        offsetRes.delete();
+        wires.forEach(w => w.delete());
+    });
+
+    it("should offset a circle edge by using a face to negative direction", () => {
+        const circleEdge = edge.createCircleEdge({ center: [0, 0, 0], radius: 1, direction: [0, 0, 1] });
+        const f = occHelper.createSquareFace({ size: 10, direction: [0, 0, 1], center: [0, 0, 0] });
+        const fRev = face.reversedFace({ shape: f });
+        const offsetRes = operations.offset({ shape: circleEdge, distance: -0.1, tolerance: 1e-7, face: fRev });
+        const wires = wire.getWires({ shape: offsetRes });
+        const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
+        expect(wireLengths).toEqual([39.2, 6.911503837897546]);
+        circleEdge.delete();
+        f.delete();
+        fRev.delete();
+        offsetRes.delete();
+        wires.forEach(w => w.delete());
+    });
+
+    it("should offset a circle by using a face to positive direction", () => {
+        const circleWire = wire.createCircleWire({ center: [0, 0, 0], radius: 1, direction: [0, 0, 1] });
+        const f = occHelper.createSquareFace({ size: 10, direction: [0, 0, 1], center: [0, 0, 0] });
+        const fRev = face.reversedFace({ shape: f });
+        const offsetRes = operations.offset({ shape: circleWire, distance: 0.1, tolerance: 1e-7, face: fRev });
+        const wires = wire.getWires({ shape: offsetRes });
+        const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
+        expect(wireLengths).toEqual([40.62831853071796, 5.654866776461627]);
+        circleWire.delete();
+        f.delete();
+        fRev.delete();
+        offsetRes.delete();
+        wires.forEach(w => w.delete());
+    });
+
+    it("should offset a sphere to negative direction", () => {
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const offsetRes = operations.offset({ shape: sphere, distance: -0.1, tolerance: 1e-7 });
+        const faceAreaOriginal = face.getFaceArea({ shape: sphere });
+        const faceArea = face.getFaceArea({ shape: offsetRes });
+        expect(faceAreaOriginal).toEqual(12.566370614359172);
+        expect(faceArea).toEqual(10.17876019763093);
+        sphere.delete();
+        offsetRes.delete();
+    });
+
+    it("should offset a sphere to positive direction", () => {
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const offsetRes = operations.offset({ shape: sphere, distance: 0.1, tolerance: 1e-7 });
+        const faceAreaOriginal = face.getFaceArea({ shape: sphere });
+        const faceArea = face.getFaceArea({ shape: offsetRes });
+        expect(faceAreaOriginal).toEqual(12.566370614359172);
+        expect(faceArea).toEqual(15.205308443374602);
+        sphere.delete();
+        offsetRes.delete();
+    });
+
+    it("should offset a cube to positive direction", () => {
+        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const offsetRes = operations.offset({ shape: sphere, distance: 0.1, tolerance: 1e-7 });
+        const faceAreaOriginal = face.getFaceArea({ shape: sphere });
+        const faceArea = face.getFaceArea({ shape: offsetRes });
+        expect(faceAreaOriginal).toEqual(12.566370614359172);
+        expect(faceArea).toEqual(15.205308443374602);
+        sphere.delete();
+        offsetRes.delete();
+    });
+
+    it("should extrude multiple shapes", () => {
+        const squareFace = face.createSquareFace({ center: [0, 0, 3], size: 1, direction: [0, 0, 1] });
+        const circleFace = face.createCircleFace({ center: [0, 0, 0], radius: 1, direction: [0, 0, 1] });
+        const res = operations.extrudeShapes({ shapes: [squareFace, circleFace], direction: [0, 0, 1] });
+        const volumes = res.map(s => {
+            return solid.getSolidVolume({ shape: s });
+        });
+        expect(volumes).toEqual([0.9999999999999998, 3.1415926535897922]);
+        squareFace.delete();
+        circleFace.delete();
+        res.forEach(s => s.delete());
+    });
+
+    it("should revolve the contour 90 degrees", () => {
+        const circleFace = face.createCircleFace({ center: [5, 0, 0], radius: 1, direction: [0, 1, 0] });
+        const res = operations.revolve({ shape: circleFace, direction: [0, 0, 1], angle: 90, copy: true });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(24.674021577404435);
+        circleFace.delete();
+        res.delete();
+    });
+
+    it("should revolve the contour 360 degress", () => {
+        const circleFace = face.createCircleFace({ center: [5, 0, 0], radius: 1, direction: [0, 1, 0] });
+        const res = operations.revolve({ shape: circleFace, direction: [0, 0, 1], angle: 360, copy: true });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(98.69604401089357);
+        circleFace.delete();
+        res.delete();
+    });
+
+    it("should create rotated extrusion", () => {
+        const squareWire = wire.createSquareWire({ center: [0.5, 0, 0], size: 1, direction: [0, 1, 0] });
+        const res = operations.rotatedExtrude({ shape: squareWire, angle: 360, height: 10 });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(9.999989383137159);
+        squareWire.delete();
+        res.delete();
+    });
+
+    it("should pipe a single profile along the backbone wire", () => {
+        const interpolatedWire = wire.interpolatePoints({
+            points: [
+                [0, 0, 0],
+                [0, 1, 0],
+                [1, 2, 0],
+                [1, 3, 0],
+                [0, 4, 0],
+            ],
+            tolerance: 1e-7,
+            periodic: false
+        });
+
+        const circleWire = wire.createCircleWire({ center: [0, 0, 0], radius: 0.2, direction: [0, 1, 0] });
+        const res = operations.pipe({ shape: interpolatedWire, shapes: [circleWire] });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(0.5499995987174751);
+        interpolatedWire.delete();
+        circleWire.delete();
+        res.delete();
+    });
+
+    it("should pipe two profile wires along the backbone wire", () => {
+        const interpolatedWire = wire.interpolatePoints({
+            points: [
+                [0, 0, 0],
+                [0, 1, 0],
+                [1, 2, 0],
+                [1, 3, 0],
+                [0, 4, 0],
+            ],
+            tolerance: 1e-7,
+            periodic: false
+        });
+
+        const circleWire1 = wire.createCircleWire({ center: [0, 0, 0], radius: 0.2, direction: [0, 1, 0] });
+        const circleWire2 = wire.createCircleWire({ center: [0, 4, 0], radius: 1, direction: [0, 1, 0] });
+
+        const res = operations.pipe({ shape: interpolatedWire, shapes: [circleWire1, circleWire2] });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(2.2134035565869317);
+        interpolatedWire.delete();
+        circleWire1.delete();
+        circleWire2.delete();
+        res.delete();
+    });
+
+    it("should pipe interpolated wire with ngon", () => {
+        const interpolatedWire = wire.interpolatePoints({
+            points: [
+                [0, 0, 0],
+                [0, 1, 0],
+                [1, 2, 0],
+                [1, 3, 0],
+                [0, 4, 0],
+            ],
+            tolerance: 1e-7,
+            periodic: false
+        });
+        const res = operations.pipePolylineWireNGon({ shape: interpolatedWire, nrCorners: 6, radius: 0.2 });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(0.518460713602639);
+        interpolatedWire.delete();
+        res.delete();
+    });
+
+    it("should pipe polyline wire with ngon through square wire", () => {
+        const polyline = wire.createPolylineWire({
+            points: [
+                [0, 0, 0],
+                [0, 1, 0],
+                [1, 2, 0],
+                [1, 3, 0],
+                [0, 4, 0],
+            ]
+        });
+        const res = operations.pipePolylineWireNGon({ shape: polyline, nrCorners: 6, radius: 0.2 });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(0.49841360246611033);
+        polyline.delete();
+        res.delete();
+    });
+
+    it("should pipe interpolated wire with circular profile", () => {
+        const interpolatedWire = wire.interpolatePoints({
+            points: [
+                [0, 0, 0],
+                [0, 1, 0],
+                [1, 2, 0],
+                [1, 3, 0],
+                [0, 4, 0],
+            ],
+            tolerance: 1e-7,
+            periodic: false
+        });
+        const res = operations.pipeWireCylindrical({ shape: interpolatedWire, radius: 0.2 });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(0.6269224771598202);
+        interpolatedWire.delete();
+        res.delete();
+    });
+
+    it("should pipe polyline wire with circular profile", () => {
+        const polyline = wire.createPolylineWire({
+            points: [
+                [0, 0, 0],
+                [0, 1, 0],
+                [1, 2, 0],
+                [1, 3, 0],
+                [0, 4, 0],
+            ]
+        });
+        const res = operations.pipeWireCylindrical({ shape: polyline, radius: 0.2 });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(0.6034549016876298);
+        polyline.delete();
+        res.delete();
+    });
+
+    it("should pipe multiple wires wire with circular profile", () => {
+        const polyline = wire.createPolylineWire({
+            points: [
+                [0, 0, 0],
+                [0, 1, 0],
+                [1, 2, 0],
+                [1, 3, 0],
+                [0, 4, 0],
+            ]
+        });
+
+        const interpolatedWire = wire.interpolatePoints({
+            points: [
+                [0, 0, 4],
+                [0, 1, 4],
+                [1, 2, 4],
+                [1, 3, 4],
+                [0, 4, 4],
+            ],
+            tolerance: 1e-7,
+            periodic: false
+        });
+        const res = operations.pipeWiresCylindrical({ shapes: [polyline, interpolatedWire], radius: 0.2 });
+        const vols = res.map(s => solid.getSolidVolume({ shape: s }));
+        expect(vols).toEqual([0.6034549016876298, 0.62692247715982,]);
+        polyline.delete();
+        res.forEach(s => s.delete());
+    });
+
+    it("should make thick solid simple", () => {
+        const box = occHelper.bRepPrimAPIMakeBox(1, 2, 3, [0, 0, 0]);
+        const boxFaces = face.getFaces({ shape: box });
+        const fRem = boxFaces.pop();
+        fRem.delete();
+        const sew = shell.sewFaces({ shapes: boxFaces, tolerance: 1e-7 });
+        const res = operations.makeThickSolidSimple({ shape: sew, offset: 0.3 });
+        const vol = solid.getSolidVolume({ shape: res });
+        expect(vol).toEqual(2.494285714285714);
+        box.delete();
+        sew.delete();
+        boxFaces.forEach(f => f.delete());
+        res.delete();
+    });
+
+
 });
+
 

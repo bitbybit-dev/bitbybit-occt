@@ -38,14 +38,16 @@ export class OccHelper {
 
             try {
                 const crv = crvHandle.get();
-                const pt1 = crv.Value(param1.current);
-                const pt2 = crv.Value(param2.current);
-                const pt1g: Inputs.Base.Point3 = [pt1.X(), pt1.Y(), pt1.Z()];
-                const pt2g: Inputs.Base.Point3 = [pt2.X(), pt2.Y(), pt2.Z()];
-                pt1.delete();
-                pt2.delete();
-                points.push(pt1g);
-                points.push(pt2g);
+                if (crv) {
+                    const pt1 = crv.Value(param1.current);
+                    const pt2 = crv.Value(param2.current);
+                    const pt1g: Inputs.Base.Point3 = [pt1.X(), pt1.Y(), pt1.Z()];
+                    const pt2g: Inputs.Base.Point3 = [pt2.X(), pt2.Y(), pt2.Z()];
+                    pt1.delete();
+                    pt2.delete();
+                    points.push(pt1g);
+                    points.push(pt2g);
+                }
             } catch (ex) {
                 console.log(ex);
             }

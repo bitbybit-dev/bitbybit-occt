@@ -4,11 +4,12 @@ import { VectorHelperService } from "../api/vector-helper.service";
 import { ShapesHelperService } from "../api/shapes-helper.service";
 import { Inputs } from "../api";
 import { OCCTFillets } from "./fillets";
-import { OCCTSolid, OCCTWire } from "./shapes";
+import { OCCTEdge, OCCTSolid, OCCTWire } from "./shapes";
 
 describe("OCCT fillets unit tests", () => {
     let occt: OpenCascadeInstance;
     let wire: OCCTWire;
+    let edge: OCCTEdge;
     let fillets: OCCTFillets;
     let solid: OCCTSolid;
     let occHelper: OccHelper;
@@ -21,6 +22,7 @@ describe("OCCT fillets unit tests", () => {
         occHelper = new OccHelper(vec, s, occt);
         solid = new OCCTSolid(occt, occHelper);
         wire = new OCCTWire(occt, occHelper);
+        edge = new OCCTEdge(occt, occHelper);
         fillets = new OCCTFillets(occt, occHelper);
     });
 
@@ -599,4 +601,11 @@ describe("OCCT fillets unit tests", () => {
         facesRes.forEach(f => f.delete());
     });
 
+    it("should fillet two edges into a wire", () => {
+        const edge1 = edge.line({ start: [0, 0, 0], end: [1, 0, 0] });
+        const edge2 = edge.line({ start: [1, 0, 0], end: [1, 1, 0] });
+        const filletRes = fillets.filletTwoEdgesInPlaneIntoAWire({ edge1, edge2, radius: 0.2, planeDirection: [0, 0, 1], planeOrigin: [0, 0, 0] });
+        const wireLength = occHelper.getWireLength({ shape: filletRes });
+        expect(wireLength).toBeCloseTo(1.3424777993634651);
+    });
 });

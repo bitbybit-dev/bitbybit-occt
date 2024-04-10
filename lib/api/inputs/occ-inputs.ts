@@ -2819,9 +2819,10 @@ export namespace OCCT {
          */
         endVertex?: Base.Point3;
     }
-    export class OffsetDto<T> {
-        constructor(shape?: T, distance?: number, tolerance?: number) {
+    export class OffsetDto<T, U> {
+        constructor(shape?: T, face?: U, distance?: number, tolerance?: number) {
             if (shape !== undefined) { this.shape = shape; }
+            if (face !== undefined) { this.face = face; }
             if (distance !== undefined) { this.distance = distance; }
             if (tolerance !== undefined) { this.tolerance = tolerance; }
         }
@@ -2830,6 +2831,11 @@ export namespace OCCT {
          * @default undefined
          */
         shape: T;
+        /**
+         * Optionally provide face for the offset
+         * @default undefined;
+         */
+        face?: U;
         /**
          * Distance of offset
          * @default 0.2
@@ -2847,9 +2853,10 @@ export namespace OCCT {
          */
         tolerance = 0.1;
     }
-    export class OffsetAdvancedDto<T> {
-        constructor(shape?: T, distance?: number, tolerance?: number, joinType?: joinTypeEnum, removeIntEdges?: boolean) {
+    export class OffsetAdvancedDto<T, U> {
+        constructor(shape?: T, face?: U, distance?: number, tolerance?: number, joinType?: joinTypeEnum, removeIntEdges?: boolean) {
             if (shape !== undefined) { this.shape = shape; }
+            if (face !== undefined) { this.face = face; }
             if (distance !== undefined) { this.distance = distance; }
             if (tolerance !== undefined) { this.tolerance = tolerance; }
             if (joinType !== undefined) { this.joinType = joinType; }
@@ -2860,6 +2867,11 @@ export namespace OCCT {
          * @default undefined
          */
         shape: T;
+        /**
+         * Optionally provide face for the offset
+         * @default undefined;
+         */
+        face?: U;
         /**
          * Distance of offset
          * @default 0.2

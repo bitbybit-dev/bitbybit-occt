@@ -1,7 +1,7 @@
 import {
     Approx_ParametrizationType, BRepFill_TypeOfContact, BRepOffsetAPI_MakeOffsetShape,
     BRepOffsetAPI_MakeOffset_1, BRepOffset_Mode, Bnd_Box_1, GeomAbs_JoinType, OpenCascadeInstance,
-    TopoDS_Compound, TopoDS_Edge, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire
+    TopoDS_Compound, TopoDS_Edge, TopoDS_Shape, TopoDS_Vertex, TopoDS_Wire, TopoDS_Face
 } from "../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OccHelper, typeSpecificityEnum } from "../occ-helper";
 import * as Inputs from "../api/inputs/inputs";
@@ -129,11 +129,11 @@ export class OCCTOperations {
         return res;
     }
 
-    offset(inputs: Inputs.OCCT.OffsetDto<TopoDS_Shape>) {
-        return this.offsetAdv({ shape: inputs.shape, distance: inputs.distance, tolerance: inputs.tolerance, joinType: Inputs.OCCT.joinTypeEnum.arc, removeIntEdges: false });
+    offset(inputs: Inputs.OCCT.OffsetDto<TopoDS_Shape, TopoDS_Face>) {
+        return this.offsetAdv({ shape: inputs.shape, face: inputs.face, distance: inputs.distance, tolerance: inputs.tolerance, joinType: Inputs.OCCT.joinTypeEnum.arc, removeIntEdges: false });
     }
 
-    offsetAdv(inputs: Inputs.OCCT.OffsetAdvancedDto<TopoDS_Shape>) {
+    offsetAdv(inputs: Inputs.OCCT.OffsetAdvancedDto<TopoDS_Shape, TopoDS_Face>) {
         if (!inputs.tolerance) { inputs.tolerance = 0.1; }
         if (inputs.distance === 0.0) { return inputs.shape; }
         let offset: BRepOffsetAPI_MakeOffset_1 | BRepOffsetAPI_MakeOffsetShape;
@@ -154,13 +154,16 @@ export class OCCTOperations {
             }
             try {
                 offset = new this.occ.BRepOffsetAPI_MakeOffset_1();
-                offset.Init_2(joinType, false);
+                if (inputs.face) {
+                    offset.Init_1(inputs.face, joinType, false);
+                } else {
+                    offset.Init_2(joinType, false);
+                }
                 offset.AddWire(wire);
                 const messageProgress1 = new this.occ.Message_ProgressRange_1();
                 offset.Build(messageProgress1);
                 offset.Perform(inputs.distance, 0.0);
             } catch (ex) {
-                // if first method fails we can still try the second one on wire
                 offset = new this.occ.BRepOffsetAPI_MakeOffsetShape();
                 (offset as BRepOffsetAPI_MakeOffsetShape).PerformByJoin(
                     wire,

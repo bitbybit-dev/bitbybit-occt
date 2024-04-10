@@ -489,6 +489,13 @@ describe("OCCT wire unit tests", () => {
         w.delete();
     });
 
+    it("should create a parallelogram wire of 0 angle not aroudn the center", async () => {
+        const w = wire.createParallelogramWire({ width: 5, height: 2, center: [0, 0, 0], direction: [0, 1, 0], angle: 0, aroundCenter: false });
+        const length = wire.getWireLength({ shape: w });
+        expect(length).toBe(14);
+        w.delete();
+    });
+
     it("should get wires of a box", async () => {
         const b = occHelper.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
         const wires = wire.getWires({ shape: b });
