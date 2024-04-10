@@ -315,4 +315,12 @@ describe("OCCT shape unit tests", () => {
         cube.delete();
     });
 
+    it("should not purge internal edges for the shape if there are any and return it", async () => {
+        const cube = solid.createCube({ size: 1, center: [0, 0, 0] });
+        const s = shape.purgeInternalEdges({
+            shape: cube
+        });
+        expect(s).toBeDefined();
+        cube.delete();
+    });
 });
