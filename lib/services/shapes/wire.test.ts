@@ -1,4 +1,4 @@
-import initOpenCascade, { OpenCascadeInstance, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
+import initOpenCascade, { OpenCascadeInstance, TopoDS_Compound, TopoDS_Shape, TopoDS_Wire } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
 import { OCCTEdge } from "./edge";
 import { OccHelper } from "../../occ-helper";
 import { OCCTWire } from "./wire";
@@ -6,14 +6,15 @@ import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
 import * as Inputs from "../../api/inputs/inputs";
 import { OCCTFace } from "./face";
-import { TopoDS_Compound } from "dist";
 import { OCCTShape } from "./shape";
+import { OCCTBooleans } from "../booleans";
 
 describe("OCCT wire unit tests", () => {
     let occt: OpenCascadeInstance;
     let wire: OCCTWire;
     let edge: OCCTEdge;
     let face: OCCTFace;
+    let booleans: OCCTBooleans;
     let shape: OCCTShape;
     let occHelper: OccHelper;
 
@@ -26,6 +27,7 @@ describe("OCCT wire unit tests", () => {
         wire = new OCCTWire(occt, occHelper);
         face = new OCCTFace(occt, occHelper);
         shape = new OCCTShape(occt, occHelper);
+        booleans = new OCCTBooleans(occt, occHelper);
     });
 
     it("should create a circle edge of the right radius and it will mach the length", async () => {
@@ -417,7 +419,16 @@ describe("OCCT wire unit tests", () => {
         const length = wire.getWireLength({ shape: res });
         const corners = edge.getCornerPointsOfEdgesForShape({ shape: res });
         expect(length).toBeCloseTo(40);
-        expect(corners).toEqual([[0, -1.8284268867320825, 2.292892266757705], [0, -5.010408473134127, 5.474871711034227], [0, -1.4748757572713234, 9.0104068070365], [0, 3.8284268867320836, 3.7071077332422933], [0, -5.010404902924925, -5.131730006763387], [0, -7.131725960526286, -3.010410377245702]]);
+        expect(corners).toEqual(
+            [
+                [0, -1.8284271247461898, 2.292893218813453],
+                [0, -5.010407640085654, 5.474873734152917],
+                [0, -1.474873734152916, 9.010407640085655],
+                [0, 3.82842712474619, 3.707106781186548],
+                [0, -5.0104076400856545, -5.131727983645296],
+                [0, -7.1317279836452965, -3.0104076400856536]
+            ]
+        );
         res.delete();
     });
 
@@ -478,8 +489,15 @@ describe("OCCT wire unit tests", () => {
         w.delete();
     });
 
+    it("should create a parallelogram wire of 0 angle not aroudn the center", async () => {
+        const w = wire.createParallelogramWire({ width: 5, height: 2, center: [0, 0, 0], direction: [0, 1, 0], angle: 0, aroundCenter: false });
+        const length = wire.getWireLength({ shape: w });
+        expect(length).toBe(14);
+        w.delete();
+    });
+
     it("should get wires of a box", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
         const wires = wire.getWires({ shape: b });
         expect(wires.length).toBe(6);
         b.delete();
@@ -487,7 +505,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should get lengths of wires", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
         const wires = wire.getWires({ shape: b });
         const lengths = wire.getWiresLengths({ shapes: wires });
         expect(lengths).toEqual([18, 18, 14, 14, 16, 16]);
@@ -505,7 +523,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should get wire of a box at specific index", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
         const w = wire.getWire({ shape: b, index: 2 });
         const length = wire.getWireLength({ shape: w });
         expect(length).toEqual(14);
@@ -514,7 +532,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should get wire of a box at 0 index if index is undefined", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
         const w = wire.getWire({ shape: b, index: undefined });
         const length = wire.getWireLength({ shape: w });
         expect(length).toEqual(18);
@@ -778,7 +796,7 @@ describe("OCCT wire unit tests", () => {
         const e2 = edge.line({ start: [1, 0, 0], end: [3, 4, 0] });
         const w1 = wire.createBezier({ points: [[3, 4, 0], [4, 4, 0], [5, 5, 0]], closed: false });
         const w2 = wire.createBezier({ points: [[5, 5, 0], [6, 6, 0], [7, 7, 0]], closed: false });
-        const box = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
         const combined = wire.addEdgesAndWiresToWire({ shape: wBase, shapes: [e1, e2, w1, w2, box] });
         const length = wire.getWireLength({ shape: combined });
         expect(length).toBeCloseTo(12.640244335199364);
@@ -792,7 +810,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should place wire on a face", async () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const f = face.getFace({ shape: sph, index: 0 });
         const w = wire.createEllipseWire({ radiusMajor: 0.5, radiusMinor: 0.3, center: [0, 0, 0], direction: [0, 1, 0] });
         const placed = wire.placeWireOnFace({ wire: w, face: f });
@@ -805,7 +823,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should place wires on a face", async () => {
-        const sph1 = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sph1 = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const f = face.getFace({ shape: sph1, index: 0 });
         const w1 = wire.createEllipseWire({ radiusMajor: 0.5, radiusMinor: 0.3, center: [0, 0, 0], direction: [0, 1, 0] });
         const w2 = wire.createEllipseWire({ radiusMajor: 0.3, radiusMinor: 0.1, center: [0, 0, 0], direction: [0, 1, 0] });
@@ -1120,7 +1138,7 @@ describe("OCCT wire unit tests", () => {
             center: [0, 4, 0],
             direction: [0, 1, 0]
         });
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const projected = wire.project({ wire: star, shape: sphere, direction: [0, -1, 0] });
         const wires = wire.getWires({ shape: projected });
         expect(wires.length).toBe(2);
@@ -1150,7 +1168,7 @@ describe("OCCT wire unit tests", () => {
             center: [0, 4, 0],
             direction: [0, 1, 0]
         });
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const projected = wire.projectWires({ wires: [star1, star2], shape: sphere, direction: [0, -1, 0] });
         expect(projected.length).toBe(2);
         const wires = projected.map(p => {
@@ -1231,5 +1249,206 @@ describe("OCCT wire unit tests", () => {
         expect(centers[1][2]).toBeCloseTo(1);
     });
 
-});
+    it("should create zig zag wire between two wires", () => {
+        const w1 = wire.createCircleWire({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
+        const w2 = wire.createCircleWire({ radius: 3, center: [0, 4, 0], direction: [0, 0, 1] });
 
+        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: false });
+        const length = wire.getWireLength({ shape: zigZagWire });
+        expect(length).toBeCloseTo(50.260581938510676);
+        const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: zigZagWire });
+        expect(cornerPoints.length).toBe(10);
+        w1.delete();
+        w2.delete();
+        zigZagWire.delete();
+    });
+
+    it("should create inverse zig zag wire between two wires", () => {
+        const w1 = wire.createCircleWire({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
+        const w2 = wire.createCircleWire({ radius: 3, center: [0, 4, 0], direction: [0, 0, 1] });
+
+        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: true });
+        const length = wire.getWireLength({ shape: zigZagWire });
+        expect(length).toBeCloseTo(50.72841254233739);
+        const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: zigZagWire });
+        expect(cornerPoints.length).toBe(10);
+        w1.delete();
+        w2.delete();
+        zigZagWire.delete();
+    });
+
+    it("should create inverse zig zag wire between two wires", () => {
+        const w1 = wire.createSquareWire({ size: 2, center: [0, 0, 0], direction: [0, 1, 0] });
+        const w2 = wire.createSquareWire({ size: 3, center: [0, 4, 0], direction: [0, 0, 1] });
+
+        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: true });
+        const length = wire.getWireLength({ shape: zigZagWire });
+        expect(length).toBeCloseTo(174.35848368606852);
+        const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: zigZagWire });
+        expect(cornerPoints.length).toBe(40);
+        w1.delete();
+        w2.delete();
+        zigZagWire.delete();
+    });
+
+    it("should trnasform wires to points", () => {
+        const squareFace = face.createRectangleFace({ width: 10, length: 20, center: [0, 0, 0], direction: [0, 1, 0] });
+        const edges = edge.getEdges({ shape: squareFace });
+        const points = edges.map(e => [edge.pointOnEdgeAtParam({ shape: e, param: 0.3 }), edge.pointOnEdgeAtParam({ shape: e, param: 0.6 })]).flat();
+        const circleFaces = points.map(p => face.createCircleFace({ radius: 1, center: p, direction: [0, 1, 0] }));
+        const diff = booleans.difference({ shape: squareFace, shapes: circleFaces.reverse(), keepEdges: true });
+        const w = wire.getWire({ shape: diff, index: 0 });
+        const opt = new Inputs.OCCT.WiresToPointsDto<TopoDS_Shape>();
+        opt.shape = w;
+        const pts = wire.wiresToPoints(opt);
+        expect(pts.length).toBe(1);
+        expect(pts[0].length).toBe(269);
+        expect(pts[0][0]).toEqual([5, 0, -1]);
+        expect(pts[0][33]).toEqual([5, 0, -10]);
+        expect(pts[0][123]).toEqual([-4.168530387697455, 0, -3.444429766980398]);
+        expect(pts[0][200]).toEqual([-1, 0, 10]);
+        expect(pts[0][268]).toEqual([5, 0, -1]);
+        squareFace.delete();
+        edges.forEach(e => e.delete());
+        circleFaces.forEach(f => f.delete());
+        diff.delete();
+        w.delete();
+    });
+
+    it("should create reversed wire from reversed edges", () => {
+        const squareFace = face.createRectangleFace({ width: 10, length: 20, center: [0, 0, 0], direction: [0, 1, 0] });
+        const edges = edge.getEdges({ shape: squareFace });
+        const points = edges.map(e => [edge.pointOnEdgeAtParam({ shape: e, param: 0.3 }), edge.pointOnEdgeAtParam({ shape: e, param: 0.6 })]).flat();
+        const circleFaces = points.map(p => face.createCircleFace({ radius: 1, center: p, direction: [0, 1, 0] }));
+        const diff = booleans.difference({ shape: squareFace, shapes: circleFaces.reverse(), keepEdges: true });
+        const w = wire.getWire({ shape: diff, index: 0 });
+        const opt = new Inputs.OCCT.ShapeDto<TopoDS_Shape>();
+        opt.shape = w;
+
+        const wireReversed = wire.reversedWireFromReversedEdges(opt);
+
+        const lastEdgeOnWire = edge.getEdgesAlongWire({ shape: w }).pop();
+        const firstEdgeOnReversedWire = edge.getEdgesAlongWire({ shape: wireReversed }).shift();
+
+        const startPointOnEdge = edge.startPointOnEdge({ shape: lastEdgeOnWire });
+        const startPointOnReversedEdge = edge.startPointOnEdge({ shape: firstEdgeOnReversedWire });
+        const endPointOnEdge = edge.endPointOnEdge({ shape: lastEdgeOnWire });
+        const endPointOnReversedEdge = edge.endPointOnEdge({ shape: firstEdgeOnReversedWire });
+
+        expect(startPointOnEdge).toEqual(endPointOnReversedEdge);
+        expect(endPointOnEdge).toEqual(startPointOnReversedEdge);
+
+        lastEdgeOnWire.delete();
+        firstEdgeOnReversedWire.delete();
+        wireReversed.delete();
+        squareFace.delete();
+        edges.forEach(e => e.delete());
+        circleFaces.forEach(f => f.delete());
+        diff.delete();
+        w.delete();
+    });
+
+    it("should create tan wire from one circle to another overlaping circle and keep outside lines and outside circles", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.outside,
+            Inputs.OCCT.fourSidesStrictEnum.outside,
+            10.540342229885404,
+        );
+    });
+
+    it("should create tan wire from one circle to another overlaping circle and keep outside lines and inside circles", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.outside,
+            Inputs.OCCT.fourSidesStrictEnum.inside,
+            8.99593956878152,
+        );
+    });
+
+    it("should create tan wire from one circle to another overlaping circle and keep outside lines and inside of one circle and outside of other", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.outside,
+            Inputs.OCCT.fourSidesStrictEnum.insideOutside,
+            6.421935133608384,
+        );
+    });
+
+    it("should create tan wire from one circle to another overlaping circle and keep outside lines and outside of one circle and inside of other", () => {
+        checkConstraintTanLinesOnTwoOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.outside,
+            Inputs.OCCT.fourSidesStrictEnum.outsideInside,
+            13.114346665058541,
+        );
+    });
+
+    it("should not create tan wire from one circle to another overlaping circle and keep inside lines and outside circles", () => {
+        expect(() => {
+            checkConstraintTanLinesOnTwoOverlapingCircles(
+                Inputs.OCCT.twoSidesStrictEnum.inside,
+                Inputs.OCCT.fourSidesStrictEnum.outside,
+                10.540342229885404,
+            );
+        }).toThrow();
+    });
+
+    const checkConstraintTanLinesOnTwoOverlapingCircles = (pos: Inputs.OCCT.twoSidesStrictEnum, cirsRem: Inputs.OCCT.fourSidesStrictEnum, lengthExp: number) => {
+        const circle1 = wire.createCircleWire({ radius: 1.6, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = wire.createCircleWire({ radius: 1, center: [1, 0, 0], direction: [0, 1, 0] });
+        const w = wire.createWireFromTwoCirclesTan({
+            circle1,
+            circle2,
+            keepLines: pos,
+            circleRemainders: cirsRem,
+            tolerance: 1e-7
+        });
+        const length = wire.getWireLength({ shape: w });
+        expect(length).toEqual(lengthExp);
+        w.delete();
+    };
+
+    it("should create tan wire from one circle to another non overlaping circle and keep inside lines and insides of circles", () => {
+        checkConstraintTanLinesOnTwoNonOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.inside,
+            Inputs.OCCT.fourSidesStrictEnum.inside,
+            10.56817548978988,
+        );
+    });
+
+    it("should create tan wire from one circle to another non overlaping circle and keep inside lines and outsides of circles", () => {
+        checkConstraintTanLinesOnTwoNonOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.inside,
+            Inputs.OCCT.fourSidesStrictEnum.outside,
+            17.927053631733575,
+        );
+    });
+
+    it("should create tan wire from one circle to another non overlaping circle and keep inside lines and outside of one circle and inside of other", () => {
+        checkConstraintTanLinesOnTwoNonOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.inside,
+            Inputs.OCCT.fourSidesStrictEnum.outsideInside,
+            15.096715884832154,
+        );
+    });
+
+    it("should create tan wire from one circle to another non overlaping circle and keep inside lines and inside of one circle and outside of other", () => {
+        checkConstraintTanLinesOnTwoNonOverlapingCircles(
+            Inputs.OCCT.twoSidesStrictEnum.inside,
+            Inputs.OCCT.fourSidesStrictEnum.insideOutside,
+            13.3985132366913,
+        );
+    });
+
+    const checkConstraintTanLinesOnTwoNonOverlapingCircles = (pos: Inputs.OCCT.twoSidesStrictEnum, cirsRem: Inputs.OCCT.fourSidesStrictEnum, lengthExp: number) => {
+        const circle1 = wire.createCircleWire({ radius: 1.6, center: [0, 0, 0], direction: [0, 1, 0] });
+        const circle2 = wire.createCircleWire({ radius: 1, center: [4, 0, 0], direction: [0, 1, 0] });
+        const w = wire.createWireFromTwoCirclesTan({
+            circle1,
+            circle2,
+            keepLines: pos,
+            circleRemainders: cirsRem,
+            tolerance: 1e-7
+        });
+        const length = wire.getWireLength({ shape: w });
+        expect(length).toEqual(lengthExp);
+        w.delete();
+    };
+});

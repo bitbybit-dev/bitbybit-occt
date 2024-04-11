@@ -26,7 +26,7 @@ describe("OCCT compound unit tests", () => {
         const cylinder = solid.createCylinder({ radius: 2, height: 2, center: [0, 0, 0], direction: [0, 0, 1] });
         const c = compound.makeCompound({ shapes: [box, cylinder] });
         expect(c).toBeDefined();
-        expect(occHelper.getShapeTypeEnum(c)).toBe(Inputs.OCCT.shapeTypeEnum.compound);
+        expect(occHelper.enumService.getShapeTypeEnum(c)).toBe(Inputs.OCCT.shapeTypeEnum.compound);
         box.delete();
         cylinder.delete();
     });

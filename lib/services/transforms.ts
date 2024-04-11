@@ -22,7 +22,7 @@ export class OCCTTransforms {
 
 
     rotate(inputs: Inputs.OCCT.RotateDto<TopoDS_Shape>): TopoDS_Shape {
-        return this.och.rotate(inputs);
+        return this.och.transformsService.rotate(inputs);
     }
 
     rotateAroundCenter(inputs: Inputs.OCCT.RotateAroundCenterDto<TopoDS_Shape>): TopoDS_Shape {
@@ -36,24 +36,24 @@ export class OCCTTransforms {
     }
 
     align(inputs: Inputs.OCCT.AlignDto<TopoDS_Shape>): TopoDS_Shape {
-        return this.och.align(inputs);
+        return this.och.transformsService.align(inputs);
     }
 
     alignAndTranslate(inputs: Inputs.OCCT.AlignAndTranslateDto<TopoDS_Shape>): TopoDS_Shape {
-        return this.och.alignAndTranslate(inputs);
+        return this.och.transformsService.alignAndTranslate(inputs);
     }
 
     translate(inputs: Inputs.OCCT.TranslateDto<TopoDS_Shape>): TopoDS_Shape {
-        return this.och.translate(inputs);
+        return this.och.transformsService.translate(inputs);
     }
 
     scale(inputs: Inputs.OCCT.ScaleDto<TopoDS_Shape>): TopoDS_Shape {
         const transformation = new this.occ.gp_Trsf_1();
-        const gpPnt = this.och.gpPnt([0.0, 0.0, 0.0]);
+        const gpPnt = this.och.entitiesService.gpPnt([0.0, 0.0, 0.0]);
         transformation.SetScale(gpPnt, inputs.factor);
         const transf = new this.occ.BRepBuilderAPI_Transform_2(inputs.shape, transformation, true);
         const s = transf.Shape();
-        const result = this.och.getActualTypeOfShape(s);
+        const result = this.och.converterService.getActualTypeOfShape(s);
         gpPnt.delete();
         transformation.delete();
         transf.delete();
@@ -88,11 +88,11 @@ export class OCCTTransforms {
 
 
     mirror(inputs: Inputs.OCCT.MirrorDto<TopoDS_Shape>): TopoDS_Shape {
-        return this.och.mirror(inputs);
+        return this.och.transformsService.mirror(inputs);
     }
 
     mirrorAlongNormal(inputs: Inputs.OCCT.MirrorAlongNormalDto<TopoDS_Shape>): TopoDS_Shape {
-        return this.och.mirrorAlongNormal(inputs);
+        return this.och.transformsService.mirrorAlongNormal(inputs);
     }
 
     transformShapes(inputs: Inputs.OCCT.TransformShapesDto<TopoDS_Shape>): TopoDS_Shape[] {
@@ -189,7 +189,7 @@ export class OCCTTransforms {
         }));
     }
 
-    checkIfListsEqualLength<T>(lists: T[][]) {
+    private checkIfListsEqualLength<T>(lists: T[][]) {
         const firstLength = lists[0].length;
         const notSameLength = lists.some(s => s.length !== firstLength);
         if (notSameLength) {

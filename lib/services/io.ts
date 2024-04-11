@@ -14,8 +14,8 @@ export class OCCTIO {
         const shapeToUse = inputs.shape;
         let adjustedShape;
         if (inputs.adjustYtoZ) {
-            const rotatedShape = this.och.rotate({ shape: inputs.shape, axis: [1, 0, 0], angle: -90 });
-            adjustedShape = this.och.mirrorAlongNormal(
+            const rotatedShape = this.och.transformsService.rotate({ shape: inputs.shape, axis: [1, 0, 0], angle: -90 });
+            adjustedShape = this.och.transformsService.mirrorAlongNormal(
                 { shape: rotatedShape, origin: [0, 0, 0], normal: [0, 0, 1] }
             );
             rotatedShape.delete();
@@ -109,10 +109,10 @@ export class OCCTIO {
             let stepShape = reader.OneShape();
             let adjustedShape;
             if (inputs.adjustZtoY) {
-                const mirroredShape = this.och.mirrorAlongNormal(
+                const mirroredShape = this.och.transformsService.mirrorAlongNormal(
                     { shape: stepShape, origin: [0, 0, 0], normal: [0, 0, 1] }
                 );
-                adjustedShape = this.och.rotate({ shape: mirroredShape, axis: [1, 0, 0], angle: 90 });
+                adjustedShape = this.och.transformsService.rotate({ shape: mirroredShape, axis: [1, 0, 0], angle: 90 });
                 mirroredShape.delete();
             }
             // Out with the old, in with the new!

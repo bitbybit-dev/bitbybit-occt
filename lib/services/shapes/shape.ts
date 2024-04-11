@@ -90,7 +90,7 @@ export class OCCTShape {
     }
 
     getShapeType(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Inputs.OCCT.shapeTypeEnum {
-        return this.och.getShapeTypeEnum(inputs.shape);
+        return this.och.enumService.getShapeTypeEnum(inputs.shape);
     }
 
 }

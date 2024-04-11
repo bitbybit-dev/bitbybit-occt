@@ -104,6 +104,12 @@ export namespace OCCT {
         inOrder = "inOrder",
         inOrderClosed = "inOrderClosed",
     }
+    export enum typeSpecificityEnum {
+        curve,
+        edge,
+        wire,
+        face,
+    }
     export class DecomposedMeshDto {
         constructor(faceList?: DecomposedFaceDto[], edgeList?: DecomposedEdgeDto[]) {
             if (faceList !== undefined) { this.faceList = faceList; }
@@ -2320,7 +2326,7 @@ export namespace OCCT {
          */
         wire2: T;
         /**
-         * How many zig zags to create between the two wires. One zig zag means two edges forming a corner.
+         * How many zig zags to create between the two wires on each edge. The number of edges should match. Edges will be joined by zigzags in order. One zig zag means two edges forming a corner.
          * @default 20
          * @minimum 1
          * @maximum Infinity
@@ -2819,9 +2825,10 @@ export namespace OCCT {
          */
         endVertex?: Base.Point3;
     }
-    export class OffsetDto<T> {
-        constructor(shape?: T, distance?: number, tolerance?: number) {
+    export class OffsetDto<T, U> {
+        constructor(shape?: T, face?: U, distance?: number, tolerance?: number) {
             if (shape !== undefined) { this.shape = shape; }
+            if (face !== undefined) { this.face = face; }
             if (distance !== undefined) { this.distance = distance; }
             if (tolerance !== undefined) { this.tolerance = tolerance; }
         }
@@ -2830,6 +2837,12 @@ export namespace OCCT {
          * @default undefined
          */
         shape: T;
+        /**
+         * Optionally provide face for the offset
+         * @default undefined
+         * @optional true
+         */
+        face?: U;
         /**
          * Distance of offset
          * @default 0.2
@@ -2847,9 +2860,10 @@ export namespace OCCT {
          */
         tolerance = 0.1;
     }
-    export class OffsetAdvancedDto<T> {
-        constructor(shape?: T, distance?: number, tolerance?: number, joinType?: joinTypeEnum, removeIntEdges?: boolean) {
+    export class OffsetAdvancedDto<T, U> {
+        constructor(shape?: T, face?: U, distance?: number, tolerance?: number, joinType?: joinTypeEnum, removeIntEdges?: boolean) {
             if (shape !== undefined) { this.shape = shape; }
+            if (face !== undefined) { this.face = face; }
             if (distance !== undefined) { this.distance = distance; }
             if (tolerance !== undefined) { this.tolerance = tolerance; }
             if (joinType !== undefined) { this.joinType = joinType; }
@@ -2860,6 +2874,12 @@ export namespace OCCT {
          * @default undefined
          */
         shape: T;
+        /**
+         * Optionally provide face for the offset
+         * @default undefined
+         * @optional true
+         */
+        face?: U;
         /**
          * Distance of offset
          * @default 0.2

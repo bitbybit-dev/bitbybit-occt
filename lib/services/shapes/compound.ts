@@ -11,7 +11,7 @@ export class OCCTCompound {
     }
 
     makeCompound(inputs: Inputs.OCCT.CompoundShapesDto<TopoDS_Shape>): TopoDS_Compound {
-        return this.och.makeCompound(inputs);
+        return this.och.converterService.makeCompound(inputs);
     }
 
 }

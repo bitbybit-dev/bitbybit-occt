@@ -11,66 +11,66 @@ export class OCCTFillets {
     }
 
     filletEdges(inputs: Inputs.OCCT.FilletDto<TopoDS_Shape>): TopoDS_Shape {
-        return this.och.filletEdges(inputs);
+        return this.och.filletsService.filletEdges(inputs);
     }
 
     filletEdgesList(inputs: Inputs.OCCT.FilletEdgesListDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
-        return this.och.filletEdgesList(inputs);
+        return this.och.filletsService.filletEdgesList(inputs);
     }
 
     filletEdgesListOneRadius(inputs: Inputs.OCCT.FilletEdgesListOneRadiusDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
-        return this.och.filletEdgesListOneRadius(inputs);
+        return this.och.filletsService.filletEdgesListOneRadius(inputs);
     }
 
     filletEdgeVariableRadius(inputs: Inputs.OCCT.FilletEdgeVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
-        return this.och.filletEdgeVariableRadius(inputs);
+        return this.och.filletsService.filletEdgeVariableRadius(inputs);
     }
 
     filletEdgesVariableRadius(inputs: Inputs.OCCT.FilletEdgesVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
-        return this.och.filletEdgesVariableRadius(inputs);
+        return this.och.filletsService.filletEdgesVariableRadius(inputs);
     }
 
     filletEdgesSameVariableRadius(inputs: Inputs.OCCT.FilletEdgesSameVariableRadiusDto<TopoDS_Shape, TopoDS_Edge>): TopoDS_Shape {
-        return this.och.filletEdgesSameVariableRadius(inputs);
+        return this.och.filletsService.filletEdgesSameVariableRadius(inputs);
     }
 
     chamferEdges(inputs: Inputs.OCCT.ChamferDto<TopoDS_Shape>) {
-        return this.och.chamferEdges(inputs);
+        return this.och.filletsService.chamferEdges(inputs);
     }
 
     chamferEdgesList(inputs: Inputs.OCCT.ChamferEdgesListDto<TopoDS_Shape, TopoDS_Edge>) {
-        return this.och.chamferEdgesList(inputs);
+        return this.och.filletsService.chamferEdgesList(inputs);
     }
 
     chamferEdgeDistAngle(inputs: Inputs.OCCT.ChamferEdgeDistAngleDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
-        return this.och.chamferEdgeDistAngle(inputs);
+        return this.och.filletsService.chamferEdgeDistAngle(inputs);
     }
 
     chamferEdgesDistAngle(inputs: Inputs.OCCT.ChamferEdgesDistAngleDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
-        return this.och.chamferEdgesDistAngle(inputs);
+        return this.och.filletsService.chamferEdgesDistAngle(inputs);
     }
 
     chamferEdgesDistsAngles(inputs: Inputs.OCCT.ChamferEdgesDistsAnglesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
-        return this.och.chamferEdgesDistsAngles(inputs);
+        return this.och.filletsService.chamferEdgesDistsAngles(inputs);
     }
 
     chamferEdgeTwoDistances(inputs: Inputs.OCCT.ChamferEdgeTwoDistancesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
-        return this.och.chamferEdgeTwoDistances(inputs);
+        return this.och.filletsService.chamferEdgeTwoDistances(inputs);
     }
 
     chamferEdgesTwoDistances(inputs: Inputs.OCCT.ChamferEdgesTwoDistancesDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
-        return this.och.chamferEdgesTwoDistances(inputs);
+        return this.och.filletsService.chamferEdgesTwoDistances(inputs);
     }
 
     chamferEdgesTwoDistancesLists(inputs: Inputs.OCCT.ChamferEdgesTwoDistancesListsDto<TopoDS_Shape, TopoDS_Edge, TopoDS_Face>) {
-        return this.och.chamferEdgesTwoDistancesLists(inputs);
+        return this.och.filletsService.chamferEdgesTwoDistancesLists(inputs);
     }
 
     filletTwoEdgesInPlaneIntoAWire(inputs: Inputs.OCCT.FilletTwoEdgesInPlaneDto<TopoDS_Edge>): TopoDS_Wire {
-        const pln = this.och.gpPln(inputs.planeOrigin, inputs.planeDirection);
+        const pln = this.och.entitiesService.gpPln(inputs.planeOrigin, inputs.planeDirection);
         const fil = new this.occ.ChFi2d_FilletAlgo_3(inputs.edge1, inputs.edge2, pln);
         fil.Perform(inputs.radius);
-        const pt = this.och.gpPnt(inputs.planeOrigin);
+        const pt = this.och.entitiesService.gpPnt(inputs.planeOrigin);
         const edge1 = new this.occ.TopoDS_Edge();
         const edge2 = new this.occ.TopoDS_Edge();
 
@@ -80,7 +80,7 @@ export class OCCTFillets {
         }
         const filletedEdge = fil.Result(pt, edge1, edge2, solution);
 
-        const result = this.och.combineEdgesAndWiresIntoAWire({ shapes: [edge1, filletedEdge, edge2] });
+        const result = this.och.converterService.combineEdgesAndWiresIntoAWire({ shapes: [edge1, filletedEdge, edge2] });
         fil.delete();
         pt.delete();
         pln.delete();
@@ -91,7 +91,7 @@ export class OCCTFillets {
     }
 
     fillet3DWire(inputs: Inputs.OCCT.Fillet3DWireDto<TopoDS_Wire>) {
-        return this.och.fillet3DWire(inputs);
+        return this.och.filletsService.fillet3DWire(inputs);
     }
 
     fillet2d(inputs: Inputs.OCCT.FilletDto<TopoDS_Wire | TopoDS_Face>): TopoDS_Face | TopoDS_Wire {
@@ -101,14 +101,14 @@ export class OCCTFillets {
         let face;
         let isShapeFace = false;
         if (inputs.shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_FACE) {
-            face = this.och.getActualTypeOfShape(inputs.shape);
+            face = this.och.converterService.getActualTypeOfShape(inputs.shape);
             isShapeFace = true;
         } else if (inputs.shape.ShapeType() === this.occ.TopAbs_ShapeEnum.TopAbs_WIRE) {
             const faceBuilder = new this.occ.BRepBuilderAPI_MakeFace_15(inputs.shape, true);
             const messageProgress = new this.occ.Message_ProgressRange_1();
             faceBuilder.Build(messageProgress);
             const shape = faceBuilder.Shape();
-            face = this.och.getActualTypeOfShape(shape);
+            face = this.och.converterService.getActualTypeOfShape(shape);
             shape.delete();
             messageProgress.delete();
             faceBuilder.delete();
@@ -155,14 +155,14 @@ export class OCCTFillets {
             const isDone = filletMaker.IsDone();
             if (isDone) {
                 const shape = filletMaker.Shape();
-                const filletedWires = this.och.getWires({ shape });
+                const filletedWires = this.och.shapeGettersService.getWires({ shape });
                 if (filletedWires.length === 1) {
                     result = filletedWires[0];
                 }
             }
             else {
                 // Previous algorithm fails if the wire is not made up of circular or straight edges. This algorithm is a failover.
-                const normal = this.och.faceNormalOnUV({ shape: face, paramU: 0.5, paramV: 0.5 });
+                const normal = this.och.facesService.faceNormalOnUV({ shape: face, paramU: 0.5, paramV: 0.5 });
                 result = this.fillet3DWire({ shape: inputs.shape, radius: inputs.radius, radiusList: inputs.radiusList, indexes: inputs.indexes, direction: normal });
             }
         }

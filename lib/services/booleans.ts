@@ -11,16 +11,16 @@ export class OCCTBooleans {
     }
 
     union(inputs: Inputs.OCCT.UnionDto<TopoDS_Shape>): TopoDS_Shape {
-        return this.och.union(inputs);
+        return this.och.booleansService.union(inputs);
     }
 
     difference(inputs: Inputs.OCCT.DifferenceDto<TopoDS_Shape>): TopoDS_Shape {
-        return this.och.difference(inputs);
+        return this.och.booleansService.difference(inputs);
     }
 
     intersection(inputs: Inputs.OCCT.IntersectionDto<TopoDS_Shape>): TopoDS_Shape {
-        const int = this.och.intersection(inputs);
-        const res = this.och.makeCompound({ shapes: int });
+        const int = this.och.booleansService.intersection(inputs);
+        const res = this.och.converterService.makeCompound({ shapes: int });
         return res;
     }
 

@@ -56,7 +56,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should not create a good face from shape that is not a wire", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
         expect(() => face.createFaceFromWire({ shape: b, planar: false })).toThrowError("Provided input shape is not a wire");
         b.delete();
     });
@@ -87,7 +87,7 @@ describe("OCCT face unit tests", () => {
         const f1 = face.createCircleFace({ radius: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const srf = geom.surfaces.surfaceFromFace({ shape: f1 });
         const w = wire.createCircleWire({ radius: 2, center: [0, 0, 1], direction: [0, 0, 1] });
-        const f = face.faceFromSurfaceAndWire({ surface:srf, wire: w, inside: true });
+        const f = face.faceFromSurfaceAndWire({ surface: srf, wire: w, inside: true });
         const area = face.getFaceArea({ shape: f });
         expect(area).toBeCloseTo(12.566370614359167);
         f1.delete();
@@ -125,7 +125,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide face into points", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const pts = face.subdivideToPoints({
             shape: f,
@@ -176,7 +176,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide face into points controlled", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const subdOpt = new OCCT.FaceSubdivisionControlledDto<TopoDS_Face>(f);
         subdOpt.nrDivisionsU = 5;
@@ -223,7 +223,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide face into points controlled with removals", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const subdOpt = new OCCT.FaceSubdivisionControlledDto<TopoDS_Face>(f);
         subdOpt.nrDivisionsU = 4;
@@ -256,7 +256,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide face into points", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const pts = face.subdivideToPoints({
             shape: f,
@@ -289,7 +289,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide face into points, remove end edges and shift u and v directions", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const pts = face.subdivideToPoints({
             shape: f,
@@ -316,7 +316,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide into normals", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const normals = face.subdivideToNormals({
             shape: f,
@@ -349,7 +349,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide face into normals, remove end edges and shift u and v directions", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const normals = face.subdivideToNormals({
             shape: f,
@@ -376,7 +376,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide to points on param on u", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.subdivideToPointsOnParam({
             shape: f,
@@ -399,7 +399,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide to points on param on v", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.subdivideToPointsOnParam({
             shape: f,
@@ -422,7 +422,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide to points on param, remove start and end points and shift half step on v", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.subdivideToPointsOnParam({
             shape: f,
@@ -446,7 +446,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide to points on param, remove start and end points and shift half step on u", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.subdivideToPointsOnParam({
             shape: f,
@@ -470,7 +470,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide to points on param on u", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
             shape: f,
@@ -493,7 +493,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide to points on param on u", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
             shape: f,
@@ -516,7 +516,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide to points on param on v", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
             shape: f,
@@ -539,7 +539,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide to points on param on u and remove edge points and shift step", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
             shape: f,
@@ -564,7 +564,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide to points on param on v and remove edge points and shift step", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUVOnParam({
             shape: f,
@@ -589,7 +589,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide face into uvs", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUV({
             shape: f,
@@ -640,7 +640,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should subdivide face into uvs", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUV({
             shape: f,
@@ -674,7 +674,7 @@ describe("OCCT face unit tests", () => {
 
 
     it("should subdivide face into uvs remove end and start edges and shift half step both on u and v", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uvs = face.subdivideToUV({
             shape: f,
@@ -707,7 +707,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should get uv on face", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const uv = face.uvOnFace({ shape: f, paramU: 0.2, paramV: 0.3 });
         expect(uv.length).toBe(2);
@@ -719,7 +719,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should get points on uvs", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const points = face.pointsOnUVs({ shape: f, paramsUV: [[0.2, 0.3], [0, 0], [0.5, 0.4]] });
         expect(points.length).toBe(3);
@@ -734,7 +734,7 @@ describe("OCCT face unit tests", () => {
 
 
     it("should get normals on uvs", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const normals = face.normalsOnUVs({ shape: f, paramsUV: [[0.2, 0.3], [0, 0], [0.5, 0.4]] });
         expect(normals.length).toBe(3);
@@ -748,7 +748,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should get point on uv", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const point = face.pointOnUV({ shape: f, paramU: 0.2, paramV: 0.3 });
         expect(point.length).toBe(3);
@@ -758,7 +758,7 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should get normal on uv", () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 2);
         const f = face.getFace({ shape: sph, index: 0 });
         const normal = face.normalOnUV({ shape: f, paramU: 0.2, paramV: 0.3 });
         expect(normal.length).toBe(3);
@@ -794,25 +794,25 @@ describe("OCCT face unit tests", () => {
     });
 
     it("should not get a face of a shape that does not have faces", async () => {
-        const d = occHelper.lineEdge({ start: [0, 0, 0], end: [1, 1, 1] });
+        const d = occHelper.edgesService.lineEdge({ start: [0, 0, 0], end: [1, 1, 1] });
         expect(() => face.getFace({ shape: d, index: 22 })).toThrowError("Shape is of incorrect type");
         d.delete();
     });
 
     it("should not get a face of a shape that does not have particular index", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
         expect(() => face.getFace({ shape: b, index: 22 })).toThrowError("Face index is out of range");
         b.delete();
     });
 
     it("should not get a face of a shape that does not have particular index", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
         expect(() => face.getFace({ shape: b, index: -22 })).toThrowError("Face index is out of range");
         b.delete();
     });
 
     it("should get faces", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
         const faces = face.getFaces({ shape: b });
         expect(faces.length).toBe(6);
         b.delete();
@@ -1002,4 +1002,296 @@ describe("OCCT face unit tests", () => {
         reverse3.delete();
         f1.delete();
     });
+
+    describe("Face from multiple circle tan wires", () => {
+        it("should create face from two circle tan wires by using all with all strategy", () => {
+            const circle1 = wire.createCircleWire({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 0.2, center: [0, 0, 2], direction: [0, 1, 0] });
+
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles: [circle1, circle2],
+                combination: OCCT.combinationCirclesForFaceEnum.allWithAll,
+                unify: true,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(4.228320685670285);
+
+            circle1.delete();
+            circle2.delete();
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should create face from four circle tan wires by using allWithAll strategy", () => {
+            const circles = create4CirclesForFaceConstruction();
+
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles,
+                combination: OCCT.combinationCirclesForFaceEnum.allWithAll,
+                unify: true,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(27.584215142769313);
+
+            circles.forEach((c) => c.delete());
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should create face from four circle tan wires by using inOrder strategy", () => {
+            const circles = create4CirclesForFaceConstruction();
+
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles,
+                combination: OCCT.combinationCirclesForFaceEnum.inOrder,
+                unify: true,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(21.828359362876572);
+
+            circles.forEach((c) => c.delete());
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should create face from four circle tan wires by using inOrderClosed strategy", () => {
+            const circles = create4CirclesForFaceConstruction();
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles,
+                combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+                unify: true,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(24.764075269346932);
+
+            circles.forEach((c) => c.delete());
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+
+        it("should create face from four circle tan wires by using inOrderClosed strategy and return non-unified result of compounded shapes", () => {
+            const circles = create4CirclesForFaceConstruction();
+            const f = face.createFaceFromMultipleCircleTanWires({
+                circles,
+                combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+                unify: false,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(4);
+            const areas = faces.map(f => face.getFaceArea({ shape: f }));
+            expect(areas).toEqual([4.228320685670285, 8.94581601121022, 18.478357180330566, 9.320341329624728]);
+
+            circles.forEach((c) => c.delete());
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        const create4CirclesForFaceConstruction = () => {
+            const circle1 = wire.createCircleWire({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 0.2, center: [0, 0, 2], direction: [0, 1, 0] });
+            const circle3 = wire.createCircleWire({ radius: 1.3, center: [4, 0, 2], direction: [0, 1, 0] });
+            const circle4 = wire.createCircleWire({ radius: 0.6, center: [-4, 0, 2], direction: [0, 1, 0] });
+            return [circle1, circle2, circle3, circle4];
+        };
+
+        it("should not create face from two circle tan wires by using all with all strategy if circles are inside each other", () => {
+            const circle1 = wire.createCircleWire({ radius: 1, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 0.2, center: [0, 0, 0], direction: [0, 1, 0] });
+
+            expect(() => {
+                face.createFaceFromMultipleCircleTanWires({
+                    circles: [circle1, circle2],
+                    combination: OCCT.combinationCirclesForFaceEnum.allWithAll,
+                    unify: true,
+                    tolerance: 1e-7
+                });
+            }).toThrow();
+
+            circle1.delete();
+            circle2.delete();
+        });
+
+        it("should create face from multiple circle tan wire collections by using strategy in order (to form separate faces)", () => {
+
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(4);
+
+            const f = face.createFaceFromMultipleCircleTanWireCollections({
+                listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                combination: OCCT.combinationCirclesForFaceEnum.inOrder,
+                unify: true,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(4);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(172.58436431800175);
+
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should not create face from multiple circle tan wire collections by using strategy in order if circle lists are not of equal length", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createNonEqualCircles(4);
+
+            expect(() => {
+                face.createFaceFromMultipleCircleTanWireCollections({
+                    listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                    combination: OCCT.combinationCirclesForFaceEnum.inOrder,
+                    unify: true,
+                    tolerance: 1e-7
+                });
+            }).toThrowError("All lists of circles must have the same length in order to use inOrder strategy.");
+
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+        });
+
+        it("should create face from multiple circle tan wire collections by using strategy all witj all (to form a single face)", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
+
+            const f = face.createFaceFromMultipleCircleTanWireCollections({
+                listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                combination: OCCT.combinationCirclesForFaceEnum.allWithAll,
+                unify: true,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(767.6148455097346);
+
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should create face from multiple circle tan wire collections by using strategy in order closed (to form a grid)", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
+
+            const f = face.createFaceFromMultipleCircleTanWireCollections({
+                listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+                unify: true,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(1);
+            const area = face.getFaceArea({ shape: f });
+            expect(area).toBe(693.4583936058482);
+
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should create face from multiple circle tan wire collections by using strategy in order closed (to form a grid) and not unify the faces into one", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createCirclesForFaceConstruction(3);
+
+            const f = face.createFaceFromMultipleCircleTanWireCollections({
+                listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+                unify: false,
+                tolerance: 1e-7
+            });
+
+            const faces = face.getFaces({ shape: f });
+            expect(faces.length).toBe(15);
+            const areas = face.getFacesAreas({ shapes: faces });
+            expect(areas).toEqual([
+                23.741592653589795, 22.84844425398502,
+                22.848444253985033, 23.141592653589793,
+                23.14159265358979, 23.141592653589775,
+                37.78260880496733, 37.782608804967325,
+                37.78260880496735, 72.42362495634481,
+                72.42362495634487, 72.42362495634481,
+                107.06464110772245, 107.06464110772241,
+                107.0646411077224
+            ]);
+
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+            f.delete();
+            faces.forEach((f) => f.delete());
+        });
+
+        it("should not create face from multiple circle tan wire collections by using strategy in order closed if circle lists are not of equal length", () => {
+            const { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 } = createNonEqualCircles(4);
+
+            expect(() => {
+                face.createFaceFromMultipleCircleTanWireCollections({
+                    listsOfCircles: [circlesOnPts1, circlesOnPts2, circlesOnPts3],
+                    combination: OCCT.combinationCirclesForFaceEnum.inOrderClosed,
+                    unify: true,
+                    tolerance: 1e-7
+                });
+            }).toThrowError("All lists of circles must have the same length in order to use inOrderClosed strategy.");
+
+            deleteCircleShapes(circle1, circle2, circle3, circlesOnPts1, circlesOnPts2, circlesOnPts3);
+        });
+
+        const createCirclesForFaceConstruction = (nrOfDivisions: number) => {
+            const circle1 = wire.createCircleWire({ radius: 10, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 20, center: [0, 0, 0.3], direction: [0, 1, 0] });
+            const circle3 = wire.createCircleWire({ radius: 30, center: [0, 0, 0.3], direction: [0, 1, 0] });
+
+            const ptsOnCircle1 = wire.divideWireByParamsToPoints({ shape: circle1, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+            const ptsOnCircle2 = wire.divideWireByParamsToPoints({ shape: circle2, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+            const ptsOnCircle3 = wire.divideWireByParamsToPoints({ shape: circle3, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+
+            const circlesOnPts1 = ptsOnCircle1.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            const circlesOnPts2 = ptsOnCircle2.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            const circlesOnPts3 = ptsOnCircle3.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            return { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 };
+        };
+
+        const createNonEqualCircles = (nrOfDivisions: number) => {
+            const circle1 = wire.createCircleWire({ radius: 10, center: [0, 0, 0], direction: [0, 1, 0] });
+            const circle2 = wire.createCircleWire({ radius: 20, center: [0, 0, 0.3], direction: [0, 1, 0] });
+            const circle3 = wire.createCircleWire({ radius: 30, center: [0, 0, 0.3], direction: [0, 1, 0] });
+
+            const ptsOnCircle1 = wire.divideWireByParamsToPoints({ shape: circle1, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+            const ptsOnCircle2 = wire.divideWireByParamsToPoints({ shape: circle2, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+            ptsOnCircle2.pop();
+            const ptsOnCircle3 = wire.divideWireByParamsToPoints({ shape: circle3, nrOfDivisions, removeEndPoint: true, removeStartPoint: false });
+
+            const circlesOnPts1 = ptsOnCircle1.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            const circlesOnPts2 = ptsOnCircle2.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            const circlesOnPts3 = ptsOnCircle3.map((pt) => wire.createCircleWire({ radius: 1, center: pt, direction: [0, 1, 0] }));
+            return { circlesOnPts1, circlesOnPts2, circlesOnPts3, circle1, circle2, circle3 };
+        };
+
+
+        const deleteCircleShapes = (circle1: TopoDS_Wire, circle2: TopoDS_Wire, circle3: TopoDS_Wire, circlesOnPts1: TopoDS_Wire[], circlesOnPts2: TopoDS_Wire[], circlesOnPts3: TopoDS_Wire[]) => {
+            circle1.delete();
+            circle2.delete();
+            circle3.delete();
+            circlesOnPts1.forEach((c) => c.delete());
+            circlesOnPts2.forEach((c) => c.delete());
+            circlesOnPts3.forEach((c) => c.delete());
+        };
+    });
+
+
+
 });

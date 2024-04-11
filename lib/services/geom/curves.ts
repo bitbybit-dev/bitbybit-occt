@@ -1,5 +1,5 @@
 import { Geom2d_Curve, Geom_Circle, Geom_Ellipse, OpenCascadeInstance } from "../../../bitbybit-dev-occt/bitbybit-dev-occt";
-import { OccHelper, typeSpecificityEnum } from "../../occ-helper";
+import { OccHelper } from "../../occ-helper";
 import * as Inputs from "../../api/inputs/inputs";
 
 export class OCCTCurves {
@@ -11,14 +11,14 @@ export class OCCTCurves {
     }
 
     geom2dEllipse(inputs: Inputs.OCCT.Geom2dEllipseDto) {
-        const axis2d = this.och.gpAx2d(inputs.center, inputs.direction);
+        const axis2d = this.och.entitiesService.gpAx2d(inputs.center, inputs.direction);
         const res = new this.occ.Geom2d_Ellipse_2(axis2d, inputs.radiusMajor, inputs.radiusMinor, inputs.sense);
         axis2d.delete();
         return res;
     }
 
     geom2dCircle(inputs: Inputs.OCCT.Geom2dCircleDto) {
-        const axis2d = this.och.gpAx2d(inputs.center, inputs.direction);
+        const axis2d = this.och.entitiesService.gpAx2d(inputs.center, inputs.direction);
         const res = new this.occ.Geom2d_Circle_2(axis2d, inputs.radius, inputs.sense);
         axis2d.delete();
         return res;
@@ -31,8 +31,8 @@ export class OCCTCurves {
     }
 
     geom2dSegment(inputs: Inputs.OCCT.Geom2dSegmentDto) {
-        const pt1 = this.och.gpPnt2d(inputs.start);
-        const pt2 = this.och.gpPnt2d(inputs.end);
+        const pt1 = this.och.entitiesService.gpPnt2d(inputs.start);
+        const pt2 = this.och.entitiesService.gpPnt2d(inputs.end);
         const res = new this.occ.GCE2d_MakeSegment_1(pt1, pt2);
         const resValue = res.Value();
         const r = resValue.get();
@@ -50,11 +50,11 @@ export class OCCTCurves {
     }
 
     geomCircleCurve(inputs: Inputs.OCCT.CircleDto): Geom_Circle {
-        return this.och.createCircle(inputs.radius, inputs.center, inputs.direction, typeSpecificityEnum.curve) as Geom_Circle;
+        return this.och.entitiesService.createCircle(inputs.radius, inputs.center, inputs.direction, Inputs.OCCT.typeSpecificityEnum.curve) as Geom_Circle;
     }
 
     geomEllipseCurve(inputs: Inputs.OCCT.EllipseDto): Geom_Ellipse {
-        return this.och.createEllipse(inputs.radiusMinor, inputs.radiusMajor, inputs.center, inputs.direction, typeSpecificityEnum.curve) as Geom_Ellipse;
+        return this.och.entitiesService.createEllipse(inputs.radiusMinor, inputs.radiusMajor, inputs.center, inputs.direction, Inputs.OCCT.typeSpecificityEnum.curve) as Geom_Ellipse;
     }
 
 }

@@ -12,87 +12,62 @@ export class OCCTSolid {
     }
 
     fromClosedShell(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shell>): TopoDS_Solid {
-        const shell = this.och.getActualTypeOfShape(inputs.shape);
-        const builder = new this.occ.BRepBuilderAPI_MakeSolid_3(shell);
-        const result = builder.Solid();
-        builder.delete();
-        shell.delete();
-        return result;
+        return this.och.solidsService.fromClosedShell(inputs);
     }
 
     createBox(inputs: Inputs.OCCT.BoxDto): TopoDS_Solid {
-        return this.och.bRepPrimAPIMakeBox(inputs.width, inputs.length, inputs.height, inputs.center);
+        return this.och.solidsService.createBox(inputs);
     }
 
     createCube(inputs: Inputs.OCCT.CubeDto): TopoDS_Solid {
-        return this.och.bRepPrimAPIMakeBox(inputs.size, inputs.size, inputs.size, inputs.center);
+        return this.och.solidsService.createCube(inputs);
     }
 
     createBoxFromCorner(inputs: Inputs.OCCT.BoxFromCornerDto): TopoDS_Solid {
-        const box = this.och.bRepPrimAPIMakeBox(inputs.width, inputs.length, inputs.height, inputs.corner);
-        const cornerBox = this.och.translate({ shape: box, translation: [inputs.width / 2, inputs.height / 2, inputs.length / 2] });
-        box.delete();
-        return cornerBox;
+        return this.och.solidsService.createBoxFromCorner(inputs);
     }
 
     createCylinder(inputs: Inputs.OCCT.CylinderDto): TopoDS_Solid {
-        return this.och.bRepPrimAPIMakeCylinder(
-            inputs.center,
-            inputs.direction ? inputs.direction : [0., 1., 0.],
-            inputs.radius,
-            inputs.height
-        );
+        return this.och.solidsService.createCylinder(inputs);
     }
 
     createCylindersOnLines(inputs: Inputs.OCCT.CylindersOnLinesDto): TopoDS_Solid[] {
-        const cylinders = inputs.lines.map(line => {
-            return this.och.bRepPrimAPIMakeCylinderBetweenPoints(
-                line.start,
-                line.end,
-                inputs.radius,
-            );
-        });
-        return cylinders;
+        return this.och.solidsService.createCylindersOnLines(inputs);
     }
 
     createSphere(inputs: Inputs.OCCT.SphereDto): TopoDS_Shape {
-        return this.och.bRepPrimAPIMakeSphere(inputs.center, [0., 0., 1.], inputs.radius);
+        return this.och.solidsService.createSphere(inputs);
     }
 
     createCone(inputs: Inputs.OCCT.ConeDto): TopoDS_Shape {
-        const ax = this.och.gpAx2(inputs.center, inputs.direction);
-        const makeCone = new this.occ.BRepPrimAPI_MakeCone_4(ax, inputs.radius1, inputs.radius2, inputs.height, inputs.angle);
-        const coneShape = makeCone.Shape();
-        makeCone.delete();
-        ax.delete();
-        return coneShape;
+        return this.och.solidsService.createCone(inputs);
     }
 
     getSolidSurfaceArea(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): number {
-        return this.och.getSolidSurfaceArea(inputs);
+        return this.och.solidsService.getSolidSurfaceArea(inputs);
     }
 
     getSolidVolume(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): number {
-        return this.och.getSolidVolume(inputs);
+        return this.och.solidsService.getSolidVolume(inputs);
     }
 
     getSolidsVolumes(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): number[] {
-        return this.och.getSolidsVolumes(inputs);
+        return this.och.solidsService.getSolidsVolumes(inputs);
     }
 
     getSolidCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Solid>): Base.Point3 {
-        return this.och.getSolidCenterOfMass(inputs);
+        return this.och.solidsService.getSolidCenterOfMass(inputs);
     }
 
     getSolidsCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Solid>): Base.Point3[] {
-        return this.och.getSolidsCentersOfMass(inputs);
+        return this.och.solidsService.getSolidsCentersOfMass(inputs);
     }
 
     getSolids(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Solid[] {
-        return this.och.getSolids(inputs);
+        return this.och.solidsService.getSolids(inputs);
     }
 
     filterSolidPoints(inputs: Inputs.OCCT.FilterSolidPointsDto<TopoDS_Solid>): Base.Point3[] {
-        return this.och.filterSolidPoints(inputs);
+        return this.och.solidsService.filterSolidPoints(inputs);
     }
 }
