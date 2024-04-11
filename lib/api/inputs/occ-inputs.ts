@@ -2839,7 +2839,8 @@ export namespace OCCT {
         shape: T;
         /**
          * Optionally provide face for the offset
-         * @default undefined;
+         * @default undefined
+         * @optional true
          */
         face?: U;
         /**
@@ -2875,7 +2876,8 @@ export namespace OCCT {
         shape: T;
         /**
          * Optionally provide face for the offset
-         * @default undefined;
+         * @default undefined
+         * @optional true
          */
         face?: U;
         /**
