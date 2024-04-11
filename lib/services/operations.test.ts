@@ -31,8 +31,9 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should get two closest points between two shapes", async () => {
-        const sph1 = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
-        const sph2 = occHelper.bRepPrimAPIMakeSphere([3, 3, 3], [0, 1, 0], 1);
+       
+        const sph1 = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const sph2 = occHelper.entitiesService.bRepPrimAPIMakeSphere([3, 3, 3], [0, 1, 0], 1);
         const res = operations.closestPointsBetweenTwoShapes({ shape1: sph1, shape2: sph2 });
         expect(res.length).toBe(2);
         expect(res).toEqual([
@@ -49,7 +50,7 @@ describe("OCCT operations unit tests", () => {
             [-3, 3, 3],
             [4, 4, -4],
         ] as Base.Point3[];
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
         const res = operations.closestPointsOnShapeFromPoints({ shape: sph, points });
         expect(res.length).toBe(5);
         expect(res).toEqual([
@@ -69,8 +70,8 @@ describe("OCCT operations unit tests", () => {
             [-3, 3, 3],
             [4, 4, -4],
         ] as Base.Point3[];
-        const sph1 = occHelper.bRepPrimAPIMakeSphere([0, 10, 0], [0, 1, 0], 1);
-        const sph2 = occHelper.bRepPrimAPIMakeSphere([0, 0, 10], [0, 1, 0], 2);
+        const sph1 = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 10, 0], [0, 1, 0], 1);
+        const sph2 = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 10], [0, 1, 0], 2);
 
         const res = operations.closestPointsOnShapesFromPoints({ shapes: [sph1, sph2], points });
         expect(res.length).toBe(10);
@@ -309,7 +310,7 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should slice a solid shape to pieces", () => {
-        const box = occHelper.bRepPrimAPIMakeBox(1, 2, 3, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(1, 2, 3, [0, 0, 0]);
         const res = operations.slice({ shape: box, direction: [0, 1, 0], step: 0.1 });
         const wires = wire.getWires({ shape: res });
         const faces = face.getFaces({ shape: res });
@@ -318,7 +319,7 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should slice a solid shape to pieces", () => {
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const res = operations.slice({ shape: sphere, direction: [0, 1, 0], step: 0.1 });
         const wires = wire.getWires({ shape: res });
         const faces = face.getFaces({ shape: res });
@@ -327,9 +328,9 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should slice two compounded solid shapes to pieces", () => {
-        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
-        const comp = occHelper.makeCompound({ shapes: [box, sphere] });
+        const box = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const comp = occHelper.converterService.makeCompound({ shapes: [box, sphere] });
         const res = operations.slice({ shape: comp, direction: [0, 1, 0], step: 0.1 });
         const wires = wire.getWires({ shape: res });
         const faces = face.getFaces({ shape: res });
@@ -338,9 +339,9 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should slice two compounded solid shapes to pieces on an angle", () => {
-        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
-        const comp = occHelper.makeCompound({ shapes: [box, sphere] });
+        const box = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const comp = occHelper.converterService.makeCompound({ shapes: [box, sphere] });
         const res = operations.slice({ shape: comp, direction: [0, 1, 1], step: 0.2 });
         const wires = wire.getWires({ shape: res });
         const faces = face.getFaces({ shape: res });
@@ -349,12 +350,12 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should not slice shapes when step is 0", () => {
-        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         expect(() => operations.slice({ shape: box, direction: [0, 1, 1], step: 0 })).toThrow("Step needs to be positive.");
     });
 
     it("should not slice shapes when step is lower than 0", () => {
-        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         expect(() => operations.slice({ shape: box, direction: [0, 1, 1], step: -0.1 })).toThrow("Step needs to be positive.");
     });
 
@@ -370,9 +371,9 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should slice two compounded solid shapes to pieces on an angle with step pattern of two numbers", () => {
-        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
-        const comp = occHelper.makeCompound({ shapes: [box, sphere] });
+        const box = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const comp = occHelper.converterService.makeCompound({ shapes: [box, sphere] });
         const res = operations.sliceInStepPattern({ shape: comp, direction: [0, 1, 1], steps: [0.1, 0.2] });
         const wires = wire.getWires({ shape: res });
         const faces = face.getFaces({ shape: res });
@@ -381,9 +382,9 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should slice two compounded solid shapes to pieces on an angle with step pattern of three numbers", () => {
-        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
-        const comp = occHelper.makeCompound({ shapes: [box, sphere] });
+        const box = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const comp = occHelper.converterService.makeCompound({ shapes: [box, sphere] });
         const res = operations.sliceInStepPattern({ shape: comp, direction: [0, 1, 1], steps: [0.1, 0.2, 0.3] });
         const wires = wire.getWires({ shape: res });
         const faces = face.getFaces({ shape: res });
@@ -392,12 +393,12 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should not slice in pattern if steps property is undefines", () => {
-        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         expect(() => operations.sliceInStepPattern({ shape: box, direction: [0, 1, 1], steps: undefined })).toThrow("Steps must be provided with at elast one positive value");
     });
 
     it("should not slice in pattern if steps property is an empty array", () => {
-        const box = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         expect(() => operations.sliceInStepPattern({ shape: box, direction: [0, 1, 1], steps: [] })).toThrow("Steps must be provided with at elast one positive value");
     });
 
@@ -428,7 +429,7 @@ describe("OCCT operations unit tests", () => {
             points,
         });
 
-        const filletWire = occHelper.fillet3DWire({ shape: polylineWire, radius: 5, direction: [0, 30, 0] });
+        const filletWire = occHelper.filletsService.fillet3DWire({ shape: polylineWire, radius: 5, direction: [0, 30, 0] });
         const offsetWireDir1 = operations.offset3DWire({
             shape: filletWire,
             direction: [0, 1, 0],
@@ -538,7 +539,7 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should measure distances from points to a shape", () => {
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
         const points = [
             [6, 0, 0],
             [0, 3, 0],
@@ -576,7 +577,7 @@ describe("OCCT operations unit tests", () => {
 
     it("should offset a circle by using a face to negative direction", () => {
         const circleWire = wire.createCircleWire({ center: [0, 0, 0], radius: 1, direction: [0, 0, 1] });
-        const f = occHelper.createSquareFace({ size: 10, direction: [0, 0, 1], center: [0, 0, 0] });
+        const f = occHelper.facesService.createSquareFace({ size: 10, direction: [0, 0, 1], center: [0, 0, 0] });
         const fRev = face.reversedFace({ shape: f });
         const offsetRes = operations.offset({ shape: circleWire, distance: -0.1, tolerance: 1e-7, face: fRev });
         const wires = wire.getWires({ shape: offsetRes });
@@ -591,7 +592,7 @@ describe("OCCT operations unit tests", () => {
 
     it("should offset a circle edge by using a face to negative direction", () => {
         const circleEdge = edge.createCircleEdge({ center: [0, 0, 0], radius: 1, direction: [0, 0, 1] });
-        const f = occHelper.createSquareFace({ size: 10, direction: [0, 0, 1], center: [0, 0, 0] });
+        const f = occHelper.facesService.createSquareFace({ size: 10, direction: [0, 0, 1], center: [0, 0, 0] });
         const fRev = face.reversedFace({ shape: f });
         const offsetRes = operations.offset({ shape: circleEdge, distance: -0.1, tolerance: 1e-7, face: fRev });
         const wires = wire.getWires({ shape: offsetRes });
@@ -606,7 +607,7 @@ describe("OCCT operations unit tests", () => {
 
     it("should offset a circle by using a face to positive direction", () => {
         const circleWire = wire.createCircleWire({ center: [0, 0, 0], radius: 1, direction: [0, 0, 1] });
-        const f = occHelper.createSquareFace({ size: 10, direction: [0, 0, 1], center: [0, 0, 0] });
+        const f = occHelper.facesService.createSquareFace({ size: 10, direction: [0, 0, 1], center: [0, 0, 0] });
         const fRev = face.reversedFace({ shape: f });
         const offsetRes = operations.offset({ shape: circleWire, distance: 0.1, tolerance: 1e-7, face: fRev });
         const wires = wire.getWires({ shape: offsetRes });
@@ -620,7 +621,7 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should offset a sphere to negative direction", () => {
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
         const offsetRes = operations.offset({ shape: sphere, distance: -0.1, tolerance: 1e-7 });
         const faceAreaOriginal = face.getFaceArea({ shape: sphere });
         const faceArea = face.getFaceArea({ shape: offsetRes });
@@ -631,7 +632,7 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should offset a sphere to positive direction", () => {
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
         const offsetRes = operations.offset({ shape: sphere, distance: 0.1, tolerance: 1e-7 });
         const faceAreaOriginal = face.getFaceArea({ shape: sphere });
         const faceArea = face.getFaceArea({ shape: offsetRes });
@@ -642,7 +643,7 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should offset a cube to positive direction", () => {
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 1);
         const offsetRes = operations.offset({ shape: sphere, distance: 0.1, tolerance: 1e-7 });
         const faceAreaOriginal = face.getFaceArea({ shape: sphere });
         const faceArea = face.getFaceArea({ shape: offsetRes });
@@ -841,7 +842,7 @@ describe("OCCT operations unit tests", () => {
     });
 
     it("should make thick solid simple", () => {
-        const box = occHelper.bRepPrimAPIMakeBox(1, 2, 3, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(1, 2, 3, [0, 0, 0]);
         const boxFaces = face.getFaces({ shape: box });
         const fRem = boxFaces.pop();
         fRem.delete();

@@ -111,7 +111,7 @@ describe("OCCT edge unit tests", () => {
     });
 
     it("should be able to get an edge from solid shape", async () => {
-        const box = occHelper.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
         const e = edge.getEdge({ shape: box, index: 1 });
         const length = edge.getEdgeLength({ shape: e });
         expect(length).toEqual(10);
@@ -120,7 +120,7 @@ describe("OCCT edge unit tests", () => {
     });
 
     it("should not be able to get an edge from solid shape with undefined index", async () => {
-        const box = occHelper.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
         expect(() =>
             edge.getEdge({ shape: box, index: 0 })
         ).toThrowError("Edge can not be found for shape on index 0");
@@ -128,7 +128,7 @@ describe("OCCT edge unit tests", () => {
     });
 
     it("should be not able to get an edge from solid shape with undefined index", async () => {
-        const box = occHelper.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
         expect(() =>
             edge.getEdge({ shape: box, index: 13 })
         ).toThrowError("Edge can not be found for shape on index 13");
@@ -142,7 +142,7 @@ describe("OCCT edge unit tests", () => {
     });
 
     it("should not remove internal edges if there are none", async () => {
-        const box = occHelper.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
         const boxEdges = edge.getEdges({ shape: box });
         const shapeWithoutEdges = edge.removeInternalEdges({ shape: box });
         const removedBoxEdges = edge.getEdges({ shape: shapeWithoutEdges });
@@ -371,7 +371,7 @@ describe("OCCT edge unit tests", () => {
     });
 
     it("should get edge lengths", async () => {
-        const cylinder = occHelper.bRepPrimAPIMakeCylinder([0, 0, 0], [0, 1, 0], 1, 2);
+        const cylinder = occHelper.entitiesService.bRepPrimAPIMakeCylinder([0, 0, 0], [0, 1, 0], 1, 2);
         const edges = edge.getEdges({ shape: cylinder });
         const lengths = edge.getEdgesLengths({ shapes: edges });
         expect(lengths.length).toBe(3);
@@ -414,7 +414,7 @@ describe("OCCT edge unit tests", () => {
     });
 
     it("should get corner points of edges for the shape", async () => {
-        const box = occHelper.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(10, 10, 10, [0, 0, 0]);
         const corners = edge.getCornerPointsOfEdgesForShape({ shape: box });
         expect(corners.length).toBe(8);
         expect(corners).toEqual([

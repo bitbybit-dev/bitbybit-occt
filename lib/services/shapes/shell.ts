@@ -11,7 +11,7 @@ export class OCCTShell {
     }
 
     sewFaces(inputs: Inputs.OCCT.SewDto<TopoDS_Face>): TopoDS_Shell {
-        return this.och.sewFaces(inputs);
+        return this.och.shellsService.sewFaces(inputs);
     }
 
     isClosed(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shell>): boolean {
@@ -19,6 +19,6 @@ export class OCCTShell {
     }
 
     getShellSurfaceArea(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shell>): number {
-        return this.och.getShellSurfaceArea(inputs);
+        return this.och.shellsService.getShellSurfaceArea(inputs);
     }
 }

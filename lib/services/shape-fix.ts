@@ -11,7 +11,7 @@ export class OCCTShapeFix {
     }
 
     fixEdgeOrientationsAlongWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
-        return this.och.fixEdgeOrientationsAlongWire(inputs);
+        return this.och.edgesService.fixEdgeOrientationsAlongWire(inputs);
     }
 
     basicShapeRepair(inputs: Inputs.OCCT.BasicShapeRepairDto<TopoDS_Shape>): TopoDS_Shape {

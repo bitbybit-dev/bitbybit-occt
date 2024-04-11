@@ -57,8 +57,8 @@ export class OCCTService {
         this.occ.BRepTools.Clean(shapeToUse, true);
 
         if (adjustYtoZ) {
-            const shapeToUseRotated = this.och.rotate({ shape, axis: [1, 0, 0], angle: -90 });
-            const shapeMirrored = this.och.mirrorAlongNormal(
+            const shapeToUseRotated = this.och.transformsService.rotate({ shape, axis: [1, 0, 0], angle: -90 });
+            const shapeMirrored = this.och.transformsService.mirrorAlongNormal(
                 { shape: shapeToUseRotated, origin: [0, 0, 0], normal: [0, 0, 1] }
             );
             shapeToUseRotated.delete();
@@ -68,7 +68,7 @@ export class OCCTService {
 
         // Iterate through the faces and triangulate each one
         const triangulations: Handle_Poly_Triangulation[] = [];
-        const faces = this.och.getFaces({ shape: shapeToUse });
+        const faces = this.och.shapeGettersService.getFaces({ shape: shapeToUse });
 
         let incrementalMeshBuilder;
         if (faces && faces.length) {
@@ -157,7 +157,7 @@ export class OCCTService {
         }
 
         // Get the free edges that aren't on any triangulated face/surface
-        const edges = this.och.getEdges({ shape: shapeToUse });
+        const edges = this.och.shapeGettersService.getEdges({ shape: shapeToUse });
         edges.forEach((myEdge, index) => {
             const thisEdge: Inputs.OCCT.DecomposedEdgeDto = {
                 vertex_coord: [],
@@ -191,7 +191,7 @@ export class OCCTService {
             this.occ.BRepTools.Clean(myEdge, true);
         });
 
-        const vertices = this.och.getVertices({ shape: shapeToUse });
+        const vertices = this.och.shapeGettersService.getVertices({ shape: shapeToUse });
         if (vertices.length > 0) {
             vertices.forEach(v => {
                 const pt = this.occ.BRep_Tool.Pnt(v);

@@ -497,7 +497,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should get wires of a box", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
         const wires = wire.getWires({ shape: b });
         expect(wires.length).toBe(6);
         b.delete();
@@ -505,7 +505,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should get lengths of wires", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
         const wires = wire.getWires({ shape: b });
         const lengths = wire.getWiresLengths({ shapes: wires });
         expect(lengths).toEqual([18, 18, 14, 14, 16, 16]);
@@ -523,7 +523,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should get wire of a box at specific index", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
         const w = wire.getWire({ shape: b, index: 2 });
         const length = wire.getWireLength({ shape: w });
         expect(length).toEqual(14);
@@ -532,7 +532,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should get wire of a box at 0 index if index is undefined", async () => {
-        const b = occHelper.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
+        const b = occHelper.entitiesService.bRepPrimAPIMakeBox(3, 4, 5, [0, 0, 0]);
         const w = wire.getWire({ shape: b, index: undefined });
         const length = wire.getWireLength({ shape: w });
         expect(length).toEqual(18);
@@ -796,7 +796,7 @@ describe("OCCT wire unit tests", () => {
         const e2 = edge.line({ start: [1, 0, 0], end: [3, 4, 0] });
         const w1 = wire.createBezier({ points: [[3, 4, 0], [4, 4, 0], [5, 5, 0]], closed: false });
         const w2 = wire.createBezier({ points: [[5, 5, 0], [6, 6, 0], [7, 7, 0]], closed: false });
-        const box = occHelper.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
         const combined = wire.addEdgesAndWiresToWire({ shape: wBase, shapes: [e1, e2, w1, w2, box] });
         const length = wire.getWireLength({ shape: combined });
         expect(length).toBeCloseTo(12.640244335199364);
@@ -810,7 +810,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should place wire on a face", async () => {
-        const sph = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sph = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const f = face.getFace({ shape: sph, index: 0 });
         const w = wire.createEllipseWire({ radiusMajor: 0.5, radiusMinor: 0.3, center: [0, 0, 0], direction: [0, 1, 0] });
         const placed = wire.placeWireOnFace({ wire: w, face: f });
@@ -823,7 +823,7 @@ describe("OCCT wire unit tests", () => {
     });
 
     it("should place wires on a face", async () => {
-        const sph1 = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sph1 = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const f = face.getFace({ shape: sph1, index: 0 });
         const w1 = wire.createEllipseWire({ radiusMajor: 0.5, radiusMinor: 0.3, center: [0, 0, 0], direction: [0, 1, 0] });
         const w2 = wire.createEllipseWire({ radiusMajor: 0.3, radiusMinor: 0.1, center: [0, 0, 0], direction: [0, 1, 0] });
@@ -1138,7 +1138,7 @@ describe("OCCT wire unit tests", () => {
             center: [0, 4, 0],
             direction: [0, 1, 0]
         });
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const projected = wire.project({ wire: star, shape: sphere, direction: [0, -1, 0] });
         const wires = wire.getWires({ shape: projected });
         expect(wires.length).toBe(2);
@@ -1168,7 +1168,7 @@ describe("OCCT wire unit tests", () => {
             center: [0, 4, 0],
             direction: [0, 1, 0]
         });
-        const sphere = occHelper.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
+        const sphere = occHelper.entitiesService.bRepPrimAPIMakeSphere([0, 0, 0], [0, 1, 0], 3);
         const projected = wire.projectWires({ wires: [star1, star2], shape: sphere, direction: [0, -1, 0] });
         expect(projected.length).toBe(2);
         const wires = projected.map(p => {

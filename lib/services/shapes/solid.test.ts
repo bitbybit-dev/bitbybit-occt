@@ -28,11 +28,11 @@ describe("OCCT solid unit tests", () => {
     });
 
     it("should recreate a solid from closed shell if sewing all edges of the box", async () => {
-        const box = occHelper.bRepPrimAPIMakeBox(2, 2, 2, [0, 0, 0]);
+        const box = occHelper.entitiesService.bRepPrimAPIMakeBox(2, 2, 2, [0, 0, 0]);
         const faces = face.getFaces({ shape: box });
         const s = shell.sewFaces({ shapes: faces, tolerance: 1e-7 });
         const so = solid.fromClosedShell({ shape: s });
-        expect(occHelper.getShapeTypeEnum(so)).toBe(Inputs.OCCT.shapeTypeEnum.solid);
+        expect(occHelper.enumService.getShapeTypeEnum(so)).toBe(Inputs.OCCT.shapeTypeEnum.solid);
         expect(solid.getSolidVolume({ shape: so })).toBeCloseTo(8);
         box.delete();
         s.delete();

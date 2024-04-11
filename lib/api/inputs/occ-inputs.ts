@@ -104,6 +104,12 @@ export namespace OCCT {
         inOrder = "inOrder",
         inOrderClosed = "inOrderClosed",
     }
+    export enum typeSpecificityEnum {
+        curve,
+        edge,
+        wire,
+        face,
+    }
     export class DecomposedMeshDto {
         constructor(faceList?: DecomposedFaceDto[], edgeList?: DecomposedEdgeDto[]) {
             if (faceList !== undefined) { this.faceList = faceList; }
