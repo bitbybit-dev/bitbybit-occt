@@ -38,17 +38,16 @@ export class OCCTService {
         this.io = new OCCTIO(occ, och);
     }
 
-    shapesToMeshes(shapes, maxDeviation, adjustYtoZ): Inputs.OCCT.DecomposedMeshDto[] {
-        return shapes.map(shape => this.shapeToMesh(shape, maxDeviation, adjustYtoZ));
+    shapesToMeshes(inputs: { shapes: TopoDS_Shape[], precision: number, adjustYtoZ: boolean }): Inputs.OCCT.DecomposedMeshDto[] {
+        return inputs.shapes.map(shape => this.shapeToMesh({shape, precision: inputs.precision, adjustYtoZ: inputs.adjustYtoZ}));
     }
 
-    shapeToMesh(shape, maxDeviation, adjustYtoZ): Inputs.OCCT.DecomposedMeshDto {
+    shapeToMesh(inputs: { shape: TopoDS_Shape, precision: number, adjustYtoZ: boolean }): Inputs.OCCT.DecomposedMeshDto {
 
         const faceList: Inputs.OCCT.DecomposedFaceDto[] = [];
         const edgeList: Inputs.OCCT.DecomposedEdgeDto[] = [];
         const pointsList: Inputs.Base.Point3[] = [];
-
-        let shapeToUse = shape as TopoDS_Shape;
+        let shapeToUse = inputs.shape;
         if (shapeToUse.IsNull()) return { faceList, edgeList, pointsList: [] };
 
         // This could be made optional...
@@ -56,8 +55,8 @@ export class OCCTService {
         // This allows to get lower res models out of higher res that was once computed and cached.
         this.occ.BRepTools.Clean(shapeToUse, true);
 
-        if (adjustYtoZ) {
-            const shapeToUseRotated = this.och.transformsService.rotate({ shape, axis: [1, 0, 0], angle: -90 });
+        if (inputs.adjustYtoZ) {
+            const shapeToUseRotated = this.och.transformsService.rotate({ shape: inputs.shape, axis: [1, 0, 0], angle: -90 });
             const shapeMirrored = this.och.transformsService.mirrorAlongNormal(
                 { shape: shapeToUseRotated, origin: [0, 0, 0], normal: [0, 0, 1] }
             );
@@ -72,7 +71,7 @@ export class OCCTService {
 
         let incrementalMeshBuilder;
         if (faces && faces.length) {
-            incrementalMeshBuilder = new this.occ.BRepMesh_IncrementalMesh_2(shapeToUse, maxDeviation, false, 0.5, false);
+            incrementalMeshBuilder = new this.occ.BRepMesh_IncrementalMesh_2(shapeToUse, inputs.precision, false, 0.5, false);
             faces.forEach((myFace, faceIndex) => {
 
                 const aLocation = new this.occ.TopLoc_Location_1();
@@ -166,7 +165,7 @@ export class OCCTService {
 
             const aLocation = new this.occ.TopLoc_Location_1();
             const adaptorCurve = new this.occ.BRepAdaptor_Curve_2(myEdge);
-            const tangDef = new this.occ.GCPnts_TangentialDeflection_2(adaptorCurve, maxDeviation, 0.1, 2, 1.0e-9, 1.0e-7);
+            const tangDef = new this.occ.GCPnts_TangentialDeflection_2(adaptorCurve, inputs.precision, 0.1, 2, 1.0e-9, 1.0e-7);
 
             // write vertex buffer
             thisEdge.vertex_coord = [];
