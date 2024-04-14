@@ -4102,10 +4102,11 @@ export namespace OCCT {
         adjustYtoZ = false;
     }
     export class SaveStepDto<T> {
-        constructor(shape?: T, fileName?: string, adjustYtoZ?: boolean) {
+        constructor(shape?: T, fileName?: string, adjustYtoZ?: boolean, tryDownload?: boolean) {
             if (shape !== undefined) { this.shape = shape; }
             if (fileName !== undefined) { this.fileName = fileName; }
             if (adjustYtoZ !== undefined) { this.adjustYtoZ = adjustYtoZ; }
+            if (tryDownload !== undefined) { this.tryDownload = tryDownload; }
         }
         /**
          * Shape to save
@@ -4122,13 +4123,20 @@ export namespace OCCT {
          * @default false
          */
         adjustYtoZ = false;
+        /**
+         * Will attempt to downlaod the file if that is possible
+         * @default true
+         */
+        tryDownload? = true;
     }
     export class SaveStlDto<T> {
-        constructor(shape?: T, fileName?: string, precision?: number, adjustYtoZ?: boolean) {
+        constructor(shape?: T, fileName?: string, precision?: number, adjustYtoZ?: boolean, tryDownload?: boolean, binary?: boolean) {
             if (shape !== undefined) { this.shape = shape; }
             if (fileName !== undefined) { this.fileName = fileName; }
             if (precision !== undefined) { this.precision = precision; }
             if (adjustYtoZ !== undefined) { this.adjustYtoZ = adjustYtoZ; }
+            if (tryDownload !== undefined) { this.tryDownload = tryDownload; }
+            if (binary !== undefined) { this.binary = binary; }
         }
         /**
          * Shape to save
@@ -4150,6 +4158,16 @@ export namespace OCCT {
          * @default false
          */
         adjustYtoZ = false;
+        /**
+         * Try download the file if that is possible
+         * @default true
+         */
+        tryDownload? = true;
+        /**
+         * Generate binary STL file
+         * @default true
+         */
+        binary? = true;
     }
     export class ImportStepIgesFromTextDto {
         constructor(text?: string, fileType?: fileTypeEnum, adjustZtoY?: boolean) {
