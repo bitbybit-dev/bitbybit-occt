@@ -2309,11 +2309,13 @@ export namespace OCCT {
         tolerance = 1e-7;
     }
     export class ZigZagBetweenTwoWiresDto<T> {
-        constructor(wire1?: T, wire2?: T, nrZigZags?: number, inverse?: boolean) {
+        constructor(wire1?: T, wire2?: T, nrZigZags?: number, inverse?: boolean, divideByEqualDistance?: boolean, zigZagsPerEdge?: boolean) {
             if (wire1 !== undefined) { this.wire1 = wire1; }
             if (wire2 !== undefined) { this.wire2 = wire2; }
             if (nrZigZags !== undefined) { this.nrZigZags = nrZigZags; }
             if (inverse !== undefined) { this.inverse = inverse; }
+            if (divideByEqualDistance !== undefined) { this.divideByEqualDistance = divideByEqualDistance; }
+            if (zigZagsPerEdge !== undefined) { this.zigZagsPerEdge = zigZagsPerEdge; }
         }
         /**
          * The first wire for zig zag
@@ -2338,6 +2340,17 @@ export namespace OCCT {
          * @default false
          */
         inverse: boolean;
+        /**
+         * If true, the zig zags will be spaced equally on each edge. By default we follow parametric subdivision of the edges, which is not always equal to distance based subdivisions.
+         * @default false
+         */
+        divideByEqualDistance = false;
+
+        /**
+         * By default the number of zig zags is applied to each edge. If this is set to false, the number of zig zags will be applied to the whole wire. This could then skip some corners where edges meet.
+         * @default true
+         */
+        zigZagsPerEdge = true;
     }
     export class InterpolationDto {
         constructor(points?: Base.Point3[], periodic?: boolean, tolerance?: number) {

@@ -510,14 +510,31 @@ export class WiresService {
     createZigZagBetweenTwoWires(inputs: Inputs.OCCT.ZigZagBetweenTwoWiresDto<TopoDS_Wire>) {
         const wire1 = inputs.wire1;
         const wire2 = inputs.wire2;
-        const edges1 = this.edgesService.getEdgesAlongWire({ shape: wire1 });
-        const edges2 = this.edgesService.getEdgesAlongWire({ shape: wire2 });
 
-        const ptsEdges1 = edges1.map(e => this.edgesService.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false }));
-        const ptsEdges2 = edges2.map(e => this.edgesService.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false }));
+        let points1 = [];
+        let points2 = [];
 
-        const wires = ptsEdges1.map((pts1, index) => {
-            const pts2 = ptsEdges2[index];
+        if (inputs.zigZagsPerEdge) {
+            const edges1 = this.edgesService.getEdgesAlongWire({ shape: wire1 });
+            const edges2 = this.edgesService.getEdgesAlongWire({ shape: wire2 });
+            if (inputs.divideByEqualDistance) {
+                points1 = edges1.map(e => this.edgesService.divideEdgeByEqualDistanceToPoints({ shape: e, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false }));
+                points2 = edges2.map(e => this.edgesService.divideEdgeByEqualDistanceToPoints({ shape: e, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false }));
+            } else {
+                points1 = edges1.map(e => this.edgesService.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false }));
+                points2 = edges2.map(e => this.edgesService.divideEdgeByParamsToPoints({ shape: e, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false }));
+            }
+        } else {
+            if (inputs.divideByEqualDistance) {
+                points1 = [this.divideWireByEqualDistanceToPoints({ shape: wire1, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false })];
+                points2 = [this.divideWireByEqualDistanceToPoints({ shape: wire2, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false })];
+            } else {
+                points1 = [this.divideWireByParamsToPoints({ shape: wire1, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false })];
+                points2 = [this.divideWireByParamsToPoints({ shape: wire2, nrOfDivisions: inputs.nrZigZags * 2, removeEndPoint: false, removeStartPoint: false })];
+            }
+        }
+        const wires = points1.map((pts1, index) => {
+            const pts2 = points2[index];
 
             const ptsInZigZagOrder = [];
             for (let i = 0; i < pts1.length; i++) {
