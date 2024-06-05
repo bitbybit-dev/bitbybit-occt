@@ -638,7 +638,6 @@ export class FacesService {
             gpPnt.delete();
             return pt;
         });
-        surface.delete();
         return pts;
     }
 
