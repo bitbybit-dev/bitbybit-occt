@@ -142,6 +142,7 @@ async function start() {
         "TColgp_Array1OfPnt2d",
         "TColgp_Array2OfPnt",
         "TColStd_Array1OfBoolean",
+        "TColStd_Array1OfReal",
         "TColgp_Array1OfVec",
         "TColStd_Array1OfInteger",
         "Precision",
