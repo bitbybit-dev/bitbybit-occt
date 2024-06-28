@@ -361,7 +361,7 @@ export namespace OCCT {
          */
         radius = 0.3;
     }
-    export class CurveAndSurfaceDto<T, U>{
+    export class CurveAndSurfaceDto<T, U> {
         constructor(curve?: T, surface?: U) {
             if (curve !== undefined) { this.curve = curve; }
             if (surface !== undefined) { this.surface = surface; }
@@ -437,7 +437,7 @@ export namespace OCCT {
          */
         points: Base.Point3[];
     }
-    export class SplitWireOnPointsDto<T>{
+    export class SplitWireOnPointsDto<T> {
         constructor(shape?: T, points?: Base.Point3[]) {
             if (shape !== undefined) { this.shape = shape; }
             if (points !== undefined) { this.points = points; }
@@ -2408,6 +2408,28 @@ export namespace OCCT {
          */
         closed = false;
     }
+    export class BezierWeightsDto {
+        constructor(points?: Base.Point3[], weights?: number[], closed?: boolean) {
+            if (points !== undefined) { this.points = points; }
+            if (weights !== undefined) { this.weights = weights; }
+            if (closed !== undefined) { this.closed = closed; }
+        }
+        /**
+         * Points through which the Bezier curve will be created
+         * @default undefined
+         */
+        points: Base.Point3[];
+        /**
+        * Weights for beziers that will be used, values should be between 0 and 1
+        * @default undefined
+        */
+        weights: number[];
+        /**
+         * Indicates wether Bezier will be cloed
+         * @default false
+         */
+        closed = false;
+    }
     export class BezierWiresDto {
         constructor(bezierWires?: BezierDto[], returnCompound?: boolean) {
             if (bezierWires !== undefined) { this.bezierWires = bezierWires; }
@@ -3181,7 +3203,7 @@ export namespace OCCT {
          */
         otherShape: T;
     }
-    export class FixSmallEdgesInWireDto<T>{
+    export class FixSmallEdgesInWireDto<T> {
         constructor(shape?: T, lockvtx?: boolean, precsmall?: number) {
             if (shape !== undefined) { this.shape = shape; }
             if (lockvtx !== undefined) { this.lockvtx = lockvtx; }
@@ -3248,7 +3270,7 @@ export namespace OCCT {
          */
         minTolerance = 0.0001;
     }
-    export class FixClosedDto<T>{
+    export class FixClosedDto<T> {
         constructor(shape?: T, precision?: number) {
             if (shape !== undefined) { this.shape = shape; }
             if (precision !== undefined) { this.precision = precision; }
@@ -3540,7 +3562,7 @@ export namespace OCCT {
         translations: Base.Vector3[] = [[0, 0, 0]];
     }
 
-    export class AlignDto<T>{
+    export class AlignDto<T> {
         constructor(shape?: T, fromOrigin?: Base.Point3, fromDirection?: Base.Vector3, toOrigin?: Base.Point3, toDirection?: Base.Vector3) {
             if (shape !== undefined) { this.shape = shape; }
             if (fromOrigin !== undefined) { this.fromOrigin = fromOrigin; }
@@ -3697,7 +3719,7 @@ export namespace OCCT {
          */
         normals: Base.Vector3[] = [[0, 0, 1]];
     }
-    export class AlignAndTranslateDto<T>{
+    export class AlignAndTranslateDto<T> {
         constructor(shape?: T, direction?: Base.Vector3, center?: Base.Vector3) {
             if (shape !== undefined) { this.shape = shape; }
             if (direction !== undefined) { this.direction = direction; }
@@ -3746,7 +3768,7 @@ export namespace OCCT {
         */
         concatBSplines = true;
     }
-    export class FilterFacePointsDto<T>{
+    export class FilterFacePointsDto<T> {
         constructor(shape?: T, points?: Base.Point3[], tolerance?: number, useBndBox?: boolean, gapTolerance?: number, keepIn?: boolean, keepOn?: boolean, keepOut?: boolean, keepUnknown?: boolean) {
             if (shape !== undefined) { this.shape = shape; }
             if (points !== undefined) { this.points = points; }
@@ -3812,7 +3834,7 @@ export namespace OCCT {
         */
         keepUnknown = false;
     }
-    export class FilterSolidPointsDto<T>{
+    export class FilterSolidPointsDto<T> {
         constructor(shape?: T, points?: Base.Point3[], tolerance?: number, keepIn?: boolean, keepOn?: boolean, keepOut?: boolean, keepUnknown?: boolean) {
             if (shape !== undefined) { this.shape = shape; }
             if (points !== undefined) { this.points = points; }
@@ -3861,7 +3883,7 @@ export namespace OCCT {
         */
         keepUnknown = false;
     }
-    export class AlignAndTranslateShapesDto<T>{
+    export class AlignAndTranslateShapesDto<T> {
         constructor(shapes?: T[], directions?: Base.Vector3[], centers?: Base.Vector3[]) {
             if (shapes !== undefined) { this.shapes = shapes; }
             if (directions !== undefined) { this.directions = directions; }
@@ -4064,7 +4086,7 @@ export namespace OCCT {
          */
         centers: Base.Point3[] = [[0, 0, 0]];
     }
-    export class ShapeToMeshDto<T>{
+    export class ShapeToMeshDto<T> {
         constructor(shape?: T, precision?: number, adjustYtoZ?: boolean) {
             if (shape !== undefined) { this.shape = shape; }
             if (precision !== undefined) { this.precision = precision; }
@@ -4089,7 +4111,7 @@ export namespace OCCT {
          */
         adjustYtoZ = false;
     }
-    export class ShapesToMeshesDto<T>{
+    export class ShapesToMeshesDto<T> {
         constructor(shapes?: T[], precision?: number, adjustYtoZ?: boolean) {
             if (shapes !== undefined) { this.shapes = shapes; }
             if (precision !== undefined) { this.precision = precision; }
@@ -4815,7 +4837,7 @@ export namespace OCCT {
          */
         direction: Base.Vector3 = [0, 1, 0];
     }
-    export class Geom2dTrimmedCurveDto<T>{
+    export class Geom2dTrimmedCurveDto<T> {
         constructor(shape?: T, u1?: number, u2?: number, sense?: boolean, adjustPeriodic?: boolean) {
             if (shape !== undefined) { this.shape = shape; }
             if (u1 !== undefined) { this.u1 = u1; }

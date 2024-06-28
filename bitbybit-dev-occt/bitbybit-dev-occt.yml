@@ -257,6 +257,7 @@
       - symbol: StlAPI_Writer
       - symbol: TColStd_Array1OfBoolean
       - symbol: TColStd_Array1OfInteger
+      - symbol: TColStd_Array1OfReal
       - symbol: TColStd_IndexedDataMapOfStringString
       - symbol: TColgp_Array1OfDir
       - symbol: TColgp_Array1OfPnt

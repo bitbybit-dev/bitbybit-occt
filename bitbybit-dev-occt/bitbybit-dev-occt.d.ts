@@ -3815,6 +3815,52 @@ export declare class TColStd_Array1OfInteger {
     constructor(theBegin: Standard_Integer, theLower: Standard_Integer, theUpper: Standard_Integer);
   }
 
+export declare class TColStd_Array1OfReal {
+  begin(): any;
+  end(): any;
+  cbegin(): any;
+  cend(): any;
+  Init(theValue: Standard_Real): void;
+  Size(): Standard_Integer;
+  Length(): Standard_Integer;
+  IsEmpty(): Standard_Boolean;
+  Lower(): Standard_Integer;
+  Upper(): Standard_Integer;
+  IsDeletable(): Standard_Boolean;
+  IsAllocated(): Standard_Boolean;
+  Assign(theOther: TColStd_Array1OfReal): TColStd_Array1OfReal;
+  Move(theOther: TColStd_Array1OfReal): TColStd_Array1OfReal;
+  First(): Standard_Real;
+  ChangeFirst(): Standard_Real;
+  Last(): Standard_Real;
+  ChangeLast(): Standard_Real;
+  Value(theIndex: Standard_Integer): Standard_Real;
+  ChangeValue(theIndex: Standard_Integer): Standard_Real;
+  SetValue(theIndex: Standard_Integer, theItem: Standard_Real): void;
+  Resize(theLower: Standard_Integer, theUpper: Standard_Integer, theToCopyData: Standard_Boolean): void;
+  delete(): void;
+}
+
+  export declare class TColStd_Array1OfReal_1 extends TColStd_Array1OfReal {
+    constructor();
+  }
+
+  export declare class TColStd_Array1OfReal_2 extends TColStd_Array1OfReal {
+    constructor(theLower: Standard_Integer, theUpper: Standard_Integer);
+  }
+
+  export declare class TColStd_Array1OfReal_3 extends TColStd_Array1OfReal {
+    constructor(theOther: TColStd_Array1OfReal);
+  }
+
+  export declare class TColStd_Array1OfReal_4 extends TColStd_Array1OfReal {
+    constructor(theOther: TColStd_Array1OfReal);
+  }
+
+  export declare class TColStd_Array1OfReal_5 extends TColStd_Array1OfReal {
+    constructor(theBegin: Standard_Real, theLower: Standard_Integer, theUpper: Standard_Integer);
+  }
+
 export declare class TColStd_IndexedDataMapOfStringString extends NCollection_BaseMap {
   begin(): any;
   end(): any;
@@ -10256,6 +10302,12 @@ export type OpenCascadeInstance = {FS: typeof FS} & {
   TColStd_Array1OfInteger_3: typeof TColStd_Array1OfInteger_3;
   TColStd_Array1OfInteger_4: typeof TColStd_Array1OfInteger_4;
   TColStd_Array1OfInteger_5: typeof TColStd_Array1OfInteger_5;
+  TColStd_Array1OfReal: typeof TColStd_Array1OfReal;
+  TColStd_Array1OfReal_1: typeof TColStd_Array1OfReal_1;
+  TColStd_Array1OfReal_2: typeof TColStd_Array1OfReal_2;
+  TColStd_Array1OfReal_3: typeof TColStd_Array1OfReal_3;
+  TColStd_Array1OfReal_4: typeof TColStd_Array1OfReal_4;
+  TColStd_Array1OfReal_5: typeof TColStd_Array1OfReal_5;
   TColStd_IndexedDataMapOfStringString: typeof TColStd_IndexedDataMapOfStringString;
   TColStd_IndexedDataMapOfStringString_1: typeof TColStd_IndexedDataMapOfStringString_1;
   TColStd_IndexedDataMapOfStringString_2: typeof TColStd_IndexedDataMapOfStringString_2;

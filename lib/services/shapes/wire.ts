@@ -46,6 +46,10 @@ export class OCCTWire {
         return this.och.converterService.makeCompoundIfNeeded(wires, inputs.returnCompound);
     }
 
+    createBezierWeights(inputs: Inputs.OCCT.BezierWeightsDto) {
+        return this.och.wiresService.createBezierWeights(inputs);
+    }
+
     interpolatePoints(inputs: Inputs.OCCT.InterpolationDto): TopoDS_Wire {
         return this.och.wiresService.interpolatePoints(inputs);
     }

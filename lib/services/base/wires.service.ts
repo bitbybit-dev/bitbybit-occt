@@ -623,6 +623,37 @@ export class WiresService {
         return result;
     }
 
+    createBezierWeights(inputs: Inputs.OCCT.BezierWeightsDto) {
+        if (!inputs.closed && inputs.points.length !== inputs.weights.length) {
+            throw new Error("Number of points and weights must be the same when bezier is not clsoed.");
+        } else if (inputs.closed && inputs.points.length !== inputs.weights.length - 1) {
+            throw new Error("Number of points must be one less than number of weights when bezier is clsoed.");
+        }
+        
+        const ptList = new this.occ.TColgp_Array1OfPnt_2(1, inputs.points.length + (inputs.closed ? 1 : 0));
+        for (let pIndex = 1; pIndex <= inputs.points.length; pIndex++) {
+            ptList.SetValue(pIndex, this.entitiesService.gpPnt(inputs.points[pIndex - 1]));
+        }
+        if (inputs.closed) { ptList.SetValue(inputs.points.length + 1, ptList.Value(1)); }
+        const arrayOfReal = new this.occ.TColStd_Array1OfReal_2(1, inputs.weights.length);
+        for (let i = 1; i <= inputs.weights.length; i++) {
+            arrayOfReal.SetValue(i, inputs.weights[i - 1]);
+        }
+        const geomBezierCurveHandle = new this.occ.Geom_BezierCurve_2(ptList, arrayOfReal);
+        const geomCurve = new this.occ.Handle_Geom_Curve_2(geomBezierCurveHandle);
+        const edgeMaker = new this.occ.BRepBuilderAPI_MakeEdge_24(geomCurve);
+        const edge = edgeMaker.Edge();
+        const makeWire = new this.occ.BRepBuilderAPI_MakeWire_2(edge);
+        const result = makeWire.Wire();
+        makeWire.delete();
+        edgeMaker.delete();
+        edge.delete();
+        geomCurve.delete();
+        ptList.delete();
+        arrayOfReal.delete();
+        return result;
+    }
+
     addEdgesAndWiresToWire(inputs: Inputs.OCCT.ShapeShapesDto<TopoDS_Wire, TopoDS_Wire | TopoDS_Edge>): TopoDS_Wire {
         const makeWire = new this.occ.BRepBuilderAPI_MakeWire_1();
         makeWire.Add_2(inputs.shape);
