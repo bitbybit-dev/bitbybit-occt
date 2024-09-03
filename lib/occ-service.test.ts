@@ -23,7 +23,7 @@ describe("OCCT service unit tests", () => {
 
     it("should convert shape to mesh", () => {
         const sphere = service.shapes.solid.createSphere({ radius: 10, center: [0, 0, 0] });
-        const meshDef = service.shapeToMesh(sphere, 0.01, false);
+        const meshDef = service.shapeToMesh({shape: sphere, precision: 0.01, adjustYtoZ: false});
         expect(meshDef).toBeDefined();
         expect(meshDef.faceList.length).toBe(1);
         expect(meshDef.faceList[0].vertex_coord.length).toBe(15318);
@@ -36,7 +36,7 @@ describe("OCCT service unit tests", () => {
 
     it("should convert shape to mesh and adjust y to z", () => {
         const sphere = service.shapes.solid.createSphere({ radius: 10, center: [0, 0, 0] });
-        const meshDef = service.shapeToMesh(sphere, 0.01, true);
+        const meshDef = service.shapeToMesh({shape: sphere, precision: 0.01, adjustYtoZ: true});
         expect(meshDef).toBeDefined();
         expect(meshDef.faceList.length).toBe(1);
         expect(meshDef.faceList[0].vertex_coord.length).toBe(15318);
@@ -53,7 +53,7 @@ describe("OCCT service unit tests", () => {
         const cube = service.shapes.solid.createCube({ size: 5, center: [0, 0, 0] });
 
 
-        const meshDef = service.shapesToMeshes([sphere, cube], 0.01, true);
+        const meshDef = service.shapesToMeshes({shapes: [sphere, cube], precision: 0.01, adjustYtoZ: true});
         expect(meshDef).toBeDefined();
         expect(meshDef.length).toBe(2);
         const sphereDef = meshDef[0];

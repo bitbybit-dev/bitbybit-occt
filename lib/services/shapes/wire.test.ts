@@ -1253,7 +1253,7 @@ describe("OCCT wire unit tests", () => {
         const w1 = wire.createCircleWire({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
         const w2 = wire.createCircleWire({ radius: 3, center: [0, 4, 0], direction: [0, 0, 1] });
 
-        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: false });
+        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: false, divideByEqualDistance: true, zigZagsPerEdge: true });
         const length = wire.getWireLength({ shape: zigZagWire });
         expect(length).toBeCloseTo(50.260581938510676);
         const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: zigZagWire });
@@ -1267,7 +1267,7 @@ describe("OCCT wire unit tests", () => {
         const w1 = wire.createCircleWire({ radius: 2, center: [0, 0, 0], direction: [0, 1, 0] });
         const w2 = wire.createCircleWire({ radius: 3, center: [0, 4, 0], direction: [0, 0, 1] });
 
-        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: true });
+        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: true, divideByEqualDistance: true, zigZagsPerEdge: true });
         const length = wire.getWireLength({ shape: zigZagWire });
         expect(length).toBeCloseTo(50.72841254233739);
         const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: zigZagWire });
@@ -1281,7 +1281,7 @@ describe("OCCT wire unit tests", () => {
         const w1 = wire.createSquareWire({ size: 2, center: [0, 0, 0], direction: [0, 1, 0] });
         const w2 = wire.createSquareWire({ size: 3, center: [0, 4, 0], direction: [0, 0, 1] });
 
-        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: true });
+        const zigZagWire = wire.createZigZagBetweenTwoWires({ wire1: w1, wire2: w2, nrZigZags: 5, inverse: true, divideByEqualDistance: true, zigZagsPerEdge: true });
         const length = wire.getWireLength({ shape: zigZagWire });
         expect(length).toBeCloseTo(174.35848368606852);
         const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: zigZagWire });
