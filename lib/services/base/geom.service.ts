@@ -12,6 +12,9 @@ export class GeomService {
         private readonly entitiesService: EntitiesService
     ) { }
 
+    curveLength(inputs: Inputs.OCCT.ShapeDto<Adaptor3d_Curve>): number {
+        return this.occ.GCPnts_AbscissaPoint.Length_1(inputs.shape);
+    }
 
     pointOnCurveAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<Geom_Curve | BRepAdaptor_CompCurve_2>): Base.Point3 {
         const curve = inputs.shape;
@@ -33,6 +36,10 @@ export class GeomService {
         absc.delete();
         gpPnt.delete();
         return pt;
+    }
+
+    pointsOnCurveAtLengths(inputs: Inputs.OCCT.DataOnGeometryAtLengthsDto<Adaptor3d_Curve>): Base.Point3[] {
+        return inputs.lengths.map(length => this.pointOnCurveAtLength({ shape: inputs.shape, length }));
     }
 
     tangentOnCurveAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<Adaptor3d_Curve>): Base.Point3 {
@@ -134,7 +141,7 @@ export class GeomService {
         gpPnt.delete();
         return pt;
     }
-    
+
     getLinearCenterOfMass(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Base.Point3 {
         const edge: TopoDS_Shape = inputs.shape;
         const gprops = new this.occ.GProp_GProps_1();

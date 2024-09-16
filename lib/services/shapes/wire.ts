@@ -68,7 +68,7 @@ export class OCCTWire {
     }
 
     createWireFromEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): TopoDS_Wire {
-        return this.och.wiresService.createWireFromEdges(inputs);
+        return this.och.wiresService.createWireFromEdge(inputs);
     }
 
     addEdgesAndWiresToWire(inputs: Inputs.OCCT.ShapeShapesDto<TopoDS_Wire, TopoDS_Wire | TopoDS_Edge>): TopoDS_Wire {
@@ -110,6 +110,18 @@ export class OCCTWire {
 
     pointOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): Inputs.Base.Point3 {
         return this.och.wiresService.pointOnWireAtLength(inputs);
+    }
+
+    pointsOnWireAtLengths(inputs: Inputs.OCCT.DataOnGeometryAtLengthsDto<TopoDS_Wire>): Inputs.Base.Point3[] {
+        return this.och.wiresService.pointsOnWireAtLengths(inputs);
+    }
+
+    pointsOnWireAtEqualLength(inputs: Inputs.OCCT.PointsOnWireAtEqualLengthDto<TopoDS_Wire>): Inputs.Base.Point3[] {
+        return this.och.wiresService.pointsOnWireAtEqualLength(inputs);
+    }
+
+    pointsOnWireAtPatternOfLengths(inputs: Inputs.OCCT.PointsOnWireAtPatternOfLengthsDto<TopoDS_Wire>): Inputs.Base.Point3[] {
+        return this.och.wiresService.pointsOnWireAtPatternOfLengths(inputs);
     }
 
     tangentOnWireAtParam(inputs: Inputs.OCCT.DataOnGeometryAtParamDto<TopoDS_Wire>): Inputs.Base.Point3 {

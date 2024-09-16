@@ -27,7 +27,6 @@ describe("OCCT shapes helper unit tests", () => {
 
     it("should create inverted L polygon when width first is larger or equal to length first", () => {
         const res = service.polygonLInverted(4, 2, 3, 1);
-        console.log(res);
         expect(res).toEqual([
             [0, 0, 0],
             [2, 0, 0],
@@ -52,7 +51,6 @@ describe("OCCT shapes helper unit tests", () => {
 
     it("should create middle L polygon when width first is larger or equal to length first", () => {
         const res = service.polygonLMiddle(4, 2, 3, 1);
-        console.log(res);
         expect(res).toEqual([
             [0.9999995, 0, 0.4999995],
             [0.9999995, 0, 1],
