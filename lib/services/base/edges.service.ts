@@ -175,12 +175,14 @@ export class EdgesService {
     }
 
     getEdgeLength(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>) {
-        const edge = inputs.shape;
-        const gprops = new this.occ.GProp_GProps_1();
-        this.occ.BRepGProp.LinearProperties(edge, gprops, false, false);
-        const mass = gprops.Mass();
-        gprops.delete();
-        return mass;
+        const makeWire = new this.occ.BRepBuilderAPI_MakeWire_2(inputs.shape);
+        const wire = makeWire.Wire();
+        const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
+        const length = this.geomService.curveLength({ shape: curve });
+        curve.delete();
+        wire.delete();
+        makeWire.delete();
+        return length;
     }
 
     getEdgesLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): number[] {
@@ -189,7 +191,6 @@ export class EdgesService {
         }
         return inputs.shapes.map(edge => this.getEdgeLength({ shape: edge }));
     }
-
 
     getEdgesCentersOfMass(inputs: Inputs.OCCT.ShapesDto<TopoDS_Edge>): Base.Point3[] {
         if (inputs.shapes === undefined) {

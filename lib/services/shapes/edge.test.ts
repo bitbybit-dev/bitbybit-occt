@@ -91,7 +91,7 @@ describe("OCCT edge unit tests", () => {
             surface: cylinderSrf
         });
         const length = edge.getEdgeLength({ shape: e });
-        expect(length).toEqual(12.566370614359172);
+        expect(length).toEqual(12.56637061435917);
         e.delete();
         elipse2d.delete();
         cylinderSrf.delete();
@@ -100,7 +100,7 @@ describe("OCCT edge unit tests", () => {
     it("should make ellipse edge", async () => {
         const e = edge.createEllipseEdge({ radiusMinor: 2, radiusMajor: 3, center: [0, 0, 0], direction: [0, 0, 1] });
         const length = edge.getEdgeLength({ shape: e });
-        expect(length).toEqual(15.869698772210649);
+        expect(length).toEqual(15.869698772210647);
         e.delete();
     });
 
@@ -375,9 +375,9 @@ describe("OCCT edge unit tests", () => {
         const edges = edge.getEdges({ shape: cylinder });
         const lengths = edge.getEdgesLengths({ shapes: edges });
         expect(lengths.length).toBe(3);
-        expect(lengths[0]).toBe(6.283185307179586);
+        expect(lengths[0]).toBe(6.283185307179587);
         expect(lengths[1]).toBe(2);
-        expect(lengths[2]).toBe(6.283185307179586);
+        expect(lengths[2]).toBe(6.283185307179587);
         cylinder.delete();
         edges.forEach((e) => e.delete());
     });
@@ -747,7 +747,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide1,
             Inputs.OCCT.circleInclusionEnum.keepSide1,
             3,
-            [2.82842712474619, 5.575824665437111, 1.732050807568877]
+            [2.8284271247461903, 5.575824665437111, 1.7320508075688772]
         );
     });
 
@@ -756,7 +756,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.circleInclusionEnum.keepSide2,
             3,
-            [2.82842712474619, 3.8489532953322696, 1.732050807568877]
+            [2.8284271247461903, 3.8489532953322696, 1.7320508075688772]
         );
     });
 
@@ -765,7 +765,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide1,
             Inputs.OCCT.circleInclusionEnum.keepSide2,
             3,
-            [2.82842712474619, 0.7073606417424754, 1.732050807568877]
+            [2.8284271247461903, 0.7073606417424754, 1.7320508075688772]
         );
     });
 
@@ -774,7 +774,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.circleInclusionEnum.keepSide1,
             3,
-            [2.82842712474619, 2.4342320118473175, 1.732050807568877]
+            [2.8284271247461903, 2.4342320118473175, 1.7320508075688772]
         );
     });
 
@@ -783,7 +783,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.all,
             Inputs.OCCT.circleInclusionEnum.keepSide1,
             4,
-            [2.82842712474619, 2.82842712474619, 1.732050807568877, 1.732050807568877]
+            [2.8284271247461903, 2.8284271247461903, 1.7320508075688772, 1.7320508075688772]
         );
     });
 
@@ -792,7 +792,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide1,
             Inputs.OCCT.circleInclusionEnum.none,
             2,
-            [2.82842712474619, 1.732050807568877]
+            [2.8284271247461903, 1.7320508075688772]
         );
     });
 
@@ -801,7 +801,7 @@ describe("OCCT edge unit tests", () => {
             "whatever" as any,
             Inputs.OCCT.circleInclusionEnum.none,
             4,
-            [2.82842712474619, 2.82842712474619, 1.732050807568877, 1.732050807568877]
+            [2.8284271247461903, 2.8284271247461903, 1.7320508075688772, 1.7320508075688772]
         );
     });
 
@@ -856,7 +856,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.all,
             Inputs.OCCT.circleInclusionEnum.keepSide1,
             3,
-            [4.737087712930804, 6.068882605086487, 4.737087712930805]
+            [4.737087712930804, 6.068882605086486, 4.737087712930805]
         );
     });
 
@@ -865,7 +865,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.all,
             Inputs.OCCT.circleInclusionEnum.keepSide2,
             3,
-            [4.737087712930804, 3.9842138864008527, 4.737087712930805]
+            [4.737087712930804, 3.984213886400852, 4.737087712930805]
         );
     });
 
@@ -874,7 +874,7 @@ describe("OCCT edge unit tests", () => {
             "whatever" as any,
             Inputs.OCCT.circleInclusionEnum.keepSide2,
             3,
-            [4.737087712930804, 3.9842138864008527, 4.737087712930805]
+            [4.737087712930804, 3.984213886400852, 4.737087712930805]
         );
     });
 
@@ -900,7 +900,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.twoCircleInclusionEnum.outside,
             4,
-            [7.085751793882179, 0.7999999999999999, 0.7999999999999999, 1.8545904360032244]
+            [7.085751793882178, 0.7999999999999999, 0.7999999999999999, 1.8545904360032246]
         );
     });
 
@@ -918,7 +918,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.twoCircleInclusionEnum.inside,
             4,
-            [2.9673446976051596, 0.7999999999999999, 0.7999999999999999, 4.428594871176361]
+            [2.967344697605159, 0.7999999999999999, 0.7999999999999999, 4.428594871176362]
         );
     });
 
@@ -927,7 +927,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.twoCircleInclusionEnum.insideOutside,
             4,
-            [2.9673446976051596, 0.7999999999999999, 0.7999999999999999, 1.8545904360032244]
+            [2.967344697605159, 0.7999999999999999, 0.7999999999999999, 1.8545904360032246]
         );
     });
 
@@ -936,7 +936,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.twoCircleInclusionEnum.outsideInside,
             4,
-            [7.085751793882179, 0.7999999999999999, 0.7999999999999999, 4.428594871176361]
+            [7.085751793882178, 0.7999999999999999, 0.7999999999999999, 4.428594871176362]
         );
     });
 
@@ -963,7 +963,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.all,
             Inputs.OCCT.twoCircleInclusionEnum.none,
             4,
-            [10.148891565092217, 9.746794344808963, 10.14889156509222, 9.746794344808961]
+            [10.148891565092217, 9.746794344808965, 10.14889156509222, 9.746794344808963]
         );
     });
 
@@ -972,7 +972,7 @@ describe("OCCT edge unit tests", () => {
             "whatever" as any,
             Inputs.OCCT.twoCircleInclusionEnum.none,
             4,
-            [10.148891565092217, 9.746794344808963, 10.14889156509222, 9.746794344808961]
+            [10.148891565092217, 9.746794344808965, 10.14889156509222, 9.746794344808963]
         );
     });
 
@@ -981,7 +981,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide1,
             Inputs.OCCT.twoCircleInclusionEnum.outside,
             4,
-            [3.738775402861678, 9.746794344808963, 9.746794344808961, 7.477550805723359,]
+            [3.7387754028616786, 9.746794344808965, 9.746794344808963, 7.47755080572336]
         );
     });
 
@@ -990,7 +990,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.twoCircleInclusionEnum.outside,
             4,
-            [2.9451608620359457, 10.148891565092217, 10.14889156509222, 6.676048890287282]
+            [2.9451608620359457, 10.148891565092217, 10.14889156509222, 6.676048890287283]
         );
     });
 
@@ -999,7 +999,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.twoCircleInclusionEnum.inside,
             4,
-            [3.338024445143641, 10.148891565092217, 10.14889156509222, 5.8903217240718915]
+            [3.3380244451436414, 10.148891565092217, 10.14889156509222, 5.8903217240718915]
         );
     });
 
@@ -1008,7 +1008,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.twoCircleInclusionEnum.insideOutside,
             4,
-            [3.338024445143641, 10.148891565092217, 10.14889156509222, 6.676048890287282]
+            [3.3380244451436414, 10.148891565092217, 10.14889156509222, 6.676048890287283]
         );
     });
 
@@ -1017,7 +1017,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide2,
             Inputs.OCCT.twoCircleInclusionEnum.insideOutside,
             4,
-            [3.338024445143641, 10.148891565092217, 10.14889156509222, 6.676048890287282]
+            [3.3380244451436414, 10.148891565092217, 10.14889156509222, 6.676048890287283]
         );
     });
 
@@ -1027,7 +1027,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide1,
             Inputs.OCCT.twoCircleInclusionEnum.inside,
             4,
-            [2.5444099043179085, 9.746794344808963, 9.746794344808961, 5.088819808635814]
+            [2.5444099043179085, 9.746794344808965, 9.746794344808963, 5.088819808635815]
         );
     });
 
@@ -1036,7 +1036,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide1,
             Inputs.OCCT.twoCircleInclusionEnum.insideOutside,
             4,
-            [2.5444099043179085, 9.746794344808963, 9.746794344808961, 7.477550805723359]
+            [2.5444099043179085, 9.746794344808965, 9.746794344808963, 7.47755080572336]
         );
     });
 
@@ -1045,7 +1045,7 @@ describe("OCCT edge unit tests", () => {
             Inputs.OCCT.positionResultEnum.keepSide1,
             Inputs.OCCT.twoCircleInclusionEnum.outsideInside,
             4,
-            [3.738775402861678, 9.746794344808963, 9.746794344808961, 5.088819808635814]
+            [3.7387754028616786, 9.746794344808965, 9.746794344808963, 5.088819808635815]
         );
     });
 
@@ -1071,7 +1071,7 @@ describe("OCCT edge unit tests", () => {
         checkConstraintTanCirclesOnTwoNotOverlapingCircles(
             4,
             2,
-            [25.132741228718345, 25.132741228718345],
+            [25.13274122871835, 25.13274122871835],
             [
                 [2.9060073031642, 0, 4.068798539367161],
                 [-1.1175457647026619, 0, 4.8735091529405326]
@@ -1116,7 +1116,7 @@ describe("OCCT edge unit tests", () => {
         checkConstraintTanCirclesOnTwoOverlapingCircles(
             0.05,
             8,
-            [0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937, 0.31415926535897937],
+            [0.3141592653589793, 0.3141592653589793, 0.3141592653589793, 0.3141592653589793, 0.3141592653589793, 0.3141592653589793, 0.3141592653589793, 0.3141592653589793],
             [
                 [0.8280264491643186, 0, 0.4656953934540581],
                 [0.1719735508356814, 0, 0.9343046065459418],
@@ -1134,7 +1134,7 @@ describe("OCCT edge unit tests", () => {
         checkConstraintTanCirclesOnTwoOverlapingCircles(
             0.2,
             6,
-            [1.2566370614359175, 1.2566370614359175, 1.2566370614359175, 1.2566370614359175, 1.2566370614359175, 1.2566370614359175],
+            [1.2566370614359172, 1.2566370614359172, 1.2566370614359172, 1.2566370614359172, 1.2566370614359172, 1.2566370614359172],
             [
                 [0.7684191974430021, 0, 0.22255771611214142],
                 [-0.03868946771327236, 0, 0.7990639055094804],
@@ -1150,7 +1150,7 @@ describe("OCCT edge unit tests", () => {
         checkConstraintTanCirclesOnTwoOverlapingCircles(
             3,
             4,
-            [18.849555921538762, 18.849555921538762, 18.849555921538762, 18.849555921538762],
+            [18.84955592153876, 18.84955592153876, 18.84955592153876, 18.84955592153876],
             [
                 [1.969234034675432, 0, -0.349452881911023],
                 [-0.969234034675432, 0, 1.7494528819110229],
@@ -1211,7 +1211,7 @@ describe("OCCT edge unit tests", () => {
         checkConstraintTanCirclesOnCircleAndPnt(
             4,
             4,
-            [25.132741228718345, 25.132741228718345, 25.132741228718345, 25.132741228718345],
+            [25.13274122871835, 25.13274122871835, 25.13274122871835, 25.13274122871835],
             [
                 [-0.9963733805414999, 0, -2.8297067138748333],
                 [2.8297067138748333, 0, 0.9963733805414999],
@@ -1225,7 +1225,7 @@ describe("OCCT edge unit tests", () => {
         checkConstraintTanCirclesOnCircleAndPnt(
             2,
             2,
-            [12.566370614359172, 12.566370614359172],
+            [12.566370614359174, 12.566370614359174],
             [
                 [1.007607323780357, 0, -2.8257260095529766],
                 [2.8257260095529766, 0, -1.007607323780357],

@@ -33,7 +33,7 @@ describe("OCCT wire unit tests", () => {
     it("should create a circle edge of the right radius and it will mach the length", async () => {
         const w = wire.createCircleWire({ radius: 3, center: [1, 0, 0], direction: [0, 1, 0] });
         const length = wire.getWireLength({ shape: w });
-        expect(length).toBe(18.849555921538762);
+        expect(length).toBe(18.84955592153876);
         w.delete();
     });
 
@@ -47,14 +47,21 @@ describe("OCCT wire unit tests", () => {
     it("should create an open bezier wire", async () => {
         const w = wire.createBezier({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]], closed: false });
         const length = wire.getWireLength({ shape: w });
-        expect(length).toBe(5.72415866652804);
+        expect(length).toBe(5.72419586092437);
         w.delete();
     });
 
     it("should create a closed bezier wire", async () => {
         const w = wire.createBezier({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]], closed: true });
         const length = wire.getWireLength({ shape: w });
-        expect(length).toBe(5.333863420641158);
+        expect(length).toBe(5.35324065286954);
+        w.delete();
+    });
+
+    it("should create a bezier wire from points and weights", async () => {
+        const w = wire.createBezierWeights({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]], weights: [1, 0.1, 1], closed: false });
+        const length = wire.getWireLength({ shape: w });
+        expect(length).toBe(5.401698013119389);
         w.delete();
     });
 
@@ -71,8 +78,8 @@ describe("OCCT wire unit tests", () => {
 
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
-            5.72415866652804,
-            6.248234956680049
+            5.72419586092437,
+            6.208665118504617
         ]);
         wires.forEach(w => w.delete());
     });
@@ -91,8 +98,8 @@ describe("OCCT wire unit tests", () => {
         const wires = wire.getWires({ shape: resCompound });
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
-            5.72415866652804,
-            6.248234956680049
+            5.72419586092437,
+            6.208665118504617
         ]);
         wires.forEach(w => w.delete());
     });
@@ -100,7 +107,7 @@ describe("OCCT wire unit tests", () => {
     it("should interpolate points", async () => {
         const w = wire.interpolatePoints({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]], periodic: false, tolerance: 1e-7 });
         const length = wire.getWireLength({ shape: w });
-        expect(length).toBe(7.256109149279404);
+        expect(length).toBe(7.253892713957898);
         w.delete();
     });
 
@@ -116,8 +123,8 @@ describe("OCCT wire unit tests", () => {
 
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
-            7.256109149279404,
-            11.683150969483133
+            7.253892713957898,
+            11.692656773237736
         ]);
         wires.forEach(w => w.delete());
     });
@@ -135,8 +142,8 @@ describe("OCCT wire unit tests", () => {
         const wires = wire.getWires({ shape: resCompound });
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
-            7.256109149279404,
-            11.683150969483133
+            7.253892713957898,
+            11.692656773237736
         ]);
         wires.forEach(w => w.delete());
     });
@@ -144,14 +151,14 @@ describe("OCCT wire unit tests", () => {
     it("should interpolate points into periodic bspline", async () => {
         const w = wire.interpolatePoints({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]], periodic: true, tolerance: 1e-7 });
         const length = wire.getWireLength({ shape: w });
-        expect(length).toBe(13.782923673238976);
+        expect(length).toBe(13.783004883953232);
         w.delete();
     });
 
     it("should create open bspline through points", async () => {
         const w = wire.createBSpline({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]], closed: false });
         const length = wire.getWireLength({ shape: w });
-        expect(length).toBe(7.064531406714803);
+        expect(length).toBe(7.0645304892614575);
         w.delete();
     });
 
@@ -168,8 +175,8 @@ describe("OCCT wire unit tests", () => {
 
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
-            7.064531406714803,
-            12.070081119772679
+            7.0645304892614575,
+            12.10236321616439
         ]);
         wires.forEach(w => w.delete());
     });
@@ -188,8 +195,8 @@ describe("OCCT wire unit tests", () => {
         const wires = wire.getWires({ shape: resCompound });
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
-            7.064531406714803,
-            12.070081119772679
+            7.0645304892614575,
+            12.10236321616439
         ]);
         wires.forEach(w => w.delete());
     });
@@ -197,7 +204,7 @@ describe("OCCT wire unit tests", () => {
     it("should create closed bspline through points", async () => {
         const w = wire.createBSpline({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]], closed: true });
         const length = wire.getWireLength({ shape: w });
-        expect(length).toBe(14.120032294676554);
+        expect(length).toBe(14.232853140068247);
         w.delete();
     });
 
@@ -222,7 +229,7 @@ describe("OCCT wire unit tests", () => {
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
             11.99553079221423,
-            10.398345637668168
+            10.39834563766817
         ]);
         wires.forEach(w => w.delete());
     });
@@ -242,7 +249,7 @@ describe("OCCT wire unit tests", () => {
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
             11.99553079221423,
-            10.398345637668168
+            10.39834563766817
         ]);
         wires.forEach(w => w.delete());
     });
@@ -268,7 +275,7 @@ describe("OCCT wire unit tests", () => {
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
             6.610365985079727,
-            5.398345637668168
+            5.39834563766817
         ]);
         wires.forEach(w => w.delete());
     });
@@ -279,7 +286,7 @@ describe("OCCT wire unit tests", () => {
             end: [0, 1, 1]
         });
         const length = wire.getWireLength({ shape: w });
-        expect(length).toEqual(1.414213562373095);
+        expect(length).toEqual(1.4142135623730951);
         w.delete();
     });
 
@@ -297,9 +304,9 @@ describe("OCCT wire unit tests", () => {
 
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
-            1.414213562373095,
+            1.4142135623730951,
             3.7416573867739413,
-            1.414213562373095,
+            1.4142135623730951,
         ]);
         wires.forEach(w => w.delete());
     });
@@ -320,9 +327,9 @@ describe("OCCT wire unit tests", () => {
         const wires = wire.getWires({ shape: resCompound });
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
-            1.414213562373095,
+            1.4142135623730951,
             3.7416573867739413,
-            1.414213562373095,
+            1.4142135623730951,
         ]);
         wires.forEach(w => w.delete());
     });
@@ -341,7 +348,7 @@ describe("OCCT wire unit tests", () => {
         const lengths = wires.map(w => wire.getWireLength({ shape: w }));
         expect(lengths).toEqual([
             6.610365985079727,
-            5.398345637668168
+            5.39834563766817
         ]);
         wires.forEach(w => w.delete());
     });
@@ -438,7 +445,7 @@ describe("OCCT wire unit tests", () => {
         const length = wire.getWireLength({ shape: w });
         const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: w });
         expect(cornerPoints.length).toBe(2);
-        expect(length).toBe(6.490970890684743);
+        expect(length).toBe(6.490970890685014);
         w.delete();
     });
 
@@ -447,7 +454,7 @@ describe("OCCT wire unit tests", () => {
         const length = wire.getWireLength({ shape: w });
         const cornerPoints = edge.getCornerPointsOfEdgesForShape({ shape: w });
         expect(cornerPoints.length).toBe(18);
-        expect(length).toBe(57.5047112618376);
+        expect(length).toBe(57.50471126183759);
         w.delete();
     });
 
@@ -639,6 +646,200 @@ describe("OCCT wire unit tests", () => {
         w.delete();
     });
 
+    it("should get points on wire at equal length and include first and last", async () => {
+        const w = wire.createBezier({ points: [[0, 0, 0], [100, 100, 0], [0, 200, 500]], closed: false });
+        const pts = wire.pointsOnWireAtEqualLength({ shape: w, length: 43, tryNext: false, includeFirst: true, includeLast: true });
+        expect(pts.length).toEqual(15);
+        expect(pts).toEqual(
+            [
+                [0, 0, 0],
+                [26.20680036154594, 31.017104093182553, 12.025759329091523],
+                [41.10377561579763, 57.81890379754844, 41.78782045437701],
+                [47.83637918802147, 79.19797696386944, 78.40399443961991],
+                [49.95344076587983, 96.94846811846361, 117.48756838145943],
+                [49.24368430384965, 112.29890805031368, 157.6380593661601],
+                [46.63057260711679, 125.95930427759268, 198.3218291761897],
+                [42.64204791663795, 138.36131406342085, 239.29816536695725],
+                [37.607256511613905, 149.7850248335503, 280.444420804841],
+                [31.74558205541915, 160.42254205936862, 321.6924000098737],
+                [25.21099037239069, 170.41166043718798, 363.00167516199326],
+                [18.11601209946386, 179.85485320321632, 404.34710275938113],
+                [10.545617981339019, 188.83060510731758, 445.71246781494636],
+                [2.565701960772223, 197.40051133256722, 487.0870234294875],
+                [0, 200, 500]
+            ]
+        );
+        w.delete();
+    });
+
+    it("should get points on wire at equal length and include and try next", async () => {
+        const w = wire.createBezier({ points: [[0, 0, 0], [100, 100, 0], [0, 200, 500]], closed: false });
+        const pts = wire.pointsOnWireAtEqualLength({ shape: w, length: 43, tryNext: true, includeFirst: false, includeLast: false });
+        expect(pts.length).toEqual(14);
+        expect(pts).toEqual(
+            [
+                [26.20680036154594, 31.017104093182553, 12.025759329091523],
+                [41.10377561579763, 57.81890379754844, 41.78782045437701],
+                [47.83637918802147, 79.19797696386944, 78.40399443961991],
+                [49.95344076587983, 96.94846811846361, 117.48756838145943],
+                [49.24368430384965, 112.29890805031368, 157.6380593661601],
+                [46.63057260711679, 125.95930427759268, 198.3218291761897],
+                [42.64204791663795, 138.36131406342085, 239.29816536695725],
+                [37.607256511613905, 149.7850248335503, 280.444420804841],
+                [31.74558205541915, 160.42254205936862, 321.6924000098737],
+                [25.21099037239069, 170.41166043718798, 363.00167516199326],
+                [18.11601209946386, 179.85485320321632, 404.34710275938113],
+                [10.545617981339019, 188.83060510731758, 445.71246781494636],
+                [2.565701960772223, 197.40051133256722, 487.0870234294875],
+                [-14.42375267847194, 213.51101504124782, 569.8369192992993]
+            ]
+        );
+        w.delete();
+    });
+
+    it("should get points on wire at equal length and include first point", async () => {
+        const w = wire.createBezier({ points: [[0, 0, 0], [100, 100, 0], [0, 200, 500]], closed: false });
+        const pts = wire.pointsOnWireAtEqualLength({ shape: w, length: 13, tryNext: false, includeFirst: true, includeLast: false });
+        expect(pts.length).toEqual(45);
+        expect(pts).toEqual(
+            [
+                [0, 0, 0],
+                [8.925537476825706, 9.363955819801697, 1.096045857439976],
+                [17.094951671226923, 18.876577576173382, 4.454064762366146],
+                [24.23767692788206, 28.2193297995652, 9.954132179207857],
+                [30.241556482596163, 37.137541382151085, 17.239962248887302],
+                [35.15060768706391, 45.50340870671618, 25.882002549130675],
+                [39.09327759557308, 53.29513429111069, 35.504641738844036],
+                [42.21779292225526, 60.54823938594188, 45.82611615921655],
+                [44.6598506196154, 67.31927362990655, 56.64855752572789],
+                [46.5329163084223, 73.66719273766013, 67.83569107309457],
+                [47.92854778406781, 79.64587405004974, 79.29331566495485],
+                [48.919843463656555, 85.30199648698206, 90.95538255831374],
+                [49.56523352144216, 90.67512489565851, 102.77472843554087],
+                [49.91173902911818, 95.79854856313159, 114.71702383503352],
+                [49.99754808938379, 100.70027289197989, 126.75681200649025],
+                [49.853987109096416, 105.40394098605057, 138.8748846923854],
+                [49.50701329339851, 109.92961939453369, 151.05651525283798],
+                [48.978344414095055, 114.29444357717323, 163.29024790769543],
+                [48.286318307905184, 118.5131396153911, 175.5670532687148],
+                [47.44655176780701, 122.59844345167599, 187.87972920967243],
+                [46.47245013928169, 126.5614376896971, 200.2224688760385],
+                [45.37560513382148, 130.41182291865624, 212.59054446208694],
+                [44.16610829068757, 134.15813727155634, 224.98007245217195],
+                [42.85280023446306, 137.80793505479224, 237.38783705082292],
+                [41.443470625214886, 141.3679329306774, 249.8111557636563],
+                [39.945019902397036, 144.8441302683037, 262.24777591476663],
+                [38.36359116477269, 148.24190882464603, 274.6957941496833],
+                [36.70467850936903, 151.5661157944458, 287.153593212692],
+                [34.973216663021994, 154.82113340123132, 299.61979184552325],
+                [33.173655632443605, 158.01093753346242, 312.0932047525471],
+                [31.310023268264835, 161.13914741266052, 324.57281036098925],
+                [29.385978010727417, 164.20906787872346, 337.05772466999014],
+                [27.40485360633772, 167.22372556421175, 349.54717989468503],
+                [25.369697217454487, 170.18589998360855, 362.0405069153852],
+                [23.28330206257504, 173.09815036979384, 374.537120768047],
+                [21.148235503605935, 175.96283893640899, 387.0365085820076],
+                [18.96686332261376, 178.78215112242904, 399.5382194995382],
+                [16.741370793275486, 181.55811327725098, 412.0418562099387],
+                [14.473781043124013, 184.29260816569385, 424.54706780642465],
+                [12.16597111541449, 186.98738860844773, 437.053543732583],
+                [9.819686069236015, 189.6440895215786, 449.5610086308564],
+                [7.4365513997126005, 192.26423857626247, 462.06921794137463],
+                [5.0180840139654626, 194.84926566509046, 474.5779541278124],
+                [2.565701960772223, 197.40051133256722, 487.0870234294875],
+                [0.08073308087001294, 199.91923430364145, 499.5962530569286]
+            ]
+        );
+        w.delete();
+    });
+
+    it("should get points on wire at lengths", async () => {
+        const w = wire.createBezier({ points: [[0, 0, 0], [100, 100, 0], [0, 200, 500]], closed: false });
+        const pts = wire.pointsOnWireAtLengths({ shape: w, lengths: [0, 12, 33, 66, 88] });
+        expect(pts.length).toEqual(5);
+        expect(pts).toEqual(
+            [
+                [0, 0, 0],
+                [8.261627213281036, 8.634390729641643, 0.9319087909015193],
+                [21.079970747732684, 23.947348169485483, 7.168443554381996],
+                [35.48631058836566, 46.122937326475686, 26.591566845275047],
+                [41.561928462999006, 58.9194169053043, 43.39372110576323]
+            ]
+        );
+        w.delete();
+    });
+
+    it("should not get points on wire at empty lengths", async () => {
+        const w = wire.createBezier({ points: [[0, 0, 0], [100, 100, 0], [0, 200, 500]], closed: false });
+        const pts = wire.pointsOnWireAtLengths({ shape: w, lengths: [] });
+        expect(pts.length).toEqual(0);
+        expect(pts).toEqual(
+            []
+        );
+        w.delete();
+    });
+
+    it("should get points on wire at pattern of lengths and include first and last points", async () => {
+        const w = wire.createBezier({ points: [[0, 0, 0], [100, 100, 0], [0, 200, 500]], closed: false });
+        const pts = wire.pointsOnWireAtPatternOfLengths({ shape: w, lengths: [10, 40, 70, 5], includeFirst: true, includeLast: true, tryNext: false });
+        expect(pts.length).toEqual(20);
+        expect(pts).toEqual(
+            [
+                [0, 0, 0],
+                [6.920912132565033, 7.178571582381942, 0.6441486245422696],
+                [29.39162221922262, 35.79972308349849, 16.020252160689683],
+                [46.89443013500558, 75.07784172671067, 70.45852897926272],
+                [47.443247626588004, 77.38694017426216, 74.8592313691854],
+                [48.354188179430544, 81.85716769316623, 83.75744878433922],
+                [49.98170039814621, 98.08690816457786, 120.26301941607916],
+                [47.58480320429754, 121.97815640904605, 185.9833830118713],
+                [47.23323351136921, 123.52346270696893, 190.72557298899926],
+                [46.47245013928169, 126.5614376896971, 200.2224688760385],
+                [42.747706290351644, 138.08488862960834, 238.34295584814177],
+                [34.15085904617084, 156.30122725807877, 305.37592052976976],
+                [33.45477782274016, 157.52429430642297, 310.17379120920697],
+                [32.03414662600377, 159.94306194047186, 319.7722882861702],
+                [26.00148157307996, 169.27989380320966, 358.1960305753243],
+                [14.297662122514987, 184.50128741916896, 425.5090632416349],
+                [13.413527209151667, 185.54118632664424, 430.3191477937315],
+                [11.627874639508573, 187.60379599137406, 439.93980337966366],
+                [4.267053787788835, 195.63780237145892, 478.4268714591752],
+                [0, 200, 500]
+            ]
+        );
+        w.delete();
+    });
+
+    it("should get points on wire at pattern of lengths and exclude first and last points but try to find next point", async () => {
+        const w = wire.createBezier({ points: [[0, 0, 0], [100, 100, 0], [0, 200, 500]], closed: false });
+        const pts = wire.pointsOnWireAtPatternOfLengths({ shape: w, lengths: [10, 40, 70, 5], includeFirst: false, includeLast: false, tryNext: true });
+        expect(pts.length).toEqual(19);
+        expect(pts).toEqual(
+            [
+                [6.920912132565033, 7.178571582381942, 0.6441486245422696],
+                [29.39162221922262, 35.79972308349849, 16.020252160689683],
+                [46.89443013500558, 75.07784172671067, 70.45852897926272],
+                [47.443247626588004, 77.38694017426216, 74.8592313691854],
+                [48.354188179430544, 81.85716769316623, 83.75744878433922],
+                [49.98170039814621, 98.08690816457786, 120.26301941607916],
+                [47.58480320429754, 121.97815640904605, 185.9833830118713],
+                [47.23323351136921, 123.52346270696893, 190.72557298899926],
+                [46.47245013928169, 126.5614376896971, 200.2224688760385],
+                [42.747706290351644, 138.08488862960834, 238.34295584814177],
+                [34.15085904617084, 156.30122725807877, 305.37592052976976],
+                [33.45477782274016, 157.52429430642297, 310.17379120920697],
+                [32.03414662600377, 159.94306194047186, 319.7722882861702],
+                [26.00148157307996, 169.27989380320966, 358.1960305753243],
+                [14.297662122514987, 184.50128741916896, 425.5090632416349],
+                [13.413527209151667, 185.54118632664424, 430.3191477937315],
+                [11.627874639508573, 187.60379599137406, 439.93980337966366],
+                [4.267053787788835, 195.63780237145892, 478.4268714591752],
+                [-9.357171096580775, 208.956111436285, 545.7832063321646]
+            ]
+        );
+        w.delete();
+    });
+
     it("should divide wires to points by params", async () => {
         const w1 = wire.createBezier({ points: [[0, 0, 0], [1, 1, 0], [0, 2, 5]], closed: false });
         const w2 = wire.createBezier({ points: [[0, 1, 0], [1, 1, 2], [3, 2, 5]], closed: true });
@@ -766,7 +967,7 @@ describe("OCCT wire unit tests", () => {
         const w2 = wire.createBezier({ points: [[5, 5, 0], [6, 6, 0], [7, 7, 0]], closed: false });
         const combined = wire.addEdgesAndWiresToWire({ shape: wBase, shapes: [e1, e2, w1, w2] });
         const length = wire.getWireLength({ shape: combined });
-        expect(length).toBeCloseTo(12.640244335199364);
+        expect(length).toBeCloseTo(12.624769666129064);
         wBase.delete();
         e1.delete();
         e2.delete();
@@ -799,7 +1000,7 @@ describe("OCCT wire unit tests", () => {
         const box = occHelper.entitiesService.bRepPrimAPIMakeBox(1, 1, 1, [0, 0, 0]);
         const combined = wire.addEdgesAndWiresToWire({ shape: wBase, shapes: [e1, e2, w1, w2, box] });
         const length = wire.getWireLength({ shape: combined });
-        expect(length).toBeCloseTo(12.640244335199364);
+        expect(length).toBeCloseTo(12.624769666129064);
         wBase.delete();
         e1.delete();
         e2.delete();
@@ -896,7 +1097,16 @@ describe("OCCT wire unit tests", () => {
         const split = wire.splitOnPoints({ shape: circle, points: pts });
         expect(split.length).toBe(9);
         const segmentLengths = split.map((s) => wire.getWireLength({ shape: s }));
-        expect(segmentLengths).toEqual([0.8000000000000004, 0.3999999999999999, 0.3999999999999999, 0.3999999999999999, 0.3999999999999999, 0.3999999999999999, 0.3999999999999999, 0.40000000000000013, 0.4]);
+        expect(segmentLengths).toEqual([
+            0.8000000000000003,
+            0.3999999999999999,
+            0.39999999999999986,
+            0.3999999999999999,
+            0.3999999999999999,
+            0.3999999999999999,
+            0.3999999999999999,
+            0.40000000000000013,
+            0.4]);
     });
 
     it("should split heart wire by points", () => {
@@ -1095,7 +1305,16 @@ describe("OCCT wire unit tests", () => {
         const split = wire.splitOnPoints({ shape: star, points: pts });
         expect(split.length).toBe(9);
         const segmentLengths = split.map((s) => wire.getWireLength({ shape: s }));
-        expect(segmentLengths).toEqual([9.369811423392672, 4.684905711696324, 4.6849057116963175, 4.684905711696345, 4.684905711696367, 4.68490571169632, 4.6849057116963415, 4.68490571169634, 4.684905711696342]);
+        expect(segmentLengths).toEqual([
+            9.369811423392672,
+            4.684905711696324,
+            4.6849057116963175,
+            4.684905711696346,
+            4.684905711696367,
+            4.68490571169632,
+            4.684905711696342,
+            4.684905711696341,
+            4.684905711696342]);
     });
 
     it("should close open wire", () => {
@@ -1143,7 +1362,7 @@ describe("OCCT wire unit tests", () => {
         const wires = wire.getWires({ shape: projected });
         expect(wires.length).toBe(2);
         const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
-        expect(wireLengths).toEqual([54.554389938555396, 54.55438993855537]);
+        expect(wireLengths).toEqual([54.5543899385554, 54.55438993855537]);
 
         star.delete();
         sphere.delete();
@@ -1176,7 +1395,7 @@ describe("OCCT wire unit tests", () => {
         }).flat();
         expect(wires.length).toBe(4);
         const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
-        expect(wireLengths).toEqual([36.22718914885955, 36.22718914885927, 16.1396129404029, 16.139612940402888]);
+        expect(wireLengths).toEqual([36.22718914885955, 36.22718914885927, 16.139612940402895, 16.139612940402888]);
 
         star1.delete();
         star2.delete();
@@ -1352,7 +1571,7 @@ describe("OCCT wire unit tests", () => {
         checkConstraintTanLinesOnTwoOverlapingCircles(
             Inputs.OCCT.twoSidesStrictEnum.outside,
             Inputs.OCCT.fourSidesStrictEnum.outside,
-            10.540342229885404,
+            10.540342229885402,
         );
     });
 
@@ -1360,7 +1579,7 @@ describe("OCCT wire unit tests", () => {
         checkConstraintTanLinesOnTwoOverlapingCircles(
             Inputs.OCCT.twoSidesStrictEnum.outside,
             Inputs.OCCT.fourSidesStrictEnum.inside,
-            8.99593956878152,
+            8.995939568781521,
         );
     });
 
@@ -1368,7 +1587,7 @@ describe("OCCT wire unit tests", () => {
         checkConstraintTanLinesOnTwoOverlapingCircles(
             Inputs.OCCT.twoSidesStrictEnum.outside,
             Inputs.OCCT.fourSidesStrictEnum.insideOutside,
-            6.421935133608384,
+            6.421935133608383,
         );
     });
 

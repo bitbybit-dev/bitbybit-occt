@@ -2716,6 +2716,79 @@ export namespace OCCT {
         distance2DParam = 0.5;
     }
 
+    export class PointsOnWireAtEqualLengthDto<T> {
+        constructor(shape: T, length?: number, tryNext?: boolean, includeFirst?: boolean, includeLast?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (length !== undefined) { this.length = length; }
+            if (tryNext !== undefined) { this.tryNext = tryNext; }
+            if (includeFirst !== undefined) { this.includeFirst = includeFirst; }
+            if (includeLast !== undefined) { this.includeLast = includeLast; }
+        }
+        /**
+         * Shape representing a wire
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * length at which to evaluate the point
+         * @default 0.5
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 0.1
+         */
+        length = 0.5;
+        /**
+         * Try next point if the point is not found
+         * @default false
+         */
+        tryNext = false;
+        /**
+         * Include first point
+         * @default false
+         */
+        includeFirst = false;
+        /**
+         * Include last point
+         * @default false
+         */
+        includeLast = false;
+    }
+
+
+    export class PointsOnWireAtPatternOfLengthsDto<T> {
+        constructor(shape: T, lengths?: number[], tryNext?: boolean, includeFirst?: boolean, includeLast?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (lengths !== undefined) { this.lengths = lengths; }
+            if (tryNext !== undefined) { this.tryNext = tryNext; }
+            if (includeFirst !== undefined) { this.includeLast = includeFirst; }
+            if (includeLast !== undefined) { this.includeLast = includeLast; }
+        }
+        /**
+         * Shape representing a wire
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * length at which to evaluate the point
+         * @default undefined
+         */
+        lengths: number[];
+        /**
+         * Try next point if the point is not found
+         * @default false
+         */
+        tryNext = false;
+        /**
+         * Include first point
+         * @default false
+         */
+        includeFirst = false;
+        /**
+         * Include last point
+         * @default false
+         */
+        includeLast = false;
+    }
     export class DataOnGeometryAtLengthDto<T> {
         constructor(shape: T, length?: number) {
             if (shape !== undefined) { this.shape = shape; }
@@ -2734,6 +2807,23 @@ export namespace OCCT {
          * @step 0.1
          */
         length = 0.5;
+    }
+
+    export class DataOnGeometryAtLengthsDto<T> {
+        constructor(shape: T, lengths?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (lengths !== undefined) { this.lengths = lengths; }
+        }
+        /**
+         * Shape representing a wire
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * lengths at which to evaluate the points
+         * @default undefined
+         */
+        lengths: number[];
     }
     export class CircleDto {
         constructor(radius?: number, center?: Base.Point3, direction?: Base.Vector3) {

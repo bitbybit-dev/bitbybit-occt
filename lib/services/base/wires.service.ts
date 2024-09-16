@@ -34,9 +34,10 @@ export class WiresService {
     ) { }
 
     getWireLength(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): number {
-        const edges = this.shapeGettersService.getEdges(inputs);
-        const lengths = edges.map(edge => this.edgesService.getEdgeLength({ shape: edge }));
-        return lengths.reduce((p, c) => p + c, 0);
+        const curve = new this.occ.BRepAdaptor_CompCurve_2(inputs.shape, false);
+        const length = this.geomService.curveLength({ shape: curve });
+        curve.delete();
+        return length;
     }
 
     getWiresLengths(inputs: Inputs.OCCT.ShapesDto<TopoDS_Wire>): number[] {
@@ -354,6 +355,78 @@ export class WiresService {
         return res;
     }
 
+    pointsOnWireAtLengths(inputs: Inputs.OCCT.DataOnGeometryAtLengthsDto<TopoDS_Wire>): Base.Point3[] {
+        const wire = inputs.shape;
+        const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
+        const res = this.geomService.pointsOnCurveAtLengths({ ...inputs, shape: curve });
+        curve.delete();
+        return res;
+    }
+
+    pointsOnWireAtEqualLength(inputs: Inputs.OCCT.PointsOnWireAtEqualLengthDto<TopoDS_Wire>): Base.Point3[] {
+        const wire = inputs.shape;
+        const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
+        const wireLength = this.getWireLength({ shape: wire });
+        const nrOfLengths = wireLength / inputs.length;
+        const lengths = [];
+        let total = 0;
+        for (let i = 0; i < nrOfLengths; i++) {
+            lengths.push(inputs.length * i);
+            total += inputs.length;
+        }
+        if(!inputs.includeFirst) {
+            lengths.shift();
+        }
+        if (inputs.tryNext) {
+            lengths.push(total + inputs.length);
+        }
+        const res = this.geomService.pointsOnCurveAtLengths({ lengths, shape: curve });
+        if (inputs.includeLast) {
+            res.push(this.endPointOnWire({ shape: wire }));
+        }
+        curve.delete();
+        return res;
+    }
+
+    pointsOnWireAtPatternOfLengths(inputs: Inputs.OCCT.PointsOnWireAtPatternOfLengthsDto<TopoDS_Wire>): Base.Point3[] {
+        const wire = inputs.shape;
+        const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
+        const wireLength = this.getWireLength({ shape: wire });
+        const lengths = [];
+        let total = 0;
+        let lastIndex = 0;
+        let reachedGoal = false;
+        while (!reachedGoal) {
+            for (let i = 0; i < inputs.lengths.length; i++) {
+                const length = inputs.lengths[i];
+                if (total + length <= wireLength) {
+                    lengths.push(total + length);
+                    total += length;
+                    lastIndex = i;
+                } else {
+                    reachedGoal = true;
+                    break;
+                }
+            }
+        }
+        if (inputs.includeFirst) {
+            lengths.unshift(0);
+        }
+        if (inputs.tryNext) {
+            if (lastIndex + 1 < inputs.lengths.length) {
+                lengths.push(total + inputs.lengths[lastIndex + 1]);
+            } else {
+                lengths.push(total + inputs.lengths[0]);
+            }
+        }
+        const res = this.geomService.pointsOnCurveAtLengths({ lengths, shape: curve });
+        if (inputs.includeLast) {
+            res.push(this.endPointOnWire({ shape: wire }));
+        }
+        curve.delete();
+        return res;
+    }
+
     tangentOnWireAtLength(inputs: Inputs.OCCT.DataOnGeometryAtLengthDto<TopoDS_Wire>): Base.Point3 {
         const wire = inputs.shape;
         const curve = new this.occ.BRepAdaptor_CompCurve_2(wire, false);
@@ -561,7 +634,7 @@ export class WiresService {
         return this.geomService.getLinearCenterOfMass(inputs);
     }
 
-    createWireFromEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): TopoDS_Wire {
+    createWireFromEdge(inputs: Inputs.OCCT.ShapeDto<TopoDS_Edge>): TopoDS_Wire {
         const makeWire = new this.occ.BRepBuilderAPI_MakeWire_2(inputs.shape);
         const wire = makeWire.Wire();
         makeWire.delete();

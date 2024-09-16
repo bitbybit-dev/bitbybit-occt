@@ -582,7 +582,7 @@ describe("OCCT operations unit tests", () => {
         const offsetRes = operations.offset({ shape: circleWire, distance: -0.1, tolerance: 1e-7, face: fRev });
         const wires = wire.getWires({ shape: offsetRes });
         const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
-        expect(wireLengths).toEqual([39.2, 6.911503837897546]);
+        expect(wireLengths).toEqual([39.2, 6.911503837897545]);
         circleWire.delete();
         f.delete();
         fRev.delete();
@@ -597,7 +597,7 @@ describe("OCCT operations unit tests", () => {
         const offsetRes = operations.offset({ shape: circleEdge, distance: -0.1, tolerance: 1e-7, face: fRev });
         const wires = wire.getWires({ shape: offsetRes });
         const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
-        expect(wireLengths).toEqual([39.2, 6.911503837897546]);
+        expect(wireLengths).toEqual([39.2, 6.911503837897545]);
         circleEdge.delete();
         f.delete();
         fRev.delete();
@@ -612,7 +612,7 @@ describe("OCCT operations unit tests", () => {
         const offsetRes = operations.offset({ shape: circleWire, distance: 0.1, tolerance: 1e-7, face: fRev });
         const wires = wire.getWires({ shape: offsetRes });
         const wireLengths = wires.map(w => wire.getWireLength({ shape: w }));
-        expect(wireLengths).toEqual([40.62831853071796, 5.654866776461627]);
+        expect(wireLengths).toEqual([40.62831853071796, 5.654866776461628]);
         circleWire.delete();
         f.delete();
         fRev.delete();
