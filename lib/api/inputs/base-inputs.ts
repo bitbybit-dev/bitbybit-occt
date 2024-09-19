@@ -15,6 +15,7 @@ export namespace Base {
     export enum skyboxEnum {
         default = "default",
         clearSky = "clearSky",
-        city = "city"
+        city = "city",
+        greyGradient = "greyGradient",
     }
 }

@@ -66,7 +66,7 @@ export class OccHelper {
             this.enumService, this.entitiesService, this.converterService, this.geomService, this.edgesService, this.booleansService);
 
         this.facesService = new FacesService(occ, this.occRefReturns, this.entitiesService, this.enumService,
-            this.shapeGettersService, this.converterService, this.booleansService, this.wiresService);
+            this.shapeGettersService, this.converterService, this.booleansService, this.wiresService, this.filletsService);
 
         this.shellsService = new ShellsService(occ, this.shapeGettersService, this.converterService, this.facesService);
 
@@ -78,7 +78,10 @@ export class OccHelper {
             this.vecHelper, this.wiresService, this.facesService, this.shellsService);
 
         this.filletsService = new FilletsService(occ, this.vecHelper, this.iteratorService, this.converterService, this.entitiesService,
-            this.transformsService, this.shapeGettersService, this.edgesService, this.operationsService);
+            this.transformsService, this.shapeGettersService, this.edgesService, this.operationsService, this.facesService);
+
+        // cross reference
+        this.facesService.filletsService = this.filletsService;
     }
 
     surfaceFromFace(inputs: Inputs.OCCT.ShapeDto<TopoDS_Face>) {

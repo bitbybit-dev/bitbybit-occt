@@ -879,6 +879,120 @@ export namespace OCCT {
          */
         removeEndEdgeV = false;
     }
+
+    export class FaceSubdivisionToWiresDto<T> {
+        /**
+          * Provide options without default values
+          */
+        constructor(shape?: T, nrDivisions?: number, isU?: boolean, shiftHalfStep?: boolean, removeStart?: boolean, removeEnd?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (nrDivisions !== undefined) { this.nrDivisions = nrDivisions; }
+            if (isU !== undefined) { this.isU = isU; }
+            if (shiftHalfStep !== undefined) { this.shiftHalfStep = shiftHalfStep; }
+            if (removeStart !== undefined) { this.removeStart = removeStart; }
+            if (removeEnd !== undefined) { this.removeEnd = removeEnd; }
+        }
+
+        /**
+         * Openascade Face
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Number of points that will be added on U direction
+         * @default 10
+         * @minimum 1
+         * @maximum Infinity
+         * @step 1
+         */
+        nrDivisions = 10;
+        /**
+        * Linear subdivision direction true - U, false - V
+        * @default true
+        */
+        isU = true;
+        /**
+         * Sometimes you want to shift your wires half way the step distance, especially on periodic surfaces
+         * @default false
+         */
+        shiftHalfStep = false;
+        /**
+         * Removes start wire
+         * @default false
+         */
+        removeStart = false;
+        /**
+         * Removes end wire
+         * @default false
+         */
+        removeEnd = false;
+    }
+    export class FaceSubdivisionToRectanglesDto<T> {
+        /**
+          * Provide options without default values
+          */
+        constructor(shape?: T, nrRectanglesU?: number, nrRectanglesV?: number, scalePatternU?: number[], scalePatternV?: number[], filletPattern?: number[], inclusionPattern?: boolean[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (nrRectanglesU !== undefined) { this.nrRectanglesU = nrRectanglesU; }
+            if (nrRectanglesV !== undefined) { this.nrRectanglesU = nrRectanglesV; }
+            if (scalePatternU !== undefined) { this.scalePatternU = scalePatternU; }
+            if (scalePatternV !== undefined) { this.scalePatternV = scalePatternV; }
+            if (filletPattern !== undefined) { this.filletPattern = filletPattern; }
+            if (inclusionPattern !== undefined) { this.inclusionPattern = inclusionPattern; }
+        }
+        /**
+         * Openascade Face
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Number of rectangles on U direction
+         * @default 10
+         * @minimum 1
+         * @maximum Infinity
+         * @step 1
+         */
+        nrRectanglesU = 10;
+        /**
+         * Number of rectangles on V direction
+         * @default 10
+         * @minimum 1
+         * @maximum Infinity
+         * @step 1
+         */
+        nrRectanglesV = 10;
+        /**
+         * Rectangle scale pattern on u direction - numbers between 0 and 1, if 1 or undefined is used, no scaling is applied
+         * @default undefined
+         * @optional true
+         */
+        scalePatternU: number[];
+        /**
+         * Rectangle scale pattern on v direction - numbers between 0 and 1, if 1 or undefined is used, no scaling is applied
+         * @default undefined
+         * @optional true
+         */
+        scalePatternV: number[];
+        /**
+         * Rectangle fillet scale pattern - numbers between 0 and 1, if 0 is used, no fillet is applied, 
+         * if 1 is used, the fillet will be exactly half of the length of the shorter side of the rectangle
+         * @default undefined
+         * @optional true
+         */
+        filletPattern: number[];
+        /**
+         * Rectangle inclusion pattern - true means that the rectangle will be included, 
+         * false means that the rectangle will be removed from the face
+         * @default undefined
+         * @optional true
+         */
+        inclusionPattern: boolean[];
+        /**
+         * If true, we will also output the faces for all the rectangles. The first face in the result will be the original face with holes punched, while the rest will be the rectangles
+         * @default false
+         */
+        holesToFaces = false;
+    }
     export class FaceSubdivisionControlledDto<T> {
         /**
          * Provide options without default values
@@ -1072,6 +1186,60 @@ export namespace OCCT {
          * @default false
          */
         removeEndPoint = false;
+    }
+    export class WireAlongParamDto<T> {
+        /**
+         * Provide options without default values
+         */
+        constructor(shape?: T, isU?: boolean, param?: number) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (isU !== undefined) { this.isU = isU; }
+            if (param !== undefined) { this.param = param; }
+        }
+        /**
+         * Brep OpenCascade geometry
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Linear subdivision direction true - U, false - V
+         * @default true
+         */
+        isU = true;
+        /**
+         * Param on direction 0 - 1
+         * @default 0.5
+         * @minimum 0
+         * @maximum 1
+         * @step 0.1
+         */
+        param = 0.5;
+    }
+
+    export class WiresAlongParamsDto<T> {
+        /**
+         * Provide options without default values
+         */
+        constructor(shape?: T, isU?: boolean, params?: number[]) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (isU !== undefined) { this.isU = isU; }
+            if (params !== undefined) { this.params = params; }
+        }
+        /**
+         * Brep OpenCascade geometry
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Linear subdivision direction true - U, false - V
+         * @default true
+         */
+        isU = true;
+        /**
+         * Params on direction 0 - 1
+         * @default undefined
+         */
+        params: number[];
     }
 
     export class DataOnUVDto<T> {
@@ -4423,6 +4591,38 @@ export namespace OCCT {
          * @default false
          */
         planar = false;
+    }
+    export class FaceFromWireOnFaceDto<T, U> {
+        constructor(wire?: T, face?: U) {
+            if (wire !== undefined) { this.wire = wire; }
+            if (face !== undefined) { this.face = face; }
+        }
+        /**
+         * Wire shape to convert into a face
+         * @default undefined
+         */
+        wire: T;
+        /**
+         * Face to attach the wire to
+         * @default undefined
+         */
+        face: U;
+    }
+    export class FacesFromWiresOnFaceDto<T, U> {
+        constructor(wires?: T[], face?: U) {
+            if (wires !== undefined) { this.wires = wires; }
+            if (face !== undefined) { this.face = face; }
+        }
+        /**
+         * Wire shape to convert into a face
+         * @default undefined
+         */
+        wires: T[];
+        /**
+         * Face to attach the wires to
+         * @default undefined
+         */
+        face: U;
     }
     export class FaceFromWiresDto<T> {
         constructor(shapes?: T[], planar?: boolean) {

@@ -1,5 +1,5 @@
 import {
-    Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, Handle_Geom_Curve, OpenCascadeInstance,
+    Geom_Circle, Geom_Curve, Geom_Ellipse, Geom_Surface, Handle_Geom_Curve, Handle_Geom_Surface, OpenCascadeInstance,
     TopoDS_Edge, TopoDS_Face, TopoDS_Shape, TopoDS_Shell, TopoDS_Vertex, TopoDS_Wire,
     gp_Ax1, gp_Ax2, gp_Ax22d_2, gp_Ax2d_2, gp_Ax3, gp_Dir2d_4, gp_Dir_4, gp_Pln_3,
     gp_Pnt2d_3, gp_Pnt_3, gp_Vec2d_4, gp_Vec_4, gp_XYZ_2
@@ -172,6 +172,27 @@ export class EntitiesService {
         const face = faceMaker.Face();
         faceMaker.delete();
         return face;
+    }
+
+    bRepBuilderAPIMakeFacesFromWiresOnFace(face: TopoDS_Face, wires: TopoDS_Wire[]): TopoDS_Face[] {
+        const surface = this.occ.BRep_Tool.Surface_2(face);
+        const res = wires.map(wire => this.bRepBuilderAPIMakeFaceFromWireOnSurface(surface, wire));
+        surface.delete();
+        return res;
+    }
+
+    bRepBuilderAPIMakeFaceFromWireOnFace(face: TopoDS_Face, wire: TopoDS_Wire): TopoDS_Face {
+        const surface = this.occ.BRep_Tool.Surface_2(face);
+        const res = this.bRepBuilderAPIMakeFaceFromWireOnSurface(surface, wire);
+        surface.delete();
+        return res;
+    }
+
+    bRepBuilderAPIMakeFaceFromWireOnSurface(surface: Handle_Geom_Surface, wire: TopoDS_Wire): TopoDS_Face {
+        const faceMaker = new this.occ.BRepBuilderAPI_MakeFace_21(surface, wire, true);
+        const f = faceMaker.Face();
+        faceMaker.delete();
+        return f;
     }
 
     bRepBuilderAPIMakeFaceFromSurface(surface: Geom_Surface, tolDegen: number): TopoDS_Face {
