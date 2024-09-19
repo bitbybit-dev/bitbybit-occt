@@ -15,6 +15,14 @@ export class OCCTFace {
         return this.och.facesService.createFaceFromWire(inputs);
     }
 
+    createFaceFromWireOnFace(inputs: Inputs.OCCT.FaceFromWireOnFaceDto<TopoDS_Face, TopoDS_Wire>): TopoDS_Face {
+        return this.och.facesService.createFaceFromWireOnFace(inputs);
+    }
+
+    createFacesFromWiresOnFace(inputs: Inputs.OCCT.FacesFromWiresOnFaceDto<TopoDS_Face, TopoDS_Wire>): TopoDS_Face[] {
+        return this.och.facesService.createFacesFromWiresOnFace(inputs);
+    }
+
     createFaceFromWires(inputs: Inputs.OCCT.FacesFromWiresDto<TopoDS_Wire>): TopoDS_Face {
         return this.och.facesService.createFaceFromWires(inputs);
     }
@@ -55,13 +63,32 @@ export class OCCTFace {
         return this.och.facesService.subdivideToPoints(inputs);
     }
 
+    subdivideToWires(inputs: Inputs.OCCT.FaceSubdivisionToWiresDto<TopoDS_Face>): TopoDS_Wire[] {
+        return this.och.facesService.subdivideToWires(inputs);
+    }
+
+    subdivideToRectangleWires(inputs: Inputs.OCCT.FaceSubdivisionToRectanglesDto<TopoDS_Face>): TopoDS_Wire[] {
+        return this.och.facesService.subdivideToRectangleWires(inputs);
+    }
+
+    subdivideToRectangleHoles(inputs: Inputs.OCCT.FaceSubdivisionToRectanglesDto<TopoDS_Face>): TopoDS_Face[] {
+        return this.och.facesService.subdivideToRectangleHoles(inputs);
+    }
+
     subdivideToNormals(inputs: Inputs.OCCT.FaceSubdivisionDto<TopoDS_Face>): Base.Point3[] {
         return this.och.facesService.subdivideToNormals(inputs);
     }
 
     subdivideToPointsOnParam(inputs: Inputs.OCCT.FaceLinearSubdivisionDto<TopoDS_Face>): Base.Point3[] {
         return this.och.facesService.subdivideToPointsOnParam(inputs);
+    }
 
+    wireAlongParam(inputs: Inputs.OCCT.WireAlongParamDto<TopoDS_Face>): TopoDS_Wire {
+        return this.och.facesService.wireAlongParam(inputs);
+    }
+
+    wiresAlongParams(inputs: Inputs.OCCT.WiresAlongParamsDto<TopoDS_Face>): TopoDS_Wire[] {
+        return this.och.facesService.wiresAlongParams(inputs);
     }
 
     subdivideToUVOnParam(inputs: Inputs.OCCT.FaceLinearSubdivisionDto<TopoDS_Face>): Base.Point2[] {

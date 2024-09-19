@@ -252,24 +252,11 @@ export class OCCTWire {
     }
 
     reversedWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
-        const wire: TopoDS_Wire = inputs.shape;
-        const reversed = wire.Reversed();
-        const result = this.och.converterService.getActualTypeOfShape(reversed);
-        reversed.delete();
-        return result;
+        return this.och.wiresService.reversedWire(inputs);
     }
 
     reversedWireFromReversedEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
-        const wire: TopoDS_Wire = inputs.shape;
-        const edges = this.och.edgesService.getEdgesAlongWire({ shape: wire });
-        const reversedEdges = edges.map(e => {
-            return this.och.converterService.getActualTypeOfShape(e.Reversed());
-        });
-        const reversed = this.och.converterService.combineEdgesAndWiresIntoAWire({ shapes: reversedEdges.reverse() });
-        const result = this.och.converterService.getActualTypeOfShape(reversed);
-        reversed.delete();
-        reversedEdges.forEach(e => e.delete());
-        return result;
+        return this.och.wiresService.reversedWireFromReversedEdges(inputs);
     }
 
     placeWireOnFace(inputs: Inputs.OCCT.WireOnFaceDto<TopoDS_Wire, TopoDS_Face>) {

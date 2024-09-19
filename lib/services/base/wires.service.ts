@@ -71,6 +71,27 @@ export class WiresService {
         });
     }
 
+    reversedWire(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
+        const wire: TopoDS_Wire = inputs.shape;
+        const reversed = wire.Reversed();
+        const result = this.converterService.getActualTypeOfShape(reversed);
+        reversed.delete();
+        return result;
+    }
+
+    reversedWireFromReversedEdges(inputs: Inputs.OCCT.ShapeDto<TopoDS_Wire>): TopoDS_Wire {
+        const wire: TopoDS_Wire = inputs.shape;
+        const edges = this.edgesService.getEdgesAlongWire({ shape: wire });
+        const reversedEdges = edges.map(e => {
+            return this.converterService.getActualTypeOfShape(e.Reversed());
+        });
+        const reversed = this.converterService.combineEdgesAndWiresIntoAWire({ shapes: reversedEdges.reverse() });
+        const result = this.converterService.getActualTypeOfShape(reversed);
+        reversed.delete();
+        reversedEdges.forEach(e => e.delete());
+        return result;
+    }
+    
     createChristmasTreeWire(inputs: Inputs.OCCT.ChristmasTreeDto) {
         const frameInner = this.createLineWire({
             start: [inputs.innerDist, 0, 0],
@@ -374,7 +395,7 @@ export class WiresService {
             lengths.push(inputs.length * i);
             total += inputs.length;
         }
-        if(!inputs.includeFirst) {
+        if (!inputs.includeFirst) {
             lengths.shift();
         }
         if (inputs.tryNext) {
@@ -702,7 +723,7 @@ export class WiresService {
         } else if (inputs.closed && inputs.points.length !== inputs.weights.length - 1) {
             throw new Error("Number of points must be one less than number of weights when bezier is clsoed.");
         }
-        
+
         const ptList = new this.occ.TColgp_Array1OfPnt_2(1, inputs.points.length + (inputs.closed ? 1 : 0));
         for (let pIndex = 1; pIndex <= inputs.points.length; pIndex++) {
             ptList.SetValue(pIndex, this.entitiesService.gpPnt(inputs.points[pIndex - 1]));
