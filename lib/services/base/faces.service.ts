@@ -9,7 +9,6 @@ import { WiresService } from "./wires.service";
 import { BooleansService } from "./booleans.service";
 import { ConverterService } from "./converter.service";
 import { FilletsService } from "./fillets.service";
-import { IteratorService } from "./iterator.service";
 
 export class FacesService {
 
@@ -611,6 +610,13 @@ export class FacesService {
     }
 
     subdivideToRectangleHoles(inputs: Inputs.OCCT.FaceSubdivisionToRectanglesDto<TopoDS_Face>): TopoDS_Face[] {
+        // default should be smaller then 1 as that can't punch holes or create faces nicely.
+        if (inputs.scalePatternU === undefined) {
+            inputs.scalePatternU = [0.5];
+        }
+        if(inputs.scalePatternV === undefined){
+            inputs.scalePatternV = [0.5];
+        }
         const wires = this.subdivideToRectangleWires(inputs);
         const faceWires = this.shapeGettersService.getWires({ shape: inputs.shape });
         const wireLengths = this.wiresService.getWiresLengths({ shapes: faceWires });
@@ -626,7 +632,7 @@ export class FacesService {
             });
         }
         revWires.forEach(w => w.delete());
-        
+
         return [newFace, ...faces];
     }
 
