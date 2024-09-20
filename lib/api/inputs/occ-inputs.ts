@@ -162,6 +162,37 @@ export namespace OCCT {
          */
         point: Base.Point3 = [0, 0, 0];
     }
+    export class XYZDto {
+        constructor(x?: number, y?: number, z?: number) {
+            if (x !== undefined) { this.x = x; }
+            if (y !== undefined) { this.y = y; }
+            if (z !== undefined) { this.z = z; }
+        }
+        /**
+         * X coord
+         * @default 0
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 0.1
+         */
+        x: number;
+        /**
+         * Y coord
+         * @default 0
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 0.1
+         */
+        y: number;
+        /**
+         * Z coord
+         * @default 0
+         * @minimum -Infinity
+         * @maximum Infinity
+         * @step 0.1
+         */
+        z: number;
+    }
     export class PointsDto {
         constructor(points?: Base.Point3[]) {
             if (points !== undefined) { this.points = points; }

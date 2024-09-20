@@ -10,6 +10,10 @@ export class OCCTVertex {
     ) {
     }
 
+    vertexFromXYZ(inputs: Inputs.OCCT.XYZDto): TopoDS_Vertex {
+        return this.och.entitiesService.makeVertex([inputs.x, inputs.y, inputs.z]);
+    }
+
     vertexFromPoint(inputs: Inputs.OCCT.PointDto): TopoDS_Vertex {
         return this.och.entitiesService.makeVertex(inputs.point);
     }
