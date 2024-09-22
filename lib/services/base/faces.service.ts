@@ -9,6 +9,7 @@ import { WiresService } from "./wires.service";
 import { BooleansService } from "./booleans.service";
 import { ConverterService } from "./converter.service";
 import { FilletsService } from "./fillets.service";
+import { TransformsService } from "./transforms.service";
 
 export class FacesService {
 
@@ -21,6 +22,7 @@ export class FacesService {
         private readonly converterService: ConverterService,
         private readonly booleansService: BooleansService,
         private readonly wiresService: WiresService,
+        private readonly transformsService: TransformsService,
         public filletsService: FilletsService,
     ) { }
 
@@ -578,23 +580,50 @@ export class FacesService {
                 }
 
                 if (include) {
+                    console.log("scaleU", scaleU);
+                    console.log("scaleV", scaleV);
+
+
                     const width = stepV * scaleV * scaleFromPatternV;
                     const length = stepU * scaleU * scaleFromPatternU;
                     const rectangle = this.wiresService.createRectangleWire({
                         width,
                         length,
-                        center: [paramsV[j] * scaleV + vMin, 0, paramsU[i] * scaleU + uMin],
+                        center: [0, 0, 0],
                         direction: [0, 1, 0],
                     });
+                    console.log("width", width);
+                    console.log("length", length);
+
+
                     if (fillet > 0) {
                         const minForFillet = Math.min(width, length);
                         fillet = minForFillet / 2 * fillet;
-                        const filletRectangle = this.filletsService.fillet2d({
+                        console.log("minForFillet", minForFillet);
+                        console.log("fillet", fillet);
+
+                        const scaledRec = this.transformsService.scale3d({
                             shape: rectangle,
+                            center: [0, 0, 0],
+                            scale: [scaleU, 1, scaleV],
+                        });
+                        const filletRectangle = this.filletsService.fillet2d({
+                            shape: scaledRec,
                             radius: fillet,
                         });
+
+                        const scaledRec2 = this.transformsService.scale3d({
+                            shape: filletRectangle,
+                            center: [0, 0, 0],
+                            scale: [1 / scaleU, 1, 1 / scaleV],
+                        });
+                        const translated = this.transformsService.translate({
+                            shape: scaledRec2,
+                            translation: [paramsV[j] * scaleV + vMin, 0, paramsU[i] * scaleU + uMin],
+                        });
                         shapesToDelete.push(rectangle);
-                        const placedRec = this.wiresService.placeWire(filletRectangle, surface);
+
+                        const placedRec = this.wiresService.placeWire(translated, surface);
                         wires.push(placedRec);
                     } else {
                         const placedRec = this.wiresService.placeWire(rectangle, surface);
@@ -614,7 +643,7 @@ export class FacesService {
         if (inputs.scalePatternU === undefined) {
             inputs.scalePatternU = [0.5];
         }
-        if(inputs.scalePatternV === undefined){
+        if (inputs.scalePatternV === undefined) {
             inputs.scalePatternV = [0.5];
         }
         const wires = this.subdivideToRectangleWires(inputs);
