@@ -614,6 +614,8 @@ export class FacesService {
                             direction: [0, 1, 0],
                         });
 
+                        const translation = [paramsV[j] * scaleV + vMin, 0, paramsU[i] * scaleU + uMin] as Base.Vector3;
+
                         if (fillet > 0) {
 
                             const filletRectangle = this.filletsService.fillet2d({
@@ -629,7 +631,7 @@ export class FacesService {
 
                             const translated = this.transformsService.translate({
                                 shape: scaledRec2,
-                                translation: [paramsV[j] * scaleV + vMin, 0, paramsU[i] * scaleU + uMin],
+                                translation,
                             });
                             shapesToDelete.push(rectangle);
 
@@ -637,9 +639,19 @@ export class FacesService {
                             wires.push(placedRec);
                             cachedRectangles.push({ id: `${width}-${length}-${fillet}`, shape: scaledRec2 });
                         } else {
-                            const placedRec = this.wiresService.placeWire(rectangle, surface);
+                            const scaledRec = this.transformsService.scale3d({
+                                shape: rectangle,
+                                center: [0, 0, 0],
+                                scale: [scaleV, 1, scaleU],
+                            });
+                            const translated = this.transformsService.translate({
+                                shape: scaledRec,
+                                translation,
+                            });
+                            shapesToDelete.push(rectangle);
+                            const placedRec = this.wiresService.placeWire(translated, surface);
                             wires.push(placedRec);
-                            cachedRectangles.push({ id: `${width}-${length}-${fillet}`, shape: rectangle });
+                            cachedRectangles.push({ id: `${width}-${length}-${fillet}`, shape: scaledRec });
                         }
                     }
                 }
