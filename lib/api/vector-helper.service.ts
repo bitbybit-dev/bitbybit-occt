@@ -94,6 +94,13 @@ export class VectorHelperService {
         return [x, y, z];
     }
 
+    angleBetweenVectors(vector1: [number, number, number], vector2: [number, number, number]): number {
+        const dotProduct = vector1[0] * vector2[0] + vector1[1] * vector2[1] + vector1[2] * vector2[2];
+        const magnitude1 = this.magnitude(vector1);
+        const magnitude2 = this.magnitude(vector2);
+        return Math.acos(dotProduct / (magnitude1 * magnitude2));
+    }
+
     distanceBetweenPoints(point1: [number, number, number], point2: [number, number, number]): number {
         const x = point2[0] - point1[0];
         const y = point2[1] - point1[1];

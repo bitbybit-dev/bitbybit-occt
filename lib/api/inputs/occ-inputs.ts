@@ -958,7 +958,7 @@ export namespace OCCT {
          */
         removeEnd = false;
     }
-    export class FaceSubdivisionToRectanglesDto<T> {
+    export class FaceSubdivideToRectangleWiresDto<T> {
         /**
           * Provide options without default values
           */
@@ -970,6 +970,69 @@ export namespace OCCT {
             if (scalePatternV !== undefined) { this.scalePatternV = scalePatternV; }
             if (filletPattern !== undefined) { this.filletPattern = filletPattern; }
             if (inclusionPattern !== undefined) { this.inclusionPattern = inclusionPattern; }
+        }
+        /**
+         * Openascade Face
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Number of rectangles on U direction
+         * @default 10
+         * @minimum 1
+         * @maximum Infinity
+         * @step 1
+         */
+        nrRectanglesU = 10;
+        /**
+         * Number of rectangles on V direction
+         * @default 10
+         * @minimum 1
+         * @maximum Infinity
+         * @step 1
+         */
+        nrRectanglesV = 10;
+        /**
+         * Rectangle scale pattern on u direction - numbers between 0 and 1, if 1 or undefined is used, no scaling is applied
+         * @default undefined
+         * @optional true
+         */
+        scalePatternU: number[];
+        /**
+         * Rectangle scale pattern on v direction - numbers between 0 and 1, if 1 or undefined is used, no scaling is applied
+         * @default undefined
+         * @optional true
+         */
+        scalePatternV: number[];
+        /**
+         * Rectangle fillet scale pattern - numbers between 0 and 1, if 0 is used, no fillet is applied, 
+         * if 1 is used, the fillet will be exactly half of the length of the shorter side of the rectangle
+         * @default undefined
+         * @optional true
+         */
+        filletPattern: number[];
+        /**
+         * Rectangle inclusion pattern - true means that the rectangle will be included, 
+         * false means that the rectangle will be removed from the face
+         * @default undefined
+         * @optional true
+         */
+        inclusionPattern: boolean[];
+    }
+
+    export class FaceSubdivideToRectangleHolesDto<T> {
+        /**
+          * Provide options without default values
+          */
+        constructor(shape?: T, nrRectanglesU?: number, nrRectanglesV?: number, scalePatternU?: number[], scalePatternV?: number[], filletPattern?: number[], inclusionPattern?: boolean[], holesToFaces?: boolean) {
+            if (shape !== undefined) { this.shape = shape; }
+            if (nrRectanglesU !== undefined) { this.nrRectanglesU = nrRectanglesU; }
+            if (nrRectanglesV !== undefined) { this.nrRectanglesU = nrRectanglesV; }
+            if (scalePatternU !== undefined) { this.scalePatternU = scalePatternU; }
+            if (scalePatternV !== undefined) { this.scalePatternV = scalePatternV; }
+            if (filletPattern !== undefined) { this.filletPattern = filletPattern; }
+            if (inclusionPattern !== undefined) { this.inclusionPattern = inclusionPattern; }
+            if (holesToFaces !== undefined) { this.holesToFaces = holesToFaces; }
         }
         /**
          * Openascade Face
@@ -4624,9 +4687,10 @@ export namespace OCCT {
         planar = false;
     }
     export class FaceFromWireOnFaceDto<T, U> {
-        constructor(wire?: T, face?: U) {
+        constructor(wire?: T, face?: U, inside?: boolean) {
             if (wire !== undefined) { this.wire = wire; }
             if (face !== undefined) { this.face = face; }
+            if (inside !== undefined) { this.inside = inside; }
         }
         /**
          * Wire shape to convert into a face
@@ -4638,11 +4702,17 @@ export namespace OCCT {
          * @default undefined
          */
         face: U;
+        /**
+         * Indication if wire is inside the surface or outside
+         * @default true
+         */
+        inside = true;
     }
     export class FacesFromWiresOnFaceDto<T, U> {
-        constructor(wires?: T[], face?: U) {
+        constructor(wires?: T[], face?: U, inside?: boolean) {
             if (wires !== undefined) { this.wires = wires; }
             if (face !== undefined) { this.face = face; }
+            if (inside !== undefined) { this.inside = inside; }
         }
         /**
          * Wire shape to convert into a face
@@ -4654,6 +4724,11 @@ export namespace OCCT {
          * @default undefined
          */
         face: U;
+        /**
+         * Indication if wire is inside the surface or outside
+         * @default true
+         */
+        inside = true;
     }
     export class FaceFromWiresDto<T> {
         constructor(shapes?: T[], planar?: boolean) {
@@ -4686,6 +4761,28 @@ export namespace OCCT {
          * @default false
          */
         planar = false;
+    }
+    export class FaceFromWiresOnFaceDto<T, U> {
+        constructor(wires?: T[], face?: U, inside?: boolean) {
+            if (wires !== undefined) { this.wires = wires; }
+            if (face !== undefined) { this.face = face; }
+            if (inside !== undefined) { this.inside = inside; }
+        }
+        /**
+         * Wire shapes to convert into a faces
+         * @default undefined
+         */
+        wires: T[];
+        /**
+         * Guide face to use as a base
+         * @default undefined
+         */
+        face: U;
+        /**
+         * Indication if wire is inside the surface or outside
+         * @default true
+         */
+        inside = true;
     }
     export class SewDto<T> {
         constructor(shapes: T[], tolerance?: number) {

@@ -10,6 +10,7 @@ import { BooleansService } from "./booleans.service";
 import { ConverterService } from "./converter.service";
 import { FilletsService } from "./fillets.service";
 import { TransformsService } from "./transforms.service";
+import { VectorHelperService } from "../../api";
 
 export class FacesService {
 
@@ -23,16 +24,17 @@ export class FacesService {
         private readonly booleansService: BooleansService,
         private readonly wiresService: WiresService,
         private readonly transformsService: TransformsService,
+        private readonly vectorService: VectorHelperService,
         public filletsService: FilletsService,
     ) { }
 
     createFaceFromWireOnFace(inputs: Inputs.OCCT.FaceFromWireOnFaceDto<TopoDS_Wire, TopoDS_Face>): TopoDS_Face {
-        const result = this.entitiesService.bRepBuilderAPIMakeFaceFromWireOnFace(inputs.face, inputs.wire);
+        const result = this.entitiesService.bRepBuilderAPIMakeFaceFromWireOnFace(inputs.face, inputs.wire, inputs.inside);
         return result;
     }
 
     createFacesFromWiresOnFace(inputs: Inputs.OCCT.FacesFromWiresOnFaceDto<TopoDS_Wire, TopoDS_Face>): TopoDS_Face[] {
-        const result = this.entitiesService.bRepBuilderAPIMakeFacesFromWiresOnFace(inputs.face, inputs.wires);
+        const result = this.entitiesService.bRepBuilderAPIMakeFacesFromWiresOnFace(inputs.face, inputs.wires, inputs.inside);
         return result;
     }
 
@@ -329,6 +331,11 @@ export class FacesService {
         return result;
     }
 
+    createFaceFromWiresOnFace(inputs: Inputs.OCCT.FaceFromWiresOnFaceDto<TopoDS_Wire, TopoDS_Face>): TopoDS_Face {
+        const result = this.entitiesService.bRepBuilderAPIMakeFaceFromWires(inputs.wires, false, inputs.face, inputs.inside);
+        return result;
+    }
+
     createFacesFromWires(inputs: Inputs.OCCT.FacesFromWiresDto<TopoDS_Wire>): TopoDS_Face[] {
         const result = inputs.shapes.map(shape => {
             return this.createFaceFromWire({ shape, planar: inputs.planar });
@@ -504,7 +511,7 @@ export class FacesService {
         return wires;
     }
 
-    subdivideToRectangleWires(inputs: Inputs.OCCT.FaceSubdivisionToRectanglesDto<TopoDS_Face>): TopoDS_Wire[] {
+    subdivideToRectangleWires(inputs: Inputs.OCCT.FaceSubdivideToRectangleWiresDto<TopoDS_Face>): TopoDS_Wire[] {
         if (inputs.shape === undefined) {
             throw (Error(("Face not defined")));
         }
@@ -540,6 +547,10 @@ export class FacesService {
         let currentScalePatternVIndex = 0;
         let currentInclusionPatternIndex = 0;
         let currentFilletPatternIndex = 0;
+
+        // potentially each rectangle can have unique fillets and scale factors due to patterns applied
+        // we can though optimise this by using cached rectangles to speed up the algorithm
+        const cachedRectangles: { id: string, shape: TopoDS_Wire }[] = [];
 
         for (let i = 0; i < paramsU.length; i++) {
             for (let j = 0; j < paramsV.length; j++) {
@@ -580,54 +591,56 @@ export class FacesService {
                 }
 
                 if (include) {
-                    console.log("scaleU", scaleU);
-                    console.log("scaleV", scaleV);
 
+                    const width = stepV * scaleFromPatternV;
+                    const length = stepU * scaleFromPatternU;
+                    const minForFillet = Math.min(width, length);
+                    fillet = minForFillet / 2 * fillet;
 
-                    const width = stepV * scaleV * scaleFromPatternV;
-                    const length = stepU * scaleU * scaleFromPatternU;
-                    const rectangle = this.wiresService.createRectangleWire({
-                        width,
-                        length,
-                        center: [0, 0, 0],
-                        direction: [0, 1, 0],
-                    });
-                    console.log("width", width);
-                    console.log("length", length);
+                    const useRec = cachedRectangles.find(r => r.id === `${fillet}-${scaleFromPatternU}-${scaleFromPatternV}`)?.shape;
 
-
-                    if (fillet > 0) {
-                        const minForFillet = Math.min(width, length);
-                        fillet = minForFillet / 2 * fillet;
-                        console.log("minForFillet", minForFillet);
-                        console.log("fillet", fillet);
-
-                        const scaledRec = this.transformsService.scale3d({
-                            shape: rectangle,
-                            center: [0, 0, 0],
-                            scale: [scaleU, 1, scaleV],
-                        });
-                        const filletRectangle = this.filletsService.fillet2d({
-                            shape: scaledRec,
-                            radius: fillet,
-                        });
-
-                        const scaledRec2 = this.transformsService.scale3d({
-                            shape: filletRectangle,
-                            center: [0, 0, 0],
-                            scale: [1 / scaleU, 1, 1 / scaleV],
-                        });
+                    if (useRec) {
                         const translated = this.transformsService.translate({
-                            shape: scaledRec2,
+                            shape: useRec,
                             translation: [paramsV[j] * scaleV + vMin, 0, paramsU[i] * scaleU + uMin],
                         });
-                        shapesToDelete.push(rectangle);
-
                         const placedRec = this.wiresService.placeWire(translated, surface);
                         wires.push(placedRec);
                     } else {
-                        const placedRec = this.wiresService.placeWire(rectangle, surface);
-                        wires.push(placedRec);
+                        const rectangle = this.wiresService.createRectangleWire({
+                            width,
+                            length,
+                            center: [0, 0, 0],
+                            direction: [0, 1, 0],
+                        });
+
+                        if (fillet > 0) {
+
+                            const filletRectangle = this.filletsService.fillet2d({
+                                shape: rectangle,
+                                radius: fillet,
+                            });
+
+                            const scaledRec2 = this.transformsService.scale3d({
+                                shape: filletRectangle,
+                                center: [0, 0, 0],
+                                scale: [scaleV, 1, scaleU],
+                            });
+
+                            const translated = this.transformsService.translate({
+                                shape: scaledRec2,
+                                translation: [paramsV[j] * scaleV + vMin, 0, paramsU[i] * scaleU + uMin],
+                            });
+                            shapesToDelete.push(rectangle);
+
+                            const placedRec = this.wiresService.placeWire(translated, surface);
+                            wires.push(placedRec);
+                            cachedRectangles.push({ id: `${width}-${length}-${fillet}`, shape: scaledRec2 });
+                        } else {
+                            const placedRec = this.wiresService.placeWire(rectangle, surface);
+                            wires.push(placedRec);
+                            cachedRectangles.push({ id: `${width}-${length}-${fillet}`, shape: rectangle });
+                        }
                     }
                 }
             }
@@ -638,7 +651,7 @@ export class FacesService {
         return wires;
     }
 
-    subdivideToRectangleHoles(inputs: Inputs.OCCT.FaceSubdivisionToRectanglesDto<TopoDS_Face>): TopoDS_Face[] {
+    subdivideToRectangleHoles(inputs: Inputs.OCCT.FaceSubdivideToRectangleHolesDto<TopoDS_Face>): TopoDS_Face[] {
         // default should be smaller then 1 as that can't punch holes or create faces nicely.
         if (inputs.scalePatternU === undefined) {
             inputs.scalePatternU = [0.5];
@@ -653,13 +666,30 @@ export class FacesService {
 
         const revWires = wires.map(wire => { return this.wiresService.reversedWire({ shape: wire }); });
         const listOfWires = [longestFaceWire, ...revWires];
-        const newFace = this.createFaceFromWires({ shapes: listOfWires, planar: false });
+        const newFace = this.createFaceFromWiresOnFace({ wires: listOfWires, face: inputs.shape, inside: true });
+
+        // check if the normals are the same, if not reverse the face
+        const normalOriginal = this.faceNormalOnUV({ shape: inputs.shape, paramU: 0, paramV: 0 });
+        const normalNew = this.faceNormalOnUV({ shape: newFace, paramU: 0, paramV: 0 });
+
+        let shouldReverse = false;
+        if (this.vectorService.angleBetweenVectors(normalOriginal, normalNew) > 1e-7) {
+            shouldReverse = true;
+            newFace.Reverse();
+        }
+
         let faces = [];
         if (inputs.holesToFaces) {
             faces = wires.map(wire => {
-                return this.createFaceFromWireOnFace({ wire, face: inputs.shape });
+                return this.createFaceFromWireOnFace({ wire, face: inputs.shape, inside: true });
             });
+            if (shouldReverse) {
+                faces.forEach(f => f.Reverse());
+            }
         }
+
+        wires.forEach(w => w.delete());
+        longestFaceWire.delete();
         revWires.forEach(w => w.delete());
 
         return [newFace, ...faces];
