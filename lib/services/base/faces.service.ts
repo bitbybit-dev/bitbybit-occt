@@ -539,8 +539,23 @@ export class FacesService {
             paramsV.push(pV);
         }
 
-        const scaleU = uMax - uMin;
-        const scaleV = vMax - vMin;
+        // figure out actual parametric scale
+        const line1 = this.wiresService.createLineWire({
+            start: [0, 0, 0],
+            end: [1, 0, 0],
+        });
+        const line2 = this.wiresService.createLineWire({
+            start: [0, 0, 0],
+            end: [0, 0, 1],
+        });
+
+        const placedLine1 = this.wiresService.placeWire(line1, surface);
+        const placedLine2 = this.wiresService.placeWire(line2, surface);
+        const scaleX = this.wiresService.getWireLength({ shape: placedLine1 });
+        const scaleZ = this.wiresService.getWireLength({ shape: placedLine2 });
+
+        const scaleU = (uMax - uMin);
+        const scaleV = (vMax - vMin);
 
         const wires = [];
         let currentScalePatternUIndex = 0;
@@ -594,15 +609,20 @@ export class FacesService {
 
                     const width = stepV * scaleFromPatternV;
                     const length = stepU * scaleFromPatternU;
-                    const minForFillet = Math.min(width, length);
-                    fillet = minForFillet / 2 * fillet;
+                    const minForFillet = Math.min(width * scaleV * scaleX, length * scaleU * scaleZ);
+                    if (minForFillet === width * scaleV * scaleX) {
+                        fillet = minForFillet / 2 * fillet;
+                    } else if (minForFillet === length * scaleU * scaleZ) {
+                        fillet = minForFillet / 2 * fillet;
+                    }
 
-                    const useRec = cachedRectangles.find(r => r.id === `${fillet}-${scaleFromPatternU}-${scaleFromPatternV}`)?.shape;
+                    const useRec = cachedRectangles.find(r => r.id === `${width}-${length}-${fillet}`)?.shape;
+                    const translation = [paramsV[j] * scaleV + vMin, 0, paramsU[i] * scaleU + uMin] as Base.Vector3;
 
                     if (useRec) {
                         const translated = this.transformsService.translate({
                             shape: useRec,
-                            translation: [paramsV[j] * scaleV + vMin, 0, paramsU[i] * scaleU + uMin],
+                            translation,
                         });
                         const placedRec = this.wiresService.placeWire(translated, surface);
                         wires.push(placedRec);
@@ -614,30 +634,38 @@ export class FacesService {
                             direction: [0, 1, 0],
                         });
 
-                        const translation = [paramsV[j] * scaleV + vMin, 0, paramsU[i] * scaleU + uMin] as Base.Vector3;
-
                         if (fillet > 0) {
+                            const scaleVec2 = [scaleV * scaleX, 1, scaleU * scaleZ] as Base.Vector3;
+                            const scaledRec2 = this.transformsService.scale3d({
+                                shape: rectangle,
+                                center: [0, 0, 0],
+                                scale: scaleVec2,
+                            });
 
                             const filletRectangle = this.filletsService.fillet2d({
-                                shape: rectangle,
+                                shape: scaledRec2,
                                 radius: fillet,
                             });
 
-                            const scaledRec2 = this.transformsService.scale3d({
-                                shape: filletRectangle,
-                                center: [0, 0, 0],
-                                scale: [scaleV, 1, scaleU],
-                            });
+                            const scaleVec3 = [1 / scaleX, 1, 1 / scaleZ] as Base.Vector3;
+                            let scaledRec3 = filletRectangle;
+                            if (!this.vectorService.vectorsTheSame(scaleVec3, [1, 1, 1], 1e-7)) {
+                                scaledRec3 = this.transformsService.scale3d({
+                                    shape: filletRectangle,
+                                    center: [0, 0, 0],
+                                    scale: scaleVec3,
+                                });
+                            }
 
                             const translated = this.transformsService.translate({
-                                shape: scaledRec2,
+                                shape: scaledRec3,
                                 translation,
                             });
                             shapesToDelete.push(rectangle);
 
                             const placedRec = this.wiresService.placeWire(translated, surface);
                             wires.push(placedRec);
-                            cachedRectangles.push({ id: `${width}-${length}-${fillet}`, shape: scaledRec2 });
+                            cachedRectangles.push({ id: `${width}-${length}-${fillet}`, shape: scaledRec3 });
                         } else {
                             const scaledRec = this.transformsService.scale3d({
                                 shape: rectangle,
