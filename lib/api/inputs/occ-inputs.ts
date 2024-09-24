@@ -962,7 +962,7 @@ export namespace OCCT {
         /**
           * Provide options without default values
           */
-        constructor(shape?: T, nrRectanglesU?: number, nrRectanglesV?: number, scalePatternU?: number[], scalePatternV?: number[], filletPattern?: number[], inclusionPattern?: boolean[]) {
+        constructor(shape?: T, nrRectanglesU?: number, nrRectanglesV?: number, scalePatternU?: number[], scalePatternV?: number[], filletPattern?: number[], inclusionPattern?: boolean[], offsetFromBorderU?: number, offsetFromBorderV?: number) {
             if (shape !== undefined) { this.shape = shape; }
             if (nrRectanglesU !== undefined) { this.nrRectanglesU = nrRectanglesU; }
             if (nrRectanglesV !== undefined) { this.nrRectanglesU = nrRectanglesV; }
@@ -970,6 +970,8 @@ export namespace OCCT {
             if (scalePatternV !== undefined) { this.scalePatternV = scalePatternV; }
             if (filletPattern !== undefined) { this.filletPattern = filletPattern; }
             if (inclusionPattern !== undefined) { this.inclusionPattern = inclusionPattern; }
+            if (offsetFromBorderU !== undefined) { this.offsetFromBorderU = offsetFromBorderU; }
+            if (offsetFromBorderV !== undefined) { this.offsetFromBorderV = offsetFromBorderV; }
         }
         /**
          * Openascade Face
@@ -1018,13 +1020,33 @@ export namespace OCCT {
          * @optional true
          */
         inclusionPattern: boolean[];
+        /**
+         * If offset on U is bigger then 0 we will use a smaller space for rectangles to be placed. This means that even rectangle of U param 1 will be offset from the face border
+         * That is often required to create a pattern that is not too close to the face border
+         * It should not be bigger then half of the total width of the face as that will create problems
+         * @default 0
+         * @minimum 0
+         * @maximum 0.5
+         * @step 0.01
+         */
+        offsetFromBorderU = 0;
+        /**
+         * If offset on V is bigger then 0 we will use a smaller space for rectangles to be placed. This means that even rectangle of V param 1 will be offset from the face border
+         * That is often required to create a pattern that is not too close to the face border
+         * It should not be bigger then half of the total width of the face as that will create problems
+         * @default 0
+         * @minimum 0
+         * @maximum 0.5
+         * @step 0.01
+         */
+        offsetFromBorderV = 0;
     }
 
     export class FaceSubdivideToRectangleHolesDto<T> {
         /**
           * Provide options without default values
           */
-        constructor(shape?: T, nrRectanglesU?: number, nrRectanglesV?: number, scalePatternU?: number[], scalePatternV?: number[], filletPattern?: number[], inclusionPattern?: boolean[], holesToFaces?: boolean) {
+        constructor(shape?: T, nrRectanglesU?: number, nrRectanglesV?: number, scalePatternU?: number[], scalePatternV?: number[], filletPattern?: number[], inclusionPattern?: boolean[], holesToFaces?: boolean, offsetFromBorderU?: number, offsetFromBorderV?: number) {
             if (shape !== undefined) { this.shape = shape; }
             if (nrRectanglesU !== undefined) { this.nrRectanglesU = nrRectanglesU; }
             if (nrRectanglesV !== undefined) { this.nrRectanglesU = nrRectanglesV; }
@@ -1033,6 +1055,8 @@ export namespace OCCT {
             if (filletPattern !== undefined) { this.filletPattern = filletPattern; }
             if (inclusionPattern !== undefined) { this.inclusionPattern = inclusionPattern; }
             if (holesToFaces !== undefined) { this.holesToFaces = holesToFaces; }
+            if (offsetFromBorderU !== undefined) { this.offsetFromBorderU = offsetFromBorderU; }
+            if (offsetFromBorderV !== undefined) { this.offsetFromBorderV = offsetFromBorderV; }
         }
         /**
          * Openascade Face
@@ -1086,6 +1110,26 @@ export namespace OCCT {
          * @default false
          */
         holesToFaces = false;
+        /**
+         * If offset on U is bigger then 0 we will use a smaller space for rectangles to be placed. This means that even rectangle of U param 1 will be offset from the face border
+         * That is often required to create a pattern that is not too close to the face border
+         * It should not be bigger then half of the total width of the face as that will create problems
+         * @default 0
+         * @minimum 0
+         * @maximum 0.5
+         * @step 0.01
+         */
+        offsetFromBorderU = 0;
+        /**
+         * If offset on V is bigger then 0 we will use a smaller space for rectangles to be placed. This means that even rectangle of V param 1 will be offset from the face border
+         * That is often required to create a pattern that is not too close to the face border
+         * It should not be bigger then half of the total width of the face as that will create problems
+         * @default 0
+         * @minimum 0
+         * @maximum 0.5
+         * @step 0.01
+         */
+        offsetFromBorderV = 0;
     }
     export class FaceSubdivisionControlledDto<T> {
         /**

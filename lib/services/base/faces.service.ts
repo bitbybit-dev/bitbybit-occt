@@ -522,20 +522,20 @@ export class FacesService {
         const { uMin, uMax, vMin, vMax } = this.getUVBounds(face);
 
         const paramsU = [];
-        const stepU = 1 / inputs.nrRectanglesU;
+        const stepU = (1 - inputs.offsetFromBorderU * 2) / inputs.nrRectanglesU;
         const halfStepU = stepU / 2;
 
         for (let i = 0; i < inputs.nrRectanglesU; i++) {
-            const pU = stepU * i + halfStepU;
+            const pU = stepU * i + halfStepU + inputs.offsetFromBorderU;
             paramsU.push(pU);
         }
 
         const paramsV = [];
-        const stepV = 1 / inputs.nrRectanglesV;
+        const stepV = (1 - inputs.offsetFromBorderV * 2) / inputs.nrRectanglesV;
         const halfStepV = stepV / 2;
 
         for (let i = 0; i < inputs.nrRectanglesV; i++) {
-            const pV = stepV * i + halfStepV;
+            const pV = stepV * i + halfStepV + inputs.offsetFromBorderV;
             paramsV.push(pV);
         }
 
