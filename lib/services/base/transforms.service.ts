@@ -33,6 +33,30 @@ export class TransformsService {
         return translated;
     }
 
+    scale3d(inputs: Inputs.OCCT.Scale3DDto<TopoDS_Shape>): TopoDS_Shape {
+        const shapeTranslated = this.translate({ shape: inputs.shape, translation: inputs.center.map(c => -c) as Inputs.Base.Vector3 });
+        const transformation = new this.occ.gp_GTrsf_1();
+        const scale = inputs.scale;
+        const mat = new this.occ.gp_Mat_2(scale[0], 0.0, 0.0, 0.0, scale[1], 0.0, 0.0, 0.0, scale[2]);
+        transformation.SetVectorialPart(mat);
+        let result;
+        try {
+            const gtrans = new this.occ.BRepBuilderAPI_GTransform_2(shapeTranslated as TopoDS_Shape, transformation, false);
+            const messageProps = new this.occ.Message_ProgressRange_1();
+            gtrans.Build(messageProps);
+            const scaledShape = gtrans.Shape();
+            result = this.translate({ shape: scaledShape, translation: inputs.center });
+            gtrans.delete();
+            scaledShape.delete();
+            messageProps.delete();
+        } catch (ex) {
+            throw new Error("Could not scale the shape");
+        }
+        shapeTranslated.delete();
+        transformation.delete();
+        mat.delete();
+        return result;
+    }
 
     translate(inputs: Inputs.OCCT.TranslateDto<TopoDS_Shape>) {
         const transformation = new this.occ.gp_Trsf_1();

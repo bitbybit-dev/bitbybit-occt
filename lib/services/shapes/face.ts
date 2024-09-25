@@ -23,12 +23,16 @@ export class OCCTFace {
         return this.och.facesService.createFacesFromWiresOnFace(inputs);
     }
 
-    createFaceFromWires(inputs: Inputs.OCCT.FacesFromWiresDto<TopoDS_Wire>): TopoDS_Face {
+    createFaceFromWires(inputs: Inputs.OCCT.FaceFromWiresDto<TopoDS_Wire>): TopoDS_Face {
         return this.och.facesService.createFaceFromWires(inputs);
     }
 
     createFacesFromWires(inputs: Inputs.OCCT.FacesFromWiresDto<TopoDS_Wire>): TopoDS_Face[] {
         return this.och.facesService.createFacesFromWires(inputs);
+    }
+
+    createFaceFromWiresOnFace(inputs: Inputs.OCCT.FaceFromWiresOnFaceDto<TopoDS_Wire, TopoDS_Face>): TopoDS_Face {
+        return this.och.facesService.createFaceFromWiresOnFace(inputs);
     }
 
     faceFromSurface(inputs: Inputs.OCCT.ShapeWithToleranceDto<Geom_Surface>) {
@@ -67,11 +71,11 @@ export class OCCTFace {
         return this.och.facesService.subdivideToWires(inputs);
     }
 
-    subdivideToRectangleWires(inputs: Inputs.OCCT.FaceSubdivisionToRectanglesDto<TopoDS_Face>): TopoDS_Wire[] {
+    subdivideToRectangleWires(inputs: Inputs.OCCT.FaceSubdivideToRectangleWiresDto<TopoDS_Face>): TopoDS_Wire[] {
         return this.och.facesService.subdivideToRectangleWires(inputs);
     }
 
-    subdivideToRectangleHoles(inputs: Inputs.OCCT.FaceSubdivisionToRectanglesDto<TopoDS_Face>): TopoDS_Face[] {
+    subdivideToRectangleHoles(inputs: Inputs.OCCT.FaceSubdivideToRectangleHolesDto<TopoDS_Face>): TopoDS_Face[] {
         return this.och.facesService.subdivideToRectangleHoles(inputs);
     }
 

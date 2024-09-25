@@ -144,17 +144,22 @@ export class EntitiesService {
         return shell;
     }
 
-    bRepBuilderAPIMakeFaceFromWires(wires: TopoDS_Wire[], planar: boolean): TopoDS_Face {
+    bRepBuilderAPIMakeFaceFromWires(wires: TopoDS_Wire[], planar: boolean, guideFace?: TopoDS_Face, inside?: boolean): TopoDS_Face {
         let face;
         const faces = [];
         wires.forEach(currentWire => {
             if (faces.length > 0) {
-                const faceBuilder = new this.occ.BRepBuilderAPI_MakeFace_22(
-                    faces[faces.length - 1], currentWire);
+                const faceBuilder = new this.occ.BRepBuilderAPI_MakeFace_22(faces[faces.length - 1], currentWire);
                 faces.push(faceBuilder.Face());
                 faceBuilder.delete();
             } else {
-                const faceBuilder = new this.occ.BRepBuilderAPI_MakeFace_15(currentWire, planar);
+                let faceBuilder;
+                if (!guideFace) {
+                    faceBuilder = new this.occ.BRepBuilderAPI_MakeFace_15(currentWire, planar);
+                } else {
+                    const surface = this.occ.BRep_Tool.Surface_2(guideFace);
+                    faceBuilder = new this.occ.BRepBuilderAPI_MakeFace_21(surface, currentWire, inside);
+                }
                 faces.push(faceBuilder.Face());
                 faceBuilder.delete();
             }
@@ -174,22 +179,22 @@ export class EntitiesService {
         return face;
     }
 
-    bRepBuilderAPIMakeFacesFromWiresOnFace(face: TopoDS_Face, wires: TopoDS_Wire[]): TopoDS_Face[] {
+    bRepBuilderAPIMakeFacesFromWiresOnFace(face: TopoDS_Face, wires: TopoDS_Wire[], inside: boolean): TopoDS_Face[] {
         const surface = this.occ.BRep_Tool.Surface_2(face);
-        const res = wires.map(wire => this.bRepBuilderAPIMakeFaceFromWireOnSurface(surface, wire));
+        const res = wires.map(wire => this.bRepBuilderAPIMakeFaceFromWireOnSurface(surface, wire, inside));
         surface.delete();
         return res;
     }
 
-    bRepBuilderAPIMakeFaceFromWireOnFace(face: TopoDS_Face, wire: TopoDS_Wire): TopoDS_Face {
+    bRepBuilderAPIMakeFaceFromWireOnFace(face: TopoDS_Face, wire: TopoDS_Wire, inside: boolean): TopoDS_Face {
         const surface = this.occ.BRep_Tool.Surface_2(face);
-        const res = this.bRepBuilderAPIMakeFaceFromWireOnSurface(surface, wire);
+        const res = this.bRepBuilderAPIMakeFaceFromWireOnSurface(surface, wire, inside);
         surface.delete();
         return res;
     }
 
-    bRepBuilderAPIMakeFaceFromWireOnSurface(surface: Handle_Geom_Surface, wire: TopoDS_Wire): TopoDS_Face {
-        const faceMaker = new this.occ.BRepBuilderAPI_MakeFace_21(surface, wire, true);
+    bRepBuilderAPIMakeFaceFromWireOnSurface(surface: Handle_Geom_Surface, wire: TopoDS_Wire, inside: boolean): TopoDS_Face {
+        const faceMaker = new this.occ.BRepBuilderAPI_MakeFace_21(surface, wire, inside);
         const f = faceMaker.Face();
         faceMaker.delete();
         return f;
