@@ -67,6 +67,45 @@ export class OCCTIO {
         return result;
     }
 
+    saveShapeSTL(inputs: Inputs.OCCT.SaveSTLDto<TopoDS_Shape>): string {
+        const shapeToUse = inputs.shape;
+        let adjustedShape;
+        if (inputs.adjustYtoZ) {
+            const rotatedShape = this.och.transformsService.rotate({ shape: inputs.shape, axis: [1, 0, 0], angle: -90 });
+            adjustedShape = this.och.transformsService.mirrorAlongNormal(
+                { shape: rotatedShape, origin: [0, 0, 0], normal: [0, 0, 1] }
+            );
+            rotatedShape.delete();
+        }
+        const fileName = "x";
+        const writer = new this.occ.StlAPI_Writer();
+        let transferShape;
+        if (adjustedShape) {
+            transferShape = adjustedShape;
+        } else {
+            transferShape = shapeToUse;
+        }
+        const messageProgress = new this.occ.Message_ProgressRange_1();
+        let result: string;
+        // Write the STL File to the virtual Emscripten Filesystem Temporarily
+        const writeResult = writer.Write(transferShape, fileName, messageProgress);
+        if (writeResult) {
+            // Read the STL File from the filesystem and clean up
+            const stlFile = this.occ.FS.readFile("/" + fileName, { encoding: "utf8" });
+            this.occ.FS.unlink("/" + fileName);
+            // Return the contents of the STL File
+            result = stlFile;
+        } else {
+            throw (new Error("Failed when writing stl file."));
+        }
+
+        if (adjustedShape) {
+            adjustedShape.delete();
+        }
+        messageProgress.delete();
+
+        return result;
+    }
 
     /** This function parses the ASCII contents of a `.STEP` or `.IGES`
      * File as a Shape into the `externalShapes` dictionary.
