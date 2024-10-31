@@ -67,8 +67,14 @@ export class OCCTIO {
         return result;
     }
 
-    saveShapeSTL(inputs: Inputs.OCCT.SaveSTLDto<TopoDS_Shape>): string {
+    saveShapeStl(inputs: Inputs.OCCT.SaveStlDto<TopoDS_Shape>): string {
         const shapeToUse = inputs.shape;
+
+        // This could be made optional...
+        // Clean cached triangulation data for the shape.
+        // This allows to get lower res models out of higher res that was once computed and cached.
+        this.occ.BRepTools.Clean(shapeToUse, true);
+
         let adjustedShape;
         if (inputs.adjustYtoZ) {
             const rotatedShape = this.och.transformsService.rotate({ shape: inputs.shape, axis: [1, 0, 0], angle: -90 });
@@ -87,6 +93,8 @@ export class OCCTIO {
         }
         const messageProgress = new this.occ.Message_ProgressRange_1();
         let result: string;
+        const incrementalMeshBuilder = new this.occ.BRepMesh_IncrementalMesh_2(transferShape, inputs.precision, false, 0.5, false);
+
         // Write the STL File to the virtual Emscripten Filesystem Temporarily
         const writeResult = writer.Write(transferShape, fileName, messageProgress);
         if (writeResult) {
@@ -104,6 +112,10 @@ export class OCCTIO {
         }
         messageProgress.delete();
 
+        if (incrementalMeshBuilder) {
+            incrementalMeshBuilder.Delete();
+        }
+        
         return result;
     }
 

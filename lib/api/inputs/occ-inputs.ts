@@ -4560,34 +4560,6 @@ export namespace OCCT {
          */
         tryDownload? = true;
     }
-    export class SaveSTLDto<T> {
-        constructor(shape?: T, fileName?: string, adjustYtoZ?: boolean, tryDownload?: boolean) {
-            if (shape !== undefined) { this.shape = shape; }
-            if (fileName !== undefined) { this.fileName = fileName; }
-            if (adjustYtoZ !== undefined) { this.adjustYtoZ = adjustYtoZ; }
-            if (tryDownload !== undefined) { this.tryDownload = tryDownload; }
-        }
-        /**
-         * Shape to save
-         * @default undefined
-         */
-        shape: T;
-        /**
-         * File name
-         * @default shape.step
-         */
-        fileName = "shape.step";
-        /**
-         * Adjust Y (up) coordinate system to Z (up) coordinate system
-         * @default false
-         */
-        adjustYtoZ = false;
-        /**
-         * Will attempt to downlaod the file if that is possible
-         * @default true
-         */
-        tryDownload? = true;
-    }
     export class SaveStlDto<T> {
         constructor(shape?: T, fileName?: string, precision?: number, adjustYtoZ?: boolean, tryDownload?: boolean, binary?: boolean) {
             if (shape !== undefined) { this.shape = shape; }
