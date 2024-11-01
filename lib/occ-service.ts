@@ -85,8 +85,13 @@ export class OCCTService {
                     tri_indexes: [],
                     vertex_coord_vec: [],
                     number_of_triangles: 0,
+                    center_point: undefined,
+                    center_normal: undefined,
                     face_index: faceIndex
                 };
+
+                thisFace.center_point = this.och.facesService.pointOnUV({ shape: myFace, paramU: 0.5, paramV: 0.5 });
+                thisFace.center_normal = this.och.facesService.normalOnUV({ shape: myFace, paramU: 0.5, paramV: 0.5 });
 
                 const pc = new this.occ.Poly_Connect_2(myT);
                 const triangulation = myT.get();
@@ -160,9 +165,11 @@ export class OCCTService {
         edges.forEach((myEdge, index) => {
             const thisEdge: Inputs.OCCT.DecomposedEdgeDto = {
                 vertex_coord: [],
+                middle_point: undefined,
                 edge_index: -1
             };
 
+            thisEdge.middle_point = this.och.edgesService.pointOnEdgeAtParam({ shape: myEdge, param: 0.5 });
             const aLocation = new this.occ.TopLoc_Location_1();
             const adaptorCurve = new this.occ.BRepAdaptor_Curve_2(myEdge);
             const tangDef = new this.occ.GCPnts_TangentialDeflection_2(adaptorCurve, inputs.precision, 0.1, 2, 1.0e-9, 1.0e-7);
