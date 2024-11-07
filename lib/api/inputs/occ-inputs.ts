@@ -136,10 +136,13 @@ export namespace OCCT {
         tri_indexes: number[];
         vertex_coord: number[];
         vertex_coord_vec: Base.Vector3[];
+        center_point: Base.Point3;
+        center_normal: Base.Vector3;
         uvs: number[];
     }
     export class DecomposedEdgeDto {
         edge_index: number;
+        middle_point: Base.Point3;
         vertex_coord: Base.Vector3[];
     }
     export class ShapesDto<T> {

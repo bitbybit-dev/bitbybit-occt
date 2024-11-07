@@ -24,14 +24,17 @@ Github Source Code - https://github.com/bitbybit-dev/app-examples/tree/main/reac
 # Closed Source Example Applications
 https://app-store.bitbybit.dev/terrace-furniture
 
-# Build package
-tsc -p tsconfig.bitbybit.json
+## Build package
+npm run build-p
 
-# Run Live Unit Tests
-npm run test
+## Run unit tests and generate test coverage
+npm run test-c
 
-# Run Live Unit Tests With Coverage
+## Run live unit tests and generate test coverage on save
 npm run test-c-l
+
+## Unit test coverage report online
+https://tests.bitbybit.dev/occt
 
 # Media Channels
 Discord: https://discord.gg/GSe3VMe  

@@ -751,10 +751,14 @@ export class EdgesService {
         const curve = this.converterService.getGeomCurveFromEdge(edge, uMin, uMax);
         const gpPnt = this.entitiesService.gpPnt([0, 0, 0]);
         const param = this.vecHelper.remap(inputs.param, 0, 1, uMin, uMax);
-        curve.D0(param, gpPnt);
-        const pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
-        gpPnt.delete();
-        return pt;
+        if (curve) {
+            curve.D0(param, gpPnt);
+            const pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
+            gpPnt.delete();
+            return pt;
+        } else {
+            return undefined;
+        }
     }
 
     private reconstructCircleAndAlignBack(lin1Sols: gp_Circ2d[], sol: gp_Circ2d, alignOpt: Inputs.OCCT.AlignDto<TopoDS_Shape>, dir: Base.Vector3, pos: Base.Point3) {

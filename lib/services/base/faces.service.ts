@@ -1007,15 +1007,19 @@ export class FacesService {
         const face = inputs.shape;
         const handle = this.occ.BRep_Tool.Surface_2(face);
         const surface = handle.get();
-        const { uMin, uMax, vMin, vMax } = this.getUVBounds(face);
-        const u = uMin + (uMax - uMin) * inputs.paramU;
-        const v = vMin + (vMax - vMin) * inputs.paramV;
-        const gpPnt = this.entitiesService.gpPnt([0, 0, 0]);
-        surface.D0(u, v, gpPnt);
-        const pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
-        gpPnt.delete();
-        handle.delete();
-        return pt;
+        if (surface) {
+            const { uMin, uMax, vMin, vMax } = this.getUVBounds(face);
+            const u = uMin + (uMax - uMin) * inputs.paramU;
+            const v = vMin + (vMax - vMin) * inputs.paramV;
+            const gpPnt = this.entitiesService.gpPnt([0, 0, 0]);
+            surface.D0(u, v, gpPnt);
+            const pt: Base.Point3 = [gpPnt.X(), gpPnt.Y(), gpPnt.Z()];
+            gpPnt.delete();
+            handle.delete();
+            return pt;
+        } else {
+            return undefined;
+        }
     }
 
     normalOnUV(inputs: Inputs.OCCT.DataOnUVDto<TopoDS_Face>): Base.Vector3 {
