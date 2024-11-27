@@ -110,6 +110,12 @@ export namespace OCCT {
         wire,
         face,
     }
+    export enum pointProjectionTypeEnum {
+        all = "all",
+        closest = "closest",
+        furthest = "furthest",
+        closestAndFurthest = "closestAndFurthest",
+    }
     export class DecomposedMeshDto {
         constructor(faceList?: DecomposedFaceDto[], edgeList?: DecomposedEdgeDto[]) {
             if (faceList !== undefined) { this.faceList = faceList; }
@@ -2807,6 +2813,34 @@ export namespace OCCT {
          * @default [0, 1, 0]
          */
         direction: Base.Vector3 = [0, 1, 0];
+    }
+    export class ProjectPointsOnShapeDto<T> {
+        constructor(points?: Base.Point3[], shape?: T, direction?: Base.Vector3, projectionType?: pointProjectionTypeEnum) {
+            if (points !== undefined) { this.points = points; }
+            if (shape !== undefined) { this.shape = shape; }
+            if (direction !== undefined) { this.direction = direction; }
+            if (projectionType !== undefined) { this.projectionType = projectionType; }
+        }
+        /**
+         * Points to project
+         * @default undefined
+         */
+        points: Base.Point3[];
+        /**
+         * Shape to use for projection
+         * @default undefined
+         */
+        shape: T;
+        /**
+         * Direction vector for projection - this must take the length into account as well, because algorithm looks for intresections with the shape in this direction. It will not find solutions outside the given length of this vector.
+         * @default [0, 10, 0]
+         */
+        direction: Base.Vector3 = [0, 10, 0];
+        /**
+         * Allows user to choose what solutions are being returned by this operation.
+         * @default all
+         */
+        projectionType: pointProjectionTypeEnum;
     }
     export class WiresToPointsDto<T> {
         constructor(shape?: T, angularDeflection?: number, curvatureDeflection?: number, minimumOfPoints?: number, uTolerance?: number, minimumLength?: number) {

@@ -11,24 +11,23 @@ export class OCCTVertex {
     }
 
     vertexFromXYZ(inputs: Inputs.OCCT.XYZDto): TopoDS_Vertex {
-        return this.och.entitiesService.makeVertex([inputs.x, inputs.y, inputs.z]);
+        return this.och.verticesService.vertexFromXYZ(inputs);
     }
 
     vertexFromPoint(inputs: Inputs.OCCT.PointDto): TopoDS_Vertex {
-        return this.och.entitiesService.makeVertex(inputs.point);
+        return this.och.verticesService.vertexFromPoint(inputs);
     }
 
     verticesFromPoints(inputs: Inputs.OCCT.PointsDto): TopoDS_Vertex[] {
-        return inputs.points.map(p => this.vertexFromPoint({ point: p }));
+        return this.och.verticesService.verticesFromPoints(inputs);
     }
 
     verticesCompoundFromPoints(inputs: Inputs.OCCT.PointsDto): TopoDS_Compound {
-        const vertexes = this.verticesFromPoints(inputs);
-        return this.och.converterService.makeCompound({ shapes: vertexes });
+        return this.och.verticesService.verticesCompoundFromPoints(inputs);
     }
 
     getVertices(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): TopoDS_Vertex[] {
-        return this.och.shapeGettersService.getVertices(inputs);
+        return this.och.verticesService.getVertices(inputs);
     }
 
     getVerticesAsPoints(inputs: Inputs.OCCT.ShapeDto<TopoDS_Shape>): Inputs.Base.Point3[] {
@@ -40,6 +39,10 @@ export class OCCTVertex {
     }
 
     vertexToPoint(inputs: Inputs.OCCT.ShapeDto<TopoDS_Vertex>): Inputs.Base.Point3 {
-        return this.och.converterService.vertexToPoint(inputs);
+        return this.och.verticesService.vertexToPoint(inputs);
+    }
+
+    projectPoints(inputs: Inputs.OCCT.ProjectPointsOnShapeDto<TopoDS_Shape>): Inputs.Base.Point3[] {
+        return this.och.verticesService.projectPoints(inputs);
     }
 }

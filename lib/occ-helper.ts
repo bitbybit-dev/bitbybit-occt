@@ -57,13 +57,14 @@ export class OccHelper {
         this.booleansService = new BooleansService(occ, this.shapeGettersService);
         this.transformsService = new TransformsService(occ, this.converterService, this.entitiesService, this.vecHelper);
 
-        this.verticesService = new VerticesService(occ, this.shapeGettersService);
+        this.verticesService = new VerticesService(occ, this.entitiesService, this.converterService, this.shapeGettersService, this.wiresService, this.booleansService);
 
         this.edgesService = new EdgesService(occ, this.occRefReturns, this.shapeGettersService, this.entitiesService,
             this.iteratorService, this.converterService, this.enumService, this.geomService, this.transformsService, this.vecHelper);
 
         this.wiresService = new WiresService(occ, this.occRefReturns, this.vecHelper, this.shapesHelperService, this.shapeGettersService, this.transformsService,
             this.enumService, this.entitiesService, this.converterService, this.geomService, this.edgesService, this.booleansService);
+        this.verticesService.wiresService = this.wiresService;
 
         this.facesService = new FacesService(occ, this.occRefReturns, this.entitiesService, this.enumService,
             this.shapeGettersService, this.converterService, this.booleansService, this.wiresService, this.transformsService, this.vecHelper, this.filletsService);

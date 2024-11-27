@@ -4,12 +4,15 @@ import { VectorHelperService } from "../../api/vector-helper.service";
 import { ShapesHelperService } from "../../api/shapes-helper.service";
 import { OCCTVertex } from "./vertex";
 import { OCCTSolid } from "./solid";
+import * as Inputs from "../../api/inputs/inputs";
+import { OCCTCompound } from "./compound";
 
 describe("OCCT vertex unit tests", () => {
     let occt: OpenCascadeInstance;
     let vertex: OCCTVertex;
     let solid: OCCTSolid;
     let occHelper: OccHelper;
+    let compound: OCCTCompound;
 
     beforeAll(async () => {
         occt = await initOpenCascade();
@@ -18,6 +21,7 @@ describe("OCCT vertex unit tests", () => {
         occHelper = new OccHelper(vec, s, occt);
         vertex = new OCCTVertex(occt, occHelper);
         solid = new OCCTSolid(occt, occHelper);
+        compound = new OCCTCompound(occt, occHelper);
     });
 
     it("should recreate a vertex from point", () => {
@@ -85,4 +89,95 @@ describe("OCCT vertex unit tests", () => {
         expect(compound).toBeDefined();
         compound.delete();
     });
+
+    it("should project points on a shape", () => {
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const points = vertex.projectPoints({ points: [[0.1, -2.3, 0.6], [0.2, -3.4, 0.7]], shape: sphere, direction: [0, 10, 0], projectionType: Inputs.OCCT.pointProjectionTypeEnum.all });
+        expect(points.length).toBe(4);
+        expect(points).toEqual(
+            [
+                [0.1, -0.7937253933193773, 0.6],
+                [0.1, 0.7937253933193773, 0.6],
+                [0.2, -0.6855654600401055, 0.7],
+                [0.2, 0.6855654600401055, 0.7]
+            ]
+        );
+    });
+
+    it("should return only closest project points on a shape", () => {
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const points = vertex.projectPoints({ points: [[0.1, -2.3, 0.6], [0.2, -3.4, 0.7]], shape: sphere, direction: [0, 10, 0], projectionType: Inputs.OCCT.pointProjectionTypeEnum.closest });
+        expect(points.length).toBe(2);
+        expect(points).toEqual(
+            [
+                [0.1, -0.7937253933193773, 0.6],
+                [0.2, -0.6855654600401055, 0.7],
+            ]
+        );
+    });
+
+    it("should return only furthest project points on a shape", () => {
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const points = vertex.projectPoints({ points: [[0.1, -2.3, 0.6], [0.2, -3.4, 0.7]], shape: sphere, direction: [0, 10, 0], projectionType: Inputs.OCCT.pointProjectionTypeEnum.furthest });
+        expect(points.length).toBe(2);
+        expect(points).toEqual(
+            [
+                [0.1, 0.7937253933193773, 0.6],
+                [0.2, 0.6855654600401055, 0.7]
+            ]
+        );
+    });
+
+    it("should return multiple intersections for compound shape", () => {
+        const box = solid.createBox({ width: 2, height: 0.5, length: 2, center: [0, 2, 0] });
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const c = compound.makeCompound({ shapes: [box, sphere] });
+        const points = vertex.projectPoints({ points: [[0.1, -2.3, 0.6], [0.2, -3.4, 0.7]], shape: c, direction: [0, 20, 0], projectionType: Inputs.OCCT.pointProjectionTypeEnum.all });
+        expect(points.length).toBe(8);
+        expect(points).toEqual(
+            [
+                [0.1, -0.7937253933193773, 0.6],
+                [0.1, 0.7937253933193773, 0.6],
+                [0.1, 1.75, 0.6],
+                [0.1, 2.25, 0.6],
+                [0.2, -0.6855654600401055, 0.7],
+                [0.2, 0.6855654600401055, 0.7],
+                [0.2, 1.7500000000000004, 0.7],
+                [0.2, 2.2500000000000004, 0.7]
+            ]
+        );
+    });
+
+    it("should only return projections of outer shape if second one is inside the first", () => {
+        const box = solid.createBox({ width: 2, height: 0.5, length: 2, center: [0, 0, 0] });
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const c = compound.makeCompound({ shapes: [box, sphere] });
+        const points = vertex.projectPoints({ points: [[0.1, -2.3, 0.6], [0.2, -3.4, 0.7]], shape: c, direction: [0, 20, 0], projectionType: Inputs.OCCT.pointProjectionTypeEnum.all });
+        expect(points.length).toBe(4);
+        expect(points).toEqual(
+            [
+                [0.1, -0.7937253933193773, 0.6],
+                [0.1, 0.7937253933193773, 0.6],
+                [0.2, -0.6855654600401055, 0.7],
+                [0.2, 0.6855654600401055, 0.7]
+            ]
+        );
+    });
+
+    it("should return closest and furthest points of intersection", () => {
+        const box = solid.createBox({ width: 2, height: 0.5, length: 2, center: [0, 2, 0] });
+        const sphere = solid.createSphere({ radius: 1, center: [0, 0, 0] });
+        const c = compound.makeCompound({ shapes: [box, sphere] });
+        const points = vertex.projectPoints({ points: [[0.1, -2.3, 0.6], [0.2, -3.4, 0.7]], shape: c, direction: [0, 20, 0], projectionType: Inputs.OCCT.pointProjectionTypeEnum.closestAndFurthest });
+        expect(points.length).toBe(4);
+        expect(points).toEqual(
+            [
+                [0.1, -0.7937253933193773, 0.6],
+                [0.1, 2.25, 0.6],
+                [0.2, -0.6855654600401055, 0.7],
+                [0.2, 2.2500000000000004, 0.7]
+            ]
+        );
+    });
 });
+
